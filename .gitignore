@@ -25,8 +25,38 @@
 *.la
 *.a
 *.lib
+*.idb
+*.pdb
+*.log
+*.tlog
+*.ilk
+*.iobj
+*.ipdb
 
 # Executables
 *.exe
 *.out
 *.app
+
+# Under .VS
+.vs/
+Frameworks/Frameworks/FBXBinary/minionZ.meshinfo
+Frameworks/Frameworks/FBXBinary/minionZ.aniinfo
+Frameworks/Frameworks/FBXBinary/minionY.meshinfo
+Frameworks/Frameworks/FBXBinary/minionY.aniinfo
+Frameworks/Frameworks/FBXBinary/minion3.meshinfo
+Frameworks/Frameworks/FBXBinary/minion3.aniinfo
+FBXexporter/Release/testModels/minionZ.FBX
+FBXexporter/Release/testModels/minionY.FBX
+FBXexporter/Release/exportedModels/minionZ.meshinfo
+FBXexporter/Release/exportedModels/minionZ.aniinfo
+FBXexporter/Release/exportedModels/minionY.meshinfo
+FBXexporter/Release/exportedModels/minionY.aniinfo
+FBXexporter/FBXExporter/testModels/minionZ.FBX
+FBXexporter/FBXExporter/testModels/minionY.FBX
+FBXexporter/FBXExporter/testModels/minion3.fbx
+FBXexporter/FBXExporter/exportedModels/minion3.meshinfo
+FBXexporter/FBXExporter/exportedModels/minion3.aniinfo
+*.tlog
+*.tlog
+*.tlog
