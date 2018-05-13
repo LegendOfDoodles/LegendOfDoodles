@@ -203,7 +203,7 @@ void CScene::BuildLights()
 	m_pLights->m_pLights[2].m_color = XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f);
 	m_pLights->m_pLights[2].m_direction = Vector3::Normalize(XMFLOAT3(1.0f, -0.3f, -1.0f));
 
-	m_pLights->m_pLights[3].m_bEnable = true;
+	m_pLights->m_pLights[3].m_bEnable = false;
 	m_pLights->m_pLights[3].m_nType = SPOT_LIGHT;
 	m_pLights->m_pLights[3].m_fRange = 500.0f;
 	m_pLights->m_pLights[3].m_color = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
