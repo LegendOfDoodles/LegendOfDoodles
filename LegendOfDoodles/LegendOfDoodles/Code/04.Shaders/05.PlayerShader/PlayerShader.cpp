@@ -43,16 +43,6 @@ void CPlayerShader::ReleaseUploadBuffers()
 
 void CPlayerShader::UpdateShaderVariables()
 {
-#if USE_INSTANCING
-	m_pCommandList->SetGraphicsRootShaderResourceView(2,
-		m_pInstanceBuffer->GetGPUVirtualAddress());
-
-	for (int i = 0; i < m_nObjects; i++)
-	{
-		XMStoreFloat4x4(&m_pMappedObjects[i].m_xmf4x4World,
-			XMMatrixTranspose(XMLoadFloat4x4(m_ppObjects[i]->GetWorldMatrix())));
-	}
-#else
 	static UINT elementBytes = ((sizeof(CB_ANIOBJECT_INFO) + 255) & ~255);
 
 	for (int i = 0; i < m_nObjects; i++)
@@ -65,7 +55,6 @@ void CPlayerShader::UpdateShaderVariables()
 		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World0,
 			XMMatrixTranspose(XMLoadFloat4x4(m_ppObjects[i]->GetWorldMatrix())));
 	}
-#endif
 }
 
 void CPlayerShader::UpdateBoundingBoxShaderVariables()
@@ -401,9 +390,9 @@ void CPlayerShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
 			pRotatingObject->SetMaterial(pCubeMaterial);
 #endif
 			pPlayer->SetBoundingMesh(pCreateMgr,
-
 				CONVERT_PaperUnit_to_InG(2), CONVERT_PaperUnit_to_InG(2), CONVERT_PaperUnit_to_InG(10),
 				0, 0, -CONVERT_PaperUnit_to_InG(8));
+
 			pPlayer->CBaseObject::SetPosition(500+(z*9000), 0, 2000+(x*1000));
 			if (z == 1) {
 				pPlayer->SetTeam(TeamType::Red);
@@ -424,7 +413,6 @@ void CPlayerShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
 			pPlayer->SetSkeleton(pDefeat2);
 
 			pPlayer->SetTerrain(m_pTerrain);
-
 			pPlayer->Rotate(90, 0, 0);
 
 #if !USE_INSTANCING

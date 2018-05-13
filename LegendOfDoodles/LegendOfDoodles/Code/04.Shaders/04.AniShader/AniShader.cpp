@@ -29,39 +29,53 @@ CAniShader::~CAniShader()
 // 공개 함수
 void CAniShader::ReleaseUploadBuffers()
 {
-#if USE_BATCH_MATERIAL
+	if (m_ppBlues)
+	{
+		for (int j = 0; j < MAX_MINION; j++)
+		{
+			m_ppBlues[j]->ReleaseUploadBuffers();
+		}
+	}
+
+	if (m_ppReds)
+	{
+		for (int j = 0; j < MAX_MINION; j++)
+		{
+			m_ppReds[j]->ReleaseUploadBuffers();
+		}
+	}
+
 	if (m_ppMaterials)
 	{
 		for (int i = 0; i<m_nMaterials; ++i)
 			m_ppMaterials[i]->ReleaseUploadBuffers();
 	}
-#endif
 }
 
 void CAniShader::UpdateShaderVariables()
 {
 	static UINT elementBytes = ((sizeof(CB_ANIOBJECT_INFO) + 255) & ~255);
 
-	for (auto& iter = m_blueObjects.begin(); iter != m_blueObjects.end(); ++iter)
+	for (int i = 0; i < m_nBlues; i++)
 	{
-		CB_ANIOBJECT_INFO *pMappedObject = (CB_ANIOBJECT_INFO *)(m_pMappedObjects + ((*iter)->GetIndex() * elementBytes));
+		CB_ANIOBJECT_INFO *pMappedObject = (CB_ANIOBJECT_INFO *)(m_pMappedObjects + (i * elementBytes));
 		XMFLOAT4X4 tmp[128];
-		memcpy(tmp, (*iter)->GetFrameMatrix(), sizeof(XMFLOAT4X4) * 128);
+		memcpy(tmp, m_ppBlues[i]->GetFrameMatrix(), sizeof(XMFLOAT4X4) * 128);
 		memcpy(pMappedObject->m_xmf4x4Frame, tmp, sizeof(XMFLOAT4X4) * 128);
 
 		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World0,
-			XMMatrixTranspose(XMLoadFloat4x4((*iter)->GetWorldMatrix())));
+			XMMatrixTranspose(XMLoadFloat4x4(m_ppBlues[i]->GetWorldMatrix())));
 	}
 
-	for (auto& iter = m_redObjects.begin(); iter != m_redObjects.end(); ++iter)
+	for (int i = 0; i < m_nReds; i++)
 	{
-		CB_ANIOBJECT_INFO *pMappedObject = (CB_ANIOBJECT_INFO *)(m_pMappedObjects + ((*iter)->GetIndex() * elementBytes));
+		CB_ANIOBJECT_INFO *pMappedObject = (CB_ANIOBJECT_INFO *)(m_pMappedObjects + ((MAX_MINION + i) * elementBytes));
 		XMFLOAT4X4 tmp[128];
-		memcpy(tmp, (*iter)->GetFrameMatrix(), sizeof(XMFLOAT4X4) * 128);
+		memcpy(tmp, m_ppReds[i]->GetFrameMatrix(), sizeof(XMFLOAT4X4) * 128);
 		memcpy(pMappedObject->m_xmf4x4Frame, tmp, sizeof(XMFLOAT4X4) * 128);
 
 		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World0,
-			XMMatrixTranspose(XMLoadFloat4x4((*iter)->GetWorldMatrix())));
+			XMMatrixTranspose(XMLoadFloat4x4(m_ppReds[i]->GetWorldMatrix())));
 	}
 }
 
@@ -69,76 +83,36 @@ void CAniShader::UpdateBoundingBoxShaderVariables()
 {
 	UINT boundingBoxElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
 
-	for (auto& iter = m_blueObjects.begin(); iter != m_blueObjects.end(); ++iter)
+	for (int i = 0; i < m_nBlues; i++)
 	{
-		CB_GAMEOBJECT_INFO *pMappedObject = (CB_GAMEOBJECT_INFO *)(m_pMappedBoundingBoxes + ((*iter)->GetIndex() * boundingBoxElementBytes));
+		CB_GAMEOBJECT_INFO *pMappedObject = (CB_GAMEOBJECT_INFO *)(m_pMappedBoundingBoxes + (i * boundingBoxElementBytes));
 
 		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
-			XMMatrixTranspose(XMLoadFloat4x4((*iter)->GetWorldMatrix())));
+			XMMatrixTranspose(XMLoadFloat4x4(m_ppBlues[i]->GetWorldMatrix())));
 	}
-	for (auto& iter = m_redObjects.begin(); iter != m_redObjects.end(); ++iter)
+
+	for (int i = 0; i < m_nReds; i++)
 	{
-		CB_GAMEOBJECT_INFO *pMappedObject = (CB_GAMEOBJECT_INFO *)(m_pMappedBoundingBoxes + ((*iter)->GetIndex() * boundingBoxElementBytes));
+		CB_GAMEOBJECT_INFO *pMappedObject = (CB_GAMEOBJECT_INFO *)(m_pMappedBoundingBoxes + ((MAX_MINION + i) * boundingBoxElementBytes));
 
 		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
-			XMMatrixTranspose(XMLoadFloat4x4((*iter)->GetWorldMatrix())));
+			XMMatrixTranspose(XMLoadFloat4x4(m_ppReds[i]->GetWorldMatrix())));
 	}
 }
 
 void CAniShader::AnimateObjects(float timeElapsed)
 {
-	/*m_spawnTime += timeElapsed;
+	//m_pNetwork->ReadPacket(m_pNetwork->m_mysocket, m_ppObjects);
 
-	if (m_spawnTime >= 0.0f && m_spawnTime <= 5.0f)
+	for (int i = 0; i < m_nBlues; i++)
 	{
-		bool spawned{ false };
-		for (float time = m_spawnTime - m_preSpawnTime; time >= 0.25; time -= 0.25)
-		{
-			spawned = true;
-			SpawnMinion();
-		}
-		if(spawned) m_preSpawnTime = m_spawnTime;
+		m_ppBlues[i]->Animate(timeElapsed);
 	}
 
-	if (m_spawnTime >= 30.0f)
+	for (int i = 0; i < m_nReds; i++)
 	{
-		m_spawnTime -= 30.0f;
-		m_preSpawnTime = -0.25f;
+		m_ppReds[i]->Animate(timeElapsed);
 	}
-
-	for (auto& iter = m_blueObjects.begin(); iter != m_blueObjects.end();)
-	{
-		if ((*iter)->GetState() == States::Remove)
-		{
-			CCollisionObject* temp{ *iter };
-			ResetPossibleIndex(temp->GetIndex());
-			Safe_Delete(temp);
-
-			iter = m_blueObjects.erase(iter);
-		}
-		else
-		{
-			m_pFSMMgr->Update(timeElapsed, (*iter));
-			++iter;
-		}
-	}
-
-	for (auto& iter = m_redObjects.begin(); iter != m_redObjects.end();)
-	{
-		if ((*iter)->GetState() == States::Remove)
-		{
-			CCollisionObject* temp{ *iter };
-			ResetPossibleIndex(temp->GetIndex());
-			Safe_Delete(temp);
-
-			iter = m_redObjects.erase(iter);
-		}
-		else
-		{
-			m_pFSMMgr->Update(timeElapsed, (*iter));
-			++iter;
-		}
-	}*/
 }
 
 void CAniShader::Render(CCamera *pCamera)
@@ -146,27 +120,30 @@ void CAniShader::Render(CCamera *pCamera)
 	CShader::Render(pCamera);
 
 	if (m_ppMaterials) m_ppMaterials[0]->UpdateShaderVariables();
-	for (auto& iter = m_blueObjects.begin(); iter != m_blueObjects.end(); ++iter)
+	for (int i = 0; i < m_nBlues; i++)
 	{
-		(*iter)->Render(pCamera);
+		m_ppBlues[i]->Render(pCamera);
 	}
+
 	if (m_ppMaterials) m_ppMaterials[1]->UpdateShaderVariables();
-	for (auto& iter = m_redObjects.begin(); iter != m_redObjects.end(); ++iter)
+	for (int i = 0; i < m_nReds; i++)
 	{
-		(*iter)->Render(pCamera);
+		m_ppReds[i]->Render(pCamera);
 	}
 }
 
 void CAniShader::RenderBoundingBox(CCamera * pCamera)
 {
 	CShader::RenderBoundingBox(pCamera);
-	for (auto& iter = m_blueObjects.begin(); iter != m_blueObjects.end(); ++iter)
+
+	for (int i = 0; i < m_nBlues; i++)
 	{
-		(*iter)->RenderBoundingBox(pCamera);
+		m_ppBlues[i]->RenderBoundingBox(pCamera);
 	}
-	for (auto& iter = m_redObjects.begin(); iter != m_redObjects.end(); ++iter)
+
+	for (int i = 0; i < m_nReds; i++)
 	{
-		(*iter)->RenderBoundingBox(pCamera);
+		m_ppReds[i]->RenderBoundingBox(pCamera);
 	}
 }
 
@@ -177,25 +154,25 @@ CBaseObject *CAniShader::PickObjectByRayIntersection(
 
 	nearHitDistance = FLT_MAX;
 	float hitDistance = FLT_MAX;
-	CCollisionObject *pSelectedObject{ NULL };
-
-	for (auto& iter = m_blueObjects.begin(); iter != m_blueObjects.end(); ++iter)
+	CBaseObject *pSelectedObject{ NULL };
+	
+	for (int i = 0; i < m_nBlues; i++)
 	{
-		intersected = (*iter)->PickObjectByRayIntersection(pickPosition, xmf4x4View, hitDistance);
+		intersected = m_ppBlues[i]->PickObjectByRayIntersection(pickPosition, xmf4x4View, hitDistance);
 		if (intersected && (hitDistance < nearHitDistance))
 		{
 			nearHitDistance = hitDistance;
-			pSelectedObject = (*iter);
+			pSelectedObject = m_ppBlues[i];
 		}
 	}
 
-	for (auto& iter = m_redObjects.begin(); iter != m_redObjects.end(); ++iter)
+	for (int i = 0; i < m_nReds; i++)
 	{
-		intersected = (*iter)->PickObjectByRayIntersection(pickPosition, xmf4x4View, hitDistance);
+		intersected = m_ppReds[i]->PickObjectByRayIntersection(pickPosition, xmf4x4View, hitDistance);
 		if (intersected && (hitDistance < nearHitDistance))
 		{
 			nearHitDistance = hitDistance;
-			pSelectedObject = (*iter);
+			pSelectedObject = m_ppReds[i];
 		}
 	}
 
@@ -212,10 +189,6 @@ bool CAniShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 		m_nWeaponState++;
 		if (m_nWeaponState >= 3)m_nWeaponState = 0;
 
-	}
-	if (GetAsyncKeyState('N') & 0x0001)
-	{
-		SpawnMinion();
 	}
 
 	return true;
@@ -369,15 +342,15 @@ void CAniShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
 	UINT ncbElementBytes = ((sizeof(CB_ANIOBJECT_INFO) + 255) & ~255);
 	UINT boundingBoxElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
 
-	CreateShaderVariables(pCreateMgr, MAX_MINION);
+	CreateShaderVariables(pCreateMgr, MAX_MINION * 2);
 
-	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, MAX_MINION, 4);
-	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, MAX_MINION, 0, 1);
-	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, MAX_MINION, 4, 2);
+	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, MAX_MINION * 2, 4);
+	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, MAX_MINION * 2, 0, 1);
+	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, MAX_MINION * 2, 4, 2);
 
-	CreateConstantBufferViews(pCreateMgr, MAX_MINION, m_pConstBuffer, ncbElementBytes, 0);
-	CreateConstantBufferViews(pCreateMgr, MAX_MINION, m_pBoundingBoxBuffer, boundingBoxElementBytes, 1);
-	CreateConstantBufferViews(pCreateMgr, MAX_MINION, m_pConstBuffer, ncbElementBytes, 2);
+	CreateConstantBufferViews(pCreateMgr, MAX_MINION * 2, m_pConstBuffer, ncbElementBytes, 0);
+	CreateConstantBufferViews(pCreateMgr, MAX_MINION * 2, m_pBoundingBoxBuffer, boundingBoxElementBytes, 1);
+	CreateConstantBufferViews(pCreateMgr, MAX_MINION * 2, m_pConstBuffer, ncbElementBytes, 2);
 
 #endif
 
@@ -398,95 +371,38 @@ void CAniShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
 	m_pWeapons[1] = new CSkinnedMesh(pCreateMgr, "Resource//3D//Minion//Weapon//Minion_Staff.meshinfo");
 	m_pWeapons[2] = new CSkinnedMesh(pCreateMgr, "Resource//3D//Minion//Weapon//Minion_Bow2.meshinfo");
 
-	for (int j = 0; j < 3; ++j) {
-		m_pWeapons[j]->AddRef();
-	}
+	for (int j = 0; j < 3; ++j) { m_pWeapons[j]->AddRef(); }
 
-	SpawnMinion();
-}
+	UINT incrementSize{ m_pCreateMgr->GetCbvSrvDescriptorIncrementSize() };
 
-void CAniShader::ReleaseObjects()
-{
-	for (auto& iter = m_blueObjects.begin(); iter != m_blueObjects.end();)
+	CSkinnedMesh *pMinionMesh = new CSkinnedMesh(m_pCreateMgr, "Resource//3D//Minion//Mesh//Minion.meshinfo");
+
+	CSkeleton *pSIdle = new CSkeleton("Resource//3D//Minion//Animation//Sword//Minion_S_Idle.aniinfo");
+	CSkeleton *pSAtk1 = new CSkeleton("Resource//3D//Minion//Animation//Sword//Minion_S_Attack1.aniinfo");
+	CSkeleton *pSAtk2 = new CSkeleton("Resource//3D//Minion//Animation//Sword//Minion_S_Attack2.aniinfo");
+	CSkeleton *pSWalkStart = new CSkeleton("Resource//3D//Minion//Animation//Sword//Minion_S_WalkStart.aniinfo");
+	CSkeleton *pSWalk = new CSkeleton("Resource//3D//Minion//Animation//Sword//Minion_S_Walk.aniinfo");
+					 
+	CSkeleton *pBIdle = new CSkeleton("Resource//3D//Minion//Animation//Bow//Minion_B_Idle.aniinfo");
+	CSkeleton *pBAtk = new CSkeleton("Resource//3D//Minion//Animation//Bow//Minion_B_Attack.aniinfo");
+	CSkeleton *pBWalkStart = new CSkeleton("Resource//3D//Minion//Animation//Bow//Minion_B_WalkStart.aniinfo");
+	CSkeleton *pBWalk = new CSkeleton("Resource//3D//Minion//Animation//Bow//Minion_B_Walk.aniinfo");
+					 
+	CSkeleton *pMIdle = new CSkeleton("Resource//3D//Minion//Animation//Magic//Minion_M_Idle.aniinfo");
+	CSkeleton *pMAtk1 = new CSkeleton("Resource//3D//Minion//Animation//Magic//Minion_M_Attack1.aniinfo");
+	CSkeleton *pMAtk2 = new CSkeleton("Resource//3D//Minion//Animation//Magic//Minion_M_Attack2.aniinfo");
+	CSkeleton *pMWalkStart = new CSkeleton("Resource//3D//Minion//Animation//Magic//Minion_M_WalkStart.aniinfo");
+	CSkeleton *pMWalk = new CSkeleton("Resource//3D//Minion//Animation//Magic//Minion_M_Walk.aniinfo");
+					 
+	CSkeleton *pDie = new CSkeleton("Resource//3D//Minion//Animation//Minion_Die.aniinfo");
+
+	pMinionMesh->SetBoundingBox(
+		XMFLOAT3(0.0f, 0.0f, -CONVERT_PaperUnit_to_InG(4)),
+		XMFLOAT3(CONVERT_PaperUnit_to_InG(1.5), CONVERT_PaperUnit_to_InG(1.5), CONVERT_PaperUnit_to_InG(3.5)));
+
+	m_ppBlues = new CBaseObject*[MAX_MINION];
+	for (int i = 0; i < MAX_MINION; ++i)
 	{
-		iter = m_blueObjects.erase(iter);
-	}
-	m_blueObjects.clear();
-	for (auto& iter = m_redObjects.begin(); iter != m_redObjects.end(); )
-	{
-		iter = m_redObjects.erase(iter);
-	}
-	m_redObjects.clear();
-
-#if USE_BATCH_MATERIAL
-	if (m_ppMaterials)
-	{
-		for (int i = 0; i < m_nMaterials; ++i)
-		{
-			if (m_ppMaterials[i]) delete m_ppMaterials[i];
-		}
-		Safe_Delete(m_ppMaterials);
-	}
-#endif
-}
-
-int CAniShader::GetPossibleIndex()
-{
-	for (int idx = 0; idx < MAX_MINION; ++idx)
-	{
-		if (!m_indexArr[idx])
-		{
-			m_indexArr[idx] = true;
-			return idx;
-		}
-	}
-	return NONE;
-}
-
-void CAniShader::SpawnMinion()
-{
-	static bool dataPrepared{ false };
-	static CSkinnedMesh *pMinionMesh = new CSkinnedMesh(m_pCreateMgr, "Resource//3D//Minion//Mesh//Minion.meshinfo");
-	static UINT incrementSize{ m_pCreateMgr->GetCbvSrvDescriptorIncrementSize() };
-
-	static CSkeleton SIdle("Resource//3D//Minion//Animation//Sword//Minion_S_Idle.aniinfo");
-	static CSkeleton SAtk1("Resource//3D//Minion//Animation//Sword//Minion_S_Attack1.aniinfo");
-	static CSkeleton SAtk2("Resource//3D//Minion//Animation//Sword//Minion_S_Attack2.aniinfo");
-	static CSkeleton SWalkStart("Resource//3D//Minion//Animation//Sword//Minion_S_WalkStart.aniinfo");
-	static CSkeleton SWalk("Resource//3D//Minion//Animation//Sword//Minion_S_Walk.aniinfo");
-
-	static CSkeleton BIdle("Resource//3D//Minion//Animation//Bow//Minion_B_Idle.aniinfo");
-	static CSkeleton BAtk("Resource//3D//Minion//Animation//Bow//Minion_B_Attack.aniinfo");
-	static CSkeleton BWalkStart("Resource//3D//Minion//Animation//Bow//Minion_B_WalkStart.aniinfo");
-	static CSkeleton BWalk("Resource//3D//Minion//Animation//Bow//Minion_B_Walk.aniinfo");
-
-	static CSkeleton MIdle("Resource//3D//Minion//Animation//Magic//Minion_M_Idle.aniinfo");
-	static CSkeleton MAtk1("Resource//3D//Minion//Animation//Magic//Minion_M_Attack1.aniinfo");
-	static CSkeleton MAtk2("Resource//3D//Minion//Animation//Magic//Minion_M_Attack2.aniinfo");
-	static CSkeleton MWalkStart("Resource//3D//Minion//Animation//Magic//Minion_M_WalkStart.aniinfo");
-	static CSkeleton MWalk("Resource//3D//Minion//Animation//Magic//Minion_M_Walk.aniinfo");
-
-	static CSkeleton Die("Resource//3D//Minion//Animation//Minion_Die.aniinfo");
-
-	if (!dataPrepared)
-	{
-		pMinionMesh->SetBoundingBox(
-			XMFLOAT3(0.0f, 0.0f, -CONVERT_PaperUnit_to_InG(4)),
-			XMFLOAT3(CONVERT_PaperUnit_to_InG(1.5), CONVERT_PaperUnit_to_InG(1.5), CONVERT_PaperUnit_to_InG(3.5)));
-		pMinionMesh->AddRef();
-		dataPrepared = true;
-		return;
-	}
-
-	m_pCreateMgr->ResetCommandList();
-
-	int kind{ 0 };
-	int makeCnt{ 0 };
-	for (; kind < 4; ++kind)
-	{
-		int index = GetPossibleIndex();
-
-		if (index == NONE) break;
 		CMinion *pMinionObject{ NULL };
 
 		switch (m_kind)
@@ -503,6 +419,7 @@ void CAniShader::SpawnMinion()
 		}
 
 		pMinionObject->SetMesh(0, pMinionMesh);
+
 		switch (m_kind)
 		{
 		case ObjectType::SwordMinion:
@@ -523,80 +440,160 @@ void CAniShader::SpawnMinion()
 		switch (m_kind)
 		{
 		case ObjectType::SwordMinion:
-			pMinionObject->SetSkeleton(&SIdle);
-			pMinionObject->SetSkeleton(&SAtk1);
-			pMinionObject->SetSkeleton(&SAtk2);
-			pMinionObject->SetSkeleton(&SWalkStart);
-			pMinionObject->SetSkeleton(&SWalk);
-			break;
-		case ObjectType::StaffMinion:
-			pMinionObject->SetSkeleton(&MIdle);
-			pMinionObject->SetSkeleton(&MAtk1);
-			pMinionObject->SetSkeleton(&MAtk2);
-			pMinionObject->SetSkeleton(&MWalkStart);
-			pMinionObject->SetSkeleton(&MWalk);
-			break;
-		case ObjectType::BowMinion:
-			pMinionObject->SetSkeleton(&BIdle);
-			pMinionObject->SetSkeleton(&BAtk);
-			pMinionObject->SetSkeleton(&BWalkStart);
-			pMinionObject->SetSkeleton(&BWalk);
+			pMinionObject->SetSkeleton(pSIdle);
+			pMinionObject->SetSkeleton(pSAtk1);
+			pMinionObject->SetSkeleton(pSAtk2);
+			pMinionObject->SetSkeleton(pSWalkStart);
+			pMinionObject->SetSkeleton(pSWalk);
+			break;										
+		case ObjectType::StaffMinion:		
+			pMinionObject->SetSkeleton(pMIdle);
+			pMinionObject->SetSkeleton(pMAtk1);
+			pMinionObject->SetSkeleton(pMAtk2);
+			pMinionObject->SetSkeleton(pMWalkStart);
+			pMinionObject->SetSkeleton(pMWalk);
+			break;										   
+		case ObjectType::BowMinion:		   
+			pMinionObject->SetSkeleton(pBIdle);
+			pMinionObject->SetSkeleton(pBAtk);
+			pMinionObject->SetSkeleton(pBWalkStart);
+			pMinionObject->SetSkeleton(pBWalk);
 			break;
 		}
 
-		pMinionObject->SetSkeleton(&Die);
+		pMinionObject->SetSkeleton(pDie);
+
 		pMinionObject->SetTerrain(m_pTerrain);
 
+		pMinionObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * i));
+		pMinionObject->SetCbvGPUDescriptorHandlePtrForBB(m_pcbvGPUDescriptorStartHandle[1].ptr + (incrementSize * i));
+
+		m_ppBlues[i] = pMinionObject;
+		m_pGaugeManger->AddMinionObject(pMinionObject);
+	}
+	m_pGaugeManger->SetBlueMinionCnt(&m_nBlues);
+
+	m_ppReds = new CBaseObject*[MAX_MINION];
+	for (int i = 0; i < MAX_MINION; ++i)
+	{
+		CMinion *pMinionObject{ NULL };
+
+		switch (m_kind)
+		{
+		case ObjectType::SwordMinion:
+			pMinionObject = new CSwordMinion(m_pCreateMgr, 2);
+			break;
+		case ObjectType::StaffMinion:
+			pMinionObject = new CMagicMinion(m_pCreateMgr, 2);
+			break;
+		case ObjectType::BowMinion:
+			pMinionObject = new CBowMinion(m_pCreateMgr, 2);
+			break;
+		}
+
+		pMinionObject->SetMesh(0, pMinionMesh);
+
+		switch (m_kind)
+		{
+		case ObjectType::SwordMinion:
+			pMinionObject->SetMesh(1, m_pWeapons[0]);
+			break;
+		case ObjectType::StaffMinion:
+			pMinionObject->SetMesh(1, m_pWeapons[1]);
+			break;
+		case ObjectType::BowMinion:
+			pMinionObject->SetMesh(1, m_pWeapons[2]);
+			break;
+		}
+
+		pMinionObject->SetBoundingMesh(m_pCreateMgr,
+			CONVERT_PaperUnit_to_InG(3), CONVERT_PaperUnit_to_InG(3), CONVERT_PaperUnit_to_InG(7),
+			0, 0, -CONVERT_PaperUnit_to_InG(4));
+
+		switch (m_kind)
+		{
+		case ObjectType::SwordMinion:
+			pMinionObject->SetSkeleton(pSIdle);
+			pMinionObject->SetSkeleton(pSAtk1);
+			pMinionObject->SetSkeleton(pSAtk2);
+			pMinionObject->SetSkeleton(pSWalkStart);
+			pMinionObject->SetSkeleton(pSWalk);
+			break;
+		case ObjectType::StaffMinion:
+			pMinionObject->SetSkeleton(pMIdle);
+			pMinionObject->SetSkeleton(pMAtk1);
+			pMinionObject->SetSkeleton(pMAtk2);
+			pMinionObject->SetSkeleton(pMWalkStart);
+			pMinionObject->SetSkeleton(pMWalk);
+			break;
+		case ObjectType::BowMinion:
+			pMinionObject->SetSkeleton(pBIdle);
+			pMinionObject->SetSkeleton(pBAtk);
+			pMinionObject->SetSkeleton(pBWalkStart);
+			pMinionObject->SetSkeleton(pBWalk);
+			break;
+		}
+		pMinionObject->SetSkeleton(pDie);
+
+		pMinionObject->SetTerrain(m_pTerrain);
 		pMinionObject->Rotate(90, 0, 0);
 
-		pMinionObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * index));
-		pMinionObject->SetCbvGPUDescriptorHandlePtrForBB(m_pcbvGPUDescriptorStartHandle[1].ptr + (incrementSize * index));
+		pMinionObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * (MAX_MINION + i)));
+		pMinionObject->SetCbvGPUDescriptorHandlePtrForBB(m_pcbvGPUDescriptorStartHandle[1].ptr + (incrementSize * (MAX_MINION + i)));
 
-		pMinionObject->SaveIndex(index);
-
-		if (kind == Minion_Species::Blue_Up || kind == Minion_Species::Blue_Down)
-		{
-			pMinionObject->SetTeam(TeamType::Blue);
-			m_blueObjects.emplace_back(pMinionObject);
-		}
-		else if (kind == Minion_Species::Red_Up || kind == Minion_Species::Red_Down)
-		{
-			pMinionObject->SetTeam(TeamType::Red);
-			m_redObjects.emplace_back(pMinionObject);
-		}
-
-		makeCnt++;
+		m_ppReds[i] = pMinionObject;
+		m_pGaugeManger->AddMinionObject(pMinionObject);
 	}
-	m_pCreateMgr->ExecuteCommandList();
+	m_pGaugeManger->SetRedMinionCnt(&m_nReds);
 
-	if (!makeCnt) return;
-	
-	CollisionObjectList::reverse_iterator &blueBegin{ m_blueObjects.rbegin() };
-	CollisionObjectList::reverse_iterator &redBegin{ m_redObjects.rbegin() };
+	m_pGaugeManger->StartSpawn();
 
-	if (makeCnt > 1) blueBegin++;
-	if (makeCnt > 3) redBegin++;
+	Safe_Delete(pSIdle);
+	Safe_Delete(pSAtk1);
+	Safe_Delete(pSAtk2);
+	Safe_Delete(pSWalkStart);
+	Safe_Delete(pSWalk);
 
-	for (kind = 0; makeCnt > 0; --makeCnt, ++kind)
+	Safe_Delete(pBIdle);
+	Safe_Delete(pBAtk);
+	Safe_Delete(pBWalkStart);
+	Safe_Delete(pBWalk);
+
+	Safe_Delete(pMIdle);
+	Safe_Delete(pMAtk1);
+	Safe_Delete(pMAtk2);
+	Safe_Delete(pMWalkStart);
+	Safe_Delete(pMWalk);
+
+	Safe_Delete(pDie);
+}
+
+void CAniShader::ReleaseObjects()
+{
+	if (m_ppBlues)
 	{
-		if (kind == Minion_Species::Blue_Up || kind == Minion_Species::Blue_Down) {
-			(*blueBegin)->ReleaseUploadBuffers();
-
-			m_pGaugeManger->AddMinionObject((*blueBegin));
-			if(blueBegin != m_blueObjects.rbegin()) --blueBegin;
+		for (int i = 0; i < m_nBlues; i++)
+		{
+			delete m_ppBlues[i];
 		}
-		else if (kind == Minion_Species::Red_Up || kind == Minion_Species::Red_Down) {
-			(*redBegin)->ReleaseUploadBuffers();
+		Safe_Delete_Array(m_ppBlues);
+	}
 
-			m_pGaugeManger->AddMinionObject((*redBegin));
-			if (redBegin != m_redObjects.rbegin()) --redBegin;
+	if (m_ppReds)
+	{
+		for (int i = 0; i < m_nReds; i++)
+		{
+			delete m_ppReds[i];
 		}
+		Safe_Delete_Array(m_ppReds);
+	}
 
-		//미니언 생성 패킷 조립, 전송
-		CS_MsgMoCreate p;
-		p.type = CS_PUT_MINION;
-		p.size = sizeof(p);
-		m_pNetwork->SendPacket(m_pNetwork->m_myid, &p);
-		m_pNetwork->ReadPacket(m_pNetwork->m_mysocket, NULL);
+	if (m_ppMaterials)
+	{
+		for (int i = 0; i < m_nMaterials; ++i)
+		{
+			if (m_ppMaterials[i]) delete m_ppMaterials[i];
+		}
+		Safe_Delete(m_ppMaterials);
 	}
 }
