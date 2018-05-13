@@ -103,6 +103,17 @@ struct SC_Msg_Pos_Character : public Packet
 	short frameTime;
 	XMFLOAT3 vLook;
 };
+
+struct CS_Msg_Demand_Use_Skill : public Packet
+{
+	BYTE Character_id;
+	BYTE skilltype;
+};
+struct SC_Msg_Permit_Use_Skill : public Packet
+{
+	BYTE Character_id;
+	short state;
+};
 #pragma pack(pop)
 
 #define MAX_BUFF_SIZE 4000
@@ -130,6 +141,7 @@ struct SC_Msg_Pos_Character : public Packet
 #define SC_PUT_MINION			  108
 #define SC_PERMIT_MAKE_ROOM		  109
 #define SC_POS					  110
+#define SC_PERMIT_USE_SKILL		  111
 //Client->Server
 #define CS_ACTION				  201
 #define CS_MOVE_PLAYER			  202
@@ -137,6 +149,8 @@ struct SC_Msg_Pos_Character : public Packet
 #define CS_DAMAND_MAKE_ROOM		  204
 #define CS_PUT_MINION			  205
 #define CS_DELETE_MINION		  206
+#define CS_DEMAND_USE_SKILL		  207
+
 //In Client Move Object
 #define CS_UP					  1
 #define CS_DOWN					  2

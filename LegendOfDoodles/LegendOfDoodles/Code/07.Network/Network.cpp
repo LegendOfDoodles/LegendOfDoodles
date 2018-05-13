@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Network.h"
 #include "..\05.Objects\03.AnimatedObject\AnimatedObject.h"
+#include "..\05.Objects\08.Player\Player.h"
 
 Network::Network()
 {
@@ -84,6 +85,8 @@ void Network::ProcessPacket(int myid, char *ptr, CBaseObject** object)
 			}
 			else if (id < NPC_START) { 
 				object[id]->CBaseObject::SetPosition(my_packet->x, my_packet->y);
+				dynamic_cast<CAnimatedObject*>(object[id])->SetAnimation((AnimationsType)my_packet->state, (float)my_packet->frameTime);
+				dynamic_cast<CAnimatedObject*>(object[id])->RegenerateWorldMatrixWithLook(my_packet->vLook);
 			}
 			break;
 		}
@@ -139,7 +142,7 @@ void Network::ProcessPacket(int myid, char *ptr, CBaseObject** object)
 			//}
 			break;
 		}
-
+		
 		default:
 			printf("Unknown PACKET type [%d]\n", ptr[1]);
 			break;

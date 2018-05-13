@@ -160,18 +160,33 @@ bool CPlayerShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 		// 무기에 따라 수정필요
 		m_ppObjects[0]->SetType(ObjectType::SwordPlayer);
 	}
-	//if (GetAsyncKeyState('Q') & 0x0001)
-	//{
-	//	dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->ActiveSkill(Animations::SkillQ);
-	//}
-	//if (GetAsyncKeyState('E') & 0x0001)
-	//{
-	//	dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->ActiveSkill(Animations::SkillE);
-	//}
-	//if (GetAsyncKeyState('R') & 0x0001)
-	//{
-	//	dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->ActiveSkill(Animations::SkillR);
-	//}
+	if (GetAsyncKeyState('Q') & 0x0001)
+	{
+		CS_Msg_Demand_Use_Skill p;
+		p.Character_id = m_pNetwork->m_myid;
+		p.size = sizeof(p);
+		p.skilltype = AnimationsType::SkillQ;
+		p.type = CS_DEMAND_USE_SKILL;
+		m_pNetwork->SendPacket(m_pNetwork->m_myid, &p);
+	}
+	if (GetAsyncKeyState('E') & 0x0001)
+	{
+		CS_Msg_Demand_Use_Skill p;
+		p.Character_id = m_pNetwork->m_myid;
+		p.size = sizeof(p);
+		p.skilltype = AnimationsType::SkillE;
+		p.type = CS_DEMAND_USE_SKILL;
+		m_pNetwork->SendPacket(m_pNetwork->m_myid, &p);
+	}
+	if (GetAsyncKeyState('R') & 0x0001)
+	{
+		CS_Msg_Demand_Use_Skill p;
+		p.Character_id = m_pNetwork->m_myid;
+		p.size = sizeof(p);
+		p.skilltype = AnimationsType::SkillR;
+		p.type = CS_DEMAND_USE_SKILL;
+		m_pNetwork->SendPacket(m_pNetwork->m_myid, &p);
+	}
 
 	return true;
 }

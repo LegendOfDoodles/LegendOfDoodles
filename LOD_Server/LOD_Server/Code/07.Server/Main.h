@@ -20,6 +20,7 @@
 #include "03.Scenes\00.BaseScene\Scene.h"
 #include "04.Shaders\05.PlayerShader\PlayerShader.h"
 #include "05.Objects\03.AnimatedObject\AnimatedObject.h"
+#include "05.Objects\08.Player\Player.h"
 using namespace std;
 
 HANDLE gh_iocp;
@@ -183,11 +184,12 @@ void ProcessPacket(int id, char *packet)
 	CS_MsgChMove* MovePacket = reinterpret_cast<CS_MsgChMove*>(packet);
 	CS_MsgChCollision* CollisionPacket = reinterpret_cast<CS_MsgChCollision*>(packet);
 	CS_MsgMoDelete* DeleteMinionPacket = reinterpret_cast<CS_MsgMoDelete*>(packet);
+	CS_Msg_Demand_Use_Skill* CSkillPacket = reinterpret_cast<CS_Msg_Demand_Use_Skill*>(packet);
 	int x = 0;
 	int y = 0;
 	//서버에서 클라로 보내줘야할 패킷들
 	SC_MsgMoCreate p;
-	//SC_MsgChUseSkill SkillPacket;
+	SC_Msg_Permit_Use_Skill SkillPacket;
 	cout << packet[1] << endl;
 	switch (MovePacket->type)
 	{
@@ -269,120 +271,15 @@ void ProcessPacket(int id, char *packet)
 		break;
 	}
 
-	//case CS_DEMAND_USE_SKILL:
-	//{
-	//	SkillPacket.Character_id = id;
-	//	SkillPacket.size = sizeof(SkillPacket);
-	//	SkillPacket.type = SC_PERMIT_USE_SKILL;
-	//	for (int i = 0; i < MAX_USER; ++i) {
-	//		if (g_clients[i].m_isconnected)
-	//			SendPacket(i, &SkillPacket);
-	//	}
-	//	break;
-	//}
+	case CS_DEMAND_USE_SKILL:
+	{
+		dynamic_cast<CPlayer*>(g_ppPlayer[id])->ActiveSkill((AnimationsType)CSkillPacket->skilltype);
+		break;
+	}
 	default:
 		cout << "Unkown Packet Type from Client [" << id << "]\n";
 		return;
 	}
-
-
-
-	SC_MsgChMove pos_packet;
-
-	pos_packet.Character_id = id;
-	pos_packet.size = sizeof(SC_MsgChMove);
-	pos_packet.type = SC_MOVE_PLAYER;
-	pos_packet.x = x;
-	pos_packet.y = y;
-
-	unordered_set<int> new_vl;
-
-	for (int i = 0; i < MAX_USER; ++i)
-	{
-		if (i == id) continue;
-		if (false == g_clients[i].m_isconnected) continue;
-		if (true == CanSee(id, i)) new_vl.insert(i);
-	}
-
-	SendPacket(id, &pos_packet);
-
-
-	//// new_vl에는 있는데 old_vl에 없는 경우
-	//for (auto ob : new_vl) {
-	//	g_clients[id].m_mvl.lock();
-	//	if (0 == g_clients[id].m_viewlist.count(ob)) {
-	//		g_clients[id].m_viewlist.insert(ob);
-	//		g_clients[id].m_mvl.unlock();
-	//		SendPutObjectPacket(id, ob);
-
-	//		if (true == IsNPC(ob)) continue;
-	//		g_clients[ob].m_mvl.lock();
-	//		if (0 == g_clients[ob].m_viewlist.count(id)) {
-	//			g_clients[ob].m_viewlist.insert(id);
-	//			g_clients[ob].m_mvl.unlock();
-
-	//			SendPutObjectPacket(ob, id);
-	//		}
-	//		else {
-	//			g_clients[ob].m_mvl.unlock();
-	//			SendPacket(ob, &pos_packet);
-	//		}
-	//	}
-	//	else {
-	//		// new_vl에도 있고 old_vl에도 있는 경우
-	//		g_clients[id].m_mvl.unlock();
-	//		if (true == IsNPC(ob)) continue;
-	//		g_clients[ob].m_mvl.lock();
-	//		if (0 != g_clients[ob].m_viewlist.count(id)) {
-	//			g_clients[ob].m_mvl.unlock();
-	//			SendPacket(ob, &pos_packet);
-	//		}
-	//		else {
-	//			g_clients[ob].m_viewlist.insert(id);
-	//			g_clients[ob].m_mvl.unlock();
-	//			SendPutObjectPacket(ob, id);
-	//		}
-	//	}
-
-	//}
-
-	//// new_vl에는 없는데 old_vl에 있는 경우
-	//vector <int> to_remove;
-	//g_clients[id].m_mvl.lock();
-	//unordered_set<int> vl_copy = g_clients[id].m_viewlist;
-	//g_clients[id].m_mvl.unlock();
-	//for (auto ob : vl_copy) {
-	//	if (0 == new_vl.count(ob)) {
-	//		to_remove.push_back(ob);
-
-	//		if (true == IsNPC(ob)) continue;
-	//		g_clients[ob].m_mvl.lock();
-	//		if (0 != g_clients[ob].m_viewlist.count(id)) {
-	//			g_clients[ob].m_viewlist.erase(id);
-	//			g_clients[ob].m_mvl.unlock();
-	//			SendRemovePacket(ob, id);
-	//		}
-	//		else {
-	//			g_clients[ob].m_mvl.unlock();
-	//		}
-	//	}
-	//}
-
-	//g_clients[id].m_mvl.lock();
-	//for (auto ob : to_remove) g_clients[id].m_viewlist.erase(ob);
-	//g_clients[id].m_mvl.unlock();
-	//for (auto ob : to_remove) {
-	//	SendRemovePacket(id, ob);
-	//}
-
-	for (int i = 0; i < MAX_USER; ++i)
-	{
-		if (g_clients[i].m_isconnected) {
-			if (id == i) continue;
-			SendPutObjectPacket(i, id);
-		}
-	}
-
 }
 
 void DisconnectPlayer(int id)
