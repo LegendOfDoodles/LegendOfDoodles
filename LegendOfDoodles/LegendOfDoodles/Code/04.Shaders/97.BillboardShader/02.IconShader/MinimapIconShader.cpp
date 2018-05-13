@@ -52,14 +52,14 @@ void CMinimapIconShader::UpdateShaderVariables()
 			XMMatrixTranspose(XMLoadFloat4x4(m_ppObjects[i]->GetWorldMatrix())));
 	}
 
-	for (int i = 0; i < *m_nBlues; ++i)
+	for (int i = m_nObjects; i < *m_nBlues + m_nObjects; ++i)
 	{
 		CB_GAUGE_INFO *pMappedObject = (CB_GAUGE_INFO *)(m_pMappedObjects + (i * elementBytes));
 		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
 			XMMatrixTranspose(XMLoadFloat4x4(m_MinionIconObjectList[i]->GetWorldMatrix())));
 	}
 
-	for (int i = MAX_MINION; i < MAX_MINION + *m_nReds; ++i)
+	for (int i = MAX_MINION + m_nObjects; i < MAX_MINION + *m_nReds + m_nObjects; ++i)
 	{
 		CB_GAUGE_INFO *pMappedObject = (CB_GAUGE_INFO *)(m_pMappedObjects + (i * elementBytes));
 		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
