@@ -285,6 +285,27 @@ void CBaseObject::SetPosition(XMFLOAT3 xmf3Position)
 	SetPosition(xmf3Position.x, xmf3Position.y, xmf3Position.z);
 }
 
+void CBaseObject::SetLook(XMFLOAT3 vLook)
+{
+	m_xmf4x4World._31 = vLook.x;
+	m_xmf4x4World._32 = vLook.y;
+	m_xmf4x4World._33 = vLook.z;
+}
+
+void CBaseObject::SetUp(XMFLOAT3 vUp)
+{
+	m_xmf4x4World._21 = vUp.x;
+	m_xmf4x4World._22 = vUp.y;
+	m_xmf4x4World._23 = vUp.z;
+}
+
+void CBaseObject::SetRight(XMFLOAT3 vRight)
+{
+	m_xmf4x4World._11 = vRight.x;
+	m_xmf4x4World._12 = vRight.y;
+	m_xmf4x4World._13 = vRight.z;
+}
+
 ////////////////////////////////////////////////////////////////////////
 // 내부 함수
 void CBaseObject::CreateShaderVariables(CCreateMgr *pCreateMgr)

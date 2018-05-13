@@ -100,6 +100,8 @@ struct SC_Msg_Pos_Character : public Packet
 	short x;
 	short y;
 	short state;
+	short frameTime;
+	XMFLOAT3 vLook;
 };
 #pragma pack(pop)
 

@@ -79,8 +79,8 @@ void Network::ProcessPacket(int myid, char *ptr, CBaseObject** object)
 			if (id == m_myid) {
 				//자기 아이디 처리
 				object[id]->CBaseObject::SetPosition(my_packet->x, my_packet->y);
-				if(my_packet->state != 0)
-					dynamic_cast<CAnimatedObject*>(object[id])->SetAnimation((AnimationsType)my_packet->state);
+				dynamic_cast<CAnimatedObject*>(object[id])->SetAnimation((AnimationsType)my_packet->state, (float)my_packet->frameTime);
+				dynamic_cast<CAnimatedObject*>(object[id])->RegenerateWorldMatrixWithLook(my_packet->vLook);
 			}
 			else if (id < NPC_START) { 
 				object[id]->CBaseObject::SetPosition(my_packet->x, my_packet->y);

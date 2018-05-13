@@ -14,10 +14,7 @@
 #include "04.Shaders/97.BillboardShader/01.GaugeShader/01.MinionGaugeShader/MinionGaugeShader.h"
 #include "04.Shaders/98.ArrowShader/ArrowShader.h"
 #include "05.Objects/01.Camera/01.AOSCamera/AOSCamera.h"
-#include "00.Global/01.Utility/04.WayFinder/WayFinder.h"
-#include "00.Global/01.Utility/05.CollisionManager/CollisionManager.h"
 #include "00.Global/01.Utility/06.HPGaugeManager/HPGaugeManager.h"
-#include "00.Global/02.AI/00.FSMMgr/FSMMgr.h"
 
 /// <summary>
 /// 목적: 기본 씬, 인터페이스 용
@@ -77,12 +74,6 @@ void CScene::ProcessInput()
 		if(continual)
 			continual = m_ppShaders[i]->OnProcessKeyInput(pKeyBuffer);
 	}
-
-	if (m_pSelectedObject && GetAsyncKeyState('K') & 0x0001)
-	{
-		if(m_pSelectedObject->GetState() != States::Die)
-			m_pSelectedObject->SetState(States::Die);
-	}
 }
 
 void CScene::AnimateObjects(float timeElapsed)
@@ -95,7 +86,6 @@ void CScene::AnimateObjects(float timeElapsed)
 	{
 		m_ppShaders[i]->AnimateObjects(timeElapsed);
 	}
-	CollisionTest();
 }
 
 void CScene::Render()
@@ -279,40 +269,13 @@ void CScene::BuildObjects(CCreateMgr *pCreateMgr)
 	m_ppShaders[9]->Initialize(pCreateMgr, m_pCamera);
 	m_ppShaders[10]->Initialize(pCreateMgr, m_pCamera);
 
-	m_pWayFinder = new CWayFinder(NODE_SIZE, NODE_SIZE);
-	m_pCollisionManager = new CCollisionManager();
 	m_pHPGaugeManager = new CHPGaugeManager();
 
-	m_pFSMMgr = new CFSMMgr(m_pWayFinder);
-
 	CAniShader* pAniS = (CAniShader *)m_ppShaders[2];
-	int nColliderObject = pAniS->GetObjectCount();
-	for (int i = 0; i < nColliderObject; ++i)
-	{
-		m_pCollisionManager->AddCollider(((CCollisionObject * *)pAniS->GetCollisionObjects())[i]);
-	}
-	pAniS->SetCollisionManager(m_pCollisionManager);
 	pAniS->SetGaugeManger(m_pHPGaugeManager);
-	pAniS->SetFSMManager(m_pFSMMgr);
 
 	static_cast<CMinionHPGaugeShader*>(m_ppShaders[8])->SetGaugeManager(m_pHPGaugeManager);
 
-	CPlayerShader* pPlayerS = (CPlayerShader *)m_ppShaders[5];
-	nColliderObject = pPlayerS->GetObjectCount();
-	for (int i = 0; i < nColliderObject; ++i)
-	{
-		m_pCollisionManager->AddCollider(((CCollisionObject * *)pPlayerS->GetCollisionObjects())[i]);
-	}
-	pPlayerS->SetColManagerToObject(m_pCollisionManager);
-	CNexusTowerShader* pNTS = (CNexusTowerShader *)m_ppShaders[10];
-	nColliderObject = pNTS->GetObjectCount();
-	for (int i = 0; i < nColliderObject; ++i)
-	{
-		m_pCollisionManager->AddCollider(((CCollisionObject * *)pNTS->GetCollisionObjects())[i]);
-	}
-	pNTS->SetColManagerToObject(m_pCollisionManager);
-
-	
 	BuildLights();
 }
 
@@ -331,10 +294,7 @@ void CScene::ReleaseObjects()
 		}
 		Safe_Delete_Array(m_ppShaders);
 	}
-	if (m_pWayFinder) Safe_Delete(m_pWayFinder);
-	if (m_pCollisionManager) Safe_Delete(m_pCollisionManager);
 	if (m_pHPGaugeManager) Safe_Delete(m_pHPGaugeManager);
-	if (m_pFSMMgr) Safe_Delete(m_pFSMMgr);
 }
 
 void CScene::CreateShaderVariables(CCreateMgr *pCreateMgr)
@@ -474,9 +434,4 @@ void CScene::OnProcessKeyUp(WPARAM wParam, LPARAM lParam)
 	{
 		m_bRenderBoundingBox = !m_bRenderBoundingBox;
 	}
-}
-
-void CScene::CollisionTest()
-{
-	m_pCollisionManager->Update(m_pWayFinder);
 }

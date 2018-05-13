@@ -83,7 +83,6 @@ void CPlayerShader::UpdateBoundingBoxShaderVariables()
 
 void CPlayerShader::AnimateObjects(float timeElapsed)
 {
-	m_FrameCheck += 1.0f / timeElapsed;
 	m_pNetwork->ReadPacket(m_pNetwork->m_mysocket, m_ppObjects);
 
 	for (int j = 0; j < m_nObjects; j++)
@@ -161,28 +160,20 @@ bool CPlayerShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 		// 무기에 따라 수정필요
 		m_ppObjects[0]->SetType(ObjectType::SwordPlayer);
 	}
-	if (GetAsyncKeyState('Q') & 0x0001)
-	{
-		dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->ActiveSkill(Animations::SkillQ);
-	}
-	if (GetAsyncKeyState('E') & 0x0001)
-	{
-		dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->ActiveSkill(Animations::SkillE);
-	}
-	if (GetAsyncKeyState('R') & 0x0001)
-	{
-		dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->ActiveSkill(Animations::SkillR);
-	}
+	//if (GetAsyncKeyState('Q') & 0x0001)
+	//{
+	//	dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->ActiveSkill(Animations::SkillQ);
+	//}
+	//if (GetAsyncKeyState('E') & 0x0001)
+	//{
+	//	dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->ActiveSkill(Animations::SkillE);
+	//}
+	//if (GetAsyncKeyState('R') & 0x0001)
+	//{
+	//	dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->ActiveSkill(Animations::SkillR);
+	//}
 
 	return true;
-}
-
-void CPlayerShader::SetColManagerToObject(CCollisionManager * manager)
-{
-	for (int i = 0; i < 4; ++i) {
-
-	dynamic_cast<CCollisionObject*>(m_ppObjects[i])->SetCollisionManager(manager);
-	}
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -413,7 +404,6 @@ void CPlayerShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
 
 				CONVERT_PaperUnit_to_InG(2), CONVERT_PaperUnit_to_InG(2), CONVERT_PaperUnit_to_InG(10),
 				0, 0, -CONVERT_PaperUnit_to_InG(8));
-			pPlayer->SetCollisionSize(CONVERT_PaperUnit_to_InG(3));
 			pPlayer->CBaseObject::SetPosition(500+(z*9000), 0, 2000+(x*1000));
 			if (z == 1) {
 				pPlayer->SetTeam(TeamType::Red);

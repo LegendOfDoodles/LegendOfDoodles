@@ -12,7 +12,6 @@
 // 생성자, 소멸자
 CPlayer::CPlayer(CCreateMgr *pCreateMgr, int nMeshes) : CAnimatedObject(pCreateMgr, nMeshes)
 {
-	m_speed = CONVERT_cm_to_InG(3.285) * 10;
 }
 
 
@@ -24,17 +23,12 @@ CPlayer::~CPlayer()
 // 공개 함수
 void CPlayer::Animate(float timeElapsed)
 {
-	
-
 	m_fFrameTime += 30 * timeElapsed;
-
-	AdjustAnimationIndex();
 
 	if (m_fFrameTime > m_nAniLength[m_nAniIndex]) {
 		while (m_fFrameTime > m_nAniLength[m_nAniIndex])
 			m_fFrameTime -= m_nAniLength[m_nAniIndex];
 	}
-
 
 	CAnimatedObject::Animate(timeElapsed);
 }
@@ -64,58 +58,6 @@ void CPlayer::Render(CCamera * pCamera, UINT instanceCnt)
 		{
 			if (m_ppMeshes[i]) m_ppMeshes[i]->Render(instanceCnt);
 		}
-	}
-}
-
-void CPlayer::ActiveSkill(AnimationsType act)
-{
-	if (m_curState != States::Attack) {
-		m_curState = States::Attack;
-		m_nCurrAnimation = act;
-		m_fFrameTime = 0;
-	}
-}
-
-void CPlayer::SetState(StatesType newState)
-{
-	m_curState = newState;
-
-	switch (newState)
-	{
-	case States::Idle:
-		m_nCurrAnimation = Animations::Idle;
-		break;
-	case States::Walk:
-		RegenerateLookAt();
-		if (m_nCurrAnimation != Animations::StartWalk &&
-			m_nCurrAnimation != Animations::Walking)
-		m_nCurrAnimation = Animations::StartWalk;
-		break;
-	case States::Chase:
-		m_nCurrAnimation = Animations::StartWalk;
-		break;
-	case States::Attack:
-		m_fFrameTime = 0;
-		break;
-	case States::Die:
-		m_nCurrAnimation = Animations::Die;
-		m_fFrameTime = 0;
-		SetPathToGo(NULL);
-		break;
-	case States::Remove:
-		break;
-	case States::Win:
-		m_nCurrAnimation = Animations::Win;
-		m_fFrameTime = 0;
-		SetPathToGo(NULL);
-		break;
-	case States::Defeat:
-		m_nCurrAnimation = Animations::Defeat;
-		m_fFrameTime = 0;
-		SetPathToGo(NULL);
-		break;
-	default:
-		assert(!"Error:: There is No State");
 	}
 }
 

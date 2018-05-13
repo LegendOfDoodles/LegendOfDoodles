@@ -69,16 +69,25 @@ void CAnimatedObject::SetPosition(float x, float z)
 	CBaseObject::SetPosition(x, m_pTerrain->GetHeight(x, z), z);
 }
 
-void CAnimatedObject::SetAnimation(AnimationsType newAnimation)
+void CAnimatedObject::SetAnimation(AnimationsType newAnimation, float curFrame)
 {
 	m_nCurrAnimation = newAnimation;
 	AdjustAnimationIndex();
-	m_fFrameTime = 0.0f;
+	m_fFrameTime = curFrame;
 }
 
 void CAnimatedObject::RegenerateWorldMatrixWithLook(XMFLOAT3 look)
 {
-	XMFLOAT3 up{ 0.0f, 1.0f, 0.0f };
+	XMFLOAT3 newLook{ Vector3::ScalarProduct(look, -1, false) };
+	XMFLOAT3 newUp{ 0.0f, 1.0f, 0.0f };
+	XMFLOAT3 newRight{ Vector3::CrossProduct(newUp, newLook) };
+	newUp = Vector3::CrossProduct(newLook, newRight);
+
+	SetLook(newLook);
+	SetUp(newUp);
+	SetRight(newRight);
+
+	Rotate(90, 0, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////

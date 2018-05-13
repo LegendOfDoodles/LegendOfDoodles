@@ -46,6 +46,7 @@ public: // 공개 함수
 	float GetAnimTimeRemainRatio() { return (m_nAniLength[m_nCurrAnimation] - m_fFrameTime) / (float)m_nAniLength[m_nCurrAnimation]; }
 
 	AnimationsType GetAnimState() { return m_nCurrAnimation; }
+	float GetFrameTime() { return m_fFrameTime; }
 
 protected: // 내부 함수
 	bool IsArrive(float dst);

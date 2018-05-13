@@ -37,6 +37,8 @@ public:
 	int m_x;
 	int m_y;
 	int m_anistate;
+	float m_frameTime;
+	XMFLOAT3 m_vLook;
 	EXOVER m_rxover;
 	int m_packet_size;  // 지금 조립하고 있는 패킷의 크기
 	int	m_prev_packet_size; // 지난번 recv에서 완성되지 않아서 저장해 놓은 패킷의 앞부분의 크기
@@ -79,7 +81,7 @@ array <Minion, NUM_OF_NPC> g_minions;
 array <Client, MAX_USER> g_clients;
 CScene* g_pScene{ NULL };
 CAnimatedObject** g_ppPlayer{ NULL };
-;
+
 int g_MinionCounts = 0;
 int g_ReuseMinion = -1;
 void error_display(const char *msg, int err_no)
@@ -556,7 +558,8 @@ void timer_thread()
 			g_clients[i].m_x = g_ppPlayer[i]->GetPosition().x;
 			g_clients[i].m_y = g_ppPlayer[i]->GetPosition().z;
 			g_clients[i].m_anistate = g_ppPlayer[i]->GetAnimState();
-			cout << g_ppPlayer[i]->GetAnimState() << endl;
+			g_clients[i].m_frameTime = g_ppPlayer[i]->GetFrameTime();
+			g_clients[i].m_vLook = g_ppPlayer[i]->GetLook();
 		}
 		
 		//Send Every User's Position Packet
@@ -569,6 +572,8 @@ void timer_thread()
 				p.x = g_clients[i].m_x;
 				p.y = g_clients[i].m_y;
 				p.state = g_clients[i].m_anistate;
+				p.frameTime = g_clients[i].m_frameTime;
+				p.vLook = g_clients[i].m_vLook;
 				for (int j = 0; j < MAX_USER; ++j) {
 					if (g_clients[j].m_isconnected == true) {
 						SendPacket(j, &p);

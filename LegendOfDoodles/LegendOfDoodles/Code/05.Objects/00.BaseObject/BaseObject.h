@@ -51,13 +51,16 @@ public: // 공개 함수
 	void Scale(float x = 1.0f, float y = 1.0f, float z = 1.0f);
 
 	XMFLOAT3 GetPosition();
-	virtual XMFLOAT3 GetLook();
-	virtual XMFLOAT3 GetUp();
+	XMFLOAT3 GetLook();
+	XMFLOAT3 GetUp();
 	XMFLOAT3 GetRight();
 
 	virtual void SetPosition(float x, float z);
 	void SetPosition(float x, float y, float z);
 	void SetPosition(XMFLOAT3 xmf3Position);
+	void SetLook(XMFLOAT3 vLook);
+	void SetUp(XMFLOAT3 vUp);
+	void SetRight(XMFLOAT3 vRight);
 
 	void AddRef() { m_nReferences++; }
 	void Release() { if (--m_nReferences <= 0) delete this; }
