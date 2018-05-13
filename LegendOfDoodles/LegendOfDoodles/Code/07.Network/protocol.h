@@ -103,6 +103,7 @@ struct SC_Msg_Pos_Character : public Packet
 	short curhp;
 	short state;
 	short frameTime;
+	short weapon;
 	XMFLOAT3 vLook;
 };
 
@@ -134,6 +135,20 @@ struct SC_Msg_Pos_Minion : public Packet
 	short frameTime;
 	XMFLOAT3 vLook;
 };
+
+struct SC_Msg_Pos_Nexus : public Packet
+{
+	BYTE Object_id;
+	XMFLOAT3 vPos;
+	short maxhp;
+	short curhp;
+};
+
+struct CS_Msg_Demand_Change_Weapon : public Packet
+{
+	BYTE Character_id;
+};
+
 #pragma pack(pop)
 
 #define MAX_BUFF_SIZE 4000
@@ -164,6 +179,7 @@ struct SC_Msg_Pos_Minion : public Packet
 #define SC_PERMIT_USE_SKILL		  111
 #define SC_POS_MINION			  112
 #define SC_MINION_COUNT			  113
+#define SC_POS_NEXUS			  114
 //Client->Server
 #define CS_ACTION				  201
 #define CS_MOVE_PLAYER			  202
@@ -172,7 +188,7 @@ struct SC_Msg_Pos_Minion : public Packet
 #define CS_PUT_MINION			  205
 #define CS_DELETE_MINION		  206
 #define CS_DEMAND_USE_SKILL		  207
-
+#define CS_DEMAND_CHANGE_WEAPON   208
 //In Client Move Object
 #define CS_UP					  1
 #define CS_DOWN					  2

@@ -143,12 +143,13 @@ bool CPlayerShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 
 	if (GetAsyncKeyState('L') & 0x0001)
 	{
-		m_ppObjects[0]->SetMesh(1, m_pSword[m_nWeaponState]);
-		m_nWeaponState++;
-		if (m_nWeaponState >= 2)m_nWeaponState = 0;
+		CS_Msg_Demand_Change_Weapon p;
+		p.Character_id = m_pNetwork->m_myid;
+		p.size = sizeof(p);
+		p.type = CS_DEMAND_CHANGE_WEAPON;
+		m_pNetwork->SendPacket(m_pNetwork->m_myid, &p);
+	
 
-		// 무기에 따라 수정필요
-		m_ppObjects[0]->SetType(ObjectType::SwordPlayer);
 	}
 	if (pKeyBuffer['Q'] & 0xF0)
 	{
@@ -428,6 +429,9 @@ void CPlayerShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
 			pPlayer->SetSkeleton(pDefeat);
 			pPlayer->SetSkeleton(pDefeat2);
 
+			pPlayer->SetStickMesh(m_pStick);
+			pPlayer->SetSwordMesh(m_pSword);
+
 			pPlayer->SetTerrain(m_pTerrain);
 			pPlayer->Rotate(90, 0, 0);
 
@@ -462,6 +466,31 @@ void CPlayerShader::ReleaseObjects()
 			delete m_ppObjects[j];
 		}
 		Safe_Delete_Array(m_ppObjects);
+	}
+	Safe_Delete(m_pStick);
+	if (m_pSteff)
+	{
+		for (int j = 0; j < m_nSteff; j++)
+		{
+			delete m_pSteff[j];
+		}
+		Safe_Delete_Array(m_pSteff);
+	}
+	if (m_pBow)
+	{
+		for (int j = 0; j < m_nBow; j++)
+		{
+			delete m_pBow[j];
+		}
+		Safe_Delete_Array(m_pBow);
+	}
+	if (m_pSword)
+	{
+		for (int j = 0; j < m_nSword; j++)
+		{
+			delete m_pSword[j];
+		}
+		Safe_Delete_Array(m_pSword);
 	}
 
 #if USE_BATCH_MATERIAL

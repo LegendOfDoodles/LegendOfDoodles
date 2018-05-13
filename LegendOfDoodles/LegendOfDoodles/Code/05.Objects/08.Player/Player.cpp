@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Player.h"
+#include "06.Meshes/01.Mesh/Mesh.h"
 
 /// <summary>
 /// 목적: 플레이어 관리 클래스
@@ -17,6 +18,7 @@ CPlayer::CPlayer(CCreateMgr *pCreateMgr, int nMeshes) : CAnimatedObject(pCreateM
 
 CPlayer::~CPlayer()
 {
+
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -61,6 +63,22 @@ void CPlayer::Render(CCamera * pCamera, UINT instanceCnt)
 	}
 }
 
+void CPlayer::SetWeapon(int weapon)
+{
+	if (m_WeaponState != weapon)
+	{
+		m_WeaponState = weapon;
+		if (weapon == 0) {
+			SetType(ObjectType::StickPlayer);
+			SetMesh(1, m_pStickMesh);
+		}
+		else {
+			SetType(ObjectType::SwordPlayer);
+			SetMesh(1, m_ppSwordMesh[weapon-1]);
+
+		}
+	}
+}
 ////////////////////////////////////////////////////////////////////////
 // 내부 함수
 void CPlayer::AdjustAnimationIndex()

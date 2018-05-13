@@ -116,6 +116,11 @@ CollisionObjectList * CScene::GetRedObjects()
 	return static_cast<CAniShader*>(m_ppShaders[1])->GetRedObjects();
 }
 
+CNexusTower** CScene::GetNexusTower()
+{
+	return (CNexusTower**)m_ppShaders[0]->GetCollisionObjects();
+}
+
 ////////////////////////////////////////////////////////////////////////
 // 내부 함수
 void CScene::BuildObjects()

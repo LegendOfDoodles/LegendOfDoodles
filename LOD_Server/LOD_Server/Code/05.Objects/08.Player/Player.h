@@ -22,7 +22,11 @@ public:	// 외부 함수
 
 	virtual PlayerInfo* GetPlayerStatus() { return &m_StatusInfo; }
 
-
+	void ChangeWeapon() {
+		m_WeaponState++;
+		if (m_WeaponState >= 4)m_WeaponState = 0;
+	}
+	int GetWeaponState() { return m_WeaponState; }
 protected: // 내부 함수
 	virtual void AdjustAnimationIndex();
 	/*
@@ -32,5 +36,6 @@ protected: // 내부 함수
 
 protected: // 변수
 	PlayerInfo m_StatusInfo;
+	int m_WeaponState{ 0 };
 };
 

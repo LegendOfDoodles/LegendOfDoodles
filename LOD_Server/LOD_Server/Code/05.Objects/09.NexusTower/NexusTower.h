@@ -27,6 +27,8 @@ public:	// 외부 함수
 		}
 	}
 
+	StaticInfo* GetStatusInfo() { return &m_StatusInfo; }
+
 protected: // 내부 함수
 	/*
 	0. Idle		1.StartWalk		2.Walking	3.Smash		4.Slash		5.Dispute

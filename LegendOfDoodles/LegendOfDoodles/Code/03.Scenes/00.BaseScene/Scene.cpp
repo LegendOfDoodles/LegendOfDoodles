@@ -236,7 +236,7 @@ void CScene::BuildObjects(CCreateMgr *pCreateMgr)
 	m_ppShaders[3] = new CAniShader(pCreateMgr, m_pNetwork);
 	m_ppShaders[4] = new CArrowShader(pCreateMgr);
 	m_ppShaders[5] = new CStaticObjectShader(pCreateMgr);
-	m_ppShaders[6] = new CNexusTowerShader(pCreateMgr);
+	m_ppShaders[6] = new CNexusTowerShader(pCreateMgr, m_pNetwork);
 	
 	// UI Shader
 	m_ppShaders[7] = new CUIObjectShader(pCreateMgr);

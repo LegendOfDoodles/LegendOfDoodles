@@ -21,6 +21,7 @@
 #include "05.Objects\03.AnimatedObject\AnimatedObject.h"
 #include "05.Objects\08.Player\Player.h"
 #include "05.Objects\06.Minion\Minion.h"
+#include "05.Objects\09.NexusTower\NexusTower.h"
 using namespace std;
 
 typedef std::list<CCollisionObject*> CollisionObjectList;
@@ -42,6 +43,9 @@ public:
 	int m_maxhp;
 	int m_curhp;
 	int m_anistate;
+
+	int m_weaponstate;
+
 	float m_frameTime;
 	XMFLOAT3 m_vLook;
 	EXOVER m_rxover;
@@ -87,13 +91,23 @@ public:
 	}
 };
 
+class NexusTower {
+public:
+	XMFLOAT3 m_vPos;
+	int m_maxhp;
+	int m_curhp;
+};
+
 array <Minion, 300> g_blueminions;
 array <Minion, 300> g_redminions;
 array <Client, MAX_USER> g_clients;
+array <NexusTower, 14> g_nexustowers;
+
 CScene* g_pScene{ NULL };
 CAnimatedObject** g_ppPlayer{ NULL };
 CollisionObjectList* g_pBlueMinions{ NULL };
 CollisionObjectList* g_pRedMinions{ NULL };
+CNexusTower** g_ppNexusTower{ NULL };
 
 int g_MinionCounts = 0;
 int g_ReuseMinion = -1;
@@ -137,6 +151,7 @@ void initialize(CScene* pScene)
 	g_ppPlayer = g_pScene->GetPlayerObject();
 	g_pBlueMinions = g_pScene->GetBlueObjects();
 	g_pRedMinions = g_pScene->GetRedObjects();
+	g_ppNexusTower = g_pScene->GetNexusTower();
 
 	gh_iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0); // 의미없는 파라메터, 마지막은 알아서 쓰레드를 만들어준다.
 	std::wcout.imbue(std::locale("korean"));
@@ -199,6 +214,7 @@ void ProcessPacket(int id, char *packet)
 	CS_MsgChCollision* CollisionPacket = reinterpret_cast<CS_MsgChCollision*>(packet);
 	CS_MsgMoDelete* DeleteMinionPacket = reinterpret_cast<CS_MsgMoDelete*>(packet);
 	CS_Msg_Demand_Use_Skill* CSkillPacket = reinterpret_cast<CS_Msg_Demand_Use_Skill*>(packet);
+	CS_Msg_Demand_Change_Weapon* CChangeWeapon = reinterpret_cast<CS_Msg_Demand_Change_Weapon*>(packet);
 	int x = 0;
 	int y = 0;
 	//서버에서 클라로 보내줘야할 패킷들
@@ -254,7 +270,12 @@ void ProcessPacket(int id, char *packet)
 
 	case CS_DEMAND_USE_SKILL:
 	{
-		dynamic_cast<CPlayer*>(g_ppPlayer[id])->ActiveSkill((AnimationsType)CSkillPacket->skilltype);
+		dynamic_cast<CPlayer*>(g_ppPlayer[CSkillPacket->Character_id])->ActiveSkill((AnimationsType)CSkillPacket->skilltype);
+		break;
+	}
+	case CS_DEMAND_CHANGE_WEAPON:
+	{
+		dynamic_cast<CPlayer*>(g_ppPlayer[CChangeWeapon->Character_id])->ChangeWeapon();
 		break;
 	}
 	default:
@@ -440,6 +461,7 @@ void timer_thread()
 			g_clients[i].m_vLook = g_ppPlayer[i]->GetLook();
 			g_clients[i].m_maxhp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->maxHP;
 			g_clients[i].m_curhp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->HP;
+			g_clients[i].m_weaponstate = ((CPlayer*)g_ppPlayer[i])->GetWeaponState();
 		}
 
 		//Send Every User's Position Packet
@@ -451,6 +473,7 @@ void timer_thread()
 				p.type = SC_POS;
 				p.maxhp = g_clients[i].m_maxhp;
 				p.curhp = g_clients[i].m_curhp;
+				p.weapon = g_clients[i].m_weaponstate;
 				p.x = g_clients[i].m_x;
 				p.y = g_clients[i].m_y;
 				p.state = g_clients[i].m_anistate;
@@ -543,6 +566,29 @@ void timer_thread()
 			p.state = g_redminions[i].m_anistate;
 			p.frameTime = g_redminions[i].m_frameTime;
 			p.vLook = g_redminions[i].m_vLook;
+			for (int j = 0; j < MAX_USER; ++j) {
+				if (g_clients[j].m_isconnected == true) {
+					SendPacket(j, &p);
+				}
+			}
+		}
+
+
+
+		for (int i = 0; i < 14; ++i){
+			g_nexustowers[i].m_vPos = g_ppNexusTower[i]->GetPosition();
+			g_nexustowers[i].m_curhp = g_ppNexusTower[i]->GetStatusInfo()->HP;
+			g_nexustowers[i].m_maxhp = g_ppNexusTower[i]->GetStatusInfo()->maxHP;
+		}
+
+		for (int i = 0; i < 14; ++i) {
+			SC_Msg_Pos_Nexus p;
+			p.curhp = g_nexustowers[i].m_curhp;
+			p.maxhp = g_nexustowers[i].m_maxhp;
+			p.size = sizeof(p);
+			p.type = SC_POS_NEXUS;
+			p.Object_id = i;
+			p.vPos = g_nexustowers[i].m_vPos;
 			for (int j = 0; j < MAX_USER; ++j) {
 				if (g_clients[j].m_isconnected == true) {
 					SendPacket(j, &p);
