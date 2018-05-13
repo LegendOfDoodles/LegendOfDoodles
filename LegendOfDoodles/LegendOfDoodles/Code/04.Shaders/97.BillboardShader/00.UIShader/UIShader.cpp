@@ -115,11 +115,16 @@ bool CUIObjectShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 	// 나중에 Define 하는 형식으로 변형
 	XMFLOAT4 MinimapArea;
 	XMFLOAT4 StatusArea;
+	float RatioX;
+	float RatioY;
 
 	MinimapArea.x = FRAME_BUFFER_WIDTH  / 1.3034f;
 	MinimapArea.y = FRAME_BUFFER_WIDTH  / 1.0078f;
 	MinimapArea.z = FRAME_BUFFER_HEIGHT / 1.3333f;
 	MinimapArea.w = FRAME_BUFFER_HEIGHT / 1.0526f;
+
+	RatioX = MinimapArea.y - MinimapArea.x;
+	RatioY = MinimapArea.w - MinimapArea.z;
 
 	StatusArea.x = FRAME_BUFFER_WIDTH  / 2.2824f;
 	StatusArea.y = FRAME_BUFFER_WIDTH  / 1.6177f;
@@ -128,16 +133,16 @@ bool CUIObjectShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 
 	if(pKeyBuffer == MK_LBUTTON)
 	{
-		//printf("%d, %d\n", cursorPos.x, cursorPos.y);
+		printf("%d, %d\n", cursorPos.x, cursorPos.y);
 
 		// 미니맵 클릭
 		if ((cursorPos.x > MinimapArea.x  && cursorPos.x < MinimapArea.y)
 			&& (cursorPos.y > MinimapArea.z && cursorPos.y < MinimapArea.w))
 		{
 			XMFLOAT3 newCameraPos;
-			newCameraPos.x = (MinimapArea.x - cursorPos.x) * -1.736 * 20;
+			newCameraPos.x = (cursorPos.x - MinimapArea.x) / RatioX * TERRAIN_SIZE_WIDTH;//* -(FRAME_BUFFER_WIDTH / 737.3f) * 9.f;
 			newCameraPos.y = m_pCamera->GetPosition().y;
-			newCameraPos.z = (MinimapArea.w - cursorPos.y) * 1.736 * 20;
+			newCameraPos.z = ((MinimapArea.w - cursorPos.y) / RatioY * TERRAIN_SIZE_HEIGHT) - 200.0f;
 			
 			m_pCamera->SetPosition(newCameraPos);
 		}

@@ -84,7 +84,7 @@ LRESULT CALLBACK CFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMessageI
 	case WM_SIZE:
 	{
 		m_createMgr.Resize(LOWORD(lParam), HIWORD(lParam));
-		// m_createMgr.ChangeScreenMode();
+		m_createMgr.ChangeScreenMode();
 		break;
 	}
 	case WM_LBUTTONDOWN:
