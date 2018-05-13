@@ -131,9 +131,9 @@ void CScene::UpdateCamera()
 
 		m_pCamera->Initialize(m_pCreateMgr);
 
-		static_cast<CUIObjectShader*>(m_ppShaders[6])->GetCamera(m_pCamera);
-		static_cast<CPlayerHPGaugeShader*>(m_ppShaders[7])->GetCamera(m_pCamera);
-		static_cast<CMinionHPGaugeShader*>(m_ppShaders[8])->GetCamera(m_pCamera);
+		static_cast<CUIObjectShader*>(m_ppShaders[7])->GetCamera(m_pCamera);
+		static_cast<CPlayerHPGaugeShader*>(m_ppShaders[8])->GetCamera(m_pCamera);
+		static_cast<CMinionHPGaugeShader*>(m_ppShaders[9])->GetCamera(m_pCamera);
 
 		m_bCamChanged = false;
 	}
@@ -161,11 +161,6 @@ void CScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID,
 		break;
 	case WM_MOUSEWHEEL:
 		m_pCamera->OnProcessMouseWheel(wParam, lParam);
-
-		static_cast<CUIObjectShader*>(m_ppShaders[6])->GetCamera(m_pCamera);
-		static_cast<CPlayerHPGaugeShader*>(m_ppShaders[7])->GetCamera(m_pCamera);
-		static_cast<CMinionHPGaugeShader*>(m_ppShaders[8])->GetCamera(m_pCamera);
-
 		break;
 	default:
 		break;
@@ -241,33 +236,39 @@ void CScene::BuildObjects(CCreateMgr *pCreateMgr)
 	m_ppShaders[3] = new CAniShader(pCreateMgr, m_pNetwork);
 	m_ppShaders[4] = new CArrowShader(pCreateMgr);
 	m_ppShaders[5] = new CStaticObjectShader(pCreateMgr);
-	m_ppShaders[6] = new CUIObjectShader(pCreateMgr);
-	m_ppShaders[7] = new CPlayerHPGaugeShader(pCreateMgr);
-	m_ppShaders[8] = new CMinionHPGaugeShader(pCreateMgr);
-	m_ppShaders[9] = new CMinimapIconShader(pCreateMgr);
-	m_ppShaders[10] = new CNexusTowerShader(pCreateMgr);
+	m_ppShaders[6] = new CNexusTowerShader(pCreateMgr);
+	
+	// UI Shader
+	m_ppShaders[7] = new CUIObjectShader(pCreateMgr);
+	m_ppShaders[8] = new CPlayerHPGaugeShader(pCreateMgr);
+	m_ppShaders[9] = new CMinionHPGaugeShader(pCreateMgr);
+	m_ppShaders[10] = new CMinimapIconShader(pCreateMgr);
 
+	// Manager Init
 	m_pHPGaugeManager = new CHPGaugeManager();
 	static_cast<CAniShader*>(m_ppShaders[3])->SetGaugeManager(m_pHPGaugeManager);
-	static_cast<CMinionHPGaugeShader*>(m_ppShaders[8])->SetGaugeManager(m_pHPGaugeManager);
+	static_cast<CMinionHPGaugeShader*>(m_ppShaders[9])->SetGaugeManager(m_pHPGaugeManager);
 
+	// Object Shaders Init
 	for (int i = 0; i < 2; ++i)
 	{
 		m_ppShaders[i]->Initialize(pCreateMgr);
 	}
 
-	for (int i = 2; i < m_nShaders - 5; ++i)
+	for (int i = 2; i < m_nShaders - 4; ++i)
 	{
 		m_ppShaders[i]->Initialize(pCreateMgr, pTerrainShader->GetTerrain());
 	}
 
-	((CPlayerHPGaugeShader*)m_ppShaders[7])->SetPlayerCnt(((CPlayerShader *)m_ppShaders[2])->GetObjectCount());
-	((CPlayerHPGaugeShader*)m_ppShaders[7])->SetPlayer(((CPlayerShader *)m_ppShaders[2])->GetCollisionObjects());
+	// UI Shaders Init
+	((CPlayerHPGaugeShader*)m_ppShaders[8])->SetPlayerCnt(((CPlayerShader *)m_ppShaders[2])->GetObjectCount());
+	((CPlayerHPGaugeShader*)m_ppShaders[8])->SetPlayer(((CPlayerShader *)m_ppShaders[2])->GetCollisionObjects());
+	((CPlayerHPGaugeShader*)m_ppShaders[8])->SetNexusAndTowerCnt(((CNexusTowerShader *)m_ppShaders[6])->GetObjectCount());
+	((CPlayerHPGaugeShader*)m_ppShaders[8])->SetNexusAndTower(((CNexusTowerShader *)m_ppShaders[6])->GetCollisionObjects());
 
-	((CMinimapIconShader*)m_ppShaders[9])->SetPlayerCnt(((CPlayerShader *)m_ppShaders[2])->GetObjectCount());
-	((CMinimapIconShader*)m_ppShaders[9])->SetPlayer(((CPlayerShader *)m_ppShaders[2])->GetCollisionObjects());
+	((CMinimapIconShader*)m_ppShaders[10])->SetPlayerCnt(((CPlayerShader *)m_ppShaders[2])->GetObjectCount());
+	((CMinimapIconShader*)m_ppShaders[10])->SetPlayer(((CPlayerShader *)m_ppShaders[2])->GetCollisionObjects());
 
-	m_ppShaders[6]->Initialize(pCreateMgr, m_pCamera);
 	m_ppShaders[7]->Initialize(pCreateMgr, m_pCamera);
 	m_ppShaders[8]->Initialize(pCreateMgr, m_pCamera);
 	m_ppShaders[9]->Initialize(pCreateMgr, m_pCamera);
@@ -348,7 +349,7 @@ void CScene::PickObjectPointedByCursor(WPARAM wParam, LPARAM lParam)
 			// Status 창 띄우기 수도 코드
 			// 현재 6번 쉐이더가 UI 이므로 상호작용하는 Object의 타입을 받아와서
 			// 그 해당 오브젝트에 대한 정보를 출력
-			m_ppShaders[6]->OnStatus(pIntersectedObject->GetType());
+			m_ppShaders[7]->OnStatus(pIntersectedObject->GetType());
 
 			//m_Network.StartRecv(m_pSelectedObject);
 		}
@@ -360,7 +361,7 @@ void CScene::PickObjectPointedByCursor(WPARAM wParam, LPARAM lParam)
 	}
 	else if (wParam == MK_LBUTTON) {
 		// 바닥 선택시 Status창 Off
-		//m_ppShaders[6]->OffStatus();
+		//m_ppShaders[7]->OffStatus();
 	}
 }
 
