@@ -16,6 +16,8 @@ public:	// 외부 함수
 
 	virtual void SetMaxHP(int maxHP, int HP) { m_StatusInfo.maxHP = maxHP; m_StatusInfo.HP = HP; }
 
+	virtual CommonInfo* GetCommonStatus() { return &m_StatusInfo; }
+
 protected:	// 내부 함수
 	virtual void AdjustAnimationIndex();
 

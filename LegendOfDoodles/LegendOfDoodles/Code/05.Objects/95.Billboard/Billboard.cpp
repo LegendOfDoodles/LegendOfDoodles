@@ -252,7 +252,7 @@ void CHPGaugeObjects::Render(CCamera * pCamera, UINT istanceCnt)
 
 float CHPGaugeObjects::GetCurrentHP()
 {
-	/*if (m_Type == GagueUIType::PlayerGauge) {
+	if (m_Type == GagueUIType::PlayerGauge) {
 		return (m_pMasterObject->GetPlayerStatus()->HP / m_pMasterObject->GetPlayerStatus()->maxHP);
 	}
 	else if (m_Type == GagueUIType::MinionGauge)
@@ -261,7 +261,7 @@ float CHPGaugeObjects::GetCurrentHP()
 	}
 	else if (m_Type == GagueUIType::NexusAndTower) {
 		return (m_pMasterObject->GetNexusAndTowerStatus()->HP / m_pMasterObject->GetNexusAndTowerStatus()->maxHP);
-	}*/
+	}
 
 }
 

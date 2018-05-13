@@ -10,6 +10,8 @@ public:
 	CNexusTower(CCreateMgr *pCreateMgr, int nMeshes = 1);
 	virtual ~CNexusTower();
 
+	virtual StaticInfo* GetNexusAndTowerStatus() { return &m_StatusInfo; }
+
 public:	// 외부 함수
 	virtual void Animate(float timeElapsed);
 
@@ -20,6 +22,7 @@ protected: // 내부 함수
 
 protected: // 변수
 	float m_fEndTime{ 0 };
-	ObjectType type;
+
+	StaticInfo m_StatusInfo;
 };
 

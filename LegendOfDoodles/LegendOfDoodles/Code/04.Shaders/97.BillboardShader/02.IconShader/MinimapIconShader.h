@@ -1,9 +1,14 @@
 #pragma once
 #include "04.Shaders/00.BaseShader/Shader.h"
+#include "05.Objects/02.CollisionObject/CollisionObject.h"
+#include "05.Objects/95.Billboard/Billboard.h"
 
-class CBillboardObject;
+typedef std::vector<CCollisionObject*> CollisionObjectList;
+typedef std::vector<CMinimapIconObjects*> MinionIconObjectList;
+
 class CMaterial;
 class CPlayer;
+class CUIObjectManager;
 
 class CMinimapIconShader : public CShader
 {
@@ -22,11 +27,16 @@ public: // 공개 함수
 
 	virtual void GetCamera(CCamera *pCamera);
 
-	void SetPlayer(CBaseObject **pPlayer) { m_pPlayer = (CPlayer**)pPlayer; };
-	void SetPlayerCnt(int cnt) { m_nPlayer = cnt; };
-
 	virtual bool OnProcessKeyInput(UCHAR* pKeyBuffer);
 	virtual bool OnProcessMouseInput(WPARAM pKeyBuffer);
+
+	void SetUIObjectsManager(CUIObjectManager * pManger);
+
+	virtual void SetPlayer(CBaseObject **pPlayer) { m_pPlayer = (CCollisionObject**)pPlayer; };
+	virtual void SetPlayerCnt(int cnt) { m_nPlayer = cnt; };
+
+	virtual void SetNexusAndTower(CBaseObject **ppObjects) { m_ppNexusAndTower = (CCollisionObject**)ppObjects; };
+	virtual void SetNexusAndTowerCnt(int cnt) { m_nNexusAndTower = cnt; };
 
 protected: // 내부 함수
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
@@ -42,24 +52,44 @@ protected: // 내부 함수
 
 	virtual void ReleaseObjects();
 
+	void SpawnMinionIcon();
+
 protected: // 변수
-	CBaseObject * *m_ppObjects{ NULL };
+	// Players Icon & Static Objects
+	CBaseObject **m_ppObjects{ NULL };
 	int m_nObjects = 0;
 
+	// Materials
 	CMaterial	**m_ppMaterials{ NULL };
 	int m_nMaterials = 0;
 
+	// 카메라
 	CCamera *m_pCamera;
 
-	CPlayer **m_pPlayer;
-	int m_nPlayer;
+	// Players
+	CCollisionObject **m_pPlayer;
+	int m_nPlayer = 0;
 
-	CCreateMgr* m_pCreateMgr{ NULL };
+	// Tower And Nexus
+	CCollisionObject **m_ppNexusAndTower{ NULL };
+	int m_nNexusAndTower = 0;
+
+	//동적생성
+	CUIObjectManager *m_pIconManger{ NULL };
+
+	CollisionObjectList *m_MinionObjectList;
+	MinionIconObjectList m_MinionIconObjectList;
+
+	int *m_nBlues{ NULL };
+	int *m_nReds{ NULL };
+
 #if USE_INSTANCING
 	CB_GAMEOBJECT_INFO *m_pMappedObjects{ NULL };
 	CMaterial		   *m_pMaterial{ NULL };
 #else
 	UINT8 *m_pMappedObjects{ NULL };
 #endif
+
+	CCreateMgr* m_pCreateMgr{ NULL };
 
 };

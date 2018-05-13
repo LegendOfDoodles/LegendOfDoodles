@@ -5,7 +5,7 @@
 #include "05.Objects/02.CollisionObject/CollisionObject.h"
 
 class CCreateMgr;
-class CHPGaugeManager;
+class CUIObjectManager;
 
 struct LIGHT
 {
@@ -94,7 +94,7 @@ protected: // º¯¼ö
 
 	CCreateMgr* m_pCreateMgr{ NULL };
 
-	CHPGaugeManager *m_pHPGaugeManager{NULL};
+	CUIObjectManager *m_pHPGaugeManager{NULL};
 
 	Network* m_pNetwork;
 	

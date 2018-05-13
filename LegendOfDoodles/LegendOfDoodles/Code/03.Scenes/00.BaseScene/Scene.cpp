@@ -245,9 +245,10 @@ void CScene::BuildObjects(CCreateMgr *pCreateMgr)
 	m_ppShaders[10] = new CMinimapIconShader(pCreateMgr);
 
 	// Manager Init
-	m_pHPGaugeManager = new CHPGaugeManager();
+	m_pHPGaugeManager = new CUIObjectManager();
 	static_cast<CAniShader*>(m_ppShaders[3])->SetGaugeManager(m_pHPGaugeManager);
 	static_cast<CMinionHPGaugeShader*>(m_ppShaders[9])->SetGaugeManager(m_pHPGaugeManager);
+	static_cast<CMinimapIconShader*>(m_ppShaders[10])->SetUIObjectsManager(m_pHPGaugeManager);
 
 	// Object Shaders Init
 	for (int i = 0; i < 2; ++i)
@@ -268,6 +269,8 @@ void CScene::BuildObjects(CCreateMgr *pCreateMgr)
 
 	((CMinimapIconShader*)m_ppShaders[10])->SetPlayerCnt(((CPlayerShader *)m_ppShaders[2])->GetObjectCount());
 	((CMinimapIconShader*)m_ppShaders[10])->SetPlayer(((CPlayerShader *)m_ppShaders[2])->GetCollisionObjects());
+	((CMinimapIconShader*)m_ppShaders[10])->SetNexusAndTowerCnt(((CNexusTowerShader *)m_ppShaders[6])->GetObjectCount());
+	((CMinimapIconShader*)m_ppShaders[10])->SetNexusAndTower(((CNexusTowerShader *)m_ppShaders[6])->GetCollisionObjects());
 
 	m_ppShaders[7]->Initialize(pCreateMgr, m_pCamera);
 	m_ppShaders[8]->Initialize(pCreateMgr, m_pCamera);

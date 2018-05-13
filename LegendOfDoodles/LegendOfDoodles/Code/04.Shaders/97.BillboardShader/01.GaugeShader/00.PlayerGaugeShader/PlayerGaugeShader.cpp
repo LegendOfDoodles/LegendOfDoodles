@@ -247,10 +247,6 @@ void CPlayerHPGaugeShader::BuildObjects(CCreateMgr * pCreateMgr, void * pContext
 			pGaugeObject->SetObject(m_pPlayer[i]);
 			pGaugeObject->GetmasterObjectType((ObjectType)m_pPlayer[i]->GetType());
 
-			XMFLOAT3 HPGaugePosition = m_pPlayer[i]->GetPosition();
-			HPGaugePosition.y += 110.f;
-			pGaugeObject->SetPosition(HPGaugePosition);
-
 			pGaugeObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * i));
 		}
 		else
@@ -262,10 +258,6 @@ void CPlayerHPGaugeShader::BuildObjects(CCreateMgr * pCreateMgr, void * pContext
 			pGaugeObject->SetObject(m_ppNexusAndTower[i - m_nPlayer]);
 
 			pGaugeObject->GetmasterObjectType((ObjectType)m_ppNexusAndTower[i - m_nPlayer]->GetType());
-
-			XMFLOAT3 HPGaugePosition = m_ppNexusAndTower[i - m_nPlayer]->GetPosition();
-			HPGaugePosition.y += 200.f;
-			pGaugeObject->SetPosition(HPGaugePosition);
 
 			pGaugeObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * i));
 		}

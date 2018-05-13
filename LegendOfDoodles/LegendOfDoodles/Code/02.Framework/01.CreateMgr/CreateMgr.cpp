@@ -657,7 +657,7 @@ void CCreateMgr::CreateGraphicsRootSignature()
 	pDescriptorRanges[1].RegisterSpace = 0;
 	pDescriptorRanges[1].OffsetInDescriptorsFromTableStart = 0;
 #else
-	D3D12_DESCRIPTOR_RANGE pDescriptorRanges[8];
+	D3D12_DESCRIPTOR_RANGE pDescriptorRanges[9];
 
 	pDescriptorRanges[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
 	pDescriptorRanges[0].NumDescriptors = 1;
@@ -706,9 +706,15 @@ void CCreateMgr::CreateGraphicsRootSignature()
 	pDescriptorRanges[7].BaseShaderRegister = 4; //UI Textures
 	pDescriptorRanges[7].RegisterSpace = 0;
 	pDescriptorRanges[7].OffsetInDescriptorsFromTableStart = 0;
+
+	pDescriptorRanges[8].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+	pDescriptorRanges[8].NumDescriptors = 1;
+	pDescriptorRanges[8].BaseShaderRegister = 7; //UI Gague
+	pDescriptorRanges[8].RegisterSpace = 0;
+	pDescriptorRanges[8].OffsetInDescriptorsFromTableStart = 0;
 #endif
 
-	D3D12_ROOT_PARAMETER pRootParameters[12];
+	D3D12_ROOT_PARAMETER pRootParameters[13];
 	pRootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	pRootParameters[0].Descriptor.ShaderRegister = 0; //Player
 	pRootParameters[0].Descriptor.RegisterSpace = 0;
@@ -787,6 +793,11 @@ void CCreateMgr::CreateGraphicsRootSignature()
 	pRootParameters[11].DescriptorTable.NumDescriptorRanges = 1;
 	pRootParameters[11].DescriptorTable.pDescriptorRanges = &pDescriptorRanges[7];  //UI Textures
 	pRootParameters[11].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
+	pRootParameters[12].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	pRootParameters[12].DescriptorTable.NumDescriptorRanges = 1;
+	pRootParameters[12].DescriptorTable.pDescriptorRanges = &pDescriptorRanges[8];  //UI Gauge Textures
+	pRootParameters[12].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 	D3D12_STATIC_SAMPLER_DESC samplerDesc[2];
 	::ZeroMemory(&samplerDesc, sizeof(D3D12_STATIC_SAMPLER_DESC));

@@ -150,7 +150,7 @@ bool CPlayerShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 		// 무기에 따라 수정필요
 		m_ppObjects[0]->SetType(ObjectType::SwordPlayer);
 	}
-	if (GetAsyncKeyState('Q') & 0x0001)
+	if (pKeyBuffer['Q'] & 0xF0)
 	{
 		CS_Msg_Demand_Use_Skill p;
 		p.Character_id = m_pNetwork->m_myid;
@@ -159,7 +159,7 @@ bool CPlayerShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 		p.type = CS_DEMAND_USE_SKILL;
 		m_pNetwork->SendPacket(m_pNetwork->m_myid, &p);
 	}
-	if (GetAsyncKeyState('E') & 0x0001)
+	if (pKeyBuffer['E'] & 0xF0)
 	{
 		CS_Msg_Demand_Use_Skill p;
 		p.Character_id = m_pNetwork->m_myid;
@@ -168,7 +168,7 @@ bool CPlayerShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 		p.type = CS_DEMAND_USE_SKILL;
 		m_pNetwork->SendPacket(m_pNetwork->m_myid, &p);
 	}
-	if (GetAsyncKeyState('R') & 0x0001)
+	if (pKeyBuffer['R'] & 0xF0)
 	{
 		CS_Msg_Demand_Use_Skill p;
 		p.Character_id = m_pNetwork->m_myid;

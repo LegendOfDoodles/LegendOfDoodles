@@ -39,18 +39,20 @@ void CMinionHPGaugeShader::ReleaseUploadBuffers()
 
 void CMinionHPGaugeShader::UpdateShaderVariables()
 {
-	static UINT elementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
+	static UINT elementBytes = ((sizeof(CB_GAUGE_INFO) + 255) & ~255);
 
 	for (int i = 0; i < *m_nBlues; ++i)
 	{
-		CB_GAMEOBJECT_INFO *pMappedObject = (CB_GAMEOBJECT_INFO *)(m_pMappedObjects + (i * elementBytes));
+		CB_GAUGE_INFO *pMappedObject = (CB_GAUGE_INFO *)(m_pMappedObjects + (i * elementBytes));
+		pMappedObject->m_fCurrentHP = m_HPGaugeObjectList[i]->GetCurrentHP();
 		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
 			XMMatrixTranspose(XMLoadFloat4x4(m_HPGaugeObjectList[i]->GetWorldMatrix())));
 	}
 
 	for (int i = MAX_MINION; i < MAX_MINION + *m_nReds; ++i)
 	{
-		CB_GAMEOBJECT_INFO *pMappedObject = (CB_GAMEOBJECT_INFO *)(m_pMappedObjects + (i * elementBytes));
+		CB_GAUGE_INFO *pMappedObject = (CB_GAUGE_INFO *)(m_pMappedObjects + (i * elementBytes));
+		pMappedObject->m_fCurrentHP = m_HPGaugeObjectList[i]->GetCurrentHP();
 		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
 			XMMatrixTranspose(XMLoadFloat4x4(m_HPGaugeObjectList[i]->GetWorldMatrix())));
 	}
@@ -97,7 +99,7 @@ void CMinionHPGaugeShader::GetCamera(CCamera * pCamera)
 	}
 }
 
-void CMinionHPGaugeShader::SetGaugeManager(CHPGaugeManager * pManger)
+void CMinionHPGaugeShader::SetGaugeManager(CUIObjectManager * pManger)
 {
 	m_pGaugeManger = pManger;
 	m_MinionObjectList = m_pGaugeManger->GetMinionObjectList();
@@ -149,7 +151,7 @@ D3D12_SHADER_BYTECODE CMinionHPGaugeShader::CreateVertexShader(ID3DBlob **ppShad
 {
 	return(CShader::CompileShaderFromFile(
 		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
-		"VSTextured",
+		"VSTexturedGauge",
 		"vs_5_1",
 		ppShaderBlob));
 }
@@ -158,7 +160,7 @@ D3D12_SHADER_BYTECODE CMinionHPGaugeShader::CreatePixelShader(ID3DBlob **ppShade
 {
 	return(CShader::CompileShaderFromFile(
 		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
-		"PSTextured",
+		"PSTexturedGauge",
 		"ps_5_1",
 		ppShaderBlob));
 }
@@ -178,7 +180,7 @@ void CMinionHPGaugeShader::CreateShaderVariables(CCreateMgr *pCreateMgr, int nBu
 {
 	HRESULT hResult;
 
-	UINT elementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
+	UINT elementBytes = ((sizeof(CB_GAUGE_INFO) + 255) & ~255);
 
 	m_pConstBuffer = pCreateMgr->CreateBufferResource(
 		NULL,
@@ -195,7 +197,7 @@ void CMinionHPGaugeShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
 {
 	m_pCamera = (CCamera*)pContext;
 
-	UINT ncbElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
+	UINT ncbElementBytes = ((sizeof(CB_GAUGE_INFO) + 255) & ~255);
 
 	CreateShaderVariables(pCreateMgr, MAX_MINION * 2);
 
@@ -227,7 +229,7 @@ void CMinionHPGaugeShader::SpawnGauge()
 		CHPGaugeObjects *pGaugeObject{ NULL };
 		CCollisionObject *pMinionObjects{ NULL };
 
-		pGaugeObject = new CHPGaugeObjects(m_pCreateMgr, GaugeUiType::MinionGauge);
+		pGaugeObject = new CHPGaugeObjects(m_pCreateMgr, GagueUIType::MinionGauge);
 		pMinionObjects = (*m_MinionObjectList)[cnt];
 
 		pGaugeObject->SetObject(pMinionObjects);
@@ -235,10 +237,6 @@ void CMinionHPGaugeShader::SpawnGauge()
 
 		pGaugeObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * cnt));
 
-		XMFLOAT3 xmfGaugePosition;
-		xmfGaugePosition = pMinionObjects->GetPosition();
-		xmfGaugePosition.y += 70.f;
-		pGaugeObject->SetPosition(xmfGaugePosition);
 		m_HPGaugeObjectList.emplace_back(pGaugeObject);
 	}
 	m_pCreateMgr->ExecuteCommandList();
@@ -251,7 +249,6 @@ void CMinionHPGaugeShader::SpawnGauge()
 	m_nBlues = m_pGaugeManger->GetBlueMinionCnt();
 	m_nReds = m_pGaugeManger->GetRedMinionCnt();
 
-	m_pGaugeManger->EndSpawn();
 }
 
 void CMinionHPGaugeShader::ReleaseObjects()

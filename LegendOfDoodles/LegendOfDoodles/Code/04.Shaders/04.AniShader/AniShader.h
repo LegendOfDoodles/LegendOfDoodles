@@ -4,7 +4,7 @@
 
 class CMaterial;
 class CHeightMapTerrain;
-class CHPGaugeManager;
+class CUIObjectManager;
 
 class CAniShader : public CShader
 {
@@ -28,7 +28,7 @@ public: // 공개 함수
 
 	virtual bool OnProcessKeyInput(UCHAR* pKeyBuffer);
 
-	void SetGaugeManager(CHPGaugeManager *pManger) { m_pGaugeManger = pManger; }
+	void SetGaugeManager(CUIObjectManager *pManger) { m_pGaugeManger = pManger; }
 
 protected: // 내부 함수
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
@@ -63,7 +63,7 @@ protected: // 변수
 #endif
 	UINT8 *m_pMappedBoundingBoxes{ NULL };
 	
-	CHPGaugeManager *m_pGaugeManger{ NULL };
+	CUIObjectManager *m_pGaugeManger{ NULL };
 	CHeightMapTerrain * m_pTerrain{ NULL };
 
 	CCreateMgr* m_pCreateMgr{ NULL };

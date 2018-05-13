@@ -1,15 +1,15 @@
 #include "stdafx.h"
 #include "HPGaugeManager.h"
 
-CHPGaugeManager::CHPGaugeManager()
+CUIObjectManager::CUIObjectManager()
 {
 }
 
-CHPGaugeManager::~CHPGaugeManager()
+CUIObjectManager::~CUIObjectManager()
 {
 }
 
-void CHPGaugeManager::AddMinionObject(CCollisionObject * pNewMinion)
+void CUIObjectManager::AddMinionObject(CCollisionObject * pNewMinion)
 {
 	if (pNewMinion) {
 		m_MinionObjectList.push_back(pNewMinion);

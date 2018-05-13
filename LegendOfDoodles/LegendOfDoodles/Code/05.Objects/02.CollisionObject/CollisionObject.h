@@ -16,6 +16,10 @@ public: // 공개 함수
 	void SetStatic(StaticType type) { m_StaticType = type; }
 	StaticType GetStaticType() { return m_StaticType; }
 
+	virtual PlayerInfo* GetPlayerStatus() { return NULL; }
+	virtual CommonInfo* GetCommonStatus() { return NULL; }
+	virtual StaticInfo* GetNexusAndTowerStatus() { return NULL; }
+
 protected: // 내부 함수
 
 protected: // 변수

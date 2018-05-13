@@ -326,6 +326,8 @@ void CNexusTowerShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
 			else {
 				pBuild->SetTeam(TeamType::Red);
 			}
+			if (i < 2) pBuild->SetType(ObjectType::Nexus);
+			else pBuild->SetType(ObjectType::FirstTower);
 
 			pBuild->Rotate(0, 180, 0);
 			pBuild->Rotate(-rot.x, rot.y, -rot.z);

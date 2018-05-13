@@ -3,11 +3,11 @@
 
 typedef std::vector<CCollisionObject*> CollisionObjectList;
 
-class CHPGaugeManager
+class CUIObjectManager
 {
 public:
-	CHPGaugeManager();
-	~CHPGaugeManager();
+	CUIObjectManager();
+	~CUIObjectManager();
 
 	void AddMinionObject(CCollisionObject *pNewMinion);
 	int GetCount() { return m_naddCount; };
