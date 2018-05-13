@@ -167,6 +167,49 @@ float4 PSTexturedUI(VS_UI_OUTPUT input) : SV_TARGET
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
+// Gauge Object 
+cbuffer cbGaugeObjectInfo : register(b7)
+{
+	matrix		gmtxGaugeObject : packoffset(c0);
+	float		CurrentHP : packoffset(c4);
+};
+
+struct VS_GAUGE_INPUT
+{
+	float3 position : POSITION;
+	float2 uv : TEXCOORD;
+};
+
+struct VS_GAUGE_OUTPUT
+{
+	float4 position : SV_POSITION;
+	float2 uv : TEXCOORD;
+};
+
+VS_GAUGE_OUTPUT VSTexturedGauge(VS_GAUGE_INPUT input)
+{
+	VS_GAUGE_OUTPUT output;
+
+	output.position = mul(mul(mul(float4(input.position, 1.0f), gmtxGaugeObject), gmtxView), gmtxProjection);
+	output.uv = input.uv;
+
+	return(output);
+}
+
+float4 PSTexturedGauge(VS_GAUGE_OUTPUT input) : SV_TARGET
+{
+	float4 cColor;
+if (input.uv.x <= CurrentHP) {
+	cColor = gtxtTexture.Sample(wrapSampler, input.uv);
+}
+else
+discard;
+
+return (cColor);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
 //#define _WITH_VERTEX_LIGHTING
 
 struct VS_LIGHTING_INPUT

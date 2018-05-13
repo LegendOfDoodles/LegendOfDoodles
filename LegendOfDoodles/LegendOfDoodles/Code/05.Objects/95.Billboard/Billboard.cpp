@@ -5,17 +5,13 @@
 /// 목적: UI 이용을 위한 Bilboard 클래스 제작
 /// 최종 수정자:  김나단
 /// 수정자 목록:  이용선, 김나단
-/// 최종 수정 날짜: 2018-05-11
+/// 최종 수정 날짜: 2018-05-14
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
 CBillboardObject::CBillboardObject(CCreateMgr *pCreateMgr) : CBaseObject(pCreateMgr)
 {
-	//CTexturedRectMesh *pRectMesh = new CTexturedRectMesh(pCreateMgr, 50.f, 50.0f, 0.f);
-	//SetMesh(0, pRectMesh);
-
-
 	CreateShaderVariables(pCreateMgr);
 }
 
@@ -52,7 +48,7 @@ void CBillboardObject::SetLookAt()
 // 생성자, 소멸자
 CUIObject::CUIObject(CCreateMgr * pCreateMgr) : CBillboardObject(pCreateMgr)
 {
-	m_xmf3Position = XMFLOAT3(0,0,0);
+	m_xmf3Position = XMFLOAT3(0, 0, 0);
 
 	CreateShaderVariables(pCreateMgr);
 }
@@ -82,7 +78,7 @@ CUIObject::CUIObject(CCreateMgr * pCreateMgr, UIType type) :CBillboardObject(pCr
 	default:
 		break;
 	}
-	
+
 	m_type = type;
 
 	CreateShaderVariables(pCreateMgr);
@@ -97,7 +93,7 @@ CUIObject::~CUIObject()
 void CUIObject::Animate(float fTimeElapsed)
 {
 	CBillboardObject::Animate(fTimeElapsed);
-	
+
 	XMFLOAT3 newPos{ 0, 0, 0 };
 
 	switch (m_type)
@@ -122,10 +118,9 @@ void CUIObject::Animate(float fTimeElapsed)
 		break;
 	}
 
-
-	m_xmf4x4World._41 = newPos.x; 
-	m_xmf4x4World._42 = newPos.y; 
-	m_xmf4x4World._43 = newPos.z; 
+	m_xmf4x4World._41 = newPos.x;
+	m_xmf4x4World._42 = newPos.y;
+	m_xmf4x4World._43 = newPos.z;
 }
 
 void CUIObject::Render(CCamera *pCamera, UINT istanceCnt)
@@ -161,51 +156,144 @@ void CUIObject::Render(CCamera *pCamera, UINT istanceCnt)
 CHPGaugeObjects::CHPGaugeObjects(CCreateMgr * pCreateMgr)
 	: CBillboardObject(pCreateMgr)
 {
-	
+
 
 	CreateShaderVariables(pCreateMgr);
 }
 
-CHPGaugeObjects::CHPGaugeObjects(CCreateMgr * pCreateMgr, GaugeUiType type)
+CHPGaugeObjects::CHPGaugeObjects(CCreateMgr * pCreateMgr, GagueUIType type)
 	: CBillboardObject(pCreateMgr)
 {
+	CTexturedRectMesh * pRectMesh = NULL;
+
 	// HP게이지 Mesh
-	CTexturedRectMesh *pRectMesh = new CTexturedRectMesh(pCreateMgr, 40.f, 5.0f, 0.f);
-	SetMesh(0, pRectMesh);
+	switch (type)
+	{
+	case PlayerGauge:
+	case MinionGauge:
+		pRectMesh = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 40.f, FRAME_BUFFER_HEIGHT / 144.f, 0.f);
+		SetMesh(0, pRectMesh);
+		break;
+	case NexusAndTower:
+		pRectMesh = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 20.6f, FRAME_BUFFER_HEIGHT / 144.f, 0.f);
+		SetMesh(0, pRectMesh);
+		break;
+	default:
+		break;
+	}
 
 	m_Type = type;
 }
 
 CHPGaugeObjects::~CHPGaugeObjects()
 {
+
 }
 
 void CHPGaugeObjects::Animate(float fTimeElapsed)
 {
 	CBillboardObject::Animate(fTimeElapsed);
 
-	if (m_Type == GaugeUiType::PlayerGauge)
+	if (m_Type == GagueUIType::PlayerGauge)
 	{
 		m_xmf4x4World._41 = m_pMasterObject->GetPosition().x;
 		m_xmf4x4World._42 = m_pMasterObject->GetPosition().y + 110.f;
 		m_xmf4x4World._43 = m_pMasterObject->GetPosition().z;
 	}
-	else if (m_Type == GaugeUiType::MinionGauge)
+	else if (m_Type == GagueUIType::MinionGauge)
 	{
 		m_xmf4x4World._41 = m_pMasterObject->GetPosition().x;
 		m_xmf4x4World._42 = m_pMasterObject->GetPosition().y + 80.f;
 		m_xmf4x4World._43 = m_pMasterObject->GetPosition().z;
 	}
-	
+	else if (m_Type == GagueUIType::NexusAndTower) {
+		if (m_MasterObjectType == ObjectType::Nexus) {
+			m_xmf4x4World._41 = m_pMasterObject->GetPosition().x;
+			m_xmf4x4World._42 = m_pMasterObject->GetPosition().y + 300.f;
+			m_xmf4x4World._43 = m_pMasterObject->GetPosition().z;
+		}
+		else {
+			m_xmf4x4World._41 = m_pMasterObject->GetPosition().x;
+			m_xmf4x4World._42 = m_pMasterObject->GetPosition().y + 200.f;
+			m_xmf4x4World._43 = m_pMasterObject->GetPosition().z;
+		}
+
+	}
+
+}
+
+void CHPGaugeObjects::Render(CCamera * pCamera, UINT istanceCnt)
+{
+	OnPrepareRender();
+
+	if (m_pMaterial)
+	{
+		m_pMaterial->Render(pCamera);
+		m_pMaterial->UpdateShaderVariables();
+	}
+
+	if (m_cbvGPUDescriptorHandle.ptr)
+		m_pCommandList->SetGraphicsRootDescriptorTable(12, m_cbvGPUDescriptorHandle);
+
+	if (m_pShader)
+	{
+		UpdateShaderVariables();
+		m_pShader->Render(pCamera);
+	}
+
+	if (m_ppMeshes)
+	{
+		for (int i = 0; i < m_nMeshes; i++)
+		{
+			if (m_ppMeshes[i]) m_ppMeshes[i]->Render(istanceCnt);
+		}
+	}
+}
+
+float CHPGaugeObjects::GetCurrentHP()
+{
+	/*if (m_Type == GagueUIType::PlayerGauge) {
+		return (m_pMasterObject->GetPlayerStatus()->HP / m_pMasterObject->GetPlayerStatus()->maxHP);
+	}
+	else if (m_Type == GagueUIType::MinionGauge)
+	{
+		return (m_pMasterObject->GetCommonStatus()->HP / m_pMasterObject->GetCommonStatus()->maxHP);
+	}
+	else if (m_Type == GagueUIType::NexusAndTower) {
+		return (m_pMasterObject->GetNexusAndTowerStatus()->HP / m_pMasterObject->GetNexusAndTowerStatus()->maxHP);
+	}*/
+
 }
 
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
+
 CMinimapIconObjects::CMinimapIconObjects(CCreateMgr * pCreateMgr)
 	: CUIObject(pCreateMgr)
 {
-	CTexturedRectMesh *pRectMesh = new CTexturedRectMesh(pCreateMgr, 0.4f, 0.4f, 0.f);
-	SetMesh(0, pRectMesh);
+}
+
+CMinimapIconObjects::CMinimapIconObjects(CCreateMgr * pCreateMgr, IconUIType type)
+	: CUIObject(pCreateMgr)
+{
+	CTexturedRectMesh *pRectMesh = NULL;
+
+	switch (type)
+	{
+	case PlayerIcon:
+		pRectMesh = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 3200.f, FRAME_BUFFER_HEIGHT / 1800.f, 0.f);
+		SetMesh(0, pRectMesh);
+		break;
+	case MinionIcon:
+		pRectMesh = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 12800.f, FRAME_BUFFER_HEIGHT / 7200.f, 0.f);
+		SetMesh(0, pRectMesh);
+		break;
+	case NexusAndTowerIcon:
+		pRectMesh = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 3200.f, FRAME_BUFFER_HEIGHT / 1800.f, 0.f);
+		SetMesh(0, pRectMesh);
+	default:
+		break;
+	}
 
 	m_MinimapPosition = XMFLOAT3(0, 0, 0);
 }
@@ -218,14 +306,14 @@ CMinimapIconObjects::~CMinimapIconObjects()
 void CMinimapIconObjects::Animate(float fTimeElapsed)
 {
 	CBillboardObject::Animate(fTimeElapsed);
-	
-	XMFLOAT3 newPos{ 0, 0, 0 };
 
 	WorldToMinimap();
 
+	XMFLOAT3 newPos{ 0, 0, 0 };
+
 	newPos = Vector3::Add(m_pCamera->GetPosition(), Vector3::ScalarProduct(m_pCamera->GetLookVector(), m_fDistance));
 	newPos = Vector3::Add(Vector3::Add(newPos, Vector3::ScalarProduct(m_pCamera->GetUpVector(), -(FRAME_BUFFER_HEIGHT / 80.f) + m_MinimapPosition.z)), Vector3::ScalarProduct(m_pCamera->GetRightVector(), (FRAME_BUFFER_WIDTH / 134.7f) + m_MinimapPosition.x));
-	
+
 	m_xmf4x4World._41 = newPos.x;
 	m_xmf4x4World._42 = newPos.y;
 	m_xmf4x4World._43 = newPos.z;
@@ -239,7 +327,7 @@ void CMinimapIconObjects::Render(CCamera *pCamera, UINT istanceCnt)
 void CMinimapIconObjects::WorldToMinimap()
 {
 	m_MinimapPosition = m_pMasterObject->GetPosition();
-	
+
 	m_MinimapPosition.x = (m_MinimapPosition.x / TERRAIN_SIZE_WIDTH) * (FRAME_BUFFER_WIDTH / 160.f);
 	m_MinimapPosition.z = (m_MinimapPosition.z / TERRAIN_SIZE_HEIGHT) * (FRAME_BUFFER_HEIGHT / 180.f);
 }

@@ -57,11 +57,12 @@ void CPlayerHPGaugeShader::UpdateShaderVariables()
 			XMMatrixTranspose(XMLoadFloat4x4(m_ppObjects[i]->GetWorldMatrix())));
 	}
 #else
-	static UINT elementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
+	static UINT elementBytes = ((sizeof(CB_GAUGE_INFO) + 255) & ~255);
 
 	for (int i = 0; i < m_nObjects; i++)
 	{
-		CB_GAMEOBJECT_INFO *pMappedObject = (CB_GAMEOBJECT_INFO *)(m_pMappedObjects + (i * elementBytes));
+		CB_GAUGE_INFO *pMappedObject = (CB_GAUGE_INFO *)(m_pMappedObjects + (i * elementBytes));
+		pMappedObject->m_fCurrentHP = ((CHPGaugeObjects*)m_ppObjects[i])->GetCurrentHP();
 		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
 			XMMatrixTranspose(XMLoadFloat4x4(m_ppObjects[i]->GetWorldMatrix())));
 	}
@@ -169,26 +170,18 @@ D3D12_BLEND_DESC CPlayerHPGaugeShader::CreateBlendState()
 
 D3D12_SHADER_BYTECODE CPlayerHPGaugeShader::CreateVertexShader(ID3DBlob ** ppShaderBlob)
 {
-#if USE_INSTANCING
 	return(CShader::CompileShaderFromFile(
 		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl", 
-		"VSTxtInstancing", 
+		"VSTexturedGauge", 
 		"vs_5_1", 
 		ppShaderBlob));
-#else
-	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl", 
-		"VSTextured", 
-		"vs_5_1", 
-		ppShaderBlob));
-#endif
 }
 
 D3D12_SHADER_BYTECODE CPlayerHPGaugeShader::CreatePixelShader(ID3DBlob ** ppShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
 		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
-		"PSTextured",
+		"PSTexturedGauge",
 		"ps_5_1",
 		ppShaderBlob));
 }
@@ -208,18 +201,7 @@ void CPlayerHPGaugeShader::CreateShaderVariables(CCreateMgr * pCreateMgr, int nB
 {
 	HRESULT hResult;
 
-#if USE_INSTANCING
-	m_pInstanceBuffer = pCreateMgr->CreateBufferResource(
-		NULL,
-		sizeof(CB_GAMEOBJECT_INFO) * nBuffers,
-		D3D12_HEAP_TYPE_UPLOAD,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		NULL);
-
-	hResult = m_pInstanceBuffer->Map(0, NULL, (void **)&m_pMappedObjects);
-	assert(SUCCEEDED(hResult) && "m_pInstanceBuffer->Map Failed");
-#else
-	UINT elementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
+	UINT elementBytes = ((sizeof(CB_GAUGE_INFO) + 255) & ~255);
 
 	m_pConstBuffer = pCreateMgr->CreateBufferResource(
 		NULL,
@@ -230,17 +212,16 @@ void CPlayerHPGaugeShader::CreateShaderVariables(CCreateMgr * pCreateMgr, int nB
 
 	hResult = m_pConstBuffer->Map(0, NULL, (void **)&m_pMappedObjects);
 	assert(SUCCEEDED(hResult) && "m_pConstBuffer->Map Failed");
-#endif
 }
 
 void CPlayerHPGaugeShader::BuildObjects(CCreateMgr * pCreateMgr, void * pContext)
 {
 	m_pCamera = (CCamera*)pContext;
 
-	m_nObjects = m_nPlayer;
+	m_nObjects = m_nPlayer + m_nNexusAndTower;
 	m_ppObjects = new CBaseObject*[m_nObjects];
 
-	UINT ncbElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
+	UINT ncbElementBytes = ((sizeof(CB_GAUGE_INFO) + 255) & ~255);
 
 	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, m_nObjects, 1);
 	CreateShaderVariables(pCreateMgr, m_nObjects);
@@ -249,40 +230,48 @@ void CPlayerHPGaugeShader::BuildObjects(CCreateMgr * pCreateMgr, void * pContext
 	UINT incrementSize{ pCreateMgr->GetCbvSrvDescriptorIncrementSize() };
 	CHPGaugeObjects *pGaugeObject = NULL;
 
+#if USE_BATCH_MATERIAL
+	m_nMaterials = 1;
+	m_ppMaterials = new CMaterial*[m_nMaterials];
+
+	m_ppMaterials[0] = Materials::CreateRedMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[0], &m_psrvGPUDescriptorStartHandle[0]);
+#endif
+
 	for (int i = 0; i < m_nObjects; ++i) {
-		pGaugeObject = new CHPGaugeObjects(pCreateMgr, GaugeUiType::PlayerGauge);
-		pGaugeObject->SetMaterial(Materials::CreateRedMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[0], &m_psrvGPUDescriptorStartHandle[0]));
-		pGaugeObject->SetCamera(m_pCamera);
+		if (i < m_nPlayer)
+		{
+			pGaugeObject = new CHPGaugeObjects(pCreateMgr, GagueUIType::PlayerGauge);
+			pGaugeObject->SetMaterial(Materials::CreateRedMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[0], &m_psrvGPUDescriptorStartHandle[0]));
+			pGaugeObject->SetCamera(m_pCamera);
 
-		pGaugeObject->SetObject(m_pPlayer[i]);
+			pGaugeObject->SetObject(m_pPlayer[i]);
+			pGaugeObject->GetmasterObjectType((ObjectType)m_pPlayer[i]->GetType());
 
-		XMFLOAT3 HPGaugePosition = m_pPlayer[i]->GetPosition();
-		
-		HPGaugePosition.y += 110.f;
+			XMFLOAT3 HPGaugePosition = m_pPlayer[i]->GetPosition();
+			HPGaugePosition.y += 110.f;
+			pGaugeObject->SetPosition(HPGaugePosition);
 
-		pGaugeObject->SetPosition(HPGaugePosition);
+			pGaugeObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * i));
+		}
+		else
+		{
+			pGaugeObject = new CHPGaugeObjects(pCreateMgr, GagueUIType::NexusAndTower);
+			pGaugeObject->SetMaterial(Materials::CreateRedMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[0], &m_psrvGPUDescriptorStartHandle[0]));
+			pGaugeObject->SetCamera(m_pCamera);
 
-		pGaugeObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * i));
+			pGaugeObject->SetObject(m_ppNexusAndTower[i - m_nPlayer]);
+
+			pGaugeObject->GetmasterObjectType((ObjectType)m_ppNexusAndTower[i - m_nPlayer]->GetType());
+
+			XMFLOAT3 HPGaugePosition = m_ppNexusAndTower[i - m_nPlayer]->GetPosition();
+			HPGaugePosition.y += 200.f;
+			pGaugeObject->SetPosition(HPGaugePosition);
+
+			pGaugeObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * i));
+		}
 
 		m_ppObjects[i] = pGaugeObject;
 	}
-}
-
-void CPlayerHPGaugeShader::ReleaseShaderVariables()
-{
-#if USE_INSTANCING
-	if (!m_pInstanceBuffer) return;
-
-	m_pInstanceBuffer->Unmap(0, NULL);
-	Safe_Release(m_pInstanceBuffer);
-#else
-	if (!m_pConstBuffer) return;
-
-	m_pConstBuffer->Unmap(0, NULL);
-	Safe_Release(m_pConstBuffer);
-#endif
-
-	CShader::ReleaseShaderVariables();
 }
 
 void CPlayerHPGaugeShader::ReleaseObjects()

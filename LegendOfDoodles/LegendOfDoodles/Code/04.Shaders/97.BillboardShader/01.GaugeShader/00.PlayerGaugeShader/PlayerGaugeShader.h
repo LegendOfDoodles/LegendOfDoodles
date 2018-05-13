@@ -1,7 +1,7 @@
 #pragma once
 #include "04.Shaders/00.BaseShader/Shader.h"
+#include "05.Objects/02.CollisionObject/CollisionObject.h"
 
-class CBillboardObject;
 class CMaterial;
 class CPlayer;
 
@@ -19,11 +19,14 @@ public: // 공개 함수
 	virtual void AnimateObjects(float timeElapsed);
 
 	virtual void Render(CCamera *pCamera);
-	
+
 	virtual void GetCamera(CCamera *pCamera);
 
-	void SetPlayer(CBaseObject **pPlayer) { m_pPlayer = (CPlayer**)pPlayer; };
-	void SetPlayerCnt(int cnt) { m_nPlayer = cnt; };
+	virtual void SetPlayer(CBaseObject **pPlayer) { m_pPlayer = (CPlayer**)pPlayer; };
+	virtual void SetPlayerCnt(int cnt) { m_nPlayer = cnt; };
+
+	void SetNexusAndTower(CBaseObject **ppObjects) { m_ppNexusAndTower = (CCollisionObject**)ppObjects; };
+	void SetNexusAndTowerCnt(int cnt) { m_nNexusAndTower = cnt; };
 
 	virtual bool OnProcessKeyInput(UCHAR* pKeyBuffer);
 	virtual bool OnProcessMouseInput(WPARAM pKeyBuffer);
@@ -40,11 +43,10 @@ protected: // 내부 함수
 
 	virtual void BuildObjects(CCreateMgr *pCreateMgr, void *pContext = NULL);
 
-	virtual void ReleaseShaderVariables();
 	virtual void ReleaseObjects();
 
 protected: // 변수
-	CBaseObject **m_ppObjects{ NULL };
+	CBaseObject * *m_ppObjects{ NULL };
 	int m_nObjects = 0;
 
 	CMaterial	**m_ppMaterials{ NULL };
@@ -54,6 +56,9 @@ protected: // 변수
 
 	CPlayer **m_pPlayer;
 	int m_nPlayer;
+
+	CCollisionObject **m_ppNexusAndTower{ NULL };
+	int m_nNexusAndTower = 0;
 
 	CCreateMgr* m_pCreateMgr{ NULL };
 #if USE_INSTANCING
