@@ -2,6 +2,7 @@
 #include "Network.h"
 #include "..\05.Objects\03.AnimatedObject\AnimatedObject.h"
 #include "..\05.Objects\08.Player\Player.h"
+#include "..\05.Objects\06.Minion\Minion.h"
 
 Network::Network()
 {
@@ -82,11 +83,13 @@ void Network::ProcessPacket(int myid, char *ptr)
 				m_ppPlayer[id]->CBaseObject::SetPosition(my_packet->x, my_packet->y);
 				dynamic_cast<CAnimatedObject*>(m_ppPlayer[id])->SetAnimation((AnimationsType)my_packet->state, (float)my_packet->frameTime);
 				dynamic_cast<CAnimatedObject*>(m_ppPlayer[id])->RegenerateWorldMatrixWithLook(my_packet->vLook);
+				dynamic_cast<CPlayer*>(m_ppPlayer[id])->SetMaxHP(my_packet->maxhp, my_packet->curhp);
 			}
 			else if (id < NPC_START) { 
 				m_ppPlayer[id]->CBaseObject::SetPosition(my_packet->x, my_packet->y);
 				dynamic_cast<CAnimatedObject*>(m_ppPlayer[id])->SetAnimation((AnimationsType)my_packet->state, (float)my_packet->frameTime);
 				dynamic_cast<CAnimatedObject*>(m_ppPlayer[id])->RegenerateWorldMatrixWithLook(my_packet->vLook);
+				dynamic_cast<CPlayer*>(m_ppPlayer[id])->SetMaxHP(my_packet->maxhp, my_packet->curhp);
 			}
 			break;
 		}
@@ -148,12 +151,15 @@ void Network::ProcessPacket(int myid, char *ptr)
 			if (my_packet->color == 1) {
 				m_ppBlueMinions[m_minon_index]->CBaseObject::SetPosition(my_packet->x, my_packet->y);
 				dynamic_cast<CAnimatedObject*>(m_ppBlueMinions[m_minon_index])->SetAnimation((AnimationsType)my_packet->state, (float)my_packet->frameTime);
-				dynamic_cast<CAnimatedObject*>(m_ppBlueMinions[m_minon_index++])->RegenerateWorldMatrixWithLook(my_packet->vLook);
+				dynamic_cast<CAnimatedObject*>(m_ppBlueMinions[m_minon_index])->RegenerateWorldMatrixWithLook(my_packet->vLook);
+				dynamic_cast<CMinion*>(m_ppBlueMinions[m_minon_index++])->SetMaxHP(my_packet->maxhp, my_packet->curhp);
+
 			}
 			else {
 				m_ppRedMinions[m_minon_index]->CBaseObject::SetPosition(my_packet->x, my_packet->y);
 				dynamic_cast<CAnimatedObject*>(m_ppRedMinions[m_minon_index])->SetAnimation((AnimationsType)my_packet->state, (float)my_packet->frameTime);
-				dynamic_cast<CAnimatedObject*>(m_ppRedMinions[m_minon_index++])->RegenerateWorldMatrixWithLook(my_packet->vLook);
+				dynamic_cast<CAnimatedObject*>(m_ppRedMinions[m_minon_index])->RegenerateWorldMatrixWithLook(my_packet->vLook);
+				dynamic_cast<CMinion*>(m_ppRedMinions[m_minon_index++])->SetMaxHP(my_packet->maxhp, my_packet->curhp);
 			}
 			break;
 		}

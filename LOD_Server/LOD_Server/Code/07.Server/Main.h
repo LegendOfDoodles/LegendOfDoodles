@@ -20,6 +20,7 @@
 #include "04.Shaders\05.PlayerShader\PlayerShader.h"
 #include "05.Objects\03.AnimatedObject\AnimatedObject.h"
 #include "05.Objects\08.Player\Player.h"
+#include "05.Objects\06.Minion\Minion.h"
 using namespace std;
 
 typedef std::list<CCollisionObject*> CollisionObjectList;
@@ -38,6 +39,8 @@ public:
 	bool m_isconnected;
 	int m_x;
 	int m_y;
+	int m_maxhp;
+	int m_curhp;
 	int m_anistate;
 	float m_frameTime;
 	XMFLOAT3 m_vLook;
@@ -60,7 +63,6 @@ public:
 		m_isconnected = false;
 		m_x = 500;
 		m_y = 2500;
-
 		ZeroMemory(&m_rxover.m_over, sizeof(WSAOVERLAPPED));
 		m_rxover.m_wsabuf.buf = m_rxover.m_iobuf;
 		m_rxover.m_wsabuf.len = sizeof(m_rxover.m_wsabuf.buf);
@@ -73,6 +75,8 @@ class Minion {
 public:
 	int m_x;
 	int m_y;
+	int m_maxhp;
+	int m_curhp;
 	int m_anistate;
 	float m_frameTime;
 	XMFLOAT3 m_vLook;
@@ -434,6 +438,8 @@ void timer_thread()
 			g_clients[i].m_anistate = g_ppPlayer[i]->GetAnimState();
 			g_clients[i].m_frameTime = g_ppPlayer[i]->GetFrameTime();
 			g_clients[i].m_vLook = g_ppPlayer[i]->GetLook();
+			g_clients[i].m_maxhp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->maxHP;
+			g_clients[i].m_curhp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->HP;
 		}
 
 		//Send Every User's Position Packet
@@ -443,6 +449,8 @@ void timer_thread()
 				p.Character_id = i;
 				p.size = sizeof(p);
 				p.type = SC_POS;
+				p.maxhp = g_clients[i].m_maxhp;
+				p.curhp = g_clients[i].m_curhp;
 				p.x = g_clients[i].m_x;
 				p.y = g_clients[i].m_y;
 				p.state = g_clients[i].m_anistate;
@@ -463,6 +471,9 @@ void timer_thread()
 			g_blueminions[idx].m_anistate = (*iter)->GetAnimState();
 			g_blueminions[idx].m_frameTime = (*iter)->GetFrameTime();
 			g_blueminions[idx].m_vLook = (*iter)->GetLook();
+			g_blueminions[idx].m_maxhp = ((CMinion*)(*iter))->GetCommonStatus()->maxHP;
+			g_blueminions[idx].m_curhp = ((CMinion*)(*iter))->GetCommonStatus()->HP;
+
 		}
 
 		for (int i = 0; i < MAX_USER; ++i) {
@@ -483,6 +494,9 @@ void timer_thread()
 			p.size = sizeof(p);
 			p.x = g_blueminions[i].m_x;
 			p.y = g_blueminions[i].m_y;
+			p.maxhp = g_blueminions[i].m_maxhp;
+			p.curhp = g_blueminions[i].m_curhp;
+
 			p.state = g_blueminions[i].m_anistate;
 			p.type = SC_POS_MINION;
 			p.frameTime = g_blueminions[i].m_frameTime;
@@ -501,6 +515,8 @@ void timer_thread()
 			g_redminions[idx].m_anistate = (*iter)->GetAnimState();
 			g_redminions[idx].m_frameTime = (*iter)->GetFrameTime();
 			g_redminions[idx].m_vLook = (*iter)->GetLook();
+			g_redminions[idx].m_maxhp = ((CMinion*)(*iter))->GetCommonStatus()->maxHP;
+			g_redminions[idx].m_curhp = ((CMinion*)(*iter))->GetCommonStatus()->HP;
 		}
 
 		for (int i = 0; i < MAX_USER; ++i) {
@@ -521,6 +537,8 @@ void timer_thread()
 			p.size = sizeof(p);
 			p.x = g_redminions[i].m_x;
 			p.y = g_redminions[i].m_y;
+			p.maxhp = g_redminions[i].m_maxhp;
+			p.curhp = g_redminions[i].m_curhp;
 			p.type = SC_POS_MINION;
 			p.state = g_redminions[i].m_anistate;
 			p.frameTime = g_redminions[i].m_frameTime;

@@ -20,6 +20,9 @@ public:	// 외부 함수
 	//virtual void SetObjectType(ObjectType type) { m_StatusInfo.WeaponType = type; };
 	virtual void ReceiveDamage(float damage) { m_StatusInfo.HP -= damage * Compute_Defence(m_StatusInfo.Def); }
 
+	virtual PlayerInfo* GetPlayerStatus() { return &m_StatusInfo; }
+
+
 protected: // 내부 함수
 	virtual void AdjustAnimationIndex();
 	/*

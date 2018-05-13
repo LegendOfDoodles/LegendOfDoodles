@@ -14,6 +14,8 @@ public:	// 외부 함수
 	virtual void Animate(float timeElapsed);
 	virtual void Render(CCamera *pCamera, UINT instanceCnt = 1);
 
+	virtual void SetMaxHP(int maxHP, int HP) { m_StatusInfo.maxHP = maxHP; m_StatusInfo.HP = HP; }
+
 protected:	// 내부 함수
 	virtual void AdjustAnimationIndex();
 
@@ -31,6 +33,7 @@ protected:	// 변수
 	6. Loyde,   	7. CAM,     	  8. GOLEM,
 	9. FirstTower,  10. SecnondTower, 11. Nexus
 	*/
+	CommonInfo m_StatusInfo;
 };
 
 class CSwordMinion : public CMinion

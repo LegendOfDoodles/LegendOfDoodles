@@ -99,6 +99,8 @@ struct SC_Msg_Pos_Character : public Packet
 	BYTE Character_id;
 	short x;
 	short y;
+	short maxhp;
+	short curhp;
 	short state;
 	short frameTime;
 	XMFLOAT3 vLook;
@@ -126,6 +128,8 @@ struct SC_Msg_Pos_Minion : public Packet
 	BYTE color;
 	short x;
 	short y;
+	short maxhp;
+	short curhp;
 	short state;
 	short frameTime;
 	XMFLOAT3 vLook;

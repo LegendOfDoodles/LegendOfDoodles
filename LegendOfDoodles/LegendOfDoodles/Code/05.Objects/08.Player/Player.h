@@ -16,6 +16,8 @@ public:	// 외부 함수
 
 	//virtual void SetObjectType(ObjectType type) { m_StatusInfo.WeaponType = type; };
 
+	virtual void SetMaxHP(int maxHP, int HP) { m_StatusInfo.maxHP = maxHP; m_StatusInfo.HP = HP; }
+
 protected: // 내부 함수
 	virtual void AdjustAnimationIndex();
 	/*
@@ -24,5 +26,6 @@ protected: // 내부 함수
 	*/
 
 protected: // 변수
+	PlayerInfo m_StatusInfo;
 };
 

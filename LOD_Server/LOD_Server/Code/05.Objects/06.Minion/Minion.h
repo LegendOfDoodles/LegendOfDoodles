@@ -29,6 +29,8 @@ public:	// 외부 함수
 
 	}
 
+	virtual CommonInfo* GetCommonStatus() { return &m_StatusInfo; }
+
 protected:	// 내부 함수
 	virtual void AdjustAnimationIndex();
 
