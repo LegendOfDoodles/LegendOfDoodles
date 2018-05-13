@@ -14,22 +14,6 @@ public:	// 외부 함수
 	virtual void Animate(float timeElapsed);
 	virtual void Render(CCamera *pCamera, UINT instanceCnt = 1);
 
-	virtual 	void SetState(StatesType newState);
-
-	virtual void PlayIdle(float timeElapsed);
-	virtual void PlayWalk(float timeElapsed);
-	virtual void PlayChase(float timeElapsed, CWayFinder* pWayFinder);
-	virtual void PlayAttack(float timeElapsed);
-
-	virtual void ReceiveDamage(float damage)
-	{
-		m_StatusInfo.HP -= damage * Compute_Defence(m_StatusInfo.Def);
-		if (m_StatusInfo.HP <= 0&&m_curState!=States::Die) {
-			SetState(States::Die);
-		}
-
-	}
-
 protected:	// 내부 함수
 	virtual void AdjustAnimationIndex();
 
@@ -47,8 +31,6 @@ protected:	// 변수
 	6. Loyde,   	7. CAM,     	  8. GOLEM,
 	9. FirstTower,  10. SecnondTower, 11. Nexus
 	*/
-
-	CommonInfo m_StatusInfo;
 };
 
 class CSwordMinion : public CMinion
@@ -58,7 +40,6 @@ public: // 생성자, 소멸자
 	virtual ~CSwordMinion();
 
 public:	// 외부 함수
-	virtual void Animate(float timeElapsed);
 	/*
 	0. Idle		1.Attack	2.Attack2	3.StartWalk		4.Walking	5.Die
 	*/
@@ -72,7 +53,6 @@ public: // 생성자, 소멸자
 	virtual ~CMagicMinion();
 
 public:	// 외부 함수
-	virtual void Animate(float timeElapsed);
 	/*
 	0. Idle		1.Attack	2.Attack2	3.StartWalk		4.Walking	5.Die
 	*/
@@ -86,7 +66,6 @@ public: // 생성자, 소멸자
 	virtual ~CBowMinion();
 
 public:	// 외부 함수
-	virtual void Animate(float timeElapsed);
 
 protected:	// 내부 함수
 	virtual void AdjustAnimationIndex();

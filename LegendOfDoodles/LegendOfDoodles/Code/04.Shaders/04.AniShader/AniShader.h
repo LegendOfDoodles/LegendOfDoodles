@@ -1,16 +1,12 @@
 #pragma once
-#include "00.Global/01.Utility/04.WayFinder/01.Edge/Edge.h"
 #include "02.Framework/01.CreateMgr/CreateMgr.h"
 #include "05.Objects/02.CollisionObject/CollisionObject.h"
 
-typedef std::list<CPathEdge> Path;
 typedef std::list<CCollisionObject*> CollisionObjectList;
 
 class CMaterial;
 class CHeightMapTerrain;
-class CCollisionManager;
 class CHPGaugeManager;
-class CFSMMgr;
 
 class CAniShader : public CShader
 {
@@ -37,9 +33,7 @@ public: // 공개 함수
 	virtual CBaseObject * * GetCollisionObjects() { return m_ppObjects; }
 	int GetObjectCount() {  return m_nObjects; }
 
-	void SetCollisionManager(CCollisionManager* pManger) { m_pColManager = pManger; }
 	void SetGaugeManger(CHPGaugeManager *pManger) { m_pGaugeManger = pManger; }
-	void SetFSMManager(CFSMMgr *pManger) { m_pFSMMgr = pManger; }
 
 protected: // 내부 함수
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
@@ -53,8 +47,6 @@ protected: // 내부 함수
 	virtual void BuildObjects(CCreateMgr *pCreateMgr, void *pContext = NULL);
 
 	virtual void ReleaseObjects();
-
-	void CreatePathes();
 
 	int GetPossibleIndex();
 	void SpawnMinion();
@@ -73,8 +65,6 @@ protected: // 변수
 
 	bool m_indexArr[MAX_MINION]{ false };
 
-	Path m_pathes[4];
-
 	CSkinnedMesh* m_pWeapons[3];
 	int m_nWeaponState{ 0 };
 
@@ -86,12 +76,10 @@ protected: // 변수
 #endif
 	UINT8 *m_pMappedBoundingBoxes{ NULL };
 	
-	CCollisionManager* m_pColManager{NULL};
 	CHPGaugeManager *m_pGaugeManger{ NULL };
 	CHeightMapTerrain * m_pTerrain{ NULL };
 
 	CCreateMgr* m_pCreateMgr{ NULL };
-	CFSMMgr * m_pFSMMgr{ NULL };
 
 	Network* m_pNetwork{ NULL };
 

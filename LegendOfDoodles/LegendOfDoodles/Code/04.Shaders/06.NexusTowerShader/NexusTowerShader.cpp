@@ -149,20 +149,7 @@ CBaseObject *CNexusTowerShader::PickObjectByRayIntersection(
 
 bool CNexusTowerShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 {
-	if (GetAsyncKeyState('U') & 0x0001)
-	{
-		((CCollisionObject*)m_ppObjects[0])->SetState(States::Die);
-
-	}
 	return true;
-}
-
-void CNexusTowerShader::SetColManagerToObject(CCollisionManager * manager)
-{
-	for (int i = 0; i < m_nObjects; ++i) {
-
-		dynamic_cast<CCollisionObject*>(m_ppObjects[i])->SetCollisionManager(manager);
-	}
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -339,19 +326,10 @@ void CNexusTowerShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
 			else {
 				pBuild->SetTeam(TeamType::Red);
 			}
-			if (i < 2) {
-				pBuild->SetCollisionSize(CONVERT_PaperUnit_to_InG(40));
-			pBuild->type = ObjectType::Nexus;
-			}
-			else {
-				pBuild->SetCollisionSize(CONVERT_PaperUnit_to_InG(8));
-				pBuild->type = ObjectType::FirstTower;
 
-			}
 			pBuild->Rotate(0, 180, 0);
 			pBuild->Rotate(-rot.x, rot.y, -rot.z);
 			pBuild->SetMesh(0, pMeshes[i]);
-			pBuild->ResetCollisionLevel();
 			pBuild->SetStatic(StaticType::Static);
 
 			pBuild->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * cnt));

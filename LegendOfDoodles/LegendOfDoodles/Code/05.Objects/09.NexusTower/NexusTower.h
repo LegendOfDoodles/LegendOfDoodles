@@ -10,22 +10,8 @@ public:
 	CNexusTower(CCreateMgr *pCreateMgr, int nMeshes = 1);
 	virtual ~CNexusTower();
 
-	ObjectType type;
 public:	// 외부 함수
 	virtual void Animate(float timeElapsed);
-
-
-	virtual void SetCollisionManager(CCollisionManager* manager) { m_pColManager = manager; }
-
-	virtual void ReceiveDamage(float damage) { 
-		m_StatusInfo.HP -= damage * Compute_Defence(m_StatusInfo.Def);
-		
-		if (m_StatusInfo.HP <= 0 && m_curState != States::Die) {
-			SetState(States::Die);
-			if(type== ObjectType::Nexus)
-				m_pColManager->GameOver(m_TeamType);
-		}
-	}
 
 protected: // 내부 함수
 	/*
@@ -34,8 +20,6 @@ protected: // 내부 함수
 
 protected: // 변수
 	float m_fEndTime{ 0 };
-
-	StaticInfo m_StatusInfo;
-	CCollisionManager * m_pColManager{ NULL };
+	ObjectType type;
 };
 

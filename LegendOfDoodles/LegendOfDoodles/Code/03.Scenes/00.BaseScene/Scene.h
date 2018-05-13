@@ -2,13 +2,10 @@
 #include "02.Framework/00.Frame/Framework.h"
 #include "04.Shaders/00.BaseShader/Shader.h"
 #include "05.Objects/01.Camera/00.BaseCamera/Camera.h"
-#include "05.Objects/03.AnimatedObject/AnimatedObject.h"
+#include "05.Objects/02.CollisionObject/CollisionObject.h"
 
 class CCreateMgr;
-class CWayFinder;
-class CCollisionManager;
 class CHPGaugeManager;
-class CFSMMgr;
 
 struct LIGHT
 {
@@ -73,8 +70,6 @@ protected: // 내부 함수
 
 	virtual void OnProcessKeyUp(WPARAM wParam, LPARAM lParam);
 
-	void CollisionTest();
-
 protected: // 변수
 	HWND m_hWnd{ NULL };
 	ID3D12GraphicsCommandList *m_pCommandList{ NULL };
@@ -89,10 +84,7 @@ protected: // 변수
 	ID3D12Resource	*m_pd3dcbLights = NULL;
 	LIGHTS *m_pcbMappedLights = NULL;
 
-	CBaseObject ** m_ppObjects{ NULL };
-	int m_nObjects{ 0 };
-
-	CAnimatedObject * m_pSelectedObject{ NULL };
+	CCollisionObject *m_pSelectedObject{ NULL };
 
 	bool m_bCurCamIsAOS{ true };
 	bool m_bCamChanged{ false };
@@ -100,17 +92,12 @@ protected: // 변수
 
 	XMFLOAT3 m_pickWorldPosition{ 0.f, 0.f, 0.f };
 
-	CWayFinder* m_pWayFinder{ NULL };
-
 	CCreateMgr* m_pCreateMgr{ NULL };
 
-	CCollisionManager *m_pCollisionManager{NULL};
 	CHPGaugeManager *m_pHPGaugeManager{NULL};
-
-	CFSMMgr * m_pFSMMgr{ NULL };
 
 	Network* m_pNetwork;
 	
-	int m_FrameCheck = 0;
+	int m_FrameCheck{ 0 };
 };
 

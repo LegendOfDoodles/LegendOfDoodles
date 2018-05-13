@@ -12,7 +12,6 @@
 // 생성자, 소멸자
 CCollisionObject::CCollisionObject(CCreateMgr * pCreateMgr, int nMeshes) : CBaseObject(pCreateMgr, nMeshes)
 {
-	ResetCollisionLevel();
 }
 
 CCollisionObject::~CCollisionObject()
@@ -21,16 +20,3 @@ CCollisionObject::~CCollisionObject()
 
 ////////////////////////////////////////////////////////////////////////
 // 공개 함수
-bool CCollisionObject::CheckEnemyState(CCollisionObject * other)
-{
-	if (!other) return false;
-	if (other->GetState() == States::Die) return false;
-	if (other->GetState() == States::Remove) return false;
-	return true;
-}
-
-bool CCollisionObject::Attackable(CCollisionObject * other)
-{
-	float dstSqr = Vector3::DistanceSquare(GetPosition(), other->GetPosition());
-	return (dstSqr < m_attackRange * m_attackRange);
-}
