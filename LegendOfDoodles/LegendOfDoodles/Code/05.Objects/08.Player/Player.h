@@ -17,7 +17,6 @@ public:	// 외부 함수
 	virtual void ActiveSkill(AnimationsType act);
 
 	virtual void SetState(StatesType newState);
-
 	//virtual void SetObjectType(ObjectType type) { m_StatusInfo.WeaponType = type; };
 	virtual void ReceiveDamage(float damage) { m_StatusInfo.HP -= damage * Compute_Defence(m_StatusInfo.Def); }
 

@@ -24,77 +24,8 @@ CPlayer::~CPlayer()
 // 공개 함수
 void CPlayer::Animate(float timeElapsed)
 {
-	switch (m_curState) {
-	case States::Idle:
-		if (m_nCurrAnimation != Animations::Idle) m_nCurrAnimation = Animations::Idle;
-		if (m_pathToGo) SetState(States::Walk);
-		break;
-	case States::Attack:
-		if (m_fFrameTime >= m_nAniLength[m_nAniIndex] - 1)
-		{
-			SetState(States::Idle);
-		}
-		else if (m_nCurrAnimation == Animations::SkillQ) {
-			if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f
-				&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f) {
-				m_pColManager->RequestCollide(CollisionType::SPHERE, this, CONVERT_PaperUnit_to_InG(8), CONVERT_PaperUnit_to_InG(8),100);
-			}
-		}
-		else if (m_nCurrAnimation == Animations::SkillE) {
-			if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f
-				&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f) {
-				m_pColManager->RequestCollide(CollisionType::SECTERFORM, this, CONVERT_PaperUnit_to_InG(24), 180,500);
-			}
-		}
-		else if (m_nCurrAnimation == Animations::SkillR) {
-			if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.666f
-				&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.666f) {
-				m_pColManager->RequestCollide(CollisionType::SPHERE, this, 0, CONVERT_PaperUnit_to_InG(12),500);
-			}
-		}
-		break;
+	
 
-	case States::Walk:
-		if (m_nCurrAnimation != Animations::StartWalk&&
-			m_nCurrAnimation != Animations::Walking)
-			m_nCurrAnimation = Animations::StartWalk;
-
-		if (m_nCurrAnimation == Animations::StartWalk) {
-			if (m_fFrameTime >= m_nAniLength[m_nAniIndex] - 1)
-			{
-				m_nCurrAnimation = Animations::Walking;
-				m_fFrameTime = 0;
-			}
-		}
-		break;
-	case States::Die:
-		if (m_nCurrAnimation != Animations::Die) m_nCurrAnimation = Animations::Die;
-		if (GetAnimTimeRemainRatio() < 0.05)
-		{
-			m_curState = States::Remove;
-		}
-		break;
-	case States::Win:
-		if (m_nCurrAnimation != Animations::Win) m_nCurrAnimation = Animations::Win;
-		break;
-	case States::Defeat:
-		if (m_nCurrAnimation != Animations::Defeat&&
-			m_nCurrAnimation != Animations::Defeat2)
-			m_nCurrAnimation = Animations::Defeat;
-
-		if (m_nCurrAnimation == Animations::Defeat) {
-			if (m_fFrameTime >= m_nAniLength[m_nAniIndex] - 1)
-			{
-				m_nCurrAnimation = Animations::Defeat2;
-				m_fFrameTime = 0;
-			}
-		}
-		break;
-	default:
-		break;
-	}
-
-	m_fPreFrameTime = m_fFrameTime;
 	m_fFrameTime += 30 * timeElapsed;
 
 	AdjustAnimationIndex();
@@ -104,7 +35,6 @@ void CPlayer::Animate(float timeElapsed)
 			m_fFrameTime -= m_nAniLength[m_nAniIndex];
 	}
 
-	if (MoveToDestination(timeElapsed) == States::Done) SetState(States::Idle);
 
 	CAnimatedObject::Animate(timeElapsed);
 }

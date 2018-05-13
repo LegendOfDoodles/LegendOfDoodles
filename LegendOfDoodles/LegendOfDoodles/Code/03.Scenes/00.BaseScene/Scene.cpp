@@ -87,20 +87,6 @@ void CScene::ProcessInput()
 
 void CScene::AnimateObjects(float timeElapsed)
 {
-	m_FrameCheck += 1.0f / timeElapsed;
-	if (m_pSelectedObject) {
-		if (m_FrameCheck % 20 == 0) {
-			//printf("now time is = %d\n", m_FrameCheck);
-			CS_MsgChMove p;
-			p.Character_id = m_pNetwork->m_myid;
-			p.size = sizeof(p);
-			p.type = CS_MOVE_PLAYER;
-			p.x = m_pSelectedObject->GetPosition().x;
-			p.y = m_pSelectedObject->GetPosition().z;
-
-			m_pNetwork->SendPacket(m_pNetwork->m_myid, &p);
-		}
-	}
 	m_pCamera->Update(timeElapsed);
 
 	UpdateShaderVariables();
@@ -433,25 +419,32 @@ void CScene::GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, XMFLOAT4X4&	 xm
 
 	m_pickWorldPosition = Vector3::Add(camPosition, Vector3::ScalarProduct(layDirection, yDiff, false));
 
-	if (m_pSelectedObject)
-	{
-		m_pSelectedObject->LookAt(m_pickWorldPosition);
-		m_pSelectedObject->SetPathToGo(m_pWayFinder->GetPathToPosition(
-			XMFLOAT2(m_pSelectedObject->GetPosition().x, m_pSelectedObject->GetPosition().z),
-			XMFLOAT2(m_pickWorldPosition.x, m_pickWorldPosition.z),
-			m_pSelectedObject->GetCollisionSize()));
-		my_packet.Character_id = m_pNetwork->m_myid;
+	my_packet.Character_id = m_pNetwork->m_myid;
+	my_packet.x = m_pickWorldPosition.x;
+	my_packet.y = m_pickWorldPosition.z;
+	my_packet.type = CS_MOVE_PLAYER;
+	my_packet.size = sizeof(my_packet);
+	m_pNetwork->SendPacket(m_pNetwork->m_myid, &my_packet);
 
-		my_packet.size = sizeof(my_packet);
-		my_packet.x = m_pickWorldPosition.x;
-		my_packet.y = m_pickWorldPosition.z;
-		m_pNetwork->m_send_wsabuf.len = sizeof(my_packet);
-		DWORD iobyte;
-		my_packet.type = CS_MOVE_PLAYER;
-		memcpy(m_pNetwork->m_send_buffer, &my_packet, sizeof(my_packet));
-		m_pNetwork->SendPacket(m_pNetwork->m_myid, &my_packet);
-		m_pNetwork->ReadPacket(m_pNetwork->m_mysocket, (CBaseObject**)m_pSelectedObject);
-	}
+	//if (m_pSelectedObject)
+	//{
+	//	m_pSelectedObject->LookAt(m_pickWorldPosition);
+	//	m_pSelectedObject->SetPathToGo(m_pWayFinder->GetPathToPosition(
+	//		XMFLOAT2(m_pSelectedObject->GetPosition().x, m_pSelectedObject->GetPosition().z),
+	//		XMFLOAT2(m_pickWorldPosition.x, m_pickWorldPosition.z),
+	//		m_pSelectedObject->GetCollisionSize()));
+	//	//my_packet.Character_id = m_pNetwork->m_myid;
+
+	//	//my_packet.size = sizeof(my_packet);
+	//	//my_packet.x = m_pickWorldPosition.x;
+	//	//my_packet.y = m_pickWorldPosition.z;
+	//	//m_pNetwork->m_send_wsabuf.len = sizeof(my_packet);
+	//	//DWORD iobyte;
+	//	//my_packet.type = CS_MOVE_PLAYER;
+	//	//memcpy(m_pNetwork->m_send_buffer, &my_packet, sizeof(my_packet));
+	//	//m_pNetwork->SendPacket(m_pNetwork->m_myid, &my_packet);
+	//	//m_pNetwork->ReadPacket(m_pNetwork->m_mysocket, (CBaseObject**)m_pSelectedObject);
+	//}
 }
 
 // Process Keyboard Input

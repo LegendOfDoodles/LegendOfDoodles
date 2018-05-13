@@ -84,9 +84,7 @@ void CPlayerShader::UpdateBoundingBoxShaderVariables()
 void CPlayerShader::AnimateObjects(float timeElapsed)
 {
 	m_FrameCheck += 1.0f / timeElapsed;
-	if (m_FrameCheck % 20 == 0) {
-		m_pNetwork->ReadPacket(m_pNetwork->m_mysocket, m_ppObjects);
-	}
+	m_pNetwork->ReadPacket(m_pNetwork->m_mysocket, m_ppObjects);
 
 	for (int j = 0; j < m_nObjects; j++)
 	{

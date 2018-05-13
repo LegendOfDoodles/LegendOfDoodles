@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Network.h"
-
+#include "..\05.Objects\03.AnimatedObject\AnimatedObject.h"
 
 Network::Network()
 {
@@ -54,12 +54,10 @@ void Network::ProcessPacket(int myid, char *ptr, CBaseObject** object)
 			}
 			if (id == m_myid) {
 				//자기 아이디 처리
-				printf("Recived Packet ID: %d X:%d Y:%d\n\n", my_packet->Character_id, my_packet->x, my_packet->y);
 				object[id]->CBaseObject::SetPosition(my_packet->x, my_packet->y);
 			}
 			else if (id < NPC_START) { //다른플레이어에게 알려줄때 쓰는거
 				//딴 아이디 처리
-				printf("Recived Packet ID: %d X:%d Y:%d\n\n", my_packet->Character_id, my_packet->x, my_packet->y);
 				object[id]->CBaseObject::SetPosition(my_packet->x, my_packet->y);
 			}
 			//else { //미니언, 몬스터 관리할때 쓰는거
@@ -67,6 +65,26 @@ void Network::ProcessPacket(int myid, char *ptr, CBaseObject** object)
 			//npc[id - NPC_START].y = my_packet->y;
 			//npc[id - NPC_START].attr |= BOB_ATTR_VISIBLE;
 			//}
+			break;
+		}
+
+		case SC_POS:
+		{
+			SC_Msg_Pos_Character *my_packet = reinterpret_cast<SC_Msg_Pos_Character *>(ptr);
+			int id = my_packet->Character_id;
+			if (first_time) {
+				first_time = false;
+				m_myid = id;
+			}
+			if (id == m_myid) {
+				//자기 아이디 처리
+				object[id]->CBaseObject::SetPosition(my_packet->x, my_packet->y);
+				if(my_packet->state != 0)
+					dynamic_cast<CAnimatedObject*>(object[id])->SetAnimation((AnimationsType)my_packet->state);
+			}
+			else if (id < NPC_START) { 
+				object[id]->CBaseObject::SetPosition(my_packet->x, my_packet->y);
+			}
 			break;
 		}
 		case SC_PUT_MINION:

@@ -1,5 +1,5 @@
 #pragma once
-
+#
 #define WIN32_LEAN_AND_MEAN  
 #define INITGUID
 #pragma comment(lib, "ws2_32.lib")
@@ -15,6 +15,11 @@
 #include <iostream>
 #include <unordered_set>
 #include <mutex>
+
+//클라쪽 헤더
+#include "03.Scenes\00.BaseScene\Scene.h"
+#include "04.Shaders\05.PlayerShader\PlayerShader.h"
+#include "05.Objects\03.AnimatedObject\AnimatedObject.h"
 using namespace std;
 
 HANDLE gh_iocp;
@@ -31,6 +36,7 @@ public:
 	bool m_isconnected;
 	int m_x;
 	int m_y;
+	int m_anistate;
 	EXOVER m_rxover;
 	int m_packet_size;  // 지금 조립하고 있는 패킷의 크기
 	int	m_prev_packet_size; // 지난번 recv에서 완성되지 않아서 저장해 놓은 패킷의 앞부분의 크기
@@ -71,6 +77,9 @@ public:
 
 array <Minion, NUM_OF_NPC> g_minions;
 array <Client, MAX_USER> g_clients;
+CScene* g_pScene{ NULL };
+CAnimatedObject** g_ppPlayer{ NULL };
+;
 int g_MinionCounts = 0;
 int g_ReuseMinion = -1;
 void error_display(const char *msg, int err_no)
@@ -107,20 +116,10 @@ bool IsNPC(int id)
 	return ((id >= NPC_START) && id < (NUM_OF_NPC));
 }
 
-void initialize()
+void initialize(CScene* pScene)
 {
-	g_clients[0].m_x = 500;
-	g_clients[0].m_y = 2500;
-
-	g_clients[1].m_x = 600;
-	g_clients[1].m_y = 2500;
-
-	g_clients[2].m_x = 9700;
-	g_clients[2].m_y = 2500;
-
-	g_clients[3].m_x = 9800;
-	g_clients[3].m_y = 2500;
-
+	g_pScene = pScene;
+	g_ppPlayer = g_pScene->GetPlayerObject();
 
 	gh_iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0); // 의미없는 파라메터, 마지막은 알아서 쓰레드를 만들어준다.
 	std::wcout.imbue(std::locale("korean"));
@@ -191,19 +190,18 @@ void ProcessPacket(int id, char *packet)
 	switch (MovePacket->type)
 	{
 		//이동하는 부분
-	case CS_UP: if (y > 0) y -= 10; break;
-	case CS_DOWN: if (y < MAP_HEIGHT - 1) y += 10; break;
-	case CS_LEFT: if (x > 0) x -= 10; break;
-	case CS_RIGHT: if (x < MAP_WIDTH - 1) x += 10; break;
 	case CS_MOVE_PLAYER:
 	{
-
-		g_clients[MovePacket->Character_id].m_x = MovePacket->x;
-		g_clients[MovePacket->Character_id].m_y = MovePacket->y;
-		x = MovePacket->x;
-		y = MovePacket->y;
-		cout << "Client[" << id << "] X is " << g_clients[MovePacket->Character_id].m_x << endl;
-		cout << "Client[" << id << "] Y is " << g_clients[MovePacket->Character_id].m_y << endl;
+		XMFLOAT3 pickposition{ (float)MovePacket->x, 0 ,(float)MovePacket->y };
+		g_pScene->GenerateLayEndWorldPosition(pickposition, MovePacket->Character_id);
+		
+		
+		//g_clients[MovePacket->Character_id].m_x = MovePacket->x;
+		//g_clients[MovePacket->Character_id].m_y = MovePacket->y;
+		//x = MovePacket->x;
+		//y = MovePacket->y;
+		//cout << "Client[" << id << "] X is " << g_clients[MovePacket->Character_id].m_x << endl;
+		//cout << "Client[" << id << "] Y is " << g_clients[MovePacket->Character_id].m_y << endl;
 		break;
 	}
 	/*case CS_COLLISION:
@@ -498,7 +496,6 @@ void accept_thread()	//새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 			ErrorDisplay("In Accept Thread:WSAAccept()");
 			continue;
 		}
-		cout << "New Client Connected!\n";
 		int id = -1;
 		for (int i = 0; i < MAX_USER; ++i)
 			if (false == g_clients[i].m_isconnected) {
@@ -516,8 +513,6 @@ void accept_thread()	//새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 		g_clients[id].m_prev_packet_size = 0;
 		g_clients[id].m_viewlist.clear();
 
-
-
 		CreateIoCompletionPort(reinterpret_cast<HANDLE>(cs), gh_iocp, id, 0);
 		g_clients[id].m_isconnected = true;
 		StartRecv(id);
@@ -528,35 +523,23 @@ void accept_thread()	//새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 		p.type = SC_PUT_PLAYER;
 		p.x = g_clients[id].m_x;
 		p.y = g_clients[id].m_y;
+		SendPacket(id, &p);
+		//for (int i = 0; i < MAX_USER; ++i)
+		//{
+		//	//연결된 애들한테 4개 플레이어 패킷 다 보냄
+		//	if (g_clients[i].m_isconnected) {
+		//		SendPacket(i, &p);
+		//	}
+		//}
 
+		//지금 연결된 애한테 4명 어디있는지 
 		for (int i = 0; i < MAX_USER; ++i)
 		{
-			if (g_clients[i].m_isconnected) {
-				//check for in range of seeing
-				if (false == CanSee(i, id)) continue;
-				g_clients[id].m_mvl.lock();
-				g_clients[id].m_viewlist.insert(id);
-				g_clients[id].m_mvl.unlock();
-				SendPacket(i, &p);
-			}
-
-		}
-
-		for (int i = 0; i < MAX_USER; ++i)
-		{
-			//if (!g_clients[i].m_isconnected)
-			//continue;
-			if (i == id)
-				continue;
-			//check for in range of seeing
-			//if (false == CanSee(i, id)) continue;
+			if (i == id) continue;
 			p.Character_id = i;
 			p.x = g_clients[i].m_x;
 			p.y = g_clients[i].m_y;
 
-			g_clients[id].m_mvl.lock();
-			g_clients[id].m_viewlist.insert(i);
-			g_clients[id].m_mvl.unlock();
 			SendPacket(id, &p);
 
 		}
@@ -565,26 +548,35 @@ void accept_thread()	//새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 
 void timer_thread()
 {
-	while (7)
+	while (1)
 	{
 		//wait for 0.3second
+		Sleep(1);
+		for (int i = 0; i < MAX_USER; ++i) {
+			g_clients[i].m_x = g_ppPlayer[i]->GetPosition().x;
+			g_clients[i].m_y = g_ppPlayer[i]->GetPosition().z;
+			g_clients[i].m_anistate = g_ppPlayer[i]->GetAnimState();
+			cout << g_ppPlayer[i]->GetAnimState() << endl;
+		}
+		
 		//Send Every User's Position Packet
+		for (int i = 0; i < MAX_USER; ++i) {
+			if (g_clients[i].m_isconnected == true) {
+				SC_Msg_Pos_Character p;
+				p.Character_id = i;
+				p.size = sizeof(p);
+				p.type = SC_POS;
+				p.x = g_clients[i].m_x;
+				p.y = g_clients[i].m_y;
+				p.state = g_clients[i].m_anistate;
+				for (int j = 0; j < MAX_USER; ++j) {
+					if (g_clients[j].m_isconnected == true) {
+						SendPacket(j, &p);
+					}
+				}
+			}
+		}
+
 	}
 }
 
-int Servermain()
-{
-	vector <thread> w_threads;
-	initialize();
-	//CreateWorkerThreads();	// 쓰레드 조인까지 이 안에서 해주어야 한다. 전역변수 해서 관리를 해야 함. 전역변수 만드는 것은
-	// 좋은 방법이 아님.
-	for (int i = 0; i < 4; ++i) w_threads.push_back(thread{ worker_thread }); // 4인 이유는 쿼드코어 CPU 라서
-																			  //CreateAcceptThreads();
-	thread a_thread{ accept_thread };
-	thread time_thread{ timer_thread };
-	for (auto& th : w_threads) th.join();
-	a_thread.join();
-	time_thread.join();
-
-	return 0;
-}

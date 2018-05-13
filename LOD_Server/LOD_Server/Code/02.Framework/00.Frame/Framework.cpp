@@ -39,6 +39,11 @@ void CFramework::FrameAdvance(float timeElapsed)
 	m_pScene->AnimateObjects(timeElapsed);
 }
 
+CScene * CFramework::GetScene()
+{
+	return m_pScene;
+}
+
 LRESULT CALLBACK CFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMessageID,
 	WPARAM wParam, LPARAM lParam)
 {

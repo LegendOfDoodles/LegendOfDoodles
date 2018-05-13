@@ -68,25 +68,15 @@ void CAnimatedObject::LookAt(XMFLOAT3 objPosition)
 	float check{ Vector3::DotProduct(Vector3::CrossProduct(towardVector, playerLook), upVector) };
 
 	// 캐릭터가 선택된 오브젝트 보다 오른쪽 보고 있는 경우
-	if (check < 0.0f)
-		Rotate(0.0f, 0.0f, -angle);
-	else if (check > 0.0f)
-		Rotate(0.0f, 0.0f, angle);
+	if (check > 0.0f)
+		Rotate(0.0f, -angle, 0.0f);
+	else if (check < 0.0f)
+		Rotate(0.0f, angle, 0.0f);
 }
 
 void CAnimatedObject::LookAt(XMFLOAT2 objPosition)
 {
 	LookAt(XMFLOAT3(objPosition.x, 0, objPosition.y));
-}
-
-XMFLOAT3 CAnimatedObject::GetLook()
-{
-	return(Vector3::ScalarProduct(XMFLOAT3(m_xmf4x4World._21, m_xmf4x4World._22, m_xmf4x4World._23), -1));
-}
-
-XMFLOAT3 CAnimatedObject::GetUp()
-{
-	return(Vector3::Normalize(XMFLOAT3(m_xmf4x4World._31, m_xmf4x4World._32, m_xmf4x4World._33)));
 }
 
 void CAnimatedObject::SetPosition(float x, float z)

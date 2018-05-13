@@ -25,9 +25,6 @@ public: // 공개 함수
 	void LookAt(XMFLOAT3 objPosition);
 	void LookAt(XMFLOAT2 objPosition);
 
-	virtual XMFLOAT3 GetLook();
-	virtual XMFLOAT3 GetUp();
-
 	virtual void SetPosition(float x, float z);
 
 	void SetPathToGo(Path *path);
@@ -47,6 +44,8 @@ public: // 공개 함수
 
 	int GetAnimTimeRemain() { return m_nAniLength[m_nCurrAnimation] - m_fFrameTime; }
 	float GetAnimTimeRemainRatio() { return (m_nAniLength[m_nCurrAnimation] - m_fFrameTime) / (float)m_nAniLength[m_nCurrAnimation]; }
+
+	AnimationsType GetAnimState() { return m_nCurrAnimation; }
 
 protected: // 내부 함수
 	bool IsArrive(float dst);

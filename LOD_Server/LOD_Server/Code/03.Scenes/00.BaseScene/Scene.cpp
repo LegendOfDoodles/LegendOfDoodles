@@ -101,6 +101,11 @@ void CScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID,
 
 }
 
+CAnimatedObject ** CScene::GetPlayerObject()
+{
+	return (CAnimatedObject**)m_ppShaders[2]->GetCollisionObjects();
+}
+
 ////////////////////////////////////////////////////////////////////////
 // 내부 함수
 void CScene::BuildObjects()
@@ -163,26 +168,15 @@ void CScene::ReleaseObjects()
 }
 
 // 플레이어 이동 시 사용 -> 입력 값 월드 포지션 패킷으로 받아서 적용
-void CScene::GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, XMFLOAT4X4& xmf4x4View)
+void CScene::GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, int id)
 {
-	//CS_MsgChMove my_packet; //= reinterpret_cast<CS_MsgChMove *>(m_Network.m_send_buffer);
-	//int ret = 0;
-	//XMFLOAT4X4  inverseArr = Matrix4x4::Inverse(xmf4x4View);
-	//XMFLOAT3 camPosition = m_pCamera->GetPosition();
-	//XMFLOAT3 layWorldPosition = Vector3::TransformCoord(pickPosition, inverseArr);
-	//XMFLOAT3 layDirection = Vector3::Subtract(layWorldPosition, camPosition);
-	//float yDiff = abs(camPosition.y / layDirection.y);
-
-	//m_pickWorldPosition = Vector3::Add(camPosition, Vector3::ScalarProduct(layDirection, yDiff, false));
-
-	//if (m_pSelectedObject)
-	//{
-	//	m_pSelectedObject->LookAt(m_pickWorldPosition);
-	//	m_pSelectedObject->SetPathToGo(m_pWayFinder->GetPathToPosition(
-	//		XMFLOAT2(m_pSelectedObject->GetPosition().x, m_pSelectedObject->GetPosition().z),
-	//		XMFLOAT2(m_pickWorldPosition.x, m_pickWorldPosition.z),
-	//		m_pSelectedObject->GetCollisionSize()));
-	//}
+	XMFLOAT3 m_pickWorldPosition = pickPosition;
+	CAnimatedObject* pPlayer = ((CAnimatedObject * *)m_ppShaders[2]->GetCollisionObjects())[id];
+	pPlayer->LookAt(m_pickWorldPosition);
+	pPlayer->SetPathToGo(m_pWayFinder->GetPathToPosition(
+			XMFLOAT2(pPlayer->GetPosition().x, pPlayer->GetPosition().z),
+			XMFLOAT2(m_pickWorldPosition.x, m_pickWorldPosition.z),
+		pPlayer->GetCollisionSize()));
 }
 
 // Process Keyboard Input

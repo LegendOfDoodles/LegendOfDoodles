@@ -12,7 +12,7 @@ public: // 공개 함수
 	bool Initialize();
 	void Finalize();
 	void FrameAdvance(float timeElapsed);
-
+	CScene* GetScene();
 	// Message Process
 	LRESULT CALLBACK OnProcessingWindowMessage(HWND hWnd, UINT nMessageID,
 		WPARAM wParam, LPARAM lParam);

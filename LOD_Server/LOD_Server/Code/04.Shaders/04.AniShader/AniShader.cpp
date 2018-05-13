@@ -27,60 +27,60 @@ CAniShader::~CAniShader()
 // 공개 함수
 void CAniShader::AnimateObjects(float timeElapsed)
 {
-	if (m_pColManager->IsGameEnded()) return;
+	//if (m_pColManager->IsGameEnded()) return;
 
-	m_spawnTime += timeElapsed;
+	//m_spawnTime += timeElapsed;
 
-	if (m_spawnTime >= 0.0f && m_spawnTime <= 5.0f)
-	{
-		bool spawned{ false };
-		for (float time = m_spawnTime - m_preSpawnTime; time >= 0.25; time -= 0.25)
-		{
-			spawned = true;
-			SpawnMinion();
-		}
-		if(spawned) m_preSpawnTime = m_spawnTime;
-	}
+	//if (m_spawnTime >= 0.0f && m_spawnTime <= 5.0f)
+	//{
+	//	bool spawned{ false };
+	//	for (float time = m_spawnTime - m_preSpawnTime; time >= 0.25; time -= 0.25)
+	//	{
+	//		spawned = true;
+	//		SpawnMinion();
+	//	}
+	//	if(spawned) m_preSpawnTime = m_spawnTime;
+	//}
 
-	if (m_spawnTime >= 30.0f)
-	{
-		m_spawnTime -= 30.0f;
-		m_preSpawnTime = -0.25f;
-	}
+	//if (m_spawnTime >= 30.0f)
+	//{
+	//	m_spawnTime -= 30.0f;
+	//	m_preSpawnTime = -0.25f;
+	//}
 
-	for (auto& iter = m_blueObjects.begin(); iter != m_blueObjects.end();)
-	{
-		if ((*iter)->GetState() == States::Remove)
-		{
-			CCollisionObject* temp{ *iter };
-			ResetPossibleIndex(temp->GetIndex());
-			Safe_Delete(temp);
+	//for (auto& iter = m_blueObjects.begin(); iter != m_blueObjects.end();)
+	//{
+	//	if ((*iter)->GetState() == States::Remove)
+	//	{
+	//		CCollisionObject* temp{ *iter };
+	//		ResetPossibleIndex(temp->GetIndex());
+	//		Safe_Delete(temp);
 
-			iter = m_blueObjects.erase(iter);
-		}
-		else
-		{
-			m_pFSMMgr->Update(timeElapsed, (*iter));
-			++iter;
-		}
-	}
+	//		iter = m_blueObjects.erase(iter);
+	//	}
+	//	else
+	//	{
+	//		m_pFSMMgr->Update(timeElapsed, (*iter));
+	//		++iter;
+	//	}
+	//}
 
-	for (auto& iter = m_redObjects.begin(); iter != m_redObjects.end();)
-	{
-		if ((*iter)->GetState() == States::Remove)
-		{
-			CCollisionObject* temp{ *iter };
-			ResetPossibleIndex(temp->GetIndex());
-			Safe_Delete(temp);
+	//for (auto& iter = m_redObjects.begin(); iter != m_redObjects.end();)
+	//{
+	//	if ((*iter)->GetState() == States::Remove)
+	//	{
+	//		CCollisionObject* temp{ *iter };
+	//		ResetPossibleIndex(temp->GetIndex());
+	//		Safe_Delete(temp);
 
-			iter = m_redObjects.erase(iter);
-		}
-		else
-		{
-			m_pFSMMgr->Update(timeElapsed, (*iter));
-			++iter;
-		}
-	}
+	//		iter = m_redObjects.erase(iter);
+	//	}
+	//	else
+	//	{
+	//		m_pFSMMgr->Update(timeElapsed, (*iter));
+	//		++iter;
+	//	}
+	//}
 }
 
 bool CAniShader::OnProcessKeyInput(UCHAR* pKeyBuffer)

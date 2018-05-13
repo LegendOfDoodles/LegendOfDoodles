@@ -46,7 +46,10 @@ public: // 공개 함수
 	virtual bool Attackable(CCollisionObject* other);
 	virtual bool Chaseable(CCollisionObject* other);
 
-	void SetAnimation(AnimationsType newAnimation) { m_nCurrAnimation = newAnimation; }
+	virtual void SetAnimation(AnimationsType newAnimation) { 
+		m_nCurrAnimation = newAnimation; 
+		AdjustAnimationIndex();
+	}
 
 	void SetTerrain(CHeightMapTerrain *pTerrain) { m_pTerrain = pTerrain; }
 

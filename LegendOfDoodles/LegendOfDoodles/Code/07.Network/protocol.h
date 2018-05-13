@@ -93,6 +93,14 @@ struct CS_MsgDemandMakeRoom : public Packet
 	BYTE Character_id;
 
 };
+
+struct SC_Msg_Pos_Character : public Packet
+{
+	BYTE Character_id;
+	short x;
+	short y;
+	short state;
+};
 #pragma pack(pop)
 
 #define MAX_BUFF_SIZE 4000
@@ -119,6 +127,7 @@ struct CS_MsgDemandMakeRoom : public Packet
 #define SC_PUT_MONSTER			  107
 #define SC_PUT_MINION			  108
 #define SC_PERMIT_MAKE_ROOM		  109
+#define SC_POS					  110
 //Client->Server
 #define CS_ACTION				  201
 #define CS_MOVE_PLAYER			  202

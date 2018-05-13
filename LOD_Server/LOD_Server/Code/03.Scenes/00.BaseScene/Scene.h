@@ -26,12 +26,15 @@ public: // 공개 함수
 		WPARAM wParam, LPARAM lParam);
 	void OnProcessingKeyboardMessage(HWND hWnd, UINT messageID,
 		WPARAM wParam, LPARAM lParam);
+	CAnimatedObject** GetPlayerObject();
+
+	void GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, int id);
 
 protected: // 내부 함수
 	void BuildObjects();
 	void ReleaseObjects();
 
-	void GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, XMFLOAT4X4&	 xmf4x4View);
+	
 
 	virtual void OnProcessKeyUp(WPARAM wParam, LPARAM lParam);
 

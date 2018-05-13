@@ -89,7 +89,7 @@ void CAniShader::UpdateBoundingBoxShaderVariables()
 
 void CAniShader::AnimateObjects(float timeElapsed)
 {
-	m_spawnTime += timeElapsed;
+	/*m_spawnTime += timeElapsed;
 
 	if (m_spawnTime >= 0.0f && m_spawnTime <= 5.0f)
 	{
@@ -140,7 +140,7 @@ void CAniShader::AnimateObjects(float timeElapsed)
 			m_pFSMMgr->Update(timeElapsed, (*iter));
 			++iter;
 		}
-	}
+	}*/
 }
 
 void CAniShader::Render(CCamera *pCamera)
