@@ -33,6 +33,8 @@ public: // 공개 함수
 	int GetAnimTimeRemain() { return m_nAniLength[m_nCurrAnimation] - m_fFrameTime; }
 	float GetAnimTimeRemainRatio() { return (m_nAniLength[m_nCurrAnimation] - m_fFrameTime) / (float)m_nAniLength[m_nCurrAnimation]; }
 
+	bool IsDead() { return m_nCurrAnimation == Animations::Die; }
+
 protected: // 내부 함수
 	virtual void AdjustAnimationIndex() = 0;
 

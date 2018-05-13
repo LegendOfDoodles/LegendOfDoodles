@@ -52,16 +52,16 @@ void CMinimapIconShader::UpdateShaderVariables()
 			XMMatrixTranspose(XMLoadFloat4x4(m_ppObjects[i]->GetWorldMatrix())));
 	}
 
-	for (int i = m_nObjects; i < *m_nBlues + m_nObjects; ++i)
+	for (int i = m_nObjects; i < (*m_nBlues) + m_nObjects; ++i)
 	{
-		CB_GAUGE_INFO *pMappedObject = (CB_GAUGE_INFO *)(m_pMappedObjects + (i * elementBytes));
+		CB_GAMEOBJECT_INFO *pMappedObject = (CB_GAMEOBJECT_INFO *)(m_pMappedObjects + (i * elementBytes));
 		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
 			XMMatrixTranspose(XMLoadFloat4x4(m_MinionIconObjectList[i]->GetWorldMatrix())));
 	}
 
-	for (int i = MAX_MINION + m_nObjects; i < MAX_MINION + *m_nReds + m_nObjects; ++i)
+	for (int i = MAX_MINION + m_nObjects; i < MAX_MINION + (*m_nReds + m_nObjects); ++i)
 	{
-		CB_GAUGE_INFO *pMappedObject = (CB_GAUGE_INFO *)(m_pMappedObjects + (i * elementBytes));
+		CB_GAMEOBJECT_INFO *pMappedObject = (CB_GAMEOBJECT_INFO *)(m_pMappedObjects + (i * elementBytes));
 		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
 			XMMatrixTranspose(XMLoadFloat4x4(m_MinionIconObjectList[i]->GetWorldMatrix())));
 	}
@@ -329,7 +329,7 @@ void CMinimapIconShader::BuildObjects(CCreateMgr * pCreateMgr, void * pContext)
 			pIconObject = new CMinimapIconObjects(pCreateMgr, IconUIType::NexusAndTowerIcon);
 
 			pIconObject->SetCamera(m_pCamera);
-			pIconObject->SetDistance((FRAME_BUFFER_WIDTH / 128.f) - 0.04f);	// distance 9
+			pIconObject->SetDistance((FRAME_BUFFER_WIDTH / 128.f) - 0.02f);	// distance 9
 			pIconObject->SetObject(m_ppNexusAndTower[i - m_nPlayer]);
 			pIconObject->GetmasterObjectType((ObjectType)m_ppNexusAndTower[i - m_nPlayer]->GetType());
 
@@ -350,7 +350,7 @@ void CMinimapIconShader::SpawnMinionIcon()
 
 	int cnt{ 0 };
 
-	for (; cnt < m_pIconManger->GetCount(); ++cnt)
+	for (int i = m_nObjects; cnt < m_pIconManger->GetCount(); ++cnt, ++i)
 	{
 		CMinimapIconObjects *pMinionIcon{ NULL };
 		CCollisionObject *pMinionObjects{ NULL };
@@ -363,7 +363,7 @@ void CMinimapIconShader::SpawnMinionIcon()
 		pMinionIcon->SetCamera(m_pCamera);
 		pMinionIcon->WorldToMinimap();
 
-		pMinionIcon->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * cnt));
+		pMinionIcon->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * i));
 
 		m_MinionIconObjectList.emplace_back(pMinionIcon);
 	}

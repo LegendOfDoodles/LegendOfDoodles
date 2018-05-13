@@ -80,12 +80,14 @@ void CMinionHPGaugeShader::Render(CCamera *pCamera)
 
 	for (int i = 0; i < *m_nBlues; ++i)
 	{
-		m_HPGaugeObjectList[i]->Render(pCamera);
+		if(!static_cast<CAnimatedObject*>((*m_MinionObjectList)[i])->IsDead())
+			m_HPGaugeObjectList[i]->Render(pCamera);
 	}
 
 	for (int i = MAX_MINION; i < MAX_MINION + *m_nReds; ++i)
 	{
-		m_HPGaugeObjectList[i]->Render(pCamera);
+		if (!static_cast<CAnimatedObject*>((*m_MinionObjectList)[i])->IsDead())
+			m_HPGaugeObjectList[i]->Render(pCamera);
 	}
 }
 
