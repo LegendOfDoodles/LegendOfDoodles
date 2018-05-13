@@ -46,6 +46,8 @@ public: // 공개 함수
 	StaticType GetStaticType() { return m_StaticType; }
 
 	void GameOver() { m_GameOver = true; }
+	virtual AnimationsType GetAnimState() { return AnimationsType::Idle; }
+	virtual float GetFrameTime() { return 0.0f; }
 
 protected: // 내부 함수
 

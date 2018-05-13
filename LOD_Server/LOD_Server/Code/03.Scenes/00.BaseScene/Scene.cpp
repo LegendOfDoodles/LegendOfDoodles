@@ -106,6 +106,16 @@ CAnimatedObject ** CScene::GetPlayerObject()
 	return (CAnimatedObject**)m_ppShaders[2]->GetCollisionObjects();
 }
 
+CollisionObjectList * CScene::GetBlueObjects()
+{
+	return static_cast<CAniShader*>(m_ppShaders[1])->GetBlueObjects();
+}
+
+CollisionObjectList * CScene::GetRedObjects()
+{
+	return static_cast<CAniShader*>(m_ppShaders[1])->GetRedObjects();
+}
+
 ////////////////////////////////////////////////////////////////////////
 // 내부 함수
 void CScene::BuildObjects()

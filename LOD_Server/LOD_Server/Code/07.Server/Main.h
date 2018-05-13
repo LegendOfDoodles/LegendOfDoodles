@@ -7,7 +7,6 @@
 #include <windows.h> 
 #include <Winsock2.h>
 
-
 //참조 헤더
 #include <thread>
 #include <vector>
@@ -22,6 +21,8 @@
 #include "05.Objects\03.AnimatedObject\AnimatedObject.h"
 #include "05.Objects\08.Player\Player.h"
 using namespace std;
+
+typedef std::list<CCollisionObject*> CollisionObjectList;
 
 HANDLE gh_iocp;
 struct EXOVER {
@@ -70,18 +71,25 @@ public:
 
 class Minion {
 public:
-	int m_hp;
-	int m_id;
+	int m_x;
+	int m_y;
+	int m_anistate;
+	float m_frameTime;
+	XMFLOAT3 m_vLook;
+
+public:
 	Minion()
 	{
-		m_id = -1;
 	}
 };
 
-array <Minion, NUM_OF_NPC> g_minions;
+array <Minion, 300> g_blueminions;
+array <Minion, 300> g_redminions;
 array <Client, MAX_USER> g_clients;
 CScene* g_pScene{ NULL };
 CAnimatedObject** g_ppPlayer{ NULL };
+CollisionObjectList* g_pBlueMinions{ NULL };
+CollisionObjectList* g_pRedMinions{ NULL };
 
 int g_MinionCounts = 0;
 int g_ReuseMinion = -1;
@@ -123,6 +131,8 @@ void initialize(CScene* pScene)
 {
 	g_pScene = pScene;
 	g_ppPlayer = g_pScene->GetPlayerObject();
+	g_pBlueMinions = g_pScene->GetBlueObjects();
+	g_pRedMinions = g_pScene->GetRedObjects();
 
 	gh_iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0); // 의미없는 파라메터, 마지막은 알아서 쓰레드를 만들어준다.
 	std::wcout.imbue(std::locale("korean"));
@@ -226,43 +236,10 @@ void ProcessPacket(int id, char *packet)
 	//재사용을 할 필요가 있을까? --> 적용했는데 잘 안될경우 그냥 필요한 수만큼 선언.
 	case CS_PUT_MINION:
 	{
-		for (int i = 0; i < g_MinionCounts; ++i) {
-			if (g_minions[i].m_id == 0) {
-				g_ReuseMinion = i;
-			}
-		}
-		//빈곳이 있어서 재사용해야한다.
-		if (g_ReuseMinion != -1) {
-			g_minions[g_ReuseMinion].m_id = NPC_START + g_MinionCounts;
-			//Debugging
-			cout << "Minion ID: [" << g_minions[g_ReuseMinion].m_id << "] Created\n";
-			p.Monster_id = g_minions[g_ReuseMinion].m_id;
-			g_MinionCounts++;
-		}
-		//빈곳이 없다.
-		else {
-			g_minions[g_MinionCounts].m_id = NPC_START + g_MinionCounts;
-			//Debugging
-			cout << "Minion ID: [" << g_minions[g_MinionCounts].m_id << "] Created\n";
-			p.Monster_id = g_minions[g_MinionCounts].m_id;
-			g_MinionCounts++;
-		}
-		p.size = sizeof(p);
-		p.type = SC_PUT_MINION;
-		for (int i = 0; i < MAX_USER; ++i) {
-			if (g_clients[i].m_isconnected == true) SendPacket(i, &p);
-		}
 		break;
 	}
 	case CS_DELETE_MINION:
 	{
-		for (int i = 0; i < g_MinionCounts; ++i) {
-			if (DeleteMinionPacket->Monster_id == g_minions[i].m_id) {
-				g_minions[i].m_id = 0;
-				//Debugging
-				cout << "Minion ID: [" << g_minions[i].m_id << "] Deleted\n";
-			}
-		}
 		break;
 	}
 	case CS_DAMAND_MAKE_ROOM:
@@ -458,7 +435,7 @@ void timer_thread()
 			g_clients[i].m_frameTime = g_ppPlayer[i]->GetFrameTime();
 			g_clients[i].m_vLook = g_ppPlayer[i]->GetLook();
 		}
-		
+
 		//Send Every User's Position Packet
 		for (int i = 0; i < MAX_USER; ++i) {
 			if (g_clients[i].m_isconnected == true) {
@@ -479,6 +456,81 @@ void timer_thread()
 			}
 		}
 
+		int idx{ 0 };
+		for (auto iter = g_pBlueMinions->begin(); iter != g_pBlueMinions->end(); ++iter, ++idx) {
+			g_blueminions[idx].m_x = (*iter)->GetPosition().x;
+			g_blueminions[idx].m_y = (*iter)->GetPosition().z;
+			g_blueminions[idx].m_anistate = (*iter)->GetAnimState();
+			g_blueminions[idx].m_frameTime = (*iter)->GetFrameTime();
+			g_blueminions[idx].m_vLook = (*iter)->GetLook();
+		}
+
+		for (int i = 0; i < MAX_USER; ++i) {
+			SC_Msg_Minion_Count p;
+			p.color = 1;
+			p.count = idx;
+			p.size = sizeof(p);
+			p.type = SC_MINION_COUNT;
+			if (g_clients[i].m_isconnected == true) {
+				SendPacket(i, &p);
+			}
+		}
+
+		//Send Every User Blue Minion Packet
+		for (int i = 0; i < idx; ++i) {
+			SC_Msg_Pos_Minion p;
+			p.color = 1;
+			p.size = sizeof(p);
+			p.x = g_blueminions[i].m_x;
+			p.y = g_blueminions[i].m_y;
+			p.state = g_blueminions[i].m_anistate;
+			p.type = SC_POS_MINION;
+			p.frameTime = g_blueminions[i].m_frameTime;
+			p.vLook = g_blueminions[i].m_vLook;
+			for (int j = 0; j < MAX_USER; ++j) {
+				if (g_clients[j].m_isconnected == true) {
+					SendPacket(j, &p);
+				}
+			}
+		}
+
+		idx = 0;
+		for (auto iter = g_pRedMinions->begin(); iter != g_pRedMinions->end(); ++iter, ++idx) {
+			g_redminions[idx].m_x = (*iter)->GetPosition().x;
+			g_redminions[idx].m_y = (*iter)->GetPosition().z;
+			g_redminions[idx].m_anistate = (*iter)->GetAnimState();
+			g_redminions[idx].m_frameTime = (*iter)->GetFrameTime();
+			g_redminions[idx].m_vLook = (*iter)->GetLook();
+		}
+
+		for (int i = 0; i < MAX_USER; ++i) {
+			SC_Msg_Minion_Count p;
+			p.color = 0;
+			p.count = idx;
+			p.size = sizeof(p);
+			p.type = SC_MINION_COUNT;
+			if (g_clients[i].m_isconnected == true) {
+				SendPacket(i, &p);
+			}
+		}
+
+		//Send Every User Red Minion Packet
+		for (int i = 0; i < idx; ++i) {
+			SC_Msg_Pos_Minion p;
+			p.color = 0;
+			p.size = sizeof(p);
+			p.x = g_redminions[i].m_x;
+			p.y = g_redminions[i].m_y;
+			p.type = SC_POS_MINION;
+			p.state = g_redminions[i].m_anistate;
+			p.frameTime = g_redminions[i].m_frameTime;
+			p.vLook = g_redminions[i].m_vLook;
+			for (int j = 0; j < MAX_USER; ++j) {
+				if (g_clients[j].m_isconnected == true) {
+					SendPacket(j, &p);
+				}
+			}
+		}
 	}
 }
 

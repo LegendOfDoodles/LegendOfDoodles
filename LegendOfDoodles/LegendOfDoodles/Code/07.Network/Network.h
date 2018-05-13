@@ -26,18 +26,30 @@ public:
 	DWORD	m_in_packet_size = 0;
 	int		m_saved_packet_size = 0;
 	int		m_myid;
+	int		m_minon_index;
+
 
 	CBaseObject * m_pSelectedObject{ NULL };
 protected:
-	CBaseObject** m_ppObject{ NULL };
+	CBaseObject** m_ppPlayer{ NULL };
+	CBaseObject** m_ppBlueMinions{ NULL };
+	CBaseObject** m_ppRedMinions{ NULL };
+	int*		  m_pnBlue{ 0 };
+	int*		  m_pnRed{ 0 };
 
 public:
 	Network();
 	~Network();
 	void Initialize(HWND hWnd);
-	void ProcessPacket(int myid, char *ptr, CBaseObject** object);
+	void ProcessPacket(int myid, char *ptr);
 	void Finalize();
-	void ReadPacket(SOCKET sock, CBaseObject** object);
+	void ReadPacket(SOCKET sock);
 	void SendPacket(int id, void *ptr);
+
+	void SetPlayers(CBaseObject** player) { m_ppPlayer = player; }
+	void SetBlueMinions(CBaseObject** blue) { m_ppBlueMinions = blue; }
+	void SetRedMinions(CBaseObject** red) { m_ppRedMinions = red; }
+	void SetBlueCount(int* cnt) { m_pnBlue = cnt; }
+	void SetRedCount(int* cnt) { m_pnRed = cnt; }
 };
 

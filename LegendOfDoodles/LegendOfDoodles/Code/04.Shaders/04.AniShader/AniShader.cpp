@@ -50,6 +50,7 @@ void CAniShader::ReleaseUploadBuffers()
 		for (int i = 0; i<m_nMaterials; ++i)
 			m_ppMaterials[i]->ReleaseUploadBuffers();
 	}
+	m_buildFinished = true;
 }
 
 void CAniShader::UpdateShaderVariables()
@@ -102,7 +103,13 @@ void CAniShader::UpdateBoundingBoxShaderVariables()
 
 void CAniShader::AnimateObjects(float timeElapsed)
 {
-	//m_pNetwork->ReadPacket(m_pNetwork->m_mysocket, m_ppObjects);
+	if (m_buildFinished)
+	{
+		m_pNetwork->ReadPacket(m_pNetwork->m_mysocket);
+		if (m_nBlues > 0) m_pNetwork->ReadPacket(m_pNetwork->m_mysocket);
+		m_pNetwork->ReadPacket(m_pNetwork->m_mysocket);
+		if (m_nReds > 0) m_pNetwork->ReadPacket(m_pNetwork->m_mysocket);
+	}
 
 	for (int i = 0; i < m_nBlues; i++)
 	{
@@ -547,6 +554,11 @@ void CAniShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
 	m_pGaugeManger->SetRedMinionCnt(&m_nReds);
 
 	m_pGaugeManger->StartSpawn();
+
+	m_pNetwork->SetBlueMinions(m_ppBlues);
+	m_pNetwork->SetRedMinions(m_ppReds);
+	m_pNetwork->SetBlueCount(&m_nBlues);
+	m_pNetwork->SetRedCount(&m_nReds);
 
 	Safe_Delete(pSIdle);
 	Safe_Delete(pSAtk1);

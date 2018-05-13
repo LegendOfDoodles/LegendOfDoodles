@@ -70,6 +70,8 @@ protected: // º¯¼ö
 
 	Network* m_pNetwork{ NULL };
 
+	bool m_buildFinished{ false };
+
 	float m_spawnTime{ 10.1f };
 	float m_preSpawnTime{ 0.0f };
 };

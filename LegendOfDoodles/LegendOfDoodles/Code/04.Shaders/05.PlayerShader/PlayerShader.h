@@ -57,6 +57,8 @@ protected: // º¯¼ö
 	CSkinnedMesh** m_pBow{ NULL };
 	int m_nWeaponState{ 0 };
 
+	bool m_buildFinished{ false };
+
 #if USE_INSTANCING
 	CB_GAMEOBJECT_INFO *m_pMappedObjects{ NULL };
 	CMaterial						*m_pMaterial{ NULL };

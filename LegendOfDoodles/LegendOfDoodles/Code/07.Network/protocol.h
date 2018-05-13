@@ -114,6 +114,22 @@ struct SC_Msg_Permit_Use_Skill : public Packet
 	BYTE Character_id;
 	short state;
 };
+
+struct SC_Msg_Minion_Count : public Packet
+{
+	BYTE color;
+	short count;
+};
+
+struct SC_Msg_Pos_Minion : public Packet
+{
+	BYTE color;
+	short x;
+	short y;
+	short state;
+	short frameTime;
+	XMFLOAT3 vLook;
+};
 #pragma pack(pop)
 
 #define MAX_BUFF_SIZE 4000
@@ -142,6 +158,8 @@ struct SC_Msg_Permit_Use_Skill : public Packet
 #define SC_PERMIT_MAKE_ROOM		  109
 #define SC_POS					  110
 #define SC_PERMIT_USE_SKILL		  111
+#define SC_POS_MINION			  112
+#define SC_MINION_COUNT			  113
 //Client->Server
 #define CS_ACTION				  201
 #define CS_MOVE_PLAYER			  202

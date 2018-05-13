@@ -4,6 +4,8 @@
 #include "05.Objects/03.AnimatedObject/AnimatedObject.h"
 #include "05.Objects/04.Terrain/HeightMapTerrain.h"
 
+typedef std::list<CCollisionObject*> CollisionObjectList;
+
 class CWayFinder;
 class CCollisionManager;
 class CFSMMgr;
@@ -26,7 +28,10 @@ public: // 공개 함수
 		WPARAM wParam, LPARAM lParam);
 	void OnProcessingKeyboardMessage(HWND hWnd, UINT messageID,
 		WPARAM wParam, LPARAM lParam);
+
 	CAnimatedObject** GetPlayerObject();
+	CollisionObjectList* GetBlueObjects();
+	CollisionObjectList* GetRedObjects();
 
 	void GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, int id);
 

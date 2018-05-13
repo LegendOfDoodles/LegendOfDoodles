@@ -24,6 +24,9 @@ public: // 공개 함수
 	void SetCollisionManager(CCollisionManager* pManger) { m_pColManager = pManger; }
 	void SetFSMManager(CFSMMgr *pManger) { m_pFSMMgr = pManger; }
 
+	CollisionObjectList* GetBlueObjects() { return &m_blueObjects; }
+	CollisionObjectList* GetRedObjects() { return &m_redObjects; }
+
 protected: // 내부 함수
 	virtual void BuildObjects(void *pContext = NULL);
 

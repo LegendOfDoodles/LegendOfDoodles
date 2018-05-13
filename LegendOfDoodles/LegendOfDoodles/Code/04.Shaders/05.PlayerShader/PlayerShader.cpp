@@ -39,6 +39,7 @@ void CPlayerShader::ReleaseUploadBuffers()
 			m_ppMaterials[i]->ReleaseUploadBuffers();
 	}
 #endif
+	m_buildFinished = true;
 }
 
 void CPlayerShader::UpdateShaderVariables()
@@ -72,7 +73,7 @@ void CPlayerShader::UpdateBoundingBoxShaderVariables()
 
 void CPlayerShader::AnimateObjects(float timeElapsed)
 {
-	m_pNetwork->ReadPacket(m_pNetwork->m_mysocket, m_ppObjects);
+	if(m_buildFinished) m_pNetwork->ReadPacket(m_pNetwork->m_mysocket);
 
 	for (int j = 0; j < m_nObjects; j++)
 	{
@@ -441,6 +442,8 @@ void CPlayerShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
 #endif
 		}
 	}
+
+	m_pNetwork->SetPlayers(m_ppObjects);
 
 	Safe_Delete(pSIdle);
 	Safe_Delete(pSSlash);

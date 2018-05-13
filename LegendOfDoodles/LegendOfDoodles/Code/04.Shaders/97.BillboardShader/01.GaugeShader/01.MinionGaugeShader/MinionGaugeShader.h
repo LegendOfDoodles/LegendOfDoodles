@@ -44,11 +44,7 @@ protected: // 내부 함수
 
 	virtual void ReleaseObjects();
 
-	int GetPossibleIndex();
 	void SpawnGauge();
-
-	void SetPossibleIndex(int idx) { m_indexArr[idx] = true; }
-	void ResetPossibleIndex(int idx) { m_indexArr[idx] = false; }
 
 protected: // 변수
 	CHPGaugeManager * m_pGaugeManger{ NULL };
@@ -60,8 +56,6 @@ protected: // 변수
 
 	int *m_nBlues{ NULL };
 	int *m_nReds{ NULL };
-
-	bool m_indexArr[MAX_MINION]{ false };
 
 #if USE_INSTANCING
 	CB_GAMEOBJECT_INFO *m_pMappedObjects{ NULL };
