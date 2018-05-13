@@ -2,8 +2,6 @@
 #include "02.Framework/01.CreateMgr/CreateMgr.h"
 #include "05.Objects/02.CollisionObject/CollisionObject.h"
 
-typedef std::list<CCollisionObject*> CollisionObjectList;
-
 class CMaterial;
 class CHeightMapTerrain;
 class CHPGaugeManager;
@@ -30,10 +28,7 @@ public: // 공개 함수
 
 	virtual bool OnProcessKeyInput(UCHAR* pKeyBuffer);
 
-	virtual CBaseObject * * GetCollisionObjects() { return m_ppObjects; }
-	int GetObjectCount() {  return m_nObjects; }
-
-	void SetGaugeManger(CHPGaugeManager *pManger) { m_pGaugeManger = pManger; }
+	void SetGaugeManager(CHPGaugeManager *pManger) { m_pGaugeManger = pManger; }
 
 protected: // 내부 함수
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
@@ -48,22 +43,14 @@ protected: // 내부 함수
 
 	virtual void ReleaseObjects();
 
-	int GetPossibleIndex();
-	void SpawnMinion();
-
-	void SetPossibleIndex(int idx) { m_indexArr[idx] = true; }
-	void ResetPossibleIndex(int idx) { m_indexArr[idx] = false; }
-
 protected: // 변수
-	CBaseObject * *m_ppObjects{ NULL };
-	int m_nObjects{ 0 };
+	CBaseObject * *m_ppBlues{ NULL };
+	int m_nBlues{ 0 };
+
+	CBaseObject * *m_ppReds{ NULL };
+	int m_nReds{ 0 };
 
 	ObjectType m_kind{ ObjectType::SwordMinion };
-
-	CollisionObjectList m_blueObjects;
-	CollisionObjectList m_redObjects;
-
-	bool m_indexArr[MAX_MINION]{ false };
 
 	CSkinnedMesh* m_pWeapons[3];
 	int m_nWeaponState{ 0 };

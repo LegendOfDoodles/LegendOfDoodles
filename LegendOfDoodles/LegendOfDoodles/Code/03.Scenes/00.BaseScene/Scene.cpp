@@ -231,10 +231,11 @@ void CScene::BuildObjects(CCreateMgr *pCreateMgr)
 
 	m_pCamera->Initialize(pCreateMgr);
 
+	CTerrainShader* pTerrainShader = new CTerrainShader(pCreateMgr);
+	
 	m_nShaders = 11;
 	m_ppShaders = new CShader*[m_nShaders];
 	m_ppShaders[0] = new CSkyBoxShader(pCreateMgr);
-	CTerrainShader* pTerrainShader = new CTerrainShader(pCreateMgr);
 	m_ppShaders[1] = pTerrainShader;
 	m_ppShaders[2] = new CAniShader(pCreateMgr, m_pNetwork);
 	m_ppShaders[3] = new CArrowShader(pCreateMgr);
@@ -246,6 +247,9 @@ void CScene::BuildObjects(CCreateMgr *pCreateMgr)
 	m_ppShaders[9] = new CMinimapIconShader(pCreateMgr);
 	m_ppShaders[10] = new CNexusTowerShader(pCreateMgr);
 
+	m_pHPGaugeManager = new CHPGaugeManager();
+	static_cast<CAniShader*>(m_ppShaders[2])->SetGaugeManager(m_pHPGaugeManager);
+	static_cast<CMinionHPGaugeShader*>(m_ppShaders[8])->SetGaugeManager(m_pHPGaugeManager);
 
 	for (int i = 0; i < 2; ++i)
 	{
@@ -268,13 +272,6 @@ void CScene::BuildObjects(CCreateMgr *pCreateMgr)
 	m_ppShaders[8]->Initialize(pCreateMgr, m_pCamera);
 	m_ppShaders[9]->Initialize(pCreateMgr, m_pCamera);
 	m_ppShaders[10]->Initialize(pCreateMgr, m_pCamera);
-
-	m_pHPGaugeManager = new CHPGaugeManager();
-
-	CAniShader* pAniS = (CAniShader *)m_ppShaders[2];
-	pAniS->SetGaugeManger(m_pHPGaugeManager);
-
-	static_cast<CMinionHPGaugeShader*>(m_ppShaders[8])->SetGaugeManager(m_pHPGaugeManager);
 
 	BuildLights();
 }

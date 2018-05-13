@@ -3,7 +3,7 @@
 
 class CMaterial;
 class CHeightMapTerrain;
-class CCollisionManager;
+
 class CPlayerShader : public CShader
 {
 public:

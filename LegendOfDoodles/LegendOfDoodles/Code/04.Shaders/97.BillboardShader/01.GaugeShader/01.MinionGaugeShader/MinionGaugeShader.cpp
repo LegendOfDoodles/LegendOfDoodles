@@ -54,22 +54,17 @@ void CMinionHPGaugeShader::UpdateShaderVariables()
 
 void CMinionHPGaugeShader::AnimateObjects(float timeElapsed)
 {
-	// Warning : 배열로 수정해야함
-	//m_HPGaugeObjectList.remove_if([this](CHPGaugeObjects* obj)
-	//{ 
-	//	if (obj->GetState() == States::Die)
-	//	{
-	//		ResetPossibleIndex(obj->GetIndex());
-	//		return true;
-	//	}
-	//	return false;
-	//});
+	if (m_pGaugeManger->SpawnStarted()) SpawnGauge();
 
-	//for (auto& iter = m_HPGaugeObjectList.begin(); iter != m_HPGaugeObjectList.end(); ++iter) {
-	//	(*iter)->Animate(timeElapsed);
-	//}
+	for (int i = 0; i < *m_nBlues; ++i)
+	{
+		m_HPGaugeObjectList[i]->Animate(timeElapsed);
+	}
 
-	//if(m_pGaugeManger->GetCount() > 0) SpawnGauge();
+	for (int i = MAX_MINION; i < MAX_MINION + *m_nReds; ++i)
+	{
+		m_HPGaugeObjectList[i]->Animate(timeElapsed);
+	}
 }
 
 void CMinionHPGaugeShader::Render(CCamera *pCamera)
@@ -77,8 +72,14 @@ void CMinionHPGaugeShader::Render(CCamera *pCamera)
 	CShader::Render(pCamera);
 	if (m_ppMaterials) m_ppMaterials[0]->UpdateShaderVariables();
 
-	for (auto& iter = m_HPGaugeObjectList.begin(); iter != m_HPGaugeObjectList.end(); ++iter) {
-		(*iter)->Render(pCamera);
+	for (int i = 0; i < *m_nBlues; ++i)
+	{
+		m_HPGaugeObjectList[i]->Render(pCamera);
+	}
+
+	for (int i = MAX_MINION; i < MAX_MINION + *m_nReds; ++i)
+	{
+		m_HPGaugeObjectList[i]->Render(pCamera);
 	}
 }
 
@@ -228,51 +229,38 @@ void CMinionHPGaugeShader::SpawnGauge()
 	m_pCreateMgr->ResetCommandList();
 
 	int cnt{ 0 };
-	CollisionObjectList::reverse_iterator minion{ m_MinionObjectList->rbegin() };
 
 	for (; cnt < m_pGaugeManger->GetCount(); ++cnt)
 	{
-		int index = GetPossibleIndex();
-		if (index == NONE) break;
-
 		CHPGaugeObjects *pGaugeObject{ NULL };
 		CCollisionObject *pMinionObjects{ NULL };
 
 		pGaugeObject = new CHPGaugeObjects(m_pCreateMgr, GaugeUiType::MinionGauge);
-		pMinionObjects = (*minion);
+		pMinionObjects = (*m_MinionObjectList)[cnt];
 
 		pGaugeObject->SetObject(pMinionObjects);
 		pGaugeObject->SetMaterial(m_ppMaterials[0]);
 		pGaugeObject->SetCamera(m_pCamera);
 
-		pGaugeObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * index));
-
-		pGaugeObject->SaveIndex(index);
+		pGaugeObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * cnt));
 
 		XMFLOAT3 xmfGaugePosition;
 		xmfGaugePosition = pMinionObjects->GetPosition();
 		xmfGaugePosition.y += 70.f;
 		pGaugeObject->SetPosition(xmfGaugePosition);
 		m_HPGaugeObjectList.emplace_back(pGaugeObject);
-
-		if(minion != m_MinionObjectList->rend()) ++minion;
 	}
 	m_pCreateMgr->ExecuteCommandList();
 
-	if (!cnt) return;
-
-	HPGaugeObjectList::reverse_iterator &gaugeBegin{ m_HPGaugeObjectList.rbegin() };
-	HPGaugeObjectList::reverse_iterator &gaugeEnd{ m_HPGaugeObjectList.rbegin() };
-
-	for (int i = 0; i < cnt - 1; ++i) ++gaugeBegin;
-
 	for (int i = 0; i < cnt; ++i)
 	{
-		(*gaugeBegin)->ReleaseUploadBuffers();
-		if (gaugeBegin != gaugeEnd) --gaugeBegin;
+		m_HPGaugeObjectList[i]->ReleaseUploadBuffers();
 	}
 
-	m_pGaugeManger->ResetCount();
+	m_nBlues = m_pGaugeManger->GetBlueMinionCnt();
+	m_nReds = m_pGaugeManger->GetRedMinionCnt();
+
+	m_pGaugeManger->EndSpawn();
 }
 
 void CMinionHPGaugeShader::ReleaseObjects()

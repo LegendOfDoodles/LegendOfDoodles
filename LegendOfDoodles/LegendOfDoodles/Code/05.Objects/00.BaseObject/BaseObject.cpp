@@ -71,7 +71,6 @@ void CBaseObject::ReleaseUploadBuffers()
 
 void CBaseObject::SetMesh(int nIndex, CMesh *pMesh)
 {
-
 	if (!m_ppMeshes) return;
 	if (nIndex >= m_nMeshes) return;
 
