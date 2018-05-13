@@ -87,6 +87,8 @@ void CAnimatedObject::MoveForward(float fDistance)
 void CAnimatedObject::LookAt(XMFLOAT3 objPosition)
 {
 	if (m_curState == States::Attack) return;
+	if (m_curState == States::Win) return;
+	if (m_curState == States::Defeat) return;
 
 	XMFLOAT3 upVector{ 0.f, 1.f, 0.f };
 	XMFLOAT3 playerLook = GetLook();

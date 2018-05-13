@@ -12,6 +12,7 @@
 // 持失切, 社瑚切
 CPlayer::CPlayer(CCreateMgr *pCreateMgr, int nMeshes) : CAnimatedObject(pCreateMgr, nMeshes)
 {
+	m_speed = CONVERT_cm_to_InG(3.285) * 10;
 }
 
 
@@ -72,6 +73,9 @@ void CPlayer::Animate(float timeElapsed)
 		{
 			m_curState = States::Remove;
 		}
+		break;
+	case States::Win:
+		if (m_nCurrAnimation != Animations::Win) m_nCurrAnimation = Animations::Win;
 		break;
 	case States::Defeat:
 		if (m_nCurrAnimation != Animations::Defeat&&
