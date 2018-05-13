@@ -3,6 +3,7 @@
 #include "..\05.Objects\03.AnimatedObject\AnimatedObject.h"
 #include "..\05.Objects\08.Player\Player.h"
 #include "..\05.Objects\06.Minion\Minion.h"
+#include "..\05.Objects\09.NexusTower\NexusTower.h"
 
 Network::Network()
 {
@@ -84,12 +85,14 @@ void Network::ProcessPacket(int myid, char *ptr)
 				dynamic_cast<CAnimatedObject*>(m_ppPlayer[id])->SetAnimation((AnimationsType)my_packet->state, (float)my_packet->frameTime);
 				dynamic_cast<CAnimatedObject*>(m_ppPlayer[id])->RegenerateWorldMatrixWithLook(my_packet->vLook);
 				dynamic_cast<CPlayer*>(m_ppPlayer[id])->SetMaxHP(my_packet->maxhp, my_packet->curhp);
+				dynamic_cast<CPlayer*>(m_ppPlayer[id])->SetWeapon(my_packet->weapon);
 			}
 			else if (id < NPC_START) { 
 				m_ppPlayer[id]->CBaseObject::SetPosition(my_packet->x, my_packet->y);
 				dynamic_cast<CAnimatedObject*>(m_ppPlayer[id])->SetAnimation((AnimationsType)my_packet->state, (float)my_packet->frameTime);
 				dynamic_cast<CAnimatedObject*>(m_ppPlayer[id])->RegenerateWorldMatrixWithLook(my_packet->vLook);
 				dynamic_cast<CPlayer*>(m_ppPlayer[id])->SetMaxHP(my_packet->maxhp, my_packet->curhp);
+				dynamic_cast<CPlayer*>(m_ppPlayer[id])->SetWeapon(my_packet->weapon);
 			}
 			break;
 		}
@@ -173,6 +176,13 @@ void Network::ProcessPacket(int myid, char *ptr)
 			else {
 				*m_pnRed = my_packet->count;
 			}
+			break;
+		}
+		case SC_POS_NEXUS:
+		{
+			SC_Msg_Pos_Nexus* my_packet = reinterpret_cast<SC_Msg_Pos_Nexus*>(ptr);
+			m_ppNexusTower[my_packet->Object_id]->SetPosition(my_packet->vPos);
+			dynamic_cast<CNexusTower*>(m_ppNexusTower[my_packet->Object_id])->SetMaxHP(my_packet->maxhp, my_packet->curhp);
 			break;
 		}
 		default:

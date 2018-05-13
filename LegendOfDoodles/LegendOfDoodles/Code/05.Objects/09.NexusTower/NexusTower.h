@@ -14,6 +14,7 @@ public:
 
 public:	// 외부 함수
 	virtual void Animate(float timeElapsed);
+	void SetMaxHP(int maxHP, int HP) { m_StatusInfo.maxHP = maxHP; m_StatusInfo.HP = HP; }
 
 protected: // 내부 함수
 	/*

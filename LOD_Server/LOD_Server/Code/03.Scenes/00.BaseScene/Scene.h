@@ -3,6 +3,7 @@
 #include "04.Shaders/00.BaseShader/Shader.h"
 #include "05.Objects/03.AnimatedObject/AnimatedObject.h"
 #include "05.Objects/04.Terrain/HeightMapTerrain.h"
+#include "05.Objects\09.NexusTower\NexusTower.h"
 
 typedef std::list<CCollisionObject*> CollisionObjectList;
 
@@ -32,6 +33,7 @@ public: // 공개 함수
 	CAnimatedObject** GetPlayerObject();
 	CollisionObjectList* GetBlueObjects();
 	CollisionObjectList* GetRedObjects();
+	CNexusTower** GetNexusTower();
 
 	void GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, int id);
 

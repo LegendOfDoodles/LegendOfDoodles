@@ -36,6 +36,8 @@ protected:
 	CBaseObject** m_ppRedMinions{ NULL };
 	int*		  m_pnBlue{ 0 };
 	int*		  m_pnRed{ 0 };
+	CBaseObject** m_ppNexusTower{ NULL };
+	
 
 public:
 	Network();
@@ -51,5 +53,6 @@ public:
 	void SetRedMinions(CBaseObject** red) { m_ppRedMinions = red; }
 	void SetBlueCount(int* cnt) { m_pnBlue = cnt; }
 	void SetRedCount(int* cnt) { m_pnRed = cnt; }
+	void SetNexusTowers(CBaseObject** nexus) { m_ppNexusTower = nexus; }
 };
 

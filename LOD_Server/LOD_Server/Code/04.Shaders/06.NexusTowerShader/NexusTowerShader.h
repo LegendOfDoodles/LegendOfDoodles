@@ -4,6 +4,8 @@
 
 class CHeightMapTerrain;
 class CCollisionManager;
+class Network;
+
 
 class CNexusTowerShader : public CShader
 {
@@ -21,6 +23,8 @@ public: // 공개 함수
 	int GetObjectCount() { return m_nObjects; }
 	virtual CBaseObject **GetCollisionObjects() { return m_ppObjects; }
 
+	
+
 protected: // 내부 함수
 	virtual void BuildObjects(void *pContext = NULL);
 
@@ -31,4 +35,6 @@ protected: // 변수
 	int m_nObjects{ 0 };
 
 	CHeightMapTerrain * m_pTerrain{ NULL };
+
+	
 };

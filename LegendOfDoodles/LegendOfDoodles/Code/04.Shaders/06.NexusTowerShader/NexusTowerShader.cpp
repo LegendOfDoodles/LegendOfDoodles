@@ -18,9 +18,10 @@
 
 ////////////////////////////////////////////////////////////////////////
 // 持失切, 社瑚切
-CNexusTowerShader::CNexusTowerShader(CCreateMgr *pCreateMgr)
+CNexusTowerShader::CNexusTowerShader(CCreateMgr *pCreateMgr, Network* network)
 	: CShader(pCreateMgr)
 {
+	m_pNetwork = network;
 }
 
 CNexusTowerShader::~CNexusTowerShader()
@@ -343,6 +344,8 @@ void CNexusTowerShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
 	for (int i = 1; i < 4; ++i) {
 		m_meshCounts[i] = m_meshCounts[i - 1] + transformInporter.m_iKindMeshCnt[i - 1];
 	}
+
+	m_pNetwork->SetNexusTowers(m_ppObjects);
 }
 
 void CNexusTowerShader::ReleaseObjects()
