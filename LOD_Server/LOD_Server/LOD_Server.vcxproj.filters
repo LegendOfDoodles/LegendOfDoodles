@@ -1,0 +1,315 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="소스 파일\00.Global">
+      <UniqueIdentifier>{2f1ee869-557b-4656-bddf-82812d3e1ac3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\00.Global\00.Standard">
+      <UniqueIdentifier>{51e39692-d200-4378-8fe0-46e252c8044b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\00.Global\01.Utility">
+      <UniqueIdentifier>{86ce24c4-f3de-46dd-b27e-4c0a8ec59180}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\01.Main">
+      <UniqueIdentifier>{873318eb-f2e8-4c65-8b55-de576a6cd443}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\02.Framework">
+      <UniqueIdentifier>{db6b3c5f-7403-4e9f-90de-2d6e2e770611}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\02.Framework\00.Frame">
+      <UniqueIdentifier>{eb5e0ab6-6691-445c-a91e-949912f5348a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\03.Scenes">
+      <UniqueIdentifier>{ea09b763-b196-4b68-bf13-067b25cf8762}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04.Shaders">
+      <UniqueIdentifier>{112a574b-b9a4-408c-b813-0d317a71e413}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\03.Scenes\00.BaseScene">
+      <UniqueIdentifier>{2064e235-5cd0-4019-b9bf-e17f8431e901}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\05.Objects">
+      <UniqueIdentifier>{86d5dfca-2443-4950-bf06-ec0dbf02cc8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\05.Objects\00.BaseObject">
+      <UniqueIdentifier>{e167d144-c6a0-4a57-b182-e34c93d8b62b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\06.Meshes">
+      <UniqueIdentifier>{9ca27172-de8c-430b-9149-fbfc612e0543}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\06.Meshes\01.Mesh">
+      <UniqueIdentifier>{9de170c0-177b-4485-a15d-bc29fba9bf0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04.Shaders\00.BaseShader">
+      <UniqueIdentifier>{d7ced033-3a87-46f3-9b3e-a67c9676f501}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\00.Global\01.Utility\00.Timer">
+      <UniqueIdentifier>{941e7b22-a475-49c5-9afc-b53f5867e479}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\00.Global\01.Utility\01.Exception">
+      <UniqueIdentifier>{d15e1826-69cc-4b10-bc69-2791b15f4841}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\00.Global\01.Utility\03.SafeFunc">
+      <UniqueIdentifier>{eeb7ccce-7b48-4171-87a3-131c360d4cf9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\05.Objects\97.Skeleton">
+      <UniqueIdentifier>{90cbe070-3299-47db-83d5-5e69b0c3f9b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\00.Global\01.Utility\04.WayFinder">
+      <UniqueIdentifier>{f526b4e0-ff88-4498-adcc-4b909c0c60a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\00.Global\01.Utility\04.WayFinder\02.Astar">
+      <UniqueIdentifier>{4b9c984b-aa41-47ca-960a-c0c5b3845d55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\00.Global\01.Utility\04.WayFinder\01.Edge">
+      <UniqueIdentifier>{856f313f-be07-45e1-b18c-dfdddc628711}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\00.Global\01.Utility\04.WayFinder\00.Node">
+      <UniqueIdentifier>{3b2c4782-862f-4857-bf53-f03183ca879b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\00.Global\02.AI">
+      <UniqueIdentifier>{187ca8d2-9c69-422e-b104-1446eb1cb44d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\00.Global\02.AI\00.FSMMgr">
+      <UniqueIdentifier>{e37989c4-9fda-4973-9d9f-f7789d0fcb53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04.Shaders\04.AniShader">
+      <UniqueIdentifier>{dc752d63-37aa-4e94-9f45-9cd6ad7d721c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\05.Objects\03.AnimatedObject">
+      <UniqueIdentifier>{be3fc130-7dbf-4272-9abf-efccf81d9bf4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\05.Objects\04.Terrain">
+      <UniqueIdentifier>{7552b41b-1324-420e-a185-8d7e9ee0bcaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\05.Objects\06.Minion">
+      <UniqueIdentifier>{5babff02-8628-4ae6-a587-3d422108063e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\05.Objects\02.CollisionObject">
+      <UniqueIdentifier>{b3b9a6a4-3dc0-43ad-a4b0-edd67b1177be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\00.Global\01.Utility\05.CollisionManager">
+      <UniqueIdentifier>{bea49c74-742c-4b0e-8ab6-bb77cb7f1c7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04.Shaders\05.PlayerShader">
+      <UniqueIdentifier>{a65c113e-364b-4392-8ee2-eba9b391c018}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\05.Objects\08.Player">
+      <UniqueIdentifier>{a29896a2-fa94-4c74-aca0-eae35af27e52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04.Shaders\06.NexusTowerShader">
+      <UniqueIdentifier>{95312e46-c39f-414e-bfd1-0f4d071afafd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\05.Objects\09.NexusTower">
+      <UniqueIdentifier>{418d977f-e21f-4e92-a645-323b228aeed2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\07.Server">
+      <UniqueIdentifier>{31a96cad-7a00-46fc-a3ba-0fced9f21f0e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Resource\Resource.h">
+      <Filter>리소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\00.Global\00.Standard\stdafx.h">
+      <Filter>소스 파일\00.Global\00.Standard</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\00.Global\00.Standard\targetver.h">
+      <Filter>소스 파일\00.Global\00.Standard</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\01.Main\LOD_Server.h">
+      <Filter>소스 파일\01.Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\00.Global\01.Utility\00.Timer\Timer.h">
+      <Filter>소스 파일\00.Global\01.Utility\00.Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\00.Global\01.Utility\01.Exception\ExptProcess.h">
+      <Filter>소스 파일\00.Global\01.Utility\01.Exception</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\00.Global\01.Utility\03.SafeFunc\SafeFunc.h">
+      <Filter>소스 파일\00.Global\01.Utility\03.SafeFunc</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\00.Global\01.Utility\04.WayFinder\00.Node\Node.h">
+      <Filter>소스 파일\00.Global\01.Utility\04.WayFinder\00.Node</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\00.Global\01.Utility\04.WayFinder\01.Edge\Edge.h">
+      <Filter>소스 파일\00.Global\01.Utility\04.WayFinder\01.Edge</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\00.Global\01.Utility\04.WayFinder\02.Astar\Astar.h">
+      <Filter>소스 파일\00.Global\01.Utility\04.WayFinder\02.Astar</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\00.Global\01.Utility\04.WayFinder\WayFinder.h">
+      <Filter>소스 파일\00.Global\01.Utility\04.WayFinder</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\00.Global\01.Utility\05.CollisionManager\CollisionManager.h">
+      <Filter>소스 파일\00.Global\01.Utility\05.CollisionManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\00.Global\01.Utility\Enumerations.h">
+      <Filter>소스 파일\00.Global\01.Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\00.Global\01.Utility\Macros.h">
+      <Filter>소스 파일\00.Global\01.Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\00.Global\01.Utility\Vectors.h">
+      <Filter>소스 파일\00.Global\01.Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\00.Global\02.AI\00.FSMMgr\FSMMgr.h">
+      <Filter>소스 파일\00.Global\02.AI\00.FSMMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\02.Framework\00.Frame\Framework.h">
+      <Filter>소스 파일\02.Framework\00.Frame</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\03.Scenes\00.BaseScene\Scene.h">
+      <Filter>소스 파일\03.Scenes\00.BaseScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\04.Shaders\00.BaseShader\Shader.h">
+      <Filter>소스 파일\04.Shaders\00.BaseShader</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\04.Shaders\04.AniShader\AniShader.h">
+      <Filter>소스 파일\04.Shaders\04.AniShader</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\04.Shaders\05.PlayerShader\PlayerShader.h">
+      <Filter>소스 파일\04.Shaders\05.PlayerShader</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\04.Shaders\06.NexusTowerShader\NexusTowerShader.h">
+      <Filter>소스 파일\04.Shaders\06.NexusTowerShader</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\05.Objects\00.BaseObject\BaseObject.h">
+      <Filter>소스 파일\05.Objects\00.BaseObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\05.Objects\02.CollisionObject\CollisionObject.h">
+      <Filter>소스 파일\05.Objects\02.CollisionObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\05.Objects\03.AnimatedObject\AnimatedObject.h">
+      <Filter>소스 파일\05.Objects\03.AnimatedObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\05.Objects\04.Terrain\HeightMapTerrain.h">
+      <Filter>소스 파일\05.Objects\04.Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\05.Objects\06.Minion\Minion.h">
+      <Filter>소스 파일\05.Objects\06.Minion</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\05.Objects\08.Player\Player.h">
+      <Filter>소스 파일\05.Objects\08.Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\05.Objects\09.NexusTower\NexusTower.h">
+      <Filter>소스 파일\05.Objects\09.NexusTower</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\05.Objects\97.Skeleton\Skeleton.h">
+      <Filter>소스 파일\05.Objects\97.Skeleton</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\06.Meshes\01.Mesh\Mesh.h">
+      <Filter>소스 파일\06.Meshes\01.Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\06.Meshes\01.Mesh\MeshImporter.h">
+      <Filter>소스 파일\06.Meshes\01.Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\07.Server\Main.h">
+      <Filter>소스 파일\07.Server</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resource\LOD_Server.ico">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Resource\small.ico">
+      <Filter>리소스 파일</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource\LOD_Server.rc">
+      <Filter>리소스 파일</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Code\00.Global\00.Standard\stdafx.cpp">
+      <Filter>소스 파일\00.Global\00.Standard</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\01.Main\LOD_Server.cpp">
+      <Filter>소스 파일\01.Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\00.Global\01.Utility\00.Timer\Timer.cpp">
+      <Filter>소스 파일\00.Global\01.Utility\00.Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\00.Global\01.Utility\01.Exception\ExptProcess.cpp">
+      <Filter>소스 파일\00.Global\01.Utility\01.Exception</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\00.Global\01.Utility\03.SafeFunc\SafeFunc.cpp">
+      <Filter>소스 파일\00.Global\01.Utility\03.SafeFunc</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\00.Global\01.Utility\04.WayFinder\00.Node\Node.cpp">
+      <Filter>소스 파일\00.Global\01.Utility\04.WayFinder\00.Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\00.Global\01.Utility\04.WayFinder\01.Edge\Edge.cpp">
+      <Filter>소스 파일\00.Global\01.Utility\04.WayFinder\01.Edge</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\00.Global\01.Utility\04.WayFinder\WayFinder.cpp">
+      <Filter>소스 파일\00.Global\01.Utility\04.WayFinder</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\00.Global\01.Utility\04.WayFinder\02.Astar\Astar.cpp">
+      <Filter>소스 파일\00.Global\01.Utility\04.WayFinder\02.Astar</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\00.Global\01.Utility\05.CollisionManager\CollisionManager.cpp">
+      <Filter>소스 파일\00.Global\01.Utility\05.CollisionManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\00.Global\02.AI\00.FSMMgr\FSMMgr.cpp">
+      <Filter>소스 파일\00.Global\02.AI\00.FSMMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\02.Framework\00.Frame\Framework.cpp">
+      <Filter>소스 파일\02.Framework\00.Frame</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\03.Scenes\00.BaseScene\Scene.cpp">
+      <Filter>소스 파일\03.Scenes\00.BaseScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\04.Shaders\00.BaseShader\Shader.cpp">
+      <Filter>소스 파일\04.Shaders\00.BaseShader</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\04.Shaders\04.AniShader\AniShader.cpp">
+      <Filter>소스 파일\04.Shaders\04.AniShader</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\04.Shaders\05.PlayerShader\PlayerShader.cpp">
+      <Filter>소스 파일\04.Shaders\05.PlayerShader</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\04.Shaders\06.NexusTowerShader\NexusTowerShader.cpp">
+      <Filter>소스 파일\04.Shaders\06.NexusTowerShader</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\05.Objects\00.BaseObject\BaseObject.cpp">
+      <Filter>소스 파일\05.Objects\00.BaseObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\05.Objects\02.CollisionObject\CollisionObject.cpp">
+      <Filter>소스 파일\05.Objects\02.CollisionObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\05.Objects\03.AnimatedObject\AnimatedObject.cpp">
+      <Filter>소스 파일\05.Objects\03.AnimatedObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\05.Objects\04.Terrain\HeightMapTerrain.cpp">
+      <Filter>소스 파일\05.Objects\04.Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\05.Objects\06.Minion\Minion.cpp">
+      <Filter>소스 파일\05.Objects\06.Minion</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\05.Objects\08.Player\Player.cpp">
+      <Filter>소스 파일\05.Objects\08.Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\05.Objects\09.NexusTower\NexusTower.cpp">
+      <Filter>소스 파일\05.Objects\09.NexusTower</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\05.Objects\97.Skeleton\Skeleton.cpp">
+      <Filter>소스 파일\05.Objects\97.Skeleton</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\06.Meshes\01.Mesh\Mesh.cpp">
+      <Filter>소스 파일\06.Meshes\01.Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\06.Meshes\01.Mesh\MeshImporter.cpp">
+      <Filter>소스 파일\06.Meshes\01.Mesh</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
