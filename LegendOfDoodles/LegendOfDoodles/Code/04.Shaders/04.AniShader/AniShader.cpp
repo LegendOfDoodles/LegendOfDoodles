@@ -3,10 +3,8 @@
 #include "05.Objects/06.Minion/Minion.h"
 #include "05.Objects/04.Terrain/HeightMapTerrain.h"
 #include "05.Objects/99.Material/Material.h"
-#include "00.Global/01.Utility/05.CollisionManager/CollisionManager.h"
 #include "00.Global/01.Utility/06.HPGaugeManager/HPGaugeManager.h"
 #include "06.Meshes/01.Mesh/MeshImporter.h"
-#include "00.Global/02.AI/00.FSMMgr/FSMMgr.h"
 
 /// <summary>
 /// 목적: 움직이는 오브젝트 관리 및 그리기 용도
@@ -108,39 +106,39 @@ void CAniShader::AnimateObjects(float timeElapsed)
 		m_preSpawnTime = -0.25f;
 	}
 
-	for (auto& iter = m_blueObjects.begin(); iter != m_blueObjects.end();)
-	{
-		if ((*iter)->GetState() == States::Remove)
-		{
-			CCollisionObject* temp{ *iter };
-			ResetPossibleIndex(temp->GetIndex());
-			Safe_Delete(temp);
+	//for (auto& iter = m_blueObjects.begin(); iter != m_blueObjects.end();)
+	//{
+	//	if ((*iter)->GetState() == States::Remove)
+	//	{
+	//		CCollisionObject* temp{ *iter };
+	//		ResetPossibleIndex(temp->GetIndex());
+	//		Safe_Delete(temp);
 
-			iter = m_blueObjects.erase(iter);
-		}
-		else
-		{
-			m_pFSMMgr->Update(timeElapsed, (*iter));
-			++iter;
-		}
-	}
+	//		iter = m_blueObjects.erase(iter);
+	//	}
+	//	else
+	//	{
+	//		m_pFSMMgr->Update(timeElapsed, (*iter));
+	//		++iter;
+	//	}
+	//}
 
-	for (auto& iter = m_redObjects.begin(); iter != m_redObjects.end();)
-	{
-		if ((*iter)->GetState() == States::Remove)
-		{
-			CCollisionObject* temp{ *iter };
-			ResetPossibleIndex(temp->GetIndex());
-			Safe_Delete(temp);
+	//for (auto& iter = m_redObjects.begin(); iter != m_redObjects.end();)
+	//{
+	//	if ((*iter)->GetState() == States::Remove)
+	//	{
+	//		CCollisionObject* temp{ *iter };
+	//		ResetPossibleIndex(temp->GetIndex());
+	//		Safe_Delete(temp);
 
-			iter = m_redObjects.erase(iter);
-		}
-		else
-		{
-			m_pFSMMgr->Update(timeElapsed, (*iter));
-			++iter;
-		}
-	}
+	//		iter = m_redObjects.erase(iter);
+	//	}
+	//	else
+	//	{
+	//		m_pFSMMgr->Update(timeElapsed, (*iter));
+	//		++iter;
+	//	}
+	//}
 }
 
 void CAniShader::Render(CCamera *pCamera)
@@ -404,7 +402,6 @@ void CAniShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
 		m_pWeapons[j]->AddRef();
 	}
 
-	CreatePathes();
 	SpawnMinion();
 }
 
@@ -431,22 +428,6 @@ void CAniShader::ReleaseObjects()
 		Safe_Delete(m_ppMaterials);
 	}
 #endif
-}
-
-void CAniShader::CreatePathes()
-{
-	CTransformImporter transformInporter;
-	transformInporter.LoadMeshData("Resource/Data/Pathes.txt");
-	for (int i = 0, cnt = 0; i < 4; ++i) 
-	{
-		for (int j = 0; j < transformInporter.m_iKindMeshCnt[i] - 1; ++j, ++cnt) 
-		{
-			XMFLOAT3 from = transformInporter.m_Transform[cnt].pos;
-			XMFLOAT3 to = transformInporter.m_Transform[cnt + 1].pos;
-			m_pathes[i].push_back(CPathEdge(XMFLOAT2(CONVERT_Unit_to_InG(from.x), CONVERT_Unit_to_InG(from.z)), XMFLOAT2(CONVERT_Unit_to_InG(to.x), CONVERT_Unit_to_InG(to.z))));
-		}
-		++cnt;
-	}
 }
 
 int CAniShader::GetPossibleIndex()
@@ -538,7 +519,6 @@ void CAniShader::SpawnMinion()
 		pMinionObject->SetBoundingMesh(m_pCreateMgr,
 			CONVERT_PaperUnit_to_InG(3), CONVERT_PaperUnit_to_InG(3), CONVERT_PaperUnit_to_InG(7),
 			0, 0, -CONVERT_PaperUnit_to_InG(4));
-		pMinionObject->SetCollisionSize(CONVERT_PaperUnit_to_InG(2));
 
 		switch (m_kind)
 		{
@@ -574,13 +554,6 @@ void CAniShader::SpawnMinion()
 
 		pMinionObject->SaveIndex(index);
 
-		pMinionObject->SetPathToGo(new Path(m_pathes[kind]));
-
-		XMFLOAT2 firstPos{ m_pathes[kind].front().From() };
-		pMinionObject->CBaseObject::SetPosition(XMFLOAT3(firstPos.x, 0, firstPos.y));
-
-		pMinionObject->SetCollisionManager(m_pColManager);
-
 		if (kind == Minion_Species::Blue_Up || kind == Minion_Species::Blue_Down)
 		{
 			pMinionObject->SetTeam(TeamType::Blue);
@@ -609,14 +582,12 @@ void CAniShader::SpawnMinion()
 		if (kind == Minion_Species::Blue_Up || kind == Minion_Species::Blue_Down) {
 			(*blueBegin)->ReleaseUploadBuffers();
 
-			m_pColManager->AddCollider((*blueBegin));
 			m_pGaugeManger->AddMinionObject((*blueBegin));
 			if(blueBegin != m_blueObjects.rbegin()) --blueBegin;
 		}
 		else if (kind == Minion_Species::Red_Up || kind == Minion_Species::Red_Down) {
 			(*redBegin)->ReleaseUploadBuffers();
 
-			m_pColManager->AddCollider((*redBegin));
 			m_pGaugeManger->AddMinionObject((*redBegin));
 			if (redBegin != m_redObjects.rbegin()) --redBegin;
 		}

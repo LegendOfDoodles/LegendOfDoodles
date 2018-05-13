@@ -25,9 +25,6 @@ public: // 공개 함수
 		XMFLOAT3& pickPosition, XMFLOAT4X4& xmf4x4View, float &nearHitDistance);
 
 	virtual bool OnProcessKeyInput(UCHAR* pKeyBuffer);
-
-
-	void SetColManagerToObject(CCollisionManager* manager);
 	
 	
 	virtual CBaseObject **GetCollisionObjects() {	return m_ppObjects; }
@@ -71,6 +68,4 @@ protected: // 변수
 	CHeightMapTerrain * m_pTerrain{ NULL };
 
 	Network* m_pNetwork;
-
-	int m_FrameCheck = 0;
 };

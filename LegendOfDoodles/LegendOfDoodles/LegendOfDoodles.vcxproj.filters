@@ -111,18 +111,6 @@
     <Filter Include="소스 파일\05.Objects\96.Arrow">
       <UniqueIdentifier>{da6614e3-61ea-4567-80c7-8b12d82ea4d7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\00.Global\01.Utility\04.WayFinder">
-      <UniqueIdentifier>{f526b4e0-ff88-4498-adcc-4b909c0c60a4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\00.Global\01.Utility\04.WayFinder\02.Astar">
-      <UniqueIdentifier>{4b9c984b-aa41-47ca-960a-c0c5b3845d55}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\00.Global\01.Utility\04.WayFinder\01.Edge">
-      <UniqueIdentifier>{856f313f-be07-45e1-b18c-dfdddc628711}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\00.Global\01.Utility\04.WayFinder\00.Node">
-      <UniqueIdentifier>{3b2c4782-862f-4857-bf53-f03183ca879b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\07.Network">
       <UniqueIdentifier>{ed8f421a-dea7-4a21-92b7-629cad64076d}</UniqueIdentifier>
     </Filter>
@@ -134,12 +122,6 @@
     </Filter>
     <Filter Include="소스 파일\04.Shaders\97.BillboardShader\00.UIShader">
       <UniqueIdentifier>{53f786f2-cdf8-4f8a-adda-aa3fca040f82}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\00.Global\02.AI">
-      <UniqueIdentifier>{187ca8d2-9c69-422e-b104-1446eb1cb44d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\00.Global\02.AI\00.FSMMgr">
-      <UniqueIdentifier>{e37989c4-9fda-4973-9d9f-f7789d0fcb53}</UniqueIdentifier>
     </Filter>
     <Filter Include="소스 파일\04.Shaders\04.AniShader">
       <UniqueIdentifier>{dc752d63-37aa-4e94-9f45-9cd6ad7d721c}</UniqueIdentifier>
@@ -170,9 +152,6 @@
     </Filter>
     <Filter Include="소스 파일\05.Objects\02.CollisionObject">
       <UniqueIdentifier>{b3b9a6a4-3dc0-43ad-a4b0-edd67b1177be}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\00.Global\01.Utility\05.CollisionManager">
-      <UniqueIdentifier>{bea49c74-742c-4b0e-8ab6-bb77cb7f1c7e}</UniqueIdentifier>
     </Filter>
     <Filter Include="소스 파일\04.Shaders\05.PlayerShader">
       <UniqueIdentifier>{a65c113e-364b-4392-8ee2-eba9b391c018}</UniqueIdentifier>
@@ -224,21 +203,6 @@
     <ClInclude Include="Code\00.Global\01.Utility\03.SafeFunc\SafeFunc.h">
       <Filter>소스 파일\00.Global\01.Utility\03.SafeFunc</Filter>
     </ClInclude>
-    <ClInclude Include="Code\00.Global\01.Utility\04.WayFinder\00.Node\Node.h">
-      <Filter>소스 파일\00.Global\01.Utility\04.WayFinder\00.Node</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\00.Global\01.Utility\04.WayFinder\01.Edge\Edge.h">
-      <Filter>소스 파일\00.Global\01.Utility\04.WayFinder\01.Edge</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\00.Global\01.Utility\04.WayFinder\02.Astar\Astar.h">
-      <Filter>소스 파일\00.Global\01.Utility\04.WayFinder\02.Astar</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\00.Global\01.Utility\04.WayFinder\WayFinder.h">
-      <Filter>소스 파일\00.Global\01.Utility\04.WayFinder</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\00.Global\01.Utility\05.CollisionManager\CollisionManager.h">
-      <Filter>소스 파일\00.Global\01.Utility\05.CollisionManager</Filter>
-    </ClInclude>
     <ClInclude Include="Code\00.Global\01.Utility\06.HPGaugeManager\HPGaugeManager.h">
       <Filter>소스 파일\00.Global\01.Utility\06.HPGaugeManager</Filter>
     </ClInclude>
@@ -247,9 +211,6 @@
     </ClInclude>
     <ClInclude Include="Resource\Resource.h">
       <Filter>리소스 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\00.Global\02.AI\00.FSMMgr\FSMMgr.h">
-      <Filter>소스 파일\00.Global\02.AI\00.FSMMgr</Filter>
     </ClInclude>
     <ClInclude Include="Code\02.Framework\00.Frame\Framework.h">
       <Filter>소스 파일\02.Framework\00.Frame</Filter>
@@ -403,29 +364,11 @@
     <ClCompile Include="Code\00.Global\01.Utility\03.SafeFunc\SafeFunc.cpp">
       <Filter>소스 파일\00.Global\01.Utility\03.SafeFunc</Filter>
     </ClCompile>
-    <ClCompile Include="Code\00.Global\01.Utility\04.WayFinder\00.Node\Node.cpp">
-      <Filter>소스 파일\00.Global\01.Utility\04.WayFinder\00.Node</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\00.Global\01.Utility\04.WayFinder\01.Edge\Edge.cpp">
-      <Filter>소스 파일\00.Global\01.Utility\04.WayFinder\01.Edge</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\00.Global\01.Utility\04.WayFinder\02.Astar\Astar.cpp">
-      <Filter>소스 파일\00.Global\01.Utility\04.WayFinder\02.Astar</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\00.Global\01.Utility\04.WayFinder\WayFinder.cpp">
-      <Filter>소스 파일\00.Global\01.Utility\04.WayFinder</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\00.Global\01.Utility\05.CollisionManager\CollisionManager.cpp">
-      <Filter>소스 파일\00.Global\01.Utility\05.CollisionManager</Filter>
-    </ClCompile>
     <ClCompile Include="Code\00.Global\01.Utility\06.HPGaugeManager\HPGaugeManager.cpp">
       <Filter>소스 파일\00.Global\01.Utility\06.HPGaugeManager</Filter>
     </ClCompile>
     <ClCompile Include="Code\01.Main\LegendOfDoodles.cpp">
       <Filter>소스 파일\01.Main</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\00.Global\02.AI\00.FSMMgr\FSMMgr.cpp">
-      <Filter>소스 파일\00.Global\02.AI\00.FSMMgr</Filter>
     </ClCompile>
     <ClCompile Include="Code\02.Framework\00.Frame\Framework.cpp">
       <Filter>소스 파일\02.Framework\00.Frame</Filter>

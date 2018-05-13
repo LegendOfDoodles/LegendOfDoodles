@@ -54,21 +54,22 @@ void CMinionHPGaugeShader::UpdateShaderVariables()
 
 void CMinionHPGaugeShader::AnimateObjects(float timeElapsed)
 {
-	m_HPGaugeObjectList.remove_if([this](CHPGaugeObjects* obj)
-	{ 
-		if (obj->GetState() == States::Die)
-		{
-			ResetPossibleIndex(obj->GetIndex());
-			return true;
-		}
-		return false;
-	});
+	// Warning : 배열로 수정해야함
+	//m_HPGaugeObjectList.remove_if([this](CHPGaugeObjects* obj)
+	//{ 
+	//	if (obj->GetState() == States::Die)
+	//	{
+	//		ResetPossibleIndex(obj->GetIndex());
+	//		return true;
+	//	}
+	//	return false;
+	//});
 
-	for (auto& iter = m_HPGaugeObjectList.begin(); iter != m_HPGaugeObjectList.end(); ++iter) {
-		(*iter)->Animate(timeElapsed);
-	}
+	//for (auto& iter = m_HPGaugeObjectList.begin(); iter != m_HPGaugeObjectList.end(); ++iter) {
+	//	(*iter)->Animate(timeElapsed);
+	//}
 
-	if(m_pGaugeManger->GetCount() > 0) SpawnGauge();
+	//if(m_pGaugeManger->GetCount() > 0) SpawnGauge();
 }
 
 void CMinionHPGaugeShader::Render(CCamera *pCamera)

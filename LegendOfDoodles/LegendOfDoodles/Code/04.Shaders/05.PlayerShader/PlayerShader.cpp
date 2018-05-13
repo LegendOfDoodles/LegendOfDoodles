@@ -83,11 +83,9 @@ void CPlayerShader::UpdateBoundingBoxShaderVariables()
 
 void CPlayerShader::AnimateObjects(float timeElapsed)
 {
-	m_FrameCheck += 1.0f / timeElapsed;
-	if (m_FrameCheck % 20 == 0) {
-		m_pNetwork->ReadPacket(m_pNetwork->m_mysocket, m_ppObjects);
-	}
+	m_pNetwork->ReadPacket(m_pNetwork->m_mysocket, m_ppObjects);
 
+	// Warning : 플레이어 포지션 등 정보 받아와야 함
 	for (int j = 0; j < m_nObjects; j++)
 	{
 		m_ppObjects[j]->Animate(timeElapsed);
@@ -109,11 +107,6 @@ void CPlayerShader::Render(CCamera *pCamera)
 		
 		m_ppObjects[j]->Render(pCamera);
 	}
-
-	/*for (int j = 0; j < 4; j++)
-	{
-		m_pNetwork->m_ppObject[j]->Render(pCamera);
-	}*/
 #endif
 }
 
@@ -151,40 +144,29 @@ CBaseObject *CPlayerShader::PickObjectByRayIntersection(
 
 bool CPlayerShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 {
-	static float R = 0.0f;
-	static float M = 0.0f;
+	//if (GetAsyncKeyState('L') & 0x0001)
+	//{
+	//	m_ppObjects[0]->SetMesh(1, m_pSword[m_nWeaponState]);
+	//	m_nWeaponState++;
+	//	if (m_nWeaponState >= 2)m_nWeaponState = 0;
 
-	if (GetAsyncKeyState('L') & 0x0001)
-	{
-		m_ppObjects[0]->SetMesh(1, m_pSword[m_nWeaponState]);
-		m_nWeaponState++;
-		if (m_nWeaponState >= 2)m_nWeaponState = 0;
-
-		// 무기에 따라 수정필요
-		m_ppObjects[0]->SetType(ObjectType::SwordPlayer);
-	}
-	if (GetAsyncKeyState('Q') & 0x0001)
-	{
-		dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->ActiveSkill(Animations::SkillQ);
-	}
-	if (GetAsyncKeyState('E') & 0x0001)
-	{
-		dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->ActiveSkill(Animations::SkillE);
-	}
-	if (GetAsyncKeyState('R') & 0x0001)
-	{
-		dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->ActiveSkill(Animations::SkillR);
-	}
+	//	// 무기에 따라 수정필요
+	//	m_ppObjects[0]->SetType(ObjectType::SwordPlayer);
+	//}
+	//if (GetAsyncKeyState('Q') & 0x0001)
+	//{
+	//	dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->ActiveSkill(Animations::SkillQ);
+	//}
+	//if (GetAsyncKeyState('E') & 0x0001)
+	//{
+	//	dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->ActiveSkill(Animations::SkillE);
+	//}
+	//if (GetAsyncKeyState('R') & 0x0001)
+	//{
+	//	dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->ActiveSkill(Animations::SkillR);
+	//}
 
 	return true;
-}
-
-void CPlayerShader::SetColManagerToObject(CCollisionManager * manager)
-{
-	for (int i = 0; i < 4; ++i) {
-
-	dynamic_cast<CCollisionObject*>(m_ppObjects[i])->SetCollisionManager(manager);
-	}
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -348,7 +330,7 @@ void CPlayerShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
 #if USE_BATCH_MATERIAL
 	m_nMaterials = 1;
 	m_ppMaterials = new CMaterial*[m_nMaterials];
-	m_ppMaterials[0] = Materials::CreateTresureBoxMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[0], &m_psrvGPUDescriptorStartHandle[0]);
+	m_ppMaterials[0] = Materials::CreatePlayerMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[0], &m_psrvGPUDescriptorStartHandle[0]);
 #else
 	CMaterial *pCubeMaterial = Materials::CreateBrickMaterial(pCreateMgr, &m_srvCPUDescriptorStartHandle, &m_srvGPUDescriptorStartHandle);
 #endif
@@ -415,7 +397,6 @@ void CPlayerShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
 
 				CONVERT_PaperUnit_to_InG(2), CONVERT_PaperUnit_to_InG(2), CONVERT_PaperUnit_to_InG(10),
 				0, 0, -CONVERT_PaperUnit_to_InG(8));
-			pPlayer->SetCollisionSize(CONVERT_PaperUnit_to_InG(3));
 			pPlayer->CBaseObject::SetPosition(500+(z*9000), 0, 2000+(x*1000));
 			if (z == 1) {
 				pPlayer->SetTeam(TeamType::Red);

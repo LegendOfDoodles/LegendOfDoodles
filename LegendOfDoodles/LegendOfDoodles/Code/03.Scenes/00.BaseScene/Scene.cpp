@@ -14,10 +14,7 @@
 #include "04.Shaders/97.BillboardShader/01.GaugeShader/01.MinionGaugeShader/MinionGaugeShader.h"
 #include "04.Shaders/98.ArrowShader/ArrowShader.h"
 #include "05.Objects/01.Camera/01.AOSCamera/AOSCamera.h"
-#include "00.Global/01.Utility/04.WayFinder/WayFinder.h"
-#include "00.Global/01.Utility/05.CollisionManager/CollisionManager.h"
 #include "00.Global/01.Utility/06.HPGaugeManager/HPGaugeManager.h"
-#include "00.Global/02.AI/00.FSMMgr/FSMMgr.h"
 
 /// <summary>
 /// 목적: 기본 씬, 인터페이스 용
@@ -77,30 +74,24 @@ void CScene::ProcessInput()
 		if(continual)
 			continual = m_ppShaders[i]->OnProcessKeyInput(pKeyBuffer);
 	}
-
-	if (m_pSelectedObject && GetAsyncKeyState('K') & 0x0001)
-	{
-		if(m_pSelectedObject->GetState() != States::Die)
-			m_pSelectedObject->SetState(States::Die);
-	}
 }
 
 void CScene::AnimateObjects(float timeElapsed)
 {
 	m_FrameCheck += 1.0f / timeElapsed;
-	if (m_pSelectedObject) {
-		if (m_FrameCheck % 20 == 0) {
-			//printf("now time is = %d\n", m_FrameCheck);
-			CS_MsgChMove p;
-			p.Character_id = m_pNetwork->m_myid;
-			p.size = sizeof(p);
-			p.type = CS_MOVE_PLAYER;
-			p.x = m_pSelectedObject->GetPosition().x;
-			p.y = m_pSelectedObject->GetPosition().z;
+	//if (m_pSelectedObject) {
+	//	if (m_FrameCheck % 20 == 0) {
+	//		//printf("now time is = %d\n", m_FrameCheck);
+	//		CS_MsgChMove p;
+	//		p.Character_id = m_pNetwork->m_myid;
+	//		p.size = sizeof(p);
+	//		p.type = CS_MOVE_PLAYER;
+	//		p.x = m_pSelectedObject->GetPosition().x;
+	//		p.y = m_pSelectedObject->GetPosition().z;
 
-			m_pNetwork->SendPacket(m_pNetwork->m_myid, &p);
-		}
-	}
+	//		m_pNetwork->SendPacket(m_pNetwork->m_myid, &p);
+	//	}
+	//}
 	m_pCamera->Update(timeElapsed);
 
 	UpdateShaderVariables();
@@ -109,7 +100,6 @@ void CScene::AnimateObjects(float timeElapsed)
 	{
 		m_ppShaders[i]->AnimateObjects(timeElapsed);
 	}
-	CollisionTest();
 }
 
 void CScene::Render()
@@ -155,9 +145,9 @@ void CScene::UpdateCamera()
 
 		m_pCamera->Initialize(m_pCreateMgr);
 
-		static_cast<CUIObjectShader*>(m_ppShaders[6])->GetCamera(m_pCamera);
-		static_cast<CPlayerHPGaugeShader*>(m_ppShaders[7])->GetCamera(m_pCamera);
-		static_cast<CMinionHPGaugeShader*>(m_ppShaders[8])->GetCamera(m_pCamera);
+		//static_cast<CUIObjectShader*>(m_ppShaders[6])->GetCamera(m_pCamera);
+		//static_cast<CPlayerHPGaugeShader*>(m_ppShaders[7])->GetCamera(m_pCamera);
+		//static_cast<CMinionHPGaugeShader*>(m_ppShaders[8])->GetCamera(m_pCamera);
 
 		m_bCamChanged = false;
 	}
@@ -185,11 +175,6 @@ void CScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID,
 		break;
 	case WM_MOUSEWHEEL:
 		m_pCamera->OnProcessMouseWheel(wParam, lParam);
-
-		static_cast<CUIObjectShader*>(m_ppShaders[6])->GetCamera(m_pCamera);
-		static_cast<CPlayerHPGaugeShader*>(m_ppShaders[7])->GetCamera(m_pCamera);
-		static_cast<CMinionHPGaugeShader*>(m_ppShaders[8])->GetCamera(m_pCamera);
-
 		break;
 	default:
 		break;
@@ -232,7 +217,7 @@ void CScene::BuildLights()
 	m_pLights->m_pLights[2].m_color = XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f);
 	m_pLights->m_pLights[2].m_direction = Vector3::Normalize(XMFLOAT3(1.0f, -0.3f, -1.0f));
 
-	m_pLights->m_pLights[3].m_bEnable = true;
+	m_pLights->m_pLights[3].m_bEnable = false;
 	m_pLights->m_pLights[3].m_nType = SPOT_LIGHT;
 	m_pLights->m_pLights[3].m_fRange = 500.0f;
 	m_pLights->m_pLights[3].m_color = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
@@ -252,81 +237,53 @@ void CScene::BuildObjects(CCreateMgr *pCreateMgr)
 	m_pCommandList = pCreateMgr->GetCommandList();
 
 	m_pCamera = new  CAOSCamera();
+		m_pCamera->Initialize(pCreateMgr);
 
-	m_pCamera->Initialize(pCreateMgr);
+	CTerrainShader* pTerrainShader = new CTerrainShader(pCreateMgr);
 
-	m_nShaders = 11;
+	m_nShaders = 4;
 	m_ppShaders = new CShader*[m_nShaders];
 	m_ppShaders[0] = new CSkyBoxShader(pCreateMgr);
-	CTerrainShader* pTerrainShader = new CTerrainShader(pCreateMgr);
 	m_ppShaders[1] = pTerrainShader;
-	m_ppShaders[2] = new CAniShader(pCreateMgr, m_pNetwork);
-	m_ppShaders[3] = new CArrowShader(pCreateMgr);
-	m_ppShaders[4] = new CStaticObjectShader(pCreateMgr);
-	m_ppShaders[5] = new CPlayerShader(pCreateMgr, m_pNetwork);
-	m_ppShaders[6] = new CUIObjectShader(pCreateMgr);
-	m_ppShaders[7] = new CPlayerHPGaugeShader(pCreateMgr);
-	m_ppShaders[8] = new CMinionHPGaugeShader(pCreateMgr);
-	m_ppShaders[9] = new CMinimapIconShader(pCreateMgr);
-	m_ppShaders[10] = new CNexusTowerShader(pCreateMgr);
+	m_ppShaders[2] = new CStaticObjectShader(pCreateMgr);
+	m_ppShaders[3] = new CPlayerShader(pCreateMgr, m_pNetwork);
+	//m_ppShaders[4] = new CAniShader(pCreateMgr, m_pNetwork);
+	//m_ppShaders[5] = new CUIObjectShader(pCreateMgr);
+	//m_ppShaders[6] = new CPlayerHPGaugeShader(pCreateMgr);
+	//m_ppShaders[7] = new CMinionHPGaugeShader(pCreateMgr);
+	//m_ppShaders[8] = new CMinimapIconShader(pCreateMgr);
+	//m_ppShaders[9] = new CNexusTowerShader(pCreateMgr);
 
 
-	for (int i = 0; i < 2; ++i)
+	for (int i = 0; i < m_nShaders; ++i)
 	{
 		m_ppShaders[i]->Initialize(pCreateMgr);
 	}
 
-	for (int i = 2; i < m_nShaders - 5; ++i)
-	{
-		m_ppShaders[i]->Initialize(pCreateMgr, pTerrainShader->GetTerrain());
-	}
+	//for (int i = 2; i < m_nShaders - 5; ++i)
+	//{
+	//	m_ppShaders[i]->Initialize(pCreateMgr, pTerrainShader->GetTerrain());
+	//}
 
-	((CPlayerHPGaugeShader*)m_ppShaders[7])->SetPlayerCnt(((CPlayerShader *)m_ppShaders[5])->GetObjectCount());
-	((CPlayerHPGaugeShader*)m_ppShaders[7])->SetPlayer(((CPlayerShader *)m_ppShaders[5])->GetCollisionObjects());
+	//((CPlayerHPGaugeShader*)m_ppShaders[7])->SetPlayerCnt(((CPlayerShader *)m_ppShaders[5])->GetObjectCount());
+	//((CPlayerHPGaugeShader*)m_ppShaders[7])->SetPlayer(((CPlayerShader *)m_ppShaders[5])->GetCollisionObjects());
 
-	((CMinimapIconShader*)m_ppShaders[9])->SetPlayerCnt(((CPlayerShader *)m_ppShaders[5])->GetObjectCount());
-	((CMinimapIconShader*)m_ppShaders[9])->SetPlayer(((CPlayerShader *)m_ppShaders[5])->GetCollisionObjects());
+	//((CMinimapIconShader*)m_ppShaders[9])->SetPlayerCnt(((CPlayerShader *)m_ppShaders[5])->GetObjectCount());
+	//((CMinimapIconShader*)m_ppShaders[9])->SetPlayer(((CPlayerShader *)m_ppShaders[5])->GetCollisionObjects());
 
-	m_ppShaders[6]->Initialize(pCreateMgr, m_pCamera);
-	m_ppShaders[7]->Initialize(pCreateMgr, m_pCamera);
-	m_ppShaders[8]->Initialize(pCreateMgr, m_pCamera);
-	m_ppShaders[9]->Initialize(pCreateMgr, m_pCamera);
-	m_ppShaders[10]->Initialize(pCreateMgr, m_pCamera);
+	//m_ppShaders[6]->Initialize(pCreateMgr, m_pCamera);
+	//m_ppShaders[7]->Initialize(pCreateMgr, m_pCamera);
+	//m_ppShaders[8]->Initialize(pCreateMgr, m_pCamera);
+	//m_ppShaders[9]->Initialize(pCreateMgr, m_pCamera);
+	//m_ppShaders[10]->Initialize(pCreateMgr, m_pCamera);
 
-	m_pWayFinder = new CWayFinder(NODE_SIZE, NODE_SIZE);
-	m_pCollisionManager = new CCollisionManager();
-	m_pHPGaugeManager = new CHPGaugeManager();
+	//m_pHPGaugeManager = new CHPGaugeManager();
 
-	m_pFSMMgr = new CFSMMgr(m_pWayFinder);
+	//CAniShader* pAniS = (CAniShader *)m_ppShaders[2];
+	//pAniS->SetGaugeManger(m_pHPGaugeManager);
 
-	CAniShader* pAniS = (CAniShader *)m_ppShaders[2];
-	int nColliderObject = pAniS->GetObjectCount();
-	for (int i = 0; i < nColliderObject; ++i)
-	{
-		m_pCollisionManager->AddCollider(((CCollisionObject * *)pAniS->GetCollisionObjects())[i]);
-	}
-	pAniS->SetCollisionManager(m_pCollisionManager);
-	pAniS->SetGaugeManger(m_pHPGaugeManager);
-	pAniS->SetFSMManager(m_pFSMMgr);
+	//static_cast<CMinionHPGaugeShader*>(m_ppShaders[7])->SetGaugeManager(m_pHPGaugeManager);
 
-	static_cast<CMinionHPGaugeShader*>(m_ppShaders[8])->SetGaugeManager(m_pHPGaugeManager);
-
-	CPlayerShader* pPlayerS = (CPlayerShader *)m_ppShaders[5];
-	nColliderObject = pPlayerS->GetObjectCount();
-	for (int i = 0; i < nColliderObject; ++i)
-	{
-		m_pCollisionManager->AddCollider(((CCollisionObject * *)pPlayerS->GetCollisionObjects())[i]);
-	}
-	pPlayerS->SetColManagerToObject(m_pCollisionManager);
-	CNexusTowerShader* pNTS = (CNexusTowerShader *)m_ppShaders[10];
-	nColliderObject = pNTS->GetObjectCount();
-	for (int i = 0; i < nColliderObject; ++i)
-	{
-		m_pCollisionManager->AddCollider(((CCollisionObject * *)pNTS->GetCollisionObjects())[i]);
-	}
-	pNTS->SetColManagerToObject(m_pCollisionManager);
-
-	
 	BuildLights();
 }
 
@@ -345,10 +302,7 @@ void CScene::ReleaseObjects()
 		}
 		Safe_Delete_Array(m_ppShaders);
 	}
-	if (m_pWayFinder) Safe_Delete(m_pWayFinder);
-	if (m_pCollisionManager) Safe_Delete(m_pCollisionManager);
 	if (m_pHPGaugeManager) Safe_Delete(m_pHPGaugeManager);
-	if (m_pFSMMgr) Safe_Delete(m_pFSMMgr);
 }
 
 void CScene::CreateShaderVariables(CCreateMgr *pCreateMgr)
@@ -388,36 +342,28 @@ void CScene::PickObjectPointedByCursor(WPARAM wParam, LPARAM lParam)
 	pickPosition.y = -(((2.0f * yClient) / viewport.Height) - 1) / xmf4x4Projection._22;
 	pickPosition.z = 1.0f;
 
-	int nIntersected{ 0 };
-	float hitDistance{ FLT_MAX }, nearestHitDistance{ FLT_MAX };
-	CBaseObject *pIntersectedObject{ NULL };
-	//m_pSelectedObject = NULL;
+	if (wParam == MK_LBUTTON) {
+		int nIntersected{ 0 };
+		float hitDistance{ FLT_MAX }, nearestHitDistance{ FLT_MAX };
+		CBaseObject *pIntersectedObject{ NULL };
 
-	for (int i = 0; i < m_nShaders; i++)
-	{
-		pIntersectedObject = m_ppShaders[i]->PickObjectByRayIntersection(pickPosition, xmf4x4View, hitDistance);
-		if (pIntersectedObject && (hitDistance < nearestHitDistance))
+		for (int i = 0; i < m_nShaders; i++)
 		{
+			pIntersectedObject = m_ppShaders[i]->PickObjectByRayIntersection(pickPosition, xmf4x4View, hitDistance);
+
+			if (!pIntersectedObject || (hitDistance > nearestHitDistance)) continue;
+
 			nearestHitDistance = hitDistance;
-			m_pSelectedObject = reinterpret_cast<CAnimatedObject*>(pIntersectedObject);
-			printf("selected!\n");
-
-			// Status 창 띄우기 수도 코드
-			// 현재 6번 쉐이더가 UI 이므로 상호작용하는 Object의 타입을 받아와서
-			// 그 해당 오브젝트에 대한 정보를 출력
-			m_ppShaders[6]->OnStatus(pIntersectedObject->GetType());
-
-			//m_Network.StartRecv(m_pSelectedObject);
+			m_pSelectedObject = reinterpret_cast<CCollisionObject*>(pIntersectedObject);
 		}
+		// Status 창 띄우기 수도 코드
+		// 현재 6번 쉐이더가 UI 이므로 상호작용하는 Object의 타입을 받아와서
+		// 그 해당 오브젝트에 대한 정보를 출력
+		//m_ppShaders[6]->OnStatus(pIntersectedObject->GetType());
 	}
-
-	if (wParam == MK_RBUTTON)
+	else if (wParam == MK_RBUTTON)
 	{
 		GenerateLayEndWorldPosition(pickPosition, xmf4x4View);
-	}
-	else if (wParam == MK_LBUTTON) {
-		// 바닥 선택시 Status창 Off
-		//m_ppShaders[6]->OffStatus();
 	}
 }
 
@@ -425,33 +371,35 @@ void CScene::GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, XMFLOAT4X4&	 xm
 {
 	CS_MsgChMove my_packet; //= reinterpret_cast<CS_MsgChMove *>(m_Network.m_send_buffer);
 	int ret = 0;
-	XMFLOAT4X4  inverseArr = Matrix4x4::Inverse(xmf4x4View);
-	XMFLOAT3 camPosition = m_pCamera->GetPosition();
-	XMFLOAT3 layWorldPosition = Vector3::TransformCoord(pickPosition, inverseArr);
+	XMFLOAT4X4  inverseArr{ Matrix4x4::Inverse(xmf4x4View) };
+	XMFLOAT3 camPosition{ m_pCamera->GetPosition() };
+	XMFLOAT3 layWorldPosition{ Vector3::TransformCoord(pickPosition, inverseArr) };
 	XMFLOAT3 layDirection = Vector3::Subtract(layWorldPosition, camPosition);
 	float yDiff = abs(camPosition.y / layDirection.y);
 
 	m_pickWorldPosition = Vector3::Add(camPosition, Vector3::ScalarProduct(layDirection, yDiff, false));
 
-	if (m_pSelectedObject)
-	{
-		m_pSelectedObject->LookAt(m_pickWorldPosition);
-		m_pSelectedObject->SetPathToGo(m_pWayFinder->GetPathToPosition(
-			XMFLOAT2(m_pSelectedObject->GetPosition().x, m_pSelectedObject->GetPosition().z),
-			XMFLOAT2(m_pickWorldPosition.x, m_pickWorldPosition.z),
-			m_pSelectedObject->GetCollisionSize()));
-		my_packet.Character_id = m_pNetwork->m_myid;
+	// Warning : 서버에 픽 포지션 보내줄 필요 있을듯?
 
-		my_packet.size = sizeof(my_packet);
-		my_packet.x = m_pickWorldPosition.x;
-		my_packet.y = m_pickWorldPosition.z;
-		m_pNetwork->m_send_wsabuf.len = sizeof(my_packet);
-		DWORD iobyte;
-		my_packet.type = CS_MOVE_PLAYER;
-		memcpy(m_pNetwork->m_send_buffer, &my_packet, sizeof(my_packet));
-		m_pNetwork->SendPacket(m_pNetwork->m_myid, &my_packet);
-		m_pNetwork->ReadPacket(m_pNetwork->m_mysocket, (CBaseObject**)m_pSelectedObject);
-	}
+	//if (m_pSelectedObject)
+	//{
+	//	m_pSelectedObject->LookAt(m_pickWorldPosition);
+	//	m_pSelectedObject->SetPathToGo(m_pWayFinder->GetPathToPosition(
+	//		XMFLOAT2(m_pSelectedObject->GetPosition().x, m_pSelectedObject->GetPosition().z),
+	//		XMFLOAT2(m_pickWorldPosition.x, m_pickWorldPosition.z),
+	//		m_pSelectedObject->GetCollisionSize()));
+	//	my_packet.Character_id = m_pNetwork->m_myid;
+
+	//	my_packet.size = sizeof(my_packet);
+	//	my_packet.x = m_pickWorldPosition.x;
+	//	my_packet.y = m_pickWorldPosition.z;
+	//	m_pNetwork->m_send_wsabuf.len = sizeof(my_packet);
+	//	DWORD iobyte;
+	//	my_packet.type = CS_MOVE_PLAYER;
+	//	memcpy(m_pNetwork->m_send_buffer, &my_packet, sizeof(my_packet));
+	//	m_pNetwork->SendPacket(m_pNetwork->m_myid, &my_packet);
+	//	m_pNetwork->ReadPacket(m_pNetwork->m_mysocket, (CBaseObject**)m_pSelectedObject);
+	//}
 }
 
 // Process Keyboard Input
@@ -481,9 +429,4 @@ void CScene::OnProcessKeyUp(WPARAM wParam, LPARAM lParam)
 	{
 		m_bRenderBoundingBox = !m_bRenderBoundingBox;
 	}
-}
-
-void CScene::CollisionTest()
-{
-	m_pCollisionManager->Update(m_pWayFinder);
 }

@@ -70,7 +70,6 @@ public:	// 생성자, 소멸자
 public: // 공개함수
 	virtual void Animate(float fTimeElapsed);
 
-	StatesType GetState() { return m_pMasterObject->GetState(); }
 	virtual void SetObject(CCollisionObject *pObject) { m_pMasterObject = pObject; };
 
 protected: // 변수

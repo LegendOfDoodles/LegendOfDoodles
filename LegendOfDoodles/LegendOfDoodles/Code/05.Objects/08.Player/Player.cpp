@@ -12,7 +12,6 @@
 // 생성자, 소멸자
 CPlayer::CPlayer(CCreateMgr *pCreateMgr, int nMeshes) : CAnimatedObject(pCreateMgr, nMeshes)
 {
-	m_speed = CONVERT_cm_to_InG(3.285) * 10;
 }
 
 
@@ -24,87 +23,12 @@ CPlayer::~CPlayer()
 // 공개 함수
 void CPlayer::Animate(float timeElapsed)
 {
-	switch (m_curState) {
-	case States::Idle:
-		if (m_nCurrAnimation != Animations::Idle) m_nCurrAnimation = Animations::Idle;
-		if (m_pathToGo) SetState(States::Walk);
-		break;
-	case States::Attack:
-		if (m_fFrameTime >= m_nAniLength[m_nAniIndex] - 1)
-		{
-			SetState(States::Idle);
-		}
-		else if (m_nCurrAnimation == Animations::SkillQ) {
-			if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f
-				&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f) {
-				m_pColManager->RequestCollide(CollisionType::SPHERE, this, CONVERT_PaperUnit_to_InG(8), CONVERT_PaperUnit_to_InG(8),100);
-			}
-		}
-		else if (m_nCurrAnimation == Animations::SkillE) {
-			if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f
-				&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f) {
-				m_pColManager->RequestCollide(CollisionType::SECTERFORM, this, CONVERT_PaperUnit_to_InG(24), 180,500);
-			}
-		}
-		else if (m_nCurrAnimation == Animations::SkillR) {
-			if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.666f
-				&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.666f) {
-				m_pColManager->RequestCollide(CollisionType::SPHERE, this, 0, CONVERT_PaperUnit_to_InG(12),500);
-			}
-		}
-		break;
-
-	case States::Walk:
-		if (m_nCurrAnimation != Animations::StartWalk&&
-			m_nCurrAnimation != Animations::Walking)
-			m_nCurrAnimation = Animations::StartWalk;
-
-		if (m_nCurrAnimation == Animations::StartWalk) {
-			if (m_fFrameTime >= m_nAniLength[m_nAniIndex] - 1)
-			{
-				m_nCurrAnimation = Animations::Walking;
-				m_fFrameTime = 0;
-			}
-		}
-		break;
-	case States::Die:
-		if (m_nCurrAnimation != Animations::Die) m_nCurrAnimation = Animations::Die;
-		if (GetAnimTimeRemainRatio() < 0.05)
-		{
-			m_curState = States::Remove;
-		}
-		break;
-	case States::Win:
-		if (m_nCurrAnimation != Animations::Win) m_nCurrAnimation = Animations::Win;
-		break;
-	case States::Defeat:
-		if (m_nCurrAnimation != Animations::Defeat&&
-			m_nCurrAnimation != Animations::Defeat2)
-			m_nCurrAnimation = Animations::Defeat;
-
-		if (m_nCurrAnimation == Animations::Defeat) {
-			if (m_fFrameTime >= m_nAniLength[m_nAniIndex] - 1)
-			{
-				m_nCurrAnimation = Animations::Defeat2;
-				m_fFrameTime = 0;
-			}
-		}
-		break;
-	default:
-		break;
-	}
-
-	m_fPreFrameTime = m_fFrameTime;
 	m_fFrameTime += 30 * timeElapsed;
-
-	AdjustAnimationIndex();
 
 	if (m_fFrameTime > m_nAniLength[m_nAniIndex]) {
 		while (m_fFrameTime > m_nAniLength[m_nAniIndex])
 			m_fFrameTime -= m_nAniLength[m_nAniIndex];
 	}
-
-	if (MoveToDestination(timeElapsed) == States::Done) SetState(States::Idle);
 
 	CAnimatedObject::Animate(timeElapsed);
 }
@@ -137,58 +61,6 @@ void CPlayer::Render(CCamera * pCamera, UINT instanceCnt)
 	}
 }
 
-void CPlayer::ActiveSkill(AnimationsType act)
-{
-	if (m_curState != States::Attack) {
-		m_curState = States::Attack;
-		m_nCurrAnimation = act;
-		m_fFrameTime = 0;
-	}
-}
-
-void CPlayer::SetState(StatesType newState)
-{
-	m_curState = newState;
-
-	switch (newState)
-	{
-	case States::Idle:
-		m_nCurrAnimation = Animations::Idle;
-		break;
-	case States::Walk:
-		RegenerateLookAt();
-		if (m_nCurrAnimation != Animations::StartWalk &&
-			m_nCurrAnimation != Animations::Walking)
-		m_nCurrAnimation = Animations::StartWalk;
-		break;
-	case States::Chase:
-		m_nCurrAnimation = Animations::StartWalk;
-		break;
-	case States::Attack:
-		m_fFrameTime = 0;
-		break;
-	case States::Die:
-		m_nCurrAnimation = Animations::Die;
-		m_fFrameTime = 0;
-		SetPathToGo(NULL);
-		break;
-	case States::Remove:
-		break;
-	case States::Win:
-		m_nCurrAnimation = Animations::Win;
-		m_fFrameTime = 0;
-		SetPathToGo(NULL);
-		break;
-	case States::Defeat:
-		m_nCurrAnimation = Animations::Defeat;
-		m_fFrameTime = 0;
-		SetPathToGo(NULL);
-		break;
-	default:
-		assert(!"Error:: There is No State");
-	}
-}
-
 ////////////////////////////////////////////////////////////////////////
 // 내부 함수
 void CPlayer::AdjustAnimationIndex()
@@ -213,7 +85,6 @@ void CPlayer::AdjustAnimationIndex()
 	case Animations::SkillR:
 		m_nAniIndex = 5;
 		break;
-
 	case Animations::Win:
 		m_nAniIndex = 6;
 		break;
@@ -223,6 +94,5 @@ void CPlayer::AdjustAnimationIndex()
 	case Animations::Defeat2:
 		m_nAniIndex = 8;
 		break;
-
 	}
 }
