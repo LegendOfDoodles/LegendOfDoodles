@@ -90,6 +90,8 @@ void CCreateMgr::Resize(int width, int height)
 
 void CCreateMgr::OnResizeBackBuffers()
 {
+	if (!m_pCommandList || !m_pCommandAllocator) return;
+
 	HRESULT hResult;
 
 	hResult = m_pCommandList->Reset(m_pCommandAllocator, NULL);
