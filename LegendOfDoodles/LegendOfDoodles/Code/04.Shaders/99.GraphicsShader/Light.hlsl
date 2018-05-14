@@ -124,7 +124,7 @@ float4 DirectionalLight(int nIndex, float3 vNormal, float3 vCamera, float4 texCo
 {
     float3 vToLight = -gLights[nIndex].m_vDirection;
 
-    return gLights[nIndex].m_cAlbedo * ((1 - gMaterials.m_cMetalic) * texColor * OrenNayarDiffuse(vToLight, vNormal, vCamera, gMaterials.m_cRoughness) +
+    return gLights[nIndex].m_cAlbedo * (texColor * OrenNayarDiffuse(vToLight, vNormal, vCamera, gMaterials.m_cRoughness) +
 				gMaterials.m_cMetalic * specular * CookTorranceSpecular(vToLight, vNormal, vCamera, gMaterials.m_cRoughness));
 }
 
@@ -132,7 +132,7 @@ float4 DirectionalLight(int nIndex, float3 vNormal, float3 vCamera, float4 texCo
 {
     float3 vToLight = -gLights[nIndex].m_vDirection;
 
-    return gLights[nIndex].m_cAlbedo * ((1 - roughnessMetallicFresnel.g) * texColor * OrenNayarDiffuse(vToLight, vNormal, vCamera, roughnessMetallicFresnel.r) +
+    return gLights[nIndex].m_cAlbedo * (texColor * OrenNayarDiffuse(vToLight, vNormal, vCamera, roughnessMetallicFresnel.r) +
 				roughnessMetallicFresnel.g * specular * CookTorranceSpecular(vToLight, vNormal, vCamera, roughnessMetallicFresnel.r, roughnessMetallicFresnel.b));
 }
 
@@ -147,7 +147,7 @@ float4 PointLight(int nIndex, float3 vPosition, float3 vNormal, float3 vCamera, 
         float fAttenuationFactor = 1.0f / dot(gLights[nIndex].m_vAttenuation, float3(1.0f, fDistance, fDistance * fDistance));
 
         if (fAttenuationFactor != 0)
-            return gLights[nIndex].m_cAlbedo * ((1 - gMaterials.m_cMetalic) * texColor * OrenNayarDiffuse(vToLight, vNormal, vCamera, gMaterials.m_cRoughness) +
+            return gLights[nIndex].m_cAlbedo * (texColor * OrenNayarDiffuse(vToLight, vNormal, vCamera, gMaterials.m_cRoughness) +
 						gMaterials.m_cMetalic * specular * CookTorranceSpecular(vToLight, vNormal, vCamera, gMaterials.m_cRoughness)) * fAttenuationFactor;
     }
     return (float4(0.0f, 0.0f, 0.0f, 0.0f));
@@ -164,7 +164,7 @@ float4 PointLight(int nIndex, float3 vPosition, float3 vNormal, float3 vCamera, 
         float fAttenuationFactor = 1.0f / dot(gLights[nIndex].m_vAttenuation, float3(1.0f, fDistance, fDistance * fDistance));
 
         if (fAttenuationFactor != 0)
-            return gLights[nIndex].m_cAlbedo * ((1 - roughnessMetallicFresnel.g) * texColor * OrenNayarDiffuse(vToLight, vNormal, vCamera, roughnessMetallicFresnel.r) +
+            return gLights[nIndex].m_cAlbedo * (texColor * OrenNayarDiffuse(vToLight, vNormal, vCamera, roughnessMetallicFresnel.r) +
 						roughnessMetallicFresnel.g * specular * CookTorranceSpecular(vToLight, vNormal, vCamera, roughnessMetallicFresnel.r, roughnessMetallicFresnel.b)) * fAttenuationFactor;
     }
     return (float4(0.0f, 0.0f, 0.0f, 0.0f));
@@ -187,7 +187,7 @@ float4 SpotLight(int nIndex, float3 vPosition, float3 vNormal, float3 vCamera, f
         float fAttenuationFactor = 1.0f / dot(gLights[nIndex].m_vAttenuation, float3(1.0f, fDistance, fDistance * fDistance));
 
         if (fSpotFactor != 0 && fAttenuationFactor != 0)
-            return gLights[nIndex].m_cAlbedo * ((1 - gMaterials.m_cMetalic) * texColor * OrenNayarDiffuse(vToLight, vNormal, vCamera, gMaterials.m_cRoughness) +
+            return gLights[nIndex].m_cAlbedo * (texColor * OrenNayarDiffuse(vToLight, vNormal, vCamera, gMaterials.m_cRoughness) +
 			gMaterials.m_cMetalic * specular * CookTorranceSpecular(vToLight, vNormal, vCamera, gMaterials.m_cRoughness)) * fAttenuationFactor * fSpotFactor;
     }
     return (float4(0.0f, 0.0f, 0.0f, 0.0f));
@@ -241,7 +241,7 @@ float4 Lighting(float3 vPosition, float3 vNormal)
             }
         }
     }
-    cColor += (gcGlobalAmbientLight * gMaterials.m_cAlbedo);
+    cColor += (gcGlobalAmbientLight * gMaterials.m_cAlbedo * texColor);
     cColor.a = gMaterials.m_cAlbedo.a;
 
     return (cColor);
@@ -271,7 +271,7 @@ float4 Lighting(float3 vPosition, float3 vNormal, float4 texColor)
             }
         }
     }
-    cColor += (gcGlobalAmbientLight * gMaterials.m_cAlbedo);
+    cColor += (gcGlobalAmbientLight * gMaterials.m_cAlbedo * texColor);
     cColor.a = gMaterials.m_cAlbedo.a;
 
     return (cColor);
@@ -300,7 +300,7 @@ float4 Lighting(float3 vPosition, float3 vNormal, float4 texColor, float4 specul
             }
         }
     }
-    cColor += (gcGlobalAmbientLight * texColor);
+    cColor += (gcGlobalAmbientLight * gMaterials.m_cAlbedo * texColor);
     cColor.a = gMaterials.m_cAlbedo.a;
 
     return (cColor);
