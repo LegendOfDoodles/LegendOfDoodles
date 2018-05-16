@@ -14,7 +14,7 @@ class CCollisionObject;
 class CWayFinder
 {
 public: // 생성자, 소멸자
-	CWayFinder(float sizeX, float sizeY);
+	CWayFinder();
 	~CWayFinder();
 
 public: // 공개 함수
@@ -40,9 +40,6 @@ protected: // 내부 함수
 protected: // 변수
 	NodeVector m_nodes;
 	EdgeArray m_edges;
-
-	XMFLOAT2 m_size{ 0, 0 };	// 노드 한 칸의 크기
-	POINT m_nodeMax{ 0, 0 };	// 노드 최대 개수(가로, 세로)
 
 	CAstar* m_pCurSearch{ NULL };
 	CCollisionMapImage *m_pCollisionMapImage{ NULL };

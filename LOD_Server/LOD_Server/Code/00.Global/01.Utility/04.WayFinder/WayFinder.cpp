@@ -7,132 +7,58 @@
 /// 목적: 길찾기 알고리즘을 위한 클래스 작성
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-09
+/// 최종 수정 날짜: 2018-05-16
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
-CWayFinder::CWayFinder(float sizeX, float sizeY)
-	: m_size(sizeX, sizeY)
+CWayFinder::CWayFinder()
 {
+	// 충돌 맵 읽어오기
 	m_pCollisionMapImage = new CCollisionMapImage(_T("Resource/Terrain/TerrainCollision.raw"),
 		TERRAIN_IMAGE_WIDTH, TERRAIN_IMAGE_HEIGHT, TERRAIN_IMAGE_SCALE);
 
-	m_nodeMax.x = (TERRAIN_SIZE_WIDTH / sizeX + 1);
-	m_nodeMax.y = (TERRAIN_SIZE_HEIGHT / sizeY + 1);
+	// 노드 읽어오기
+	std::ifstream nodeIn("Resource/Data/AStar/nodesData.txt", std::ios::in, std::ios::binary);
 
-	m_nodes.reserve(m_nodeMax.x * m_nodeMax.y);
-	m_edges.resize(m_nodeMax.x * m_nodeMax.y);
+	int maxNode{ 0 };
+	nodeIn >> maxNode;
+	m_nodes.reserve(maxNode);
 
-	// 노드 추가
-	for (int y = 0, index = 0; y <= m_nodeMax.y; ++y)
+	int index{ INVALID_NODE };
+	XMFLOAT2 position, size;
+	for (int i = 0; i < maxNode; ++i)
 	{
-		for (int x = 0; x <= m_nodeMax.x; ++x, ++index)
-		{
-			if(m_pCollisionMapImage->GetCollision(x * sizeX, y * sizeY))
-				m_nodes.emplace_back(INVALID_NODE, XMFLOAT2(x * sizeX, y * sizeY), m_size);
-			else
-				m_nodes.emplace_back(index, XMFLOAT2(x * sizeX, y * sizeY), m_size);
-		}
+		nodeIn >> index >> position.x >> position.y >> size.x >> size.y;
+		m_nodes.emplace_back(index, position, size);
 	}
 
-	// 엣지 추가
-	for (int y = 0, i = 0, edgeIdx = 0; y < m_nodeMax.y; ++y)
+	nodeIn.close();
+
+	// 에지 읽어오기
+	std::ifstream edgeIn("Resource/Data/AStar/edgesData.txt", std::ios::in, std::ios::binary);
+
+	int maxEdge{ 0 };
+	edgeIn >> maxEdge;
+	m_edges.resize(maxEdge);
+
+	int edgeSize{ 0 };
+	int from{ 0 }, to{ 0 }, cost{ 0 };
+	for (int i = 0; i < maxEdge; ++i)
 	{
-		for (int x = 0; x < m_nodeMax.x; ++x, ++i)
+		edgeIn >> edgeSize;
+		if (edgeSize)
 		{
-			int from = m_nodes[i].Index();
-			if (from != INVALID_NODE)
+			m_edges[i].reserve(edgeSize);
+			for (int j = 0; j < edgeSize; ++j)
 			{
-				int to;
-				bool LRDU[]{ false, false, false, false };
-				// 좌
-				if (x != 0)
-				{
-					LRDU[0] = true;
-					to = m_nodes[m_nodeMax.x * y + x - 1].Index();
-					if (to != INVALID_NODE)
-					{
-						m_edges[from].push_back(CEdge(from, to));
-						m_edges[from].push_back(CEdge(to, from));
-					}
-				}
-				// 우
-				if (x != m_nodeMax.x)
-				{
-					LRDU[1] = true;
-					to = m_nodes[m_nodeMax.x * y + x + 1].Index();
-					if (to != INVALID_NODE)
-					{
-						m_edges[from].push_back(CEdge(from, to));
-						m_edges[from].push_back(CEdge(to, from));
-					}
-				}
-				// 하
-				if (y != 0)
-				{
-					LRDU[2] = true;
-					to = m_nodes[m_nodeMax.x * (y - 1) + x].Index();
-					if (to != INVALID_NODE)
-					{
-						m_edges[from].push_back(CEdge(from, to));
-						m_edges[from].push_back(CEdge(to, from));
-					}
-				}
-				//  상
-				if (y != m_nodeMax.y)
-				{
-					LRDU[3] = true;
-					to = m_nodes[m_nodeMax.x * (y + 1) + x].Index();
-					if (to != INVALID_NODE)
-					{
-						m_edges[from].push_back(CEdge(from, to));
-						m_edges[from].push_back(CEdge(to, from));
-					}
-				}
-				// 좌 하단 대각선
-				if (LRDU[0] && LRDU[2])
-				{
-					to = m_nodes[m_nodeMax.x * (y - 1) + x - 1].Index();
-					if (to != INVALID_NODE)
-					{
-						m_edges[from].push_back(CEdge(from, to,14));
-						m_edges[from].push_back(CEdge(to, from, 14));
-					}
-				}
-				// 좌 상단 대각선
-				if (LRDU[0] && LRDU[3])
-				{
-					to = m_nodes[m_nodeMax.x * (y + 1) + x - 1].Index();
-					if (to != INVALID_NODE)
-					{
-						m_edges[from].push_back(CEdge(from, to, 14));
-						m_edges[from].push_back(CEdge(to, from, 14));
-					}
-				}
-				// 우 하단 대각선
-				if (LRDU[1] && LRDU[2])
-				{
-					to = m_nodes[m_nodeMax.x * (y - 1) + x + 1].Index();
-					if (to != INVALID_NODE)
-					{
-						m_edges[from].push_back(CEdge(from, to, 14));
-						m_edges[from].push_back(CEdge(to, from, 14));
-					}
-				}
-				// 우 상단 대각선
-				if (LRDU[1] && LRDU[3])
-				{
-					to = m_nodes[m_nodeMax.x * (y + 1) + x + 1].Index();
-					if (to != INVALID_NODE)
-					{
-						m_edges[from].push_back(CEdge(from, to, 14));
-						m_edges[from].push_back(CEdge(to, from, 14));
-					}
-				}
+				edgeIn >> from >> to >> cost;
+				m_edges[i].emplace_back(from, to, cost);
 			}
 		}
 	}
+
+	edgeIn.close();
 }
 
 CWayFinder::~CWayFinder()
