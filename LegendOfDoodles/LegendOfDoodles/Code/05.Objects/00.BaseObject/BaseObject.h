@@ -62,6 +62,8 @@ public: // 공개 함수
 	void SetUp(XMFLOAT3 vUp);
 	void SetRight(XMFLOAT3 vRight);
 
+	bool IsVisible(CCamera *pCamera = NULL);
+
 	void AddRef() { m_nReferences++; }
 	void Release() { if (--m_nReferences <= 0) delete this; }
 

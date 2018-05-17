@@ -44,6 +44,8 @@ protected: // 내부 함수
 
 	virtual void ReleaseObjects();
 
+	void SetBoundingBoxMeshByIndex(CCreateMgr *pCreateMgr, CBaseObject* target, int index);
+
 protected: // 변수
 	CBaseObject * *m_ppObjects{ NULL };
 	int m_nObjects{ 0 };

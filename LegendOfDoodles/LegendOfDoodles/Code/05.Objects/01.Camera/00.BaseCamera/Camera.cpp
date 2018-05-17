@@ -6,7 +6,7 @@
 /// 목적: 기본 카메라 코드, 인터 페이스 용
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-08
+/// 최종 수정 날짜: 2018-05-17
 /// </summary>
 
 
@@ -161,6 +161,8 @@ void CCamera::RegenerateViewMatrix()
 	m_xmf4x4View._41 = -Vector3::DotProduct(m_xmf3Position, m_xmf3Right);
 	m_xmf4x4View._42 = -Vector3::DotProduct(m_xmf3Position, m_xmf3Up);
 	m_xmf4x4View._43 = -Vector3::DotProduct(m_xmf3Position, m_xmf3Look);
+
+	GenerateFrustum();
 }
 
 void CCamera::GenerateProjectionMatrix(
@@ -243,6 +245,18 @@ bool CCamera::OnProcessKeyInput(UCHAR * pKeyBuffer)
 	m_direction = direction;
 
 	return false;
+}
+
+void CCamera::GenerateFrustum()
+{
+	m_xmFrustum.CreateFromMatrix(m_xmFrustum, XMLoadFloat4x4(&m_xmf4x4Projection));
+	XMMATRIX xmmtxInversView = XMMatrixInverse(NULL, XMLoadFloat4x4(&m_xmf4x4View));
+	m_xmFrustum.Transform(m_xmFrustum, xmmtxInversView);
+}
+
+bool CCamera::IsInFrustum(BoundingOrientedBox & xmBoundingBox)
+{
+	return(m_xmFrustum.Intersects(xmBoundingBox));
 }
 
 ////////////////////////////////////////////////////////////////////////

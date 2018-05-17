@@ -6,7 +6,7 @@
 /// 목적: 움직이는 오브젝트 처리용 기본 클래스
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-05-12
+/// 최종 수정 날짜: 2018-05-17
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -33,6 +33,8 @@ void CAnimatedObject::Animate(float timeElapsed)
 void CAnimatedObject::Render(CCamera * pCamera, UINT instanceCnt)
 {
 	OnPrepareRender();
+
+	if (!IsVisible(pCamera)) return;
 
 	if (m_pMaterial)
 	{

@@ -19,12 +19,13 @@ public: // 공개 함수
 
 	void SetBoundingBox(XMFLOAT3& center, XMFLOAT3& extents);
 	
-	ID3D12Resource* GetVertexBuffer() { 
-		return m_pVertexBuffer; 
-	}
-	ID3D12Resource* GetVertexUploadBuffer() { 
-		return m_pVertexUploadBuffer;
-	}
+	ID3D12Resource* GetVertexBuffer() { return m_pVertexBuffer; 	}
+	ID3D12Resource* GetVertexUploadBuffer() { 	return m_pVertexUploadBuffer; }
+
+	BoundingOrientedBox GetBoundingBox() { return(*m_pBoundingBox); }
+
+	bool HasBoundingBox() { return m_pBoundingBox; }
+
 	void AddRef() { m_nReferences++; }
 	void Release() { if (--m_nReferences <= 0) delete this; }
 
@@ -54,7 +55,7 @@ protected: // 변수
 	UINT m_nStartIndex{ 0 };
 	UINT m_nBaseVertex{ 0 };
 
-	BoundingBox	 *m_pBoundingBox{ NULL };
+	BoundingOrientedBox	 *m_pBoundingBox{ NULL };
 
 	ID3D12GraphicsCommandList *m_pCommandList{ NULL };
 };

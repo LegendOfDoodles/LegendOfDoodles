@@ -45,6 +45,8 @@ public: // 공개 함수
 	void Release() { if (--m_nReferences <= 0) delete this; }
 	virtual CBaseObject * * GetCollisionObjects() { return nullptr; }
 
+	void SaveBoundingBoxHeapNumber(int n) { m_boundingBoxHeapNumber = n; }
+
 protected: // 내부 함수
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
 	virtual D3D12_RASTERIZER_DESC CreateRasterizerState();
@@ -97,6 +99,7 @@ protected: // 변수
 
 	ID3D12DescriptorHeap			**m_ppCbvSrvDescriptorHeaps{ NULL };
 	int m_nHeaps{ 0 };
+	int m_boundingBoxHeapNumber{ 0 };
 
 	D3D12_CPU_DESCRIPTOR_HANDLE		*m_pcbvCPUDescriptorStartHandle{ NULL };
 	D3D12_GPU_DESCRIPTOR_HANDLE		*m_pcbvGPUDescriptorStartHandle{ NULL };

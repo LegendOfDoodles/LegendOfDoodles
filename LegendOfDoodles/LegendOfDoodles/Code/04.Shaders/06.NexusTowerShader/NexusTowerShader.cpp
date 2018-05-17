@@ -3,9 +3,7 @@
 #include "02.Framework/01.CreateMgr/CreateMgr.h"
 #include "05.Objects/99.Material/Material.h"
 #include "05.Objects/04.Terrain/HeightMapTerrain.h"
-#include "05.Objects/07.StaticObjects/01.Nexus/Nexus.h"
-#include "05.Objects/07.StaticObjects/02.Tower/Tower.h"
-#include "05.Objects/07.StaticObjects/03.Obstacle/Obstacle.h"
+#include "05.Objects/07.StaticObjects/Obstacle.h"
 #include "05.Objects/09.NexusTower/NexusTower.h"
 #include "06.Meshes/01.Mesh/MeshImporter.h"
 
@@ -13,7 +11,7 @@
 /// 목적: 스테틱 오브젝트 그리기 용도의 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-11
+/// 최종 수정 날짜: 2018-05-17
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -212,7 +210,7 @@ D3D12_SHADER_BYTECODE CNexusTowerShader::CreatePixelShader(ID3DBlob **ppShaderBl
 
 void CNexusTowerShader::CreateShader(CCreateMgr *pCreateMgr)
 {
-	m_nPipelineStates = 1;
+	m_nPipelineStates = 2;
 	m_ppPipelineStates = new ID3D12PipelineState*[m_nPipelineStates];
 
 	for (int i = 0; i < m_nPipelineStates; ++i)
@@ -220,11 +218,11 @@ void CNexusTowerShader::CreateShader(CCreateMgr *pCreateMgr)
 		m_ppPipelineStates[i] = NULL;
 	}
 
-	m_nHeaps = 4;
+	m_nHeaps = 5;
 	CreateDescriptorHeaps();
 
 	CShader::CreateShader(pCreateMgr);
-	//CShader::CreateBoundingBoxShader(pCreateMgr);
+	CShader::CreateBoundingBoxShader(pCreateMgr);
 }
 
 void CNexusTowerShader::CreateShaderVariables(CCreateMgr *pCreateMgr, int nBuffers)
@@ -282,14 +280,18 @@ void CNexusTowerShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
 	UINT boundingBoxElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
 
 	CreateShaderVariables(pCreateMgr, m_nObjects);
-	for (int i = 0; i < m_nHeaps; ++i)
+	for (int i = 0; i < m_nHeaps - 1; ++i)
 	{
 		CreateCbvAndSrvDescriptorHeaps(pCreateMgr, m_nObjects, 4, i);
 		CreateConstantBufferViews(pCreateMgr, m_nObjects, m_pConstBuffer, ncbElementBytes, i);
 	}
+	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, m_nObjects, 0, m_nHeaps - 1);
+	CreateConstantBufferViews(pCreateMgr, m_nObjects, m_pBoundingBoxBuffer, ncbElementBytes, m_nHeaps - 1);
+
+	SaveBoundingBoxHeapNumber(m_nHeaps - 1);
 
 #if USE_BATCH_MATERIAL
-	m_nMaterials = m_nHeaps;
+	m_nMaterials = m_nHeaps - 1;
 	m_ppMaterials = new CMaterial*[m_nMaterials];
 	m_ppMaterials[0] = Materials::CreateTresureBoxMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[0], &m_psrvGPUDescriptorStartHandle[0]);
 	m_ppMaterials[1] = Materials::CreateShellMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[1], &m_psrvGPUDescriptorStartHandle[1]);
@@ -302,9 +304,24 @@ void CNexusTowerShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
 	UINT incrementSize{ pCreateMgr->GetCbvSrvDescriptorIncrementSize() };
 	CStaticMesh *pMeshes[4];
 	pMeshes[0] = new CStaticMesh(pCreateMgr, "Resource//3D//Building//NexusTower//Treasure Box Nexus(UV).meshinfo");
+	pMeshes[0]->SetBoundingBox(
+		XMFLOAT3(0.0f, 0.0f, -CONVERT_PaperUnit_to_InG(16)),
+		XMFLOAT3(CONVERT_PaperUnit_to_InG(25), CONVERT_PaperUnit_to_InG(18), CONVERT_PaperUnit_to_InG(16)));
+
 	pMeshes[1] = new CStaticMesh(pCreateMgr, "Resource//3D//Building//NexusTower//Shell Nexus (UV).meshinfo");
+	pMeshes[1]->SetBoundingBox(
+		XMFLOAT3(0.0f, 0.0f, -CONVERT_PaperUnit_to_InG(10)),
+		XMFLOAT3(CONVERT_PaperUnit_to_InG(18), CONVERT_PaperUnit_to_InG(18), CONVERT_PaperUnit_to_InG(10)));
+
 	pMeshes[2] = new CStaticMesh(pCreateMgr, "Resource//3D//Building//NexusTower//Circle Soap Dispenser (UV).meshinfo");
+	pMeshes[2]->SetBoundingBox(
+		XMFLOAT3(0.0f, 0.0f, -CONVERT_PaperUnit_to_InG(10)),
+		XMFLOAT3(CONVERT_PaperUnit_to_InG(5), CONVERT_PaperUnit_to_InG(7), CONVERT_PaperUnit_to_InG(10)));
+
 	pMeshes[3] = new CStaticMesh(pCreateMgr, "Resource//3D//Building//NexusTower//Square Soap Dispenser ver.2 (UV).meshinfo");
+	pMeshes[3]->SetBoundingBox(
+		XMFLOAT3(0.0f, 0.0f, -CONVERT_PaperUnit_to_InG(10)),
+		XMFLOAT3(CONVERT_PaperUnit_to_InG(5), CONVERT_PaperUnit_to_InG(7), CONVERT_PaperUnit_to_InG(10)));
 	CNexusTower *pBuild = NULL;
 
 	
@@ -329,9 +346,12 @@ void CNexusTowerShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
 			pBuild->Rotate(0, 180, 0);
 			pBuild->Rotate(-rot.x, rot.y, -rot.z);
 			pBuild->SetMesh(0, pMeshes[i]);
+			SetBoundingBoxMeshByIndex(pCreateMgr, pBuild, i);
+
 			pBuild->SetStatic(StaticType::Static);
 
 			pBuild->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * cnt));
+			pBuild->SetCbvGPUDescriptorHandlePtrForBB(m_pcbvGPUDescriptorStartHandle[m_nHeaps - 1].ptr + (incrementSize * cnt));
 			m_ppObjects[cnt++] = pBuild;
 		}
 	}
@@ -366,4 +386,31 @@ void CNexusTowerShader::ReleaseObjects()
 		Safe_Delete(m_ppMaterials);
 	}
 #endif
+}
+
+void CNexusTowerShader::SetBoundingBoxMeshByIndex(CCreateMgr * pCreateMgr, CBaseObject * target, int index)
+{
+	switch (index)
+	{
+	case 0: // 보물 상자
+		target->SetBoundingMesh(pCreateMgr,
+			CONVERT_PaperUnit_to_InG(50), CONVERT_PaperUnit_to_InG(36), CONVERT_PaperUnit_to_InG(32),
+			0, 0, -CONVERT_PaperUnit_to_InG(16));
+		break;
+	case 1: // 진주 조개
+		target->SetBoundingMesh(pCreateMgr,
+			CONVERT_PaperUnit_to_InG(36), CONVERT_PaperUnit_to_InG(36), CONVERT_PaperUnit_to_InG(20),
+			0, 0, -CONVERT_PaperUnit_to_InG(10));
+		break;
+	case 2: // 동글 비누 타워
+		target->SetBoundingMesh(pCreateMgr,
+			CONVERT_PaperUnit_to_InG(10), CONVERT_PaperUnit_to_InG(14), CONVERT_PaperUnit_to_InG(20),
+			0, 0, -CONVERT_PaperUnit_to_InG(10));
+		break;
+	case 3: // 네모 비누 타워
+		target->SetBoundingMesh(pCreateMgr,
+			CONVERT_PaperUnit_to_InG(10), CONVERT_PaperUnit_to_InG(14), CONVERT_PaperUnit_to_InG(20),
+			0, 0, -CONVERT_PaperUnit_to_InG(10));
+		break;
+	}
 }

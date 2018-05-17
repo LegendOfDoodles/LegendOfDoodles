@@ -21,9 +21,6 @@ public: // 공개 함수
 	virtual void Render(CCamera *pCamera);
 	virtual void RenderBoundingBox(CCamera *pCamera);
 
-	virtual CBaseObject *PickObjectByRayIntersection(
-		XMFLOAT3& pickPosition, XMFLOAT4X4& xmf4x4View, float &nearHitDistance);
-
 	virtual bool OnProcessKeyInput(UCHAR* pKeyBuffer);
 
 protected: // 내부 함수
@@ -38,6 +35,8 @@ protected: // 내부 함수
 	virtual void BuildObjects(CCreateMgr *pCreateMgr, void *pContext = NULL);
 
 	virtual void ReleaseObjects();
+
+	void SetBoundingBoxMeshByIndex(CCreateMgr *pCreateMgr, CBaseObject* target, int index);
 
 protected: // 변수
 	CBaseObject **m_ppObjects{ NULL };

@@ -61,6 +61,9 @@ public:	// 공개 함수
 	virtual bool OnProcessMouseInput(UCHAR* pKeyBuffer);
 	virtual bool OnProcessKeyInput(UCHAR* pKeyBuffer);
 
+	void GenerateFrustum();
+	bool IsInFrustum(BoundingOrientedBox& xmBoundingBox);
+
 	void SetMode(DWORD nMode) { m_nMode = nMode; }
 	DWORD GetMode() { return(m_nMode); }
 
@@ -133,5 +136,7 @@ protected: // 변수
 
 	HWND m_hWnd{ NULL };
 	ID3D12GraphicsCommandList *m_pCommandList{ NULL };
+
+	BoundingFrustum m_xmFrustum;
 };
 

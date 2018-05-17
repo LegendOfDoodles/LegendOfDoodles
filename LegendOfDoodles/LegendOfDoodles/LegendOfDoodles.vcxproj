@@ -192,9 +192,7 @@
     <ClInclude Include="Code\05.Objects\04.Terrain\HeightMapTerrain.h" />
     <ClInclude Include="Code\05.Objects\05.Skybox\SkyBox.h" />
     <ClInclude Include="Code\05.Objects\06.Minion\Minion.h" />
-    <ClInclude Include="Code\05.Objects\07.StaticObjects\01.Nexus\Nexus.h" />
-    <ClInclude Include="Code\05.Objects\07.StaticObjects\02.Tower\Tower.h" />
-    <ClInclude Include="Code\05.Objects\07.StaticObjects\03.Obstacle\Obstacle.h" />
+    <ClInclude Include="Code\05.Objects\07.StaticObjects\Obstacle.h" />
     <ClInclude Include="Code\05.Objects\08.Player\Player.h" />
     <ClInclude Include="Code\05.Objects\09.NexusTower\NexusTower.h" />
     <ClInclude Include="Code\05.Objects\95.Billboard\Billboard.h" />
@@ -248,9 +246,7 @@
     <ClCompile Include="Code\05.Objects\04.Terrain\HeightMapTerrain.cpp" />
     <ClCompile Include="Code\05.Objects\05.Skybox\SkyBox.cpp" />
     <ClCompile Include="Code\05.Objects\06.Minion\Minion.cpp" />
-    <ClCompile Include="Code\05.Objects\07.StaticObjects\01.Nexus\Nexus.cpp" />
-    <ClCompile Include="Code\05.Objects\07.StaticObjects\02.Tower\Tower.cpp" />
-    <ClCompile Include="Code\05.Objects\07.StaticObjects\03.Obstacle\Obstacle.cpp" />
+    <ClCompile Include="Code\05.Objects\07.StaticObjects\Obstacle.cpp" />
     <ClCompile Include="Code\05.Objects\08.Player\Player.cpp" />
     <ClCompile Include="Code\05.Objects\09.NexusTower\NexusTower.cpp" />
     <ClCompile Include="Code\05.Objects\95.Billboard\Billboard.cpp" />

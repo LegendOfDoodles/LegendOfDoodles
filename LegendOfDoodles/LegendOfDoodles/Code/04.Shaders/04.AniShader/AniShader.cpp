@@ -10,7 +10,7 @@
 /// 목적: 움직이는 오브젝트 관리 및 그리기 용도
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-05-11
+/// 최종 수정 날짜: 2018-05-17
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -358,6 +358,8 @@ void CAniShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
 	CreateConstantBufferViews(pCreateMgr, MAX_MINION * 2, m_pConstBuffer, ncbElementBytes, 0);
 	CreateConstantBufferViews(pCreateMgr, MAX_MINION * 2, m_pBoundingBoxBuffer, boundingBoxElementBytes, 1);
 	CreateConstantBufferViews(pCreateMgr, MAX_MINION * 2, m_pConstBuffer, ncbElementBytes, 2);
+
+	SaveBoundingBoxHeapNumber(1);
 
 #endif
 

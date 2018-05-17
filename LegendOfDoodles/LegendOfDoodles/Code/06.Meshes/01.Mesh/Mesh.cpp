@@ -8,7 +8,7 @@
 /// 목적: 테스트 용 메쉬 클래스 생성
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-05
+/// 최종 수정 날짜: 2018-05-17
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -69,7 +69,7 @@ bool CMesh::CheckRayIntersection(XMFLOAT3& xmf3RayOrigin, XMFLOAT3& xmf3RayDirec
 
 void CMesh::SetBoundingBox(XMFLOAT3& center, XMFLOAT3 & extents)
 {
-	m_pBoundingBox = new BoundingBox(center, extents);
+	m_pBoundingBox = new BoundingOrientedBox(center, extents, XMFLOAT4(0, 0, 0, 1));
 }
 
 

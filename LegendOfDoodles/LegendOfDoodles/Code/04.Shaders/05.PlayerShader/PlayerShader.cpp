@@ -6,9 +6,14 @@
 #include "02.Framework/01.CreateMgr/CreateMgr.h"
 #include "05.Objects/99.Material/Material.h"
 #include "05.Objects/04.Terrain/HeightMapTerrain.h"
-#include "05.Objects/07.StaticObjects/01.Nexus/Nexus.h"
 #include "06.Meshes/01.Mesh/MeshImporter.h"
 
+/// <summary>
+/// 목적: 플레이어 관리 및 렌더링 용도
+/// 최종 수정자:  김나단
+/// 수정자 목록:  정휘현, 김나단
+/// 최종 수정 날짜: 2018-05-17
+/// </summary>
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 CPlayerShader::CPlayerShader(CCreateMgr *pCreateMgr, Network* network) : CShader(pCreateMgr)
@@ -338,6 +343,8 @@ void CPlayerShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
 	CreateShaderVariables(pCreateMgr, m_nObjects);
 	CreateConstantBufferViews(pCreateMgr, m_nObjects, m_pConstBuffer, ncbElementBytes, 0);
 	CreateConstantBufferViews(pCreateMgr, m_nObjects, m_pBoundingBoxBuffer, boundingBoxElementBytes, 1);
+
+	SaveBoundingBoxHeapNumber(1);
 #endif
 
 #if USE_BATCH_MATERIAL

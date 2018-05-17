@@ -8,7 +8,7 @@
 /// 목적: 기본 쉐이터 코드, 인터페이스 용
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-09
+/// 최종 수정 날짜: 2018-05-17
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -487,15 +487,14 @@ void CShader::OnPrepareRender(int opt)
 	m_pCommandList->SetPipelineState(m_ppPipelineStates[0]);
 	if(m_ppCbvSrvDescriptorHeaps) m_pCommandList->SetDescriptorHeaps(1, &m_ppCbvSrvDescriptorHeaps[opt]);
 
-	if(opt != BOUNDING_BOX) UpdateShaderVariables();
-	else UpdateBoundingBoxShaderVariables();
+	UpdateShaderVariables();
 }
 
 void CShader::OnPrepareRenderForBB()
 {
 	//파이프라인에 그래픽스 상태 객체를 설정한다.
 	m_pCommandList->SetPipelineState(m_ppPipelineStates[BOUNDING_BOX]);
-	if (m_ppCbvSrvDescriptorHeaps) m_pCommandList->SetDescriptorHeaps(1, &m_ppCbvSrvDescriptorHeaps[BOUNDING_BOX]);
+	if (m_ppCbvSrvDescriptorHeaps) m_pCommandList->SetDescriptorHeaps(1, &m_ppCbvSrvDescriptorHeaps[m_boundingBoxHeapNumber]);
 	UpdateBoundingBoxShaderVariables();
 }
 

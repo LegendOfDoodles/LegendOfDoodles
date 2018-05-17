@@ -9,7 +9,7 @@
 /// 목적: 기본 오브젝트 클래스, 인터페이스 용
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-11
+/// 최종 수정 날짜: 2018-05-17
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -115,6 +115,8 @@ void CBaseObject::Render(CCamera *pCamera, UINT istanceCnt)
 {
 	OnPrepareRender();
 
+	if (!IsVisible(pCamera)) return;
+
 	if (m_pMaterial)
 	{
 		m_pMaterial->Render(pCamera);
@@ -142,6 +144,8 @@ void CBaseObject::Render(CCamera *pCamera, UINT istanceCnt)
 void CBaseObject::RenderBoundingBox(CCamera * pCamera, UINT istanceCnt)
 {
 	OnPrepareRender();
+
+	if (!IsVisible(pCamera)) return;
 
 	if (m_cbvGPUDescriptorHandleForBB.ptr)
 		m_pCommandList->SetGraphicsRootDescriptorTable(2, m_cbvGPUDescriptorHandleForBB);
@@ -333,4 +337,16 @@ void CBaseObject::UpdateShaderVariables()
 
 void CBaseObject::OnPrepareRender()
 {
+}
+
+bool CBaseObject::IsVisible(CCamera * pCamera)
+{
+	if (!m_ppMeshes) return false;
+	if (!m_ppMeshes[0]->HasBoundingBox()) return true;
+	bool bIsVisible = false;
+	BoundingOrientedBox boundingBox = m_ppMeshes[0]->GetBoundingBox();
+	//모델 좌표계의 바운딩 박스를 월드 좌표계로 변환한다.
+	boundingBox.Transform(boundingBox, XMLoadFloat4x4(&m_xmf4x4World));
+	if (pCamera) bIsVisible = pCamera->IsInFrustum(boundingBox);
+	return(bIsVisible);
 }
