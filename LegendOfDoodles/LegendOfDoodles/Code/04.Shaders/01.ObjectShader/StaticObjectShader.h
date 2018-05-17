@@ -42,7 +42,7 @@ protected: // 내부 함수
 protected: // 변수
 	CBaseObject **m_ppObjects{ NULL };
 	int m_nObjects{ 0 };
-	int m_meshCounts[17];
+	int m_meshCounts[18];
 
 	ID3D12Resource *m_myConstBuffer{ NULL };
 

@@ -95,22 +95,18 @@ void CNexusTowerShader::AnimateObjects(float timeElapsed)
 
 void CNexusTowerShader::Render(CCamera *pCamera)
 {
+	int setIndex{ 0 };
+	int setCnt{ m_meshCounts[setIndex] };
+	int nextSetCnt{ m_meshCounts[setIndex + 1] };
+
 	for (int j = 0; j < m_nObjects; j++)
 	{
-		for (int i = 0; i < m_nHeaps; ++i)
+		if (j >= setCnt && j < nextSetCnt)
 		{
-			if (i == m_nHeaps - 1)
-			{
-				CShader::Render(pCamera, i);
-				m_ppMaterials[i]->UpdateShaderVariables();
-				break;
-			}
-			else if (j >= m_meshCounts[i] && j < m_meshCounts[i + 1])
-			{
-				CShader::Render(pCamera, i);
-				m_ppMaterials[i]->UpdateShaderVariables();
-				break;
-			}
+			CShader::Render(pCamera, setIndex);
+			m_ppMaterials[setIndex++]->UpdateShaderVariables();
+			setCnt = m_meshCounts[setIndex];
+			nextSetCnt = m_meshCounts[setIndex + 1];
 		}
 		if (m_ppObjects[j]) m_ppObjects[j]->Render(pCamera);
 	}
@@ -344,6 +340,7 @@ void CNexusTowerShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
 	for (int i = 1; i < 4; ++i) {
 		m_meshCounts[i] = m_meshCounts[i - 1] + transformInporter.m_iKindMeshCnt[i - 1];
 	}
+	m_meshCounts[4] = m_nObjects;
 
 	m_pNetwork->SetNexusTowers(m_ppObjects);
 }
