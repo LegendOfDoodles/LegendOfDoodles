@@ -105,9 +105,6 @@
     <Filter Include="소스 파일\05.Objects\01.Camera\01.AOSCamera">
       <UniqueIdentifier>{7d070f59-60db-4a7b-a19d-086a99df7d5b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\04.Shaders\98.ArrowShader">
-      <UniqueIdentifier>{70d23914-ffae-4e4d-b1a6-4aac8dacb79c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\05.Objects\96.Arrow">
       <UniqueIdentifier>{da6614e3-61ea-4567-80c7-8b12d82ea4d7}</UniqueIdentifier>
     </Filter>
@@ -116,12 +113,6 @@
     </Filter>
     <Filter Include="소스 파일\05.Objects\95.Billboard">
       <UniqueIdentifier>{55fe72be-b996-42b9-af24-96806570544b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\04.Shaders\97.BillboardShader">
-      <UniqueIdentifier>{571b66e2-4e70-4740-a411-e6398c94664f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\04.Shaders\97.BillboardShader\00.UIShader">
-      <UniqueIdentifier>{53f786f2-cdf8-4f8a-adda-aa3fca040f82}</UniqueIdentifier>
     </Filter>
     <Filter Include="소스 파일\04.Shaders\04.AniShader">
       <UniqueIdentifier>{dc752d63-37aa-4e94-9f45-9cd6ad7d721c}</UniqueIdentifier>
@@ -150,29 +141,35 @@
     <Filter Include="소스 파일\05.Objects\08.Player">
       <UniqueIdentifier>{a29896a2-fa94-4c74-aca0-eae35af27e52}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\04.Shaders\97.BillboardShader\01.GaugeShader">
-      <UniqueIdentifier>{865a229b-606a-46e0-82b5-63b023eafc41}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\04.Shaders\97.BillboardShader\01.GaugeShader\00.PlayerGaugeShader">
-      <UniqueIdentifier>{348c3afd-ab13-4f47-986a-b0d18d90bf59}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\04.Shaders\97.BillboardShader\01.GaugeShader\01.MinionGaugeShader">
-      <UniqueIdentifier>{51bcd638-c1d9-4073-aa8d-15fe57eb1797}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\00.Global\01.Utility\06.HPGaugeManager">
       <UniqueIdentifier>{da69b070-0d64-4a34-ae5e-e8636545f903}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\04.Shaders\97.BillboardShader\02.IconShader">
-      <UniqueIdentifier>{48b9bf6b-916d-4f61-94a9-dcdc8b552ebf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\04.Shaders\97.BillboardShader\99.BillboardShader">
-      <UniqueIdentifier>{22b3e6fb-1293-40c2-9daa-2dfd14e1f83b}</UniqueIdentifier>
     </Filter>
     <Filter Include="소스 파일\04.Shaders\06.NexusTowerShader">
       <UniqueIdentifier>{95312e46-c39f-414e-bfd1-0f4d071afafd}</UniqueIdentifier>
     </Filter>
     <Filter Include="소스 파일\05.Objects\09.NexusTower">
       <UniqueIdentifier>{418d977f-e21f-4e92-a645-323b228aeed2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04.Shaders\98.BillboardShader">
+      <UniqueIdentifier>{571b66e2-4e70-4740-a411-e6398c94664f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04.Shaders\98.BillboardShader\00.UIShader">
+      <UniqueIdentifier>{53f786f2-cdf8-4f8a-adda-aa3fca040f82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04.Shaders\98.BillboardShader\01.GaugeShader">
+      <UniqueIdentifier>{865a229b-606a-46e0-82b5-63b023eafc41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04.Shaders\98.BillboardShader\01.GaugeShader\00.PlayerGaugeShader">
+      <UniqueIdentifier>{348c3afd-ab13-4f47-986a-b0d18d90bf59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04.Shaders\98.BillboardShader\01.GaugeShader\01.MinionGaugeShader">
+      <UniqueIdentifier>{51bcd638-c1d9-4073-aa8d-15fe57eb1797}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04.Shaders\98.BillboardShader\02.IconShader">
+      <UniqueIdentifier>{48b9bf6b-916d-4f61-94a9-dcdc8b552ebf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04.Shaders\98.BillboardShader\99.BillboardShader">
+      <UniqueIdentifier>{22b3e6fb-1293-40c2-9daa-2dfd14e1f83b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -235,24 +232,6 @@
     </ClInclude>
     <ClInclude Include="Code\04.Shaders\06.NexusTowerShader\NexusTowerShader.h">
       <Filter>소스 파일\04.Shaders\06.NexusTowerShader</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\04.Shaders\97.BillboardShader\00.UIShader\UIShader.h">
-      <Filter>소스 파일\04.Shaders\97.BillboardShader\00.UIShader</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\04.Shaders\97.BillboardShader\01.GaugeShader\00.PlayerGaugeShader\PlayerGaugeShader.h">
-      <Filter>소스 파일\04.Shaders\97.BillboardShader\01.GaugeShader\00.PlayerGaugeShader</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\04.Shaders\97.BillboardShader\01.GaugeShader\01.MinionGaugeShader\MinionGaugeShader.h">
-      <Filter>소스 파일\04.Shaders\97.BillboardShader\01.GaugeShader\01.MinionGaugeShader</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\04.Shaders\97.BillboardShader\02.IconShader\MinimapIconShader.h">
-      <Filter>소스 파일\04.Shaders\97.BillboardShader\02.IconShader</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\04.Shaders\97.BillboardShader\99.BIllboard\BillboardShader.h">
-      <Filter>소스 파일\04.Shaders\97.BillboardShader\99.BillboardShader</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\04.Shaders\98.ArrowShader\ArrowShader.h">
-      <Filter>소스 파일\04.Shaders\98.ArrowShader</Filter>
     </ClInclude>
     <ClInclude Include="Code\05.Objects\00.BaseObject\BaseObject.h">
       <Filter>소스 파일\05.Objects\00.BaseObject</Filter>
@@ -332,6 +311,21 @@
     <ClInclude Include="Code\05.Objects\07.StaticObjects\Obstacle.h">
       <Filter>소스 파일\05.Objects\07.StaticObjects</Filter>
     </ClInclude>
+    <ClInclude Include="Code\04.Shaders\98.BillboardShader\00.UIShader\UIShader.h">
+      <Filter>소스 파일\04.Shaders\98.BillboardShader\00.UIShader</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\04.Shaders\98.BillboardShader\01.GaugeShader\00.PlayerGaugeShader\PlayerGaugeShader.h">
+      <Filter>소스 파일\04.Shaders\98.BillboardShader\01.GaugeShader\00.PlayerGaugeShader</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\04.Shaders\98.BillboardShader\01.GaugeShader\01.MinionGaugeShader\MinionGaugeShader.h">
+      <Filter>소스 파일\04.Shaders\98.BillboardShader\01.GaugeShader\01.MinionGaugeShader</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\04.Shaders\98.BillboardShader\02.IconShader\MinimapIconShader.h">
+      <Filter>소스 파일\04.Shaders\98.BillboardShader\02.IconShader</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\04.Shaders\98.BillboardShader\99.BIllboard\BillboardShader.h">
+      <Filter>소스 파일\04.Shaders\98.BillboardShader\99.BillboardShader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\00.Global\00.Standard\stdafx.cpp">
@@ -387,24 +381,6 @@
     </ClCompile>
     <ClCompile Include="Code\04.Shaders\06.NexusTowerShader\NexusTowerShader.cpp">
       <Filter>소스 파일\04.Shaders\06.NexusTowerShader</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\04.Shaders\97.BillboardShader\00.UIShader\UIShader.cpp">
-      <Filter>소스 파일\04.Shaders\97.BillboardShader\00.UIShader</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\04.Shaders\97.BillboardShader\01.GaugeShader\00.PlayerGaugeShader\PlayerGaugeShader.cpp">
-      <Filter>소스 파일\04.Shaders\97.BillboardShader\01.GaugeShader\00.PlayerGaugeShader</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\04.Shaders\97.BillboardShader\01.GaugeShader\01.MinionGaugeShader\MinionGaugeShader.cpp">
-      <Filter>소스 파일\04.Shaders\97.BillboardShader\01.GaugeShader\01.MinionGaugeShader</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\04.Shaders\97.BillboardShader\02.IconShader\MinimapIconShader.cpp">
-      <Filter>소스 파일\04.Shaders\97.BillboardShader\02.IconShader</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\04.Shaders\97.BillboardShader\99.BIllboard\BillboardShader.cpp">
-      <Filter>소스 파일\04.Shaders\97.BillboardShader\99.BillboardShader</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\04.Shaders\98.ArrowShader\ArrowShader.cpp">
-      <Filter>소스 파일\04.Shaders\98.ArrowShader</Filter>
     </ClCompile>
     <ClCompile Include="Code\05.Objects\00.BaseObject\BaseObject.cpp">
       <Filter>소스 파일\05.Objects\00.BaseObject</Filter>
@@ -468,6 +444,21 @@
     </ClCompile>
     <ClCompile Include="Code\05.Objects\07.StaticObjects\Obstacle.cpp">
       <Filter>소스 파일\05.Objects\07.StaticObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\04.Shaders\98.BillboardShader\00.UIShader\UIShader.cpp">
+      <Filter>소스 파일\04.Shaders\98.BillboardShader\00.UIShader</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\04.Shaders\98.BillboardShader\01.GaugeShader\00.PlayerGaugeShader\PlayerGaugeShader.cpp">
+      <Filter>소스 파일\04.Shaders\98.BillboardShader\01.GaugeShader\00.PlayerGaugeShader</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\04.Shaders\98.BillboardShader\01.GaugeShader\01.MinionGaugeShader\MinionGaugeShader.cpp">
+      <Filter>소스 파일\04.Shaders\98.BillboardShader\01.GaugeShader\01.MinionGaugeShader</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\04.Shaders\98.BillboardShader\02.IconShader\MinimapIconShader.cpp">
+      <Filter>소스 파일\04.Shaders\98.BillboardShader\02.IconShader</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\04.Shaders\98.BillboardShader\99.BIllboard\BillboardShader.cpp">
+      <Filter>소스 파일\04.Shaders\98.BillboardShader\99.BillboardShader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

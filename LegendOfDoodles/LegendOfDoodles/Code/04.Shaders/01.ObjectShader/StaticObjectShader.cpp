@@ -10,7 +10,7 @@
 /// 목적: 스테틱 오브젝트 그리기 용도의 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-17
+/// 최종 수정 날짜: 2018-05-18
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -91,20 +91,18 @@ void CStaticObjectShader::AnimateObjects(float timeElapsed)
 
 void CStaticObjectShader::Render(CCamera *pCamera)
 {
-	int setIndex{ 0 };
-	int setCnt{ m_meshCounts[setIndex] };
-	int nextSetCnt{ m_meshCounts[setIndex + 1] };
-
-	for (int j = 0; j < m_nObjects; j++)
+	int cnt{ 0 };
+	for (int i = 0; i < m_nMaterials; ++i)
 	{
-		if (j >= setCnt && j < nextSetCnt)
+		for (int j = 0; j < m_meshCounts[i]; ++j, ++cnt)
 		{
-			CShader::Render(pCamera, setIndex);
-			m_ppMaterials[setIndex++]->UpdateShaderVariables();
-			setCnt = m_meshCounts[setIndex];
-			nextSetCnt = m_meshCounts[setIndex + 1];
+			if (j == 0)
+			{
+				CShader::Render(pCamera, i);
+				m_ppMaterials[i]->UpdateShaderVariables();
+			}
+			if (m_ppObjects[cnt]) m_ppObjects[cnt]->Render(pCamera);
 		}
-		if (m_ppObjects[j]) m_ppObjects[j]->Render(pCamera);
 	}
 }
 
@@ -386,7 +384,7 @@ void CStaticObjectShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
 		XMFLOAT3(CONVERT_PaperUnit_to_InG(27), CONVERT_PaperUnit_to_InG(6), CONVERT_PaperUnit_to_InG(32.5)));
 
 	int cnt = 0;
-	for (int i = 0; i < 17; ++i) {
+	for (int i = 0; i < m_nMaterials; ++i) {
 		m_meshCounts[i] = transformInporter.m_iKindMeshCnt[i];
 		for (int j = 0; j < transformInporter.m_iKindMeshCnt[i]; ++j) {
 			XMFLOAT3 pos = transformInporter.m_Transform[cnt].pos;
@@ -405,12 +403,6 @@ void CStaticObjectShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
 			++cnt;
 		}
 	}
-
-	m_meshCounts[0] = 0;
-	for (int i = 1; i < 17; ++i) {
-		m_meshCounts[i] = m_meshCounts[i - 1] + transformInporter.m_iKindMeshCnt[i - 1];
-	}
-	m_meshCounts[17] = m_nObjects;
 }
 
 void CStaticObjectShader::ReleaseObjects()

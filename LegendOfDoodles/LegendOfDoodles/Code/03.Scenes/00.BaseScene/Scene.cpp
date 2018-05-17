@@ -8,11 +8,10 @@
 #include "04.Shaders/04.AniShader/AniShader.h"
 #include "04.Shaders/05.PlayerShader/PlayerShader.h"
 #include "04.Shaders/06.NexusTowerShader/NexusTowerShader.h"
-#include "04.Shaders/97.BillboardShader/00.UIShader/UIShader.h"
-#include "04.Shaders/97.BillboardShader/02.IconShader/MinimapIconShader.h"
-#include "04.Shaders/97.BillboardShader/01.GaugeShader/00.PlayerGaugeShader/PlayerGaugeShader.h"
-#include "04.Shaders/97.BillboardShader/01.GaugeShader/01.MinionGaugeShader/MinionGaugeShader.h"
-#include "04.Shaders/98.ArrowShader/ArrowShader.h"
+#include "04.Shaders/98.BillboardShader/00.UIShader/UIShader.h"
+#include "04.Shaders/98.BillboardShader/02.IconShader/MinimapIconShader.h"
+#include "04.Shaders/98.BillboardShader/01.GaugeShader/00.PlayerGaugeShader/PlayerGaugeShader.h"
+#include "04.Shaders/98.BillboardShader/01.GaugeShader/01.MinionGaugeShader/MinionGaugeShader.h"
 #include "05.Objects/01.Camera/01.AOSCamera/AOSCamera.h"
 #include "00.Global/01.Utility/06.HPGaugeManager/HPGaugeManager.h"
 
@@ -20,7 +19,7 @@
 /// 목적: 기본 씬, 인터페이스 용
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-11
+/// 최종 수정 날짜: 2018-05-18
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -131,9 +130,9 @@ void CScene::UpdateCamera()
 
 		m_pCamera->Initialize(m_pCreateMgr);
 
-		static_cast<CUIObjectShader*>(m_ppShaders[7])->GetCamera(m_pCamera);
-		static_cast<CPlayerHPGaugeShader*>(m_ppShaders[8])->GetCamera(m_pCamera);
-		static_cast<CMinionHPGaugeShader*>(m_ppShaders[9])->GetCamera(m_pCamera);
+		static_cast<CUIObjectShader*>(m_ppShaders[6])->GetCamera(m_pCamera);
+		static_cast<CPlayerHPGaugeShader*>(m_ppShaders[7])->GetCamera(m_pCamera);
+		static_cast<CMinionHPGaugeShader*>(m_ppShaders[8])->GetCamera(m_pCamera);
 
 		m_bCamChanged = false;
 	}
@@ -228,27 +227,26 @@ void CScene::BuildObjects(CCreateMgr *pCreateMgr)
 
 	CTerrainShader* pTerrainShader = new CTerrainShader(pCreateMgr);
 	
-	m_nShaders = 11;
+	m_nShaders = 10;
 	m_ppShaders = new CShader*[m_nShaders];
 	m_ppShaders[0] = new CSkyBoxShader(pCreateMgr);
 	m_ppShaders[1] = pTerrainShader;
 	m_ppShaders[2] = new CPlayerShader(pCreateMgr, m_pNetwork);
 	m_ppShaders[3] = new CAniShader(pCreateMgr, m_pNetwork);
-	m_ppShaders[4] = new CArrowShader(pCreateMgr);
-	m_ppShaders[5] = new CStaticObjectShader(pCreateMgr);
-	m_ppShaders[6] = new CNexusTowerShader(pCreateMgr, m_pNetwork);
+	m_ppShaders[4] = new CStaticObjectShader(pCreateMgr);
+	m_ppShaders[5] = new CNexusTowerShader(pCreateMgr, m_pNetwork);
 	
 	// UI Shader
-	m_ppShaders[7] = new CUIObjectShader(pCreateMgr);
-	m_ppShaders[8] = new CPlayerHPGaugeShader(pCreateMgr);
-	m_ppShaders[9] = new CMinionHPGaugeShader(pCreateMgr);
-	m_ppShaders[10] = new CMinimapIconShader(pCreateMgr);
+	m_ppShaders[6] = new CUIObjectShader(pCreateMgr);
+	m_ppShaders[7] = new CPlayerHPGaugeShader(pCreateMgr);
+	m_ppShaders[8] = new CMinionHPGaugeShader(pCreateMgr);
+	m_ppShaders[9] = new CMinimapIconShader(pCreateMgr);
 
 	// Manager Init
 	m_pHPGaugeManager = new CUIObjectManager();
 	static_cast<CAniShader*>(m_ppShaders[3])->SetGaugeManager(m_pHPGaugeManager);
-	static_cast<CMinionHPGaugeShader*>(m_ppShaders[9])->SetGaugeManager(m_pHPGaugeManager);
-	static_cast<CMinimapIconShader*>(m_ppShaders[10])->SetUIObjectsManager(m_pHPGaugeManager);
+	static_cast<CMinionHPGaugeShader*>(m_ppShaders[8])->SetGaugeManager(m_pHPGaugeManager);
+	static_cast<CMinimapIconShader*>(m_ppShaders[9])->SetUIObjectsManager(m_pHPGaugeManager);
 
 	// Object Shaders Init
 	for (int i = 0; i < 2; ++i)
@@ -262,20 +260,20 @@ void CScene::BuildObjects(CCreateMgr *pCreateMgr)
 	}
 
 	// UI Shaders Init
-	((CPlayerHPGaugeShader*)m_ppShaders[8])->SetPlayerCnt(((CPlayerShader *)m_ppShaders[2])->GetObjectCount());
-	((CPlayerHPGaugeShader*)m_ppShaders[8])->SetPlayer(((CPlayerShader *)m_ppShaders[2])->GetCollisionObjects());
-	((CPlayerHPGaugeShader*)m_ppShaders[8])->SetNexusAndTowerCnt(((CNexusTowerShader *)m_ppShaders[6])->GetObjectCount());
-	((CPlayerHPGaugeShader*)m_ppShaders[8])->SetNexusAndTower(((CNexusTowerShader *)m_ppShaders[6])->GetCollisionObjects());
+	((CPlayerHPGaugeShader*)m_ppShaders[7])->SetPlayerCnt(((CPlayerShader *)m_ppShaders[2])->GetObjectCount());
+	((CPlayerHPGaugeShader*)m_ppShaders[7])->SetPlayer(((CPlayerShader *)m_ppShaders[2])->GetCollisionObjects());
+	((CPlayerHPGaugeShader*)m_ppShaders[7])->SetNexusAndTowerCnt(((CNexusTowerShader *)m_ppShaders[5])->GetObjectCount());
+	((CPlayerHPGaugeShader*)m_ppShaders[7])->SetNexusAndTower(((CNexusTowerShader *)m_ppShaders[5])->GetCollisionObjects());
 
-	((CMinimapIconShader*)m_ppShaders[10])->SetPlayerCnt(((CPlayerShader *)m_ppShaders[2])->GetObjectCount());
-	((CMinimapIconShader*)m_ppShaders[10])->SetPlayer(((CPlayerShader *)m_ppShaders[2])->GetCollisionObjects());
-	((CMinimapIconShader*)m_ppShaders[10])->SetNexusAndTowerCnt(((CNexusTowerShader *)m_ppShaders[6])->GetObjectCount());
-	((CMinimapIconShader*)m_ppShaders[10])->SetNexusAndTower(((CNexusTowerShader *)m_ppShaders[6])->GetCollisionObjects());
+	((CMinimapIconShader*)m_ppShaders[9])->SetPlayerCnt(((CPlayerShader *)m_ppShaders[2])->GetObjectCount());
+	((CMinimapIconShader*)m_ppShaders[9])->SetPlayer(((CPlayerShader *)m_ppShaders[2])->GetCollisionObjects());
+	((CMinimapIconShader*)m_ppShaders[9])->SetNexusAndTowerCnt(((CNexusTowerShader *)m_ppShaders[5])->GetObjectCount());
+	((CMinimapIconShader*)m_ppShaders[9])->SetNexusAndTower(((CNexusTowerShader *)m_ppShaders[5])->GetCollisionObjects());
 
+	m_ppShaders[6]->Initialize(pCreateMgr, m_pCamera);
 	m_ppShaders[7]->Initialize(pCreateMgr, m_pCamera);
 	m_ppShaders[8]->Initialize(pCreateMgr, m_pCamera);
 	m_ppShaders[9]->Initialize(pCreateMgr, m_pCamera);
-	m_ppShaders[10]->Initialize(pCreateMgr, m_pCamera);
 
 	BuildLights();
 }
@@ -352,7 +350,7 @@ void CScene::PickObjectPointedByCursor(WPARAM wParam, LPARAM lParam)
 			// Status 창 띄우기 수도 코드
 			// 현재 6번 쉐이더가 UI 이므로 상호작용하는 Object의 타입을 받아와서
 			// 그 해당 오브젝트에 대한 정보를 출력
-			m_ppShaders[7]->OnStatus(pIntersectedObject->GetType());
+			m_ppShaders[6]->OnStatus(pIntersectedObject->GetType());
 
 			//m_Network.StartRecv(m_pSelectedObject);
 		}
