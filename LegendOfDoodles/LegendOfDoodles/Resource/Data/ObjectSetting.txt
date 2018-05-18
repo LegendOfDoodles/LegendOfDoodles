@@ -123,8 +123,8 @@ NailClipper
 <end>
 BlueHeadSet
 1
-1.6 0.2 2.5
-0 270 0
+1.635 0.112 2.5
+5.635997 270 0
 1 1 1
 <end>
 ShortPencil

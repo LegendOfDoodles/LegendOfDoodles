@@ -416,26 +416,15 @@ struct VS_BONEINPUT {
 	float3 tangent : TANGENT;
 };
 
-struct VS_BONEOUTPUT {
-	float4 position : SV_POSITION;
-	float3 positionW : POSITION;
-	float3 normalW : NORMAL;
-	float2 uv : TEXCOORD0;
-	float3 tangentW : TANGENT;
-
-#ifdef _WITH_VERTEX_LIGHTING
-	float4 color : COLOR;
-#endif
-};
-
 cbuffer cbSkinnedInfo: register(b5)
 {
 	float4x4 gmtxBoneWorld: packoffset(c0);
 	float4x4 gmtxBoneTransforms[128]: packoffset(c4);
 };
 
-VS_BONEOUTPUT VSBone(VS_BONEINPUT input) {
-	VS_BONEOUTPUT output;
+VS_TEXTURED_LIGHTING_OUTPUT VSBone(VS_BONEINPUT input)
+{
+    VS_TEXTURED_LIGHTING_OUTPUT output;
 
 	float fWeights[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	fWeights[0] = input.boneWeights.x;
@@ -467,26 +456,4 @@ VS_BONEOUTPUT VSBone(VS_BONEINPUT input) {
 	output.position = mul(mul(float4(output.positionW, 1.0f), gmtxView), gmtxProjection);
 
 	return(output);
-}
-
-
-float4 PSBone(VS_BONEOUTPUT input) : SV_TARGET
-{
-#ifdef _WITH_VERTEX_LIGHTING
-	float4 cIllumination = input.color;
-#else
-	float3 N = normalize(input.normalW);
-	if (input.tangentW.x != 0 || input.tangentW.y != 0 || input.tangentW.z != 0)
-	{
-		float3 T = normalize(input.tangentW - dot(input.tangentW, N) * N);
-		float3 B = cross(N, T); // 노말과 탄젠트를 외적해서 바이 탄젠트(바이 노말)생성
-		float3x3 TBN = float3x3(T, B, N); // 이를 바탕으로 TBN행렬 생성
-		float3 normal = gtxtNormal.Sample(wrapSampler, input.uv); // 노말 맵에서 해당하는 uv에 해당하는 노말 읽기
-		normal = 2.0f * normal - 1.0f; // 노말을 -1에서 1사이의 값으로 변환
-		N = mul(normal, TBN); // 노말을 TBN행렬로 변환
-	}
-
-    float4 cColor = Lighting(input.positionW, N, gtxtTexture.Sample(wrapSampler, input.uv));
-#endif
-    return gMaterials.m_cAlbedo * cColor;
 }
