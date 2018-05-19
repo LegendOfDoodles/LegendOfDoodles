@@ -6,9 +6,9 @@
 
 /// <summary>
 /// 목적: UI 테스트 쉐이더
-/// 최종 수정자:  이용선
-/// 수정자 목록:  이용선
-/// 최종 수정 날짜: 2018-05-09
+/// 최종 수정자:  김나단
+/// 수정자 목록:  이용선, 김나단
+/// 최종 수정 날짜: 2018-05-19
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -230,7 +230,7 @@ D3D12_SHADER_BYTECODE CUIObjectShader::CreatePixelShader(ID3DBlob ** ppShaderBlo
 		ppShaderBlob));
 }
 
-void CUIObjectShader::CreateShader(CCreateMgr * pCreateMgr)
+void CUIObjectShader::CreateShader(CCreateMgr * pCreateMgr, UINT nRenderTargets)
 {
 	m_nPipelineStates = 1;
 	m_ppPipelineStates = new ID3D12PipelineState*[m_nPipelineStates];
@@ -238,7 +238,7 @@ void CUIObjectShader::CreateShader(CCreateMgr * pCreateMgr)
 	m_nHeaps = 1;
 	CreateDescriptorHeaps();
 
-	CShader::CreateShader(pCreateMgr);
+	CShader::CreateShader(pCreateMgr, nRenderTargets);
 }
 
 void CUIObjectShader::CreateShaderVariables(CCreateMgr * pCreateMgr, int nBuffers)

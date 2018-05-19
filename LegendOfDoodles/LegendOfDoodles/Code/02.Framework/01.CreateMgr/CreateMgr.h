@@ -1,5 +1,6 @@
 #pragma once
 #include "02.Framework/02.RenderMgr/RenderMgr.h"
+#include "04.Shaders/97.TextureToFullScreenShader/TextureToFullScreenShader.h"
 
 class CCreateMgr
 {
@@ -17,15 +18,22 @@ public:	// 공개 함수
 	void ChangeScreenMode();
 
 	ID3D12Resource *CreateBufferResource(
-		void *pData, UINT nBytes, 
+		void *pData, UINT nBytes,
 		D3D12_HEAP_TYPE d3dHeapType = D3D12_HEAP_TYPE_UPLOAD,
 		D3D12_RESOURCE_STATES d3dResourceStates = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER,
 		ID3D12Resource **ppd3dUploadBuffer = NULL);
 
 	ID3D12Resource *CreateTextureResourceFromFile(
-		wchar_t *pszFileName, 
-		ID3D12Resource **ppUploadBuffer, 
+		wchar_t *pszFileName,
+		ID3D12Resource **ppUploadBuffer,
 		D3D12_RESOURCE_STATES resourceStates = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+
+	ID3D12Resource* CreateTexture2DResource(
+		UINT nWidth, UINT nHeight,
+		DXGI_FORMAT dxgiFormat,
+		D3D12_RESOURCE_FLAGS resourceFlags,
+		D3D12_RESOURCE_STATES resourceStates,
+		D3D12_CLEAR_VALUE *pClearValue);
 
 	void ResetCommandList();
 	void ExecuteCommandList();
@@ -39,20 +47,19 @@ public:	// 공개 함수
 
 	HWND GetHwnd() { return m_hWnd; }
 
-	int GetWindowWidth() { return m_wndClientWidth; }
-	int GetWindowHeight() { return m_wndClientHeight; }
+	int GetWindowWidth() { return m_nWndClientWidth; }
+	int GetWindowHeight() { return m_nWndClientHeight; }
 
 	UINT GetCbvSrvDescriptorIncrementSize() { return m_cbvSrvDescriptorIncrementSize; }
 
-private:	
-	DXGI_SWAP_CHAIN_DESC CreateSwapChainDesc();
-
+private:
 	void CreateDirect3dDevice();
 	void CreateCommandQueueAndList();
 	void CreateSwapChain();
 	void CreateRtvAndDsvDescriptorHeaps();
+	void CreateSwapChainRenderTargetViews();
 	void CreateDepthStencilView();
-	void CreateRenderTargetView();
+	void CreateRenderTargetViews();
 	void CreateGraphicsRootSignature();
 
 private:	 // 변수
@@ -60,24 +67,28 @@ private:	 // 변수
 	HWND m_hWnd;
 
 	// Window Size
-	int m_wndClientWidth{ FRAME_BUFFER_WIDTH };
-	int m_wndClientHeight{ FRAME_BUFFER_HEIGHT };
+	int m_nWndClientWidth{ FRAME_BUFFER_WIDTH };
+	int m_nWndClientHeight{ FRAME_BUFFER_HEIGHT };
 
 	// Factory and Device
 	IDXGIFactory4 *m_pFactory{ NULL };
 	ID3D12Device *m_pDevice{ NULL };
 
-	// MSAA Set
-	bool m_msaa4xEnable{ false };
-	UINT m_msaa4xQualityLevels{ 0 };
-
 	// Swap Chain
 	IDXGISwapChain3 *m_pSwapChain{ NULL };
 
+	// MSAA Set
+	bool m_bMsaa4xEnable{ false };
+	UINT m_nMsaa4xQualityLevels{ 0 };
+
 	// Render Target View
-	ID3D12Resource *m_ppRenderTargetBuffers[SWAP_CHAIN_BUFFER_CNT]{ NULL };
+	ID3D12Resource *m_ppRenderTargetBuffers[RENDER_TARGET_BUFFER_CNT];
+	D3D12_CPU_DESCRIPTOR_HANDLE m_pRtvRenderTargetBufferCPUHandles[RENDER_TARGET_BUFFER_CNT];
+
+	ID3D12Resource					*m_ppSwapChainBackBuffers[SWAP_CHAIN_BUFFER_CNT];
 	ID3D12DescriptorHeap *m_pRtvDescriptorHeap{ NULL };
-	UINT m_rtvDescriptorIncrementSize{ 0 };
+	UINT m_nRtvDescriptorIncrementSize{ 0 };
+	D3D12_CPU_DESCRIPTOR_HANDLE		m_pRtvSwapChainBackBufferCPUHandles[SWAP_CHAIN_BUFFER_CNT];
 
 	// Depth Stencil View
 	ID3D12Resource *m_pDepthStencilBuffer{ NULL };
@@ -96,6 +107,8 @@ private:	 // 변수
 #endif
 
 	UINT m_cbvSrvDescriptorIncrementSize{ 0 };
+
+	CTextureToFullScreenShader *m_pTextureToFullScreenShader{ NULL };
 
 	// Root Signature
 	ID3D12RootSignature *m_pGraphicsRootSignature{ NULL };

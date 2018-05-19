@@ -43,6 +43,7 @@ public: // 공개 함수
 	void ProcessInput();
 	void AnimateObjects(float timeElapsed);
 	void Render();
+	void RenderWithLights();
 
 	void SetViewportsAndScissorRects();
 	void UpdateCamera();

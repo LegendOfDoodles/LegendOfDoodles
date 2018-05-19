@@ -1,10 +1,5 @@
 #pragma once
 
-#define RESOURCE_TEXTURE_2D			0x01
-#define RESOURCE_TEXTURE_2D_ARRAY	0x02
-#define RESOURCE_TEXTURE_CUBE		0x03
-#define RESOURCE_BUFFER				0x04
-
 class CCreateMgr;
 
 struct SRVROOTARGUMENTINFO
@@ -31,6 +26,10 @@ public: // 공개 함수
 	void UpdateShaderVariable(int nIndex);
 
 	void LoadTextureFromFile(CCreateMgr *pCreateMgr, wchar_t *pszFileName, UINT nIndex);
+	ID3D12Resource *CreateTexture(CCreateMgr *pCreateMgr,
+		UINT nWidth, UINT nHeight,
+		DXGI_FORMAT dxgiFormat, D3D12_RESOURCE_FLAGS resourceFlags,
+		D3D12_RESOURCE_STATES resourceStates, D3D12_CLEAR_VALUE *pClearValue, UINT nIndex);
 
 	int GetTextureCount() { return(m_nTextures); }
 	ID3D12Resource *GetTexture(int nIndex) { return(m_ppTextures[nIndex]); }

@@ -8,8 +8,8 @@ struct COLOR
 {
 	XMFLOAT4						m_xmf4Diffuse{ 1.0f, 1.0f, 1.0f, 1.0f };
 	float									m_cSpecularPower{ 1.0f };
-	float									m_cRoughness{ 0.5f };
-	float									m_cMetalic{ 0.5f };
+	float									m_cRoughness{ 1.0f };
+	float									m_cMetalic{ 0.0f };
 };
 
 class CMaterial

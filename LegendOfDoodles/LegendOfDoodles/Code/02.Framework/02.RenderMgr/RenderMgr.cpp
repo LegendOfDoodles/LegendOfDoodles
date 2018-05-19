@@ -6,13 +6,17 @@
 /// 목적: 렌더링 관련 함수를 모아 두어 다른 변경사항 없이 그릴 수 있도록 하기 위함
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-01-27
+/// 최종 수정 날짜: 2018-05-19
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
 CRenderMgr::CRenderMgr()
 {
+	for (int i = 0; i < RENDER_TARGET_BUFFER_CNT; i++)
+	{
+		m_fenceValues[i] = 0;
+	}
 }
 
 CRenderMgr::~CRenderMgr()
@@ -44,53 +48,36 @@ void CRenderMgr::Render(CScene* pScene)
 	assert(SUCCEEDED(hResult) && "CommandList->Reset Failed");
 
 	// Set Barrier
-	m_pCommandList->ResourceBarrier(	1, 
-		&CreateResourceBarrier(m_ppRenderTargetBuffers[m_swapChainBufferIndex], 
-			D3D12_RESOURCE_STATE_PRESENT,
-			D3D12_RESOURCE_STATE_RENDER_TARGET));
+	for (int i = 0; i < RENDER_TARGET_BUFFER_CNT; ++i)
+	{
+		SynchronizeResourceTransition(m_ppRenderTargetBuffers[i], D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	}
 
 	// Set Viewport and Scissor Rect
 	pScene->SetViewportsAndScissorRects();
 
-	// Check Render Target
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvCPUDescriptorHandle =
-		m_pRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-	rtvCPUDescriptorHandle.ptr +=
-		(m_swapChainBufferIndex * m_rtvDescriptorIncrementSize);
-
 	// Clear Render Target View
-	float pClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f };
-	m_pCommandList->ClearRenderTargetView(rtvCPUDescriptorHandle,
-		pClearColor, 0, NULL);
-
-	// Check Depth Stencil
-	D3D12_CPU_DESCRIPTOR_HANDLE dsvCPUDescriptorHandle =
-		m_pDsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	float pClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	for (int i = 0; i < RENDER_TARGET_BUFFER_CNT; ++i)
+	{
+		m_pCommandList->ClearRenderTargetView(m_pRtvRenderTargetBufferCPUHandles[i], pClearColor, 0, NULL);
+	}
 
 	// Clear Depth Stencil View
-	m_pCommandList->ClearDepthStencilView(dsvCPUDescriptorHandle,
-		D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL,
-		1.0f, 0,
-		0, NULL);
+	m_pCommandList->ClearDepthStencilView(m_dsvDepthStencilBufferCPUHandle,
+		D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
 
 	// Set Render Target and Depth Stencil
-	m_pCommandList->OMSetRenderTargets(1, &rtvCPUDescriptorHandle,
-		TRUE, &dsvCPUDescriptorHandle);
+	m_pCommandList->OMSetRenderTargets(RENDER_TARGET_BUFFER_CNT, m_pRtvRenderTargetBufferCPUHandles,
+		TRUE, &m_dsvDepthStencilBufferCPUHandle);
 
-	// Set Graphics Root Signature
 	m_pCommandList->SetGraphicsRootSignature(m_pGraphicsRootSignature);
-	
+
 	// Update Camera
 	pScene->UpdateCamera();
 
 	// Render Scene
 	pScene->Render();
-
-	// Set Barrier
-	m_pCommandList->ResourceBarrier(1, 
-		&CreateResourceBarrier(m_ppRenderTargetBuffers[m_swapChainBufferIndex],
-			D3D12_RESOURCE_STATE_RENDER_TARGET,
-			D3D12_RESOURCE_STATE_PRESENT));
 
 	// Close Command List
 	hResult = m_pCommandList->Close();
@@ -102,26 +89,67 @@ void CRenderMgr::Render(CScene* pScene)
 
 	WaitForGpuComplete();
 
+	//------------------------------------------------------
+	// ↓↓↓↓↓↓ Light Rendering ↓↓↓↓↓↓↓
+
+	hResult = m_pCommandAllocator->Reset();
+	assert(SUCCEEDED(hResult) && "CommandAllocator->Reset Failed");
+
+	hResult = m_pCommandList->Reset(m_pCommandAllocator, NULL);
+	assert(SUCCEEDED(hResult) && "CommandList->Reset Failed");
+
+	// Set Barrier
+	for (int i = 0; i < RENDER_TARGET_BUFFER_CNT; ++i)
+	{
+		SynchronizeResourceTransition(m_ppRenderTargetBuffers[i], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
+	}
+
+	SynchronizeResourceTransition(m_ppSwapChainBackBuffers[m_swapChainBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+	// Set Viewport and Scissor Rect
+	pScene->SetViewportsAndScissorRects();
+
+	m_pCommandList->ClearDepthStencilView(m_dsvDepthStencilBufferCPUHandle,
+		D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
+	m_pCommandList->ClearRenderTargetView(m_pRtvSwapChainBackBufferCPUHandles[m_swapChainBufferIndex], Colors::Azure, 0, NULL);
+	m_pCommandList->OMSetRenderTargets(1, &m_pRtvSwapChainBackBufferCPUHandles[m_swapChainBufferIndex],
+		TRUE, &m_dsvDepthStencilBufferCPUHandle);
+
+	m_pTextureToFullScreenShader->SetGraphicsRootSignature();
+
+	pScene->RenderWithLights();
+	m_pTextureToFullScreenShader->Render(m_pCamera);
+
+	SynchronizeResourceTransition(m_ppSwapChainBackBuffers[m_swapChainBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+
+	// Close Command List
+	hResult = m_pCommandList->Close();
+	assert(SUCCEEDED(hResult) && "CommandList->Close Failed");
+
+	// Excute Command List
+	m_pCommandQueue->ExecuteCommandLists(1, ppCommandLists);
+
+	WaitForGpuComplete();
+
 	// Present
 	hResult = m_pSwapChain->Present(0, 0);
 	assert(SUCCEEDED(hResult) && "SwapChain->Present Failed");
+	//ExptProcess::ThrowIfFailed(hResult);
 
 	MoveToNextFrame();
 }
 
-void CRenderMgr::SetRenderTargetBuffers(ID3D12Resource *ppRenderTargetBuffers[])
+void CRenderMgr::SetDsvDescriptorHeap(ID3D12DescriptorHeap * pDsvDescriptorHeap)
 {
-	for (int i = 0; i < SWAP_CHAIN_BUFFER_CNT; ++i)
-	{
-		m_ppRenderTargetBuffers[i] = ppRenderTargetBuffers[i];
-	}
+	m_pDsvDescriptorHeap = pDsvDescriptorHeap;
+	m_dsvDepthStencilBufferCPUHandle = m_pDsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 }
 
 void CRenderMgr::WaitForGpuComplete()
 {
 	HRESULT hResult;
 	UINT64 fenceValue = ++m_fenceValues[m_swapChainBufferIndex];
-	
+
 	hResult = m_pCommandQueue->Signal(m_pFence, fenceValue);
 	assert(SUCCEEDED(hResult) && "CommandQueue->Signal Failed");
 
@@ -163,25 +191,14 @@ void CRenderMgr::ExecuteCommandList()
 
 ////////////////////////////////////////////////////////////////////////
 // 내부 함수
-//D3D12_RESOURCE_BARRIER CRenderMgr::CreateResourceBarrier()
-//{
-//	D3D12_RESOURCE_BARRIER resourceBarrier;
-//
-//	::ZeroMemory(&resourceBarrier, sizeof(D3D12_RESOURCE_BARRIER));
-//	resourceBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-//	resourceBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-//	resourceBarrier.Transition.pResource =
-//		m_ppRenderTargetBuffers[m_swapChainBufferIndex];
-//	resourceBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
-//	resourceBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-//	resourceBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-//
-//	return(resourceBarrier);
-//}
-//
-//void CRenderMgr::SetResourceBarrier(D3D12_RESOURCE_BARRIER &resourceBarrier,
-//	D3D12_RESOURCE_STATES before, D3D12_RESOURCE_STATES after)
-//{
-//	resourceBarrier.Transition.StateBefore = before;
-//	resourceBarrier.Transition.StateAfter = after;
-//}
+void CRenderMgr::SynchronizeResourceTransition(ID3D12Resource * pResource, D3D12_RESOURCE_STATES stateBefore, D3D12_RESOURCE_STATES stateAfter)
+{
+	D3D12_RESOURCE_BARRIER resourceBarrier;
+	resourceBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	resourceBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	resourceBarrier.Transition.pResource = pResource;
+	resourceBarrier.Transition.StateBefore = stateBefore;
+	resourceBarrier.Transition.StateAfter = stateAfter;
+	resourceBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	m_pCommandList->ResourceBarrier(1, &resourceBarrier);
+}

@@ -178,6 +178,7 @@
     <ClInclude Include="Code\04.Shaders\04.AniShader\AniShader.h" />
     <ClInclude Include="Code\04.Shaders\05.PlayerShader\PlayerShader.h" />
     <ClInclude Include="Code\04.Shaders\06.NexusTowerShader\NexusTowerShader.h" />
+    <ClInclude Include="Code\04.Shaders\97.TextureToFullScreenShader\TextureToFullScreenShader.h" />
     <ClInclude Include="Code\04.Shaders\98.BillboardShader\00.UIShader\UIShader.h" />
     <ClInclude Include="Code\04.Shaders\98.BillboardShader\01.GaugeShader\00.PlayerGaugeShader\PlayerGaugeShader.h" />
     <ClInclude Include="Code\04.Shaders\98.BillboardShader\01.GaugeShader\01.MinionGaugeShader\MinionGaugeShader.h" />
@@ -231,6 +232,7 @@
     <ClCompile Include="Code\04.Shaders\04.AniShader\AniShader.cpp" />
     <ClCompile Include="Code\04.Shaders\05.PlayerShader\PlayerShader.cpp" />
     <ClCompile Include="Code\04.Shaders\06.NexusTowerShader\NexusTowerShader.cpp" />
+    <ClCompile Include="Code\04.Shaders\97.TextureToFullScreenShader\TextureToFullScreenShader.cpp" />
     <ClCompile Include="Code\04.Shaders\98.BillboardShader\00.UIShader\UIShader.cpp" />
     <ClCompile Include="Code\04.Shaders\98.BillboardShader\01.GaugeShader\00.PlayerGaugeShader\PlayerGaugeShader.cpp" />
     <ClCompile Include="Code\04.Shaders\98.BillboardShader\01.GaugeShader\01.MinionGaugeShader\MinionGaugeShader.cpp" />

@@ -11,7 +11,7 @@
 /// 목적: 스테틱 오브젝트 그리기 용도의 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-18
+/// 최종 수정 날짜: 2018-05-19
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -206,7 +206,7 @@ D3D12_SHADER_BYTECODE CNexusTowerShader::CreatePixelShader(ID3DBlob **ppShaderBl
 	return(CShader::CompileShaderFromFile(L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl", "PSTexturedLightingDetail", "ps_5_1", ppShaderBlob));
 }
 
-void CNexusTowerShader::CreateShader(CCreateMgr *pCreateMgr)
+void CNexusTowerShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets)
 {
 	m_nPipelineStates = 2;
 	m_ppPipelineStates = new ID3D12PipelineState*[m_nPipelineStates];
@@ -219,8 +219,8 @@ void CNexusTowerShader::CreateShader(CCreateMgr *pCreateMgr)
 	m_nHeaps = 5;
 	CreateDescriptorHeaps();
 
-	CShader::CreateShader(pCreateMgr);
-	CShader::CreateBoundingBoxShader(pCreateMgr);
+	CShader::CreateShader(pCreateMgr, nRenderTargets);
+	CShader::CreateBoundingBoxShader(pCreateMgr, nRenderTargets);
 }
 
 void CNexusTowerShader::CreateShaderVariables(CCreateMgr *pCreateMgr, int nBuffers)

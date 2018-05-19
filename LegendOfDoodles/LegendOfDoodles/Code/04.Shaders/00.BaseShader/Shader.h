@@ -46,6 +46,7 @@ public: // 공개 함수
 	virtual CBaseObject * * GetCollisionObjects() { return nullptr; }
 
 	void SaveBoundingBoxHeapNumber(int n) { m_boundingBoxHeapNumber = n; }
+	ID3D12RootSignature *GetGraphicsRootSignature() { return(m_pGraphicsRootSignature); }
 
 protected: // 내부 함수
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
@@ -67,8 +68,10 @@ protected: // 내부 함수
 	D3D12_SHADER_BYTECODE CreateBoundingBoxVertexShader(ID3DBlob **ppShaderBlob);
 	D3D12_SHADER_BYTECODE CreateBoundingBoxPixelShader(ID3DBlob **ppShaderBlob);
 
-	virtual void CreateShader(CCreateMgr *pCreateMgr);
-	void CreateBoundingBoxShader(CCreateMgr *pCreateMgr);
+	virtual void CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets = 1);
+	virtual void CreateShader(CCreateMgr *pCreateMgr, ID3D12RootSignature *pGraphicsRootSignature, UINT nRenderTargets = 1);
+
+	void CreateBoundingBoxShader(CCreateMgr *pCreateMgr, UINT nRenderTargets = 1);
 	virtual void CreateShaderVariables(CCreateMgr *pCreateMgr, int nBuffers = 1);
 
 	virtual void BuildObjects(CCreateMgr *pCreateMgr, void *pContext = NULL);
@@ -107,5 +110,7 @@ protected: // 변수
 	D3D12_GPU_DESCRIPTOR_HANDLE		*m_psrvGPUDescriptorStartHandle{ NULL };
 
 	ID3D12GraphicsCommandList *m_pCommandList{ NULL };
+
+	ID3D12RootSignature				*m_pGraphicsRootSignature{ NULL };
 };
 

@@ -120,37 +120,12 @@ float4 CookTorranceSpecular(float3 vLight, float3 vNormal, float3 vCamera, float
     return max(0, (fresnel * D * G) / (NV * NL));
 }
 
-float4 DirectionalLight(int nIndex, float3 vNormal, float3 vCamera, float4 baseColor)
-{
-    float3 vToLight = -gLights[nIndex].m_vDirection;
-
-    return gLights[nIndex].m_cAlbedo * ((1 - gMaterials.m_cMetalic) * baseColor * OrenNayarDiffuse(vToLight, vNormal, vCamera, gMaterials.m_cRoughness) +
-				gMaterials.m_cMetalic * baseColor * CookTorranceSpecular(vToLight, vNormal, vCamera, gMaterials.m_cRoughness));
-}
-
 float4 DirectionalLight(int nIndex, float3 vNormal, float3 vCamera, float4 baseColor, float4 roughnessMetallicFresnel)
 {
     float3 vToLight = -gLights[nIndex].m_vDirection;
 
     return gLights[nIndex].m_cAlbedo * ((1 - roughnessMetallicFresnel.g) * baseColor * OrenNayarDiffuse(vToLight, vNormal, vCamera, roughnessMetallicFresnel.r) +
 				roughnessMetallicFresnel.g * baseColor * CookTorranceSpecular(vToLight, vNormal, vCamera, roughnessMetallicFresnel.r, roughnessMetallicFresnel.b));
-}
-
-float4 PointLight(int nIndex, float3 vPosition, float3 vNormal, float3 vCamera, float4 baseColor)
-{
-    float3 vToLight = gLights[nIndex].m_vPosition - vPosition;
-    float fDistance = length(vToLight);
-    if (fDistance <= gLights[nIndex].m_fRange)
-    {
-        vToLight /= fDistance;
-
-        float fAttenuationFactor = 1.0f / dot(gLights[nIndex].m_vAttenuation, float3(1.0f, fDistance, fDistance * fDistance));
-
-        if (fAttenuationFactor != 0)
-            return gLights[nIndex].m_cAlbedo * ((1 - gMaterials.m_cMetalic) * baseColor * OrenNayarDiffuse(vToLight, vNormal, vCamera, gMaterials.m_cRoughness) +
-						gMaterials.m_cMetalic * baseColor * CookTorranceSpecular(vToLight, vNormal, vCamera, gMaterials.m_cRoughness)) * fAttenuationFactor;
-    }
-    return (float4(0.0f, 0.0f, 0.0f, 0.0f));
 }
 
 float4 PointLight(int nIndex, float3 vPosition, float3 vNormal, float3 vCamera, float4 baseColor, float4 roughnessMetallicFresnel)
@@ -166,29 +141,6 @@ float4 PointLight(int nIndex, float3 vPosition, float3 vNormal, float3 vCamera, 
         if (fAttenuationFactor != 0)
             return gLights[nIndex].m_cAlbedo * ((1 - roughnessMetallicFresnel.g) * baseColor * OrenNayarDiffuse(vToLight, vNormal, vCamera, roughnessMetallicFresnel.r) +
 						roughnessMetallicFresnel.g * baseColor * CookTorranceSpecular(vToLight, vNormal, vCamera, roughnessMetallicFresnel.r, roughnessMetallicFresnel.b)) * fAttenuationFactor;
-    }
-    return (float4(0.0f, 0.0f, 0.0f, 0.0f));
-}
-
-float4 SpotLight(int nIndex, float3 vPosition, float3 vNormal, float3 vCamera, float4 baseColor)
-{
-    float3 vToLight = gLights[nIndex].m_vPosition - vPosition;
-    float fDistance = length(vToLight);
-    if (fDistance <= gLights[nIndex].m_fRange)
-    {
-        vToLight /= fDistance;
-
-#ifdef _WITH_THETA_PHI_CONES
-        float fAlpha = max(dot(normalize(-vToLight), gLights[nIndex].m_vDirection), 0.0f);
-        float fSpotFactor = pow(max(((fAlpha - gLights[nIndex].m_fPhi) / (gLights[nIndex].m_fTheta - gLights[nIndex].m_fPhi)), 0.0f), gLights[nIndex].m_fFalloff);
-#else
-	float fSpotFactor = pow(max(dot(-vToLight, gLights[i].m_vDirection), 0.0f), gLights[i].m_fFalloff);
-#endif
-        float fAttenuationFactor = 1.0f / dot(gLights[nIndex].m_vAttenuation, float3(1.0f, fDistance, fDistance * fDistance));
-
-        if (fSpotFactor != 0 && fAttenuationFactor != 0)
-            return gLights[nIndex].m_cAlbedo * ((1 - gMaterials.m_cMetalic) * baseColor * OrenNayarDiffuse(vToLight, vNormal, vCamera, gMaterials.m_cRoughness) +
-			gMaterials.m_cMetalic * baseColor * CookTorranceSpecular(vToLight, vNormal, vCamera, gMaterials.m_cRoughness)) * fAttenuationFactor * fSpotFactor;
     }
     return (float4(0.0f, 0.0f, 0.0f, 0.0f));
 }
@@ -216,74 +168,10 @@ float4 SpotLight(int nIndex, float3 vPosition, float3 vNormal, float3 vCamera, f
     return (float4(0.0f, 0.0f, 0.0f, 0.0f));
 }
 
-float4 Lighting(float3 vPosition, float3 vNormal)
+float4 Lighting(float3 vPosition, float3 vNormal, float4 albedo, float4 baseColor, float4 roughnessMetallicFresnel)
 {
     float3 vCameraPosition = float3(gvCameraPosition.x, gvCameraPosition.y, gvCameraPosition.z);
     float3 vCamera = vCameraPosition - vPosition;
-    float4 texColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
-    float4 specular = float4(0.4f, 0.4f, 0.4f, 1.0f);
-    float4 baseColor = texColor + specular;
-    float4 cColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
-    for (int i = 0; i < MAX_LIGHTS; i++)
-    {
-        if (gLights[i].m_bEnable)
-        {
-            if (gLights[i].m_nType == DIRECTIONAL_LIGHT)
-            {
-                cColor += DirectionalLight(i, vNormal, vCamera, baseColor);
-            }
-            else if (gLights[i].m_nType == POINT_LIGHT)
-            {
-                cColor += PointLight(i, vPosition, vNormal, vCamera, baseColor);
-            }
-            else if (gLights[i].m_nType == SPOT_LIGHT)
-            {
-                cColor += SpotLight(i, vPosition, vNormal, vCamera, baseColor);
-            }
-        }
-    }
-    cColor += (gcGlobalAmbientLight * gMaterials.m_cAlbedo * baseColor);
-    cColor.a = gMaterials.m_cAlbedo.a;
-
-    return (cColor);
-}
-
-float4 Lighting(float3 vPosition, float3 vNormal, float4 texColor)
-{
-    float3 vCameraPosition = float3(gvCameraPosition.x, gvCameraPosition.y, gvCameraPosition.z);
-    float3 vCamera = vCameraPosition - vPosition;
-    float4 specular = float4(0.4f, 0.4f, 0.4f, 1.0f);
-    float4 baseColor = texColor + specular;
-    float4 cColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
-    for (int i = 0; i < MAX_LIGHTS; i++)
-    {
-        if (gLights[i].m_bEnable)
-        {
-            if (gLights[i].m_nType == DIRECTIONAL_LIGHT)
-            {
-                cColor += DirectionalLight(i, vNormal, vCamera, baseColor);
-            }
-            else if (gLights[i].m_nType == POINT_LIGHT)
-            {
-                cColor += PointLight(i, vPosition, vNormal, vCamera, baseColor);
-            }
-            else if (gLights[i].m_nType == SPOT_LIGHT)
-            {
-                cColor += SpotLight(i, vPosition, vNormal, vCamera, baseColor);
-            }
-        }
-    }
-    cColor += (gcGlobalAmbientLight * gMaterials.m_cAlbedo * baseColor);
-    cColor.a = gMaterials.m_cAlbedo.a;
-
-    return (cColor);
-}
-
-float4 Lighting(float3 vPosition, float3 vNormal, float4 texColor, float4 specular, float4 roughnessMetallicFresnel)
-{
-    float3 vCameraPosition = float3(gvCameraPosition.x, gvCameraPosition.y, gvCameraPosition.z);
-    float3 vCamera = vCameraPosition - vPosition;
-    float4 baseColor = texColor + specular;
     float4 cColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
     for (int i = 0; i < MAX_LIGHTS; i++)
     {
@@ -303,8 +191,9 @@ float4 Lighting(float3 vPosition, float3 vNormal, float4 texColor, float4 specul
             }
         }
     }
-    cColor += (gcGlobalAmbientLight * gMaterials.m_cAlbedo * baseColor);
-    cColor.a = gMaterials.m_cAlbedo.a;
+    cColor += (gcGlobalAmbientLight * baseColor);
+    cColor *= albedo;
+    cColor.a = albedo.a;
 
     return (cColor);
 }

@@ -9,7 +9,7 @@
 /// 목적: Billboard 테스트 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  이용선, 김나단
-/// 최종 수정 날짜: 2018-05-11
+/// 최종 수정 날짜: 2018-05-19
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -167,7 +167,7 @@ D3D12_SHADER_BYTECODE CMinionHPGaugeShader::CreatePixelShader(ID3DBlob **ppShade
 		ppShaderBlob));
 }
 
-void CMinionHPGaugeShader::CreateShader(CCreateMgr *pCreateMgr)
+void CMinionHPGaugeShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets)
 {
 	m_nPipelineStates = 1;
 	m_ppPipelineStates = new ID3D12PipelineState*[m_nPipelineStates];
@@ -175,7 +175,7 @@ void CMinionHPGaugeShader::CreateShader(CCreateMgr *pCreateMgr)
 	m_nHeaps = 1;
 	CreateDescriptorHeaps();
 
-	CShader::CreateShader(pCreateMgr);
+	CShader::CreateShader(pCreateMgr, nRenderTargets);
 }
 
 void CMinionHPGaugeShader::CreateShaderVariables(CCreateMgr *pCreateMgr, int nBuffers)

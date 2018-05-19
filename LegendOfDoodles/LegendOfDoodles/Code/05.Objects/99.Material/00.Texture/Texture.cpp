@@ -6,7 +6,7 @@
 /// 목적: 텍스처에 필요한 처리 담당하는 클래스
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-02-07
+/// 최종 수정 날짜: 2018-05-19
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -98,6 +98,13 @@ void CTexture::LoadTextureFromFile(CCreateMgr *pCreateMgr, wchar_t *pszFileName,
 {
 	m_pCommandList = pCreateMgr->GetCommandList();
 	m_ppTextures[nIndex] = pCreateMgr->CreateTextureResourceFromFile(pszFileName, &m_ppTextureUploadBuffers[nIndex], D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+}
+
+ID3D12Resource * CTexture::CreateTexture(CCreateMgr *pCreateMgr, UINT nWidth, UINT nHeight, DXGI_FORMAT dxgiFormat, D3D12_RESOURCE_FLAGS resourceFlags, D3D12_RESOURCE_STATES resourceStates, D3D12_CLEAR_VALUE * pClearValue, UINT nIndex)
+{
+	m_pCommandList = pCreateMgr->GetCommandList();
+	m_ppTextures[nIndex] = pCreateMgr->CreateTexture2DResource(nWidth, nHeight, dxgiFormat, resourceFlags, resourceStates, pClearValue);
+	return(m_ppTextures[nIndex]);
 }
 
 ////////////////////////////////////////////////////////////////////////

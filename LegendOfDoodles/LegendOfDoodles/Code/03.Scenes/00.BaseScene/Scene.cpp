@@ -19,7 +19,7 @@
 /// 목적: 기본 씬, 인터페이스 용
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-18
+/// 최종 수정 날짜: 2018-05-19
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -107,6 +107,15 @@ void CScene::Render()
 	}
 }
 
+void CScene::RenderWithLights()
+{
+	UpdateShaderVariables();
+	m_pCamera->UpdateShaderVariables();
+
+	D3D12_GPU_VIRTUAL_ADDRESS d3dcbLightsGpuVirtualAddress = m_pd3dcbLights->GetGPUVirtualAddress();
+	m_pCommandList->SetGraphicsRootConstantBufferView(2, d3dcbLightsGpuVirtualAddress); //Lights
+}
+
 void CScene::SetViewportsAndScissorRects()
 {
 	m_pCamera->SetViewportsAndScissorRects();
@@ -190,28 +199,42 @@ void CScene::BuildLights()
 	m_pLights->m_pLights[0].m_bEnable = true;
 	m_pLights->m_pLights[0].m_nType = DIRECTIONAL_LIGHT;
 	m_pLights->m_pLights[0].m_color = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	m_pLights->m_pLights[0].m_direction = Vector3::Normalize(XMFLOAT3(-1.0f, -0.3f, 1.0f));
+	m_pLights->m_pLights[0].m_direction = Vector3::Normalize(XMFLOAT3(-1.0f, -0.6f, 0.0f));
 
 	m_pLights->m_pLights[1].m_bEnable = true;
 	m_pLights->m_pLights[1].m_nType = DIRECTIONAL_LIGHT;
 	m_pLights->m_pLights[1].m_color = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	m_pLights->m_pLights[1].m_direction = Vector3::Normalize(XMFLOAT3(0.0f, -1.0f, 0.0f));
+	m_pLights->m_pLights[1].m_direction = Vector3::Normalize(XMFLOAT3(1.0f, -0.6f, 0.0f));
 
 	m_pLights->m_pLights[2].m_bEnable = true;
 	m_pLights->m_pLights[2].m_nType = DIRECTIONAL_LIGHT;
 	m_pLights->m_pLights[2].m_color = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	m_pLights->m_pLights[2].m_direction = Vector3::Normalize(XMFLOAT3(1.0f, -0.3f, -1.0f));
+	m_pLights->m_pLights[2].m_direction = Vector3::Normalize(XMFLOAT3(0.0f, -0.6f, -1.0f));
 
-	m_pLights->m_pLights[3].m_bEnable = false;
-	m_pLights->m_pLights[3].m_nType = SPOT_LIGHT;
-	m_pLights->m_pLights[3].m_fRange = 500.0f;
-	m_pLights->m_pLights[3].m_color = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
-	m_pLights->m_pLights[3].m_position = XMFLOAT3(-50.0f, 20.0f, -5.0f);
-	m_pLights->m_pLights[3].m_direction = XMFLOAT3(0.0f, 0.0f, 1.0f);
-	m_pLights->m_pLights[3].m_xmf3Attenuation = XMFLOAT3(1.0f, 0.01f, 0.0001f);
-	m_pLights->m_pLights[3].m_fFalloff = 8.0f;
-	m_pLights->m_pLights[3].m_fPhi = (float)cos(XMConvertToRadians(40.0f));
-	m_pLights->m_pLights[3].m_fTheta = (float)cos(XMConvertToRadians(20.0f));
+	m_pLights->m_pLights[3].m_bEnable = true;
+	m_pLights->m_pLights[3].m_nType = DIRECTIONAL_LIGHT;
+	m_pLights->m_pLights[3].m_color = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	m_pLights->m_pLights[3].m_direction = Vector3::Normalize(XMFLOAT3(0.0f, -0.6f, 1.0f));
+
+	m_pLights->m_pLights[4].m_bEnable = true;
+	m_pLights->m_pLights[4].m_nType = DIRECTIONAL_LIGHT;
+	m_pLights->m_pLights[4].m_color = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	m_pLights->m_pLights[4].m_direction = Vector3::Normalize(XMFLOAT3(-1.0f, -0.3f, -1.0f));
+
+	m_pLights->m_pLights[5].m_bEnable = true;
+	m_pLights->m_pLights[5].m_nType = DIRECTIONAL_LIGHT;
+	m_pLights->m_pLights[5].m_color = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	m_pLights->m_pLights[5].m_direction = Vector3::Normalize(XMFLOAT3(-1.0f, -0.3f, 1.0f));
+
+	m_pLights->m_pLights[6].m_bEnable = true;
+	m_pLights->m_pLights[6].m_nType = DIRECTIONAL_LIGHT;
+	m_pLights->m_pLights[6].m_color = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	m_pLights->m_pLights[6].m_direction = Vector3::Normalize(XMFLOAT3(1.0f, -0.3f, -1.0f));
+
+	m_pLights->m_pLights[7].m_bEnable = true;
+	m_pLights->m_pLights[7].m_nType = DIRECTIONAL_LIGHT;
+	m_pLights->m_pLights[7].m_color = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	m_pLights->m_pLights[7].m_direction = Vector3::Normalize(XMFLOAT3(1.0f, -0.3f, 1.0f));
 }
 
 void CScene::BuildObjects(CCreateMgr *pCreateMgr)
@@ -315,8 +338,6 @@ void CScene::ReleaseShaderVariables()
 
 void CScene::UpdateShaderVariables()
 {
-	m_pLights->m_pLights[3].m_position = m_pCamera->GetPosition();
-	m_pLights->m_pLights[3].m_direction = m_pCamera->GetLookVector();
 	::memcpy(m_pcbMappedLights, m_pLights, sizeof(LIGHTS));
 }
 

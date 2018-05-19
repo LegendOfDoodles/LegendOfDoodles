@@ -27,7 +27,7 @@ CShader::~CShader()
 		Safe_Release(m_ppPipelineStates[i]);
 	}
 	Safe_Delete_Array(m_ppPipelineStates);
-																   
+
 	Safe_Delete_Array(m_ppCbvSrvDescriptorHeaps);
 	Safe_Delete_Array(m_pcbvCPUDescriptorStartHandle);
 	Safe_Delete_Array(m_pcbvGPUDescriptorStartHandle);
@@ -39,7 +39,7 @@ CShader::~CShader()
 // 공개 함수
 void CShader::Initialize(CCreateMgr *pCreateMgr, void *pContext)
 {
-	CreateShader(pCreateMgr);
+	CreateShader(pCreateMgr, RENDER_TARGET_BUFFER_CNT);
 	BuildObjects(pCreateMgr, pContext);
 }
 
@@ -172,9 +172,9 @@ D3D12_DEPTH_STENCIL_DESC CShader::CreateDepthStencilState()
 	depthStencilDesc.StencilReadMask = 0x00;
 	depthStencilDesc.StencilWriteMask = 0x00;
 	depthStencilDesc.FrontFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
-	depthStencilDesc.FrontFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
+	depthStencilDesc.FrontFace.StencilDepthFailOp = D3D12_STENCIL_OP_REPLACE;
 	depthStencilDesc.FrontFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
-	depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_NEVER;
+	depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
 	depthStencilDesc.BackFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
 	depthStencilDesc.BackFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
 	depthStencilDesc.BackFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
@@ -279,8 +279,8 @@ void CShader::CreateConstantBufferViews(
 }
 
 void GetShaderResourceViewDesc(
-	D3D12_RESOURCE_DESC resourceDesc, 
-	UINT nTextureType, 
+	D3D12_RESOURCE_DESC resourceDesc,
+	UINT nTextureType,
 	D3D12_SHADER_RESOURCE_VIEW_DESC *pShaderResourceViewDesc)
 {
 	pShaderResourceViewDesc->Format = resourceDesc.Format;
@@ -320,7 +320,7 @@ void GetShaderResourceViewDesc(
 }
 
 void CShader::CreateShaderResourceViews(
-	CCreateMgr *pCreateMgr, CTexture *pTexture, 
+	CCreateMgr *pCreateMgr, CTexture *pTexture,
 	UINT nRootParameterStartIndex, bool bAutoIncrement, int index)
 {
 	UINT incrementSize = pCreateMgr->GetCbvSrvDescriptorIncrementSize();
@@ -378,7 +378,7 @@ D3D12_SHADER_BYTECODE CShader::CreateBoundingBoxPixelShader(ID3DBlob ** ppShader
 		ppShaderBlob));
 }
 
-void CShader::CreateShader(CCreateMgr *pCreateMgr)
+void CShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets)
 {
 	ComPtr<ID3DBlob> pVertexShaderBlob{ NULL }, pPixelShaderBlob{ NULL };
 
@@ -394,8 +394,45 @@ void CShader::CreateShader(CCreateMgr *pCreateMgr)
 	pipelineStateDesc.InputLayout = CreateInputLayout();
 	pipelineStateDesc.SampleMask = UINT_MAX;
 	pipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-	pipelineStateDesc.NumRenderTargets = 1;
-	pipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	pipelineStateDesc.NumRenderTargets = nRenderTargets;
+	for (UINT i = 0; i < nRenderTargets; i++)
+	{
+		pipelineStateDesc.RTVFormats[i] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	}
+	pipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	pipelineStateDesc.SampleDesc.Count = 2;
+	pipelineStateDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
+
+	HRESULT hResult = pCreateMgr->GetDevice()->CreateGraphicsPipelineState(
+		&pipelineStateDesc,
+		IID_PPV_ARGS(&m_ppPipelineStates[0]));
+	assert(SUCCEEDED(hResult) && "Device->CreateGraphicsPipelineState Failed");
+	//ExptProcess::ThrowIfFailed(hResult);
+
+	Safe_Delete_Array(pipelineStateDesc.InputLayout.pInputElementDescs);
+}
+
+void CShader::CreateShader(CCreateMgr * pCreateMgr, ID3D12RootSignature * pGraphicsRootSignature, UINT nRenderTargets)
+{
+	ComPtr<ID3DBlob> pVertexShaderBlob{ NULL }, pPixelShaderBlob{ NULL };
+
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineStateDesc;
+	::ZeroMemory(&pipelineStateDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
+
+	pipelineStateDesc.pRootSignature = pGraphicsRootSignature;
+	pipelineStateDesc.VS = CreateVertexShader(&pVertexShaderBlob);
+	pipelineStateDesc.PS = CreatePixelShader(&pPixelShaderBlob);
+	pipelineStateDesc.RasterizerState = CreateRasterizerState();
+	pipelineStateDesc.BlendState = CreateBlendState();
+	pipelineStateDesc.DepthStencilState = CreateDepthStencilState();
+	pipelineStateDesc.InputLayout = CreateInputLayout();
+	pipelineStateDesc.SampleMask = UINT_MAX;
+	pipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	pipelineStateDesc.NumRenderTargets = nRenderTargets;
+	for (UINT i = 0; i < nRenderTargets; i++)
+	{
+		pipelineStateDesc.RTVFormats[i] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	}
 	pipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	pipelineStateDesc.SampleDesc.Count = 1;
 	pipelineStateDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
@@ -404,11 +441,12 @@ void CShader::CreateShader(CCreateMgr *pCreateMgr)
 		&pipelineStateDesc,
 		IID_PPV_ARGS(&m_ppPipelineStates[0]));
 	assert(SUCCEEDED(hResult) && "Device->CreateGraphicsPipelineState Failed");
+	//ExptProcess::ThrowIfFailed(hResult);
 
 	Safe_Delete_Array(pipelineStateDesc.InputLayout.pInputElementDescs);
 }
 
-void CShader::CreateBoundingBoxShader(CCreateMgr * pCreateMgr)
+void CShader::CreateBoundingBoxShader(CCreateMgr * pCreateMgr, UINT nRenderTargets)
 {
 	ComPtr<ID3DBlob> pVertexShaderBlob{ NULL }, pPixelShaderBlob{ NULL };
 
@@ -424,10 +462,13 @@ void CShader::CreateBoundingBoxShader(CCreateMgr * pCreateMgr)
 	pipelineStateDesc.InputLayout = CreateBoundingBoxInputLayout();
 	pipelineStateDesc.SampleMask = UINT_MAX;
 	pipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-	pipelineStateDesc.NumRenderTargets = 1;
-	pipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	pipelineStateDesc.NumRenderTargets = nRenderTargets;
+	for (UINT i = 0; i < nRenderTargets; i++)
+	{
+		pipelineStateDesc.RTVFormats[i] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	}
 	pipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	pipelineStateDesc.SampleDesc.Count = 1;
+	pipelineStateDesc.SampleDesc.Count = 2;
 	pipelineStateDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
 
 	HRESULT hResult = pCreateMgr->GetDevice()->CreateGraphicsPipelineState(
@@ -452,7 +493,7 @@ void CShader::ReleaseShaderVariables()
 	{
 		for (int i = 0; i < m_nHeaps; ++i)
 		{
-			if(m_ppCbvSrvDescriptorHeaps[i]) 
+			if (m_ppCbvSrvDescriptorHeaps[i])
 				Safe_Release(m_ppCbvSrvDescriptorHeaps[i]);
 		}
 		Safe_Delete_Array(m_ppCbvSrvDescriptorHeaps);
@@ -485,7 +526,7 @@ void CShader::OnPrepareRender(int opt)
 {
 	//파이프라인에 그래픽스 상태 객체를 설정한다.
 	m_pCommandList->SetPipelineState(m_ppPipelineStates[0]);
-	if(m_ppCbvSrvDescriptorHeaps) m_pCommandList->SetDescriptorHeaps(1, &m_ppCbvSrvDescriptorHeaps[opt]);
+	if (m_ppCbvSrvDescriptorHeaps) m_pCommandList->SetDescriptorHeaps(1, &m_ppCbvSrvDescriptorHeaps[opt]);
 
 	UpdateShaderVariables();
 }
@@ -511,7 +552,7 @@ D3D12_SHADER_BYTECODE CShader::CompileShaderFromFile(
 
 	ComPtr<ID3DBlob> pErrorBlob{ NULL };
 	hResult = D3DCompileFromFile(
-		  pszFileName
+		pszFileName
 		, NULL
 		, D3D_COMPILE_STANDARD_FILE_INCLUDE
 		, pszShaderName
@@ -522,6 +563,7 @@ D3D12_SHADER_BYTECODE CShader::CompileShaderFromFile(
 		, &pErrorBlob);
 	assert(SUCCEEDED(hResult) && "D3DCompileFromFile Failed");
 	//ExptProcess::PrintErrorBlob(pErrorBlob);
+	//ExptProcess::ThrowIfFailed(hResult);
 
 	D3D12_SHADER_BYTECODE shaderByteCode;
 	shaderByteCode.BytecodeLength = (*ppShaderBlob)->GetBufferSize();

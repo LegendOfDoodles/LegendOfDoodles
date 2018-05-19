@@ -5,8 +5,8 @@
 /// <summary>
 /// 목적: 사용하는 매터리얼 정리용
 /// 최종 수정자:  김나단
-/// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-09
+/// 수정자 목록:  김나단, 이용선
+/// 최종 수정 날짜: 2018-05-19
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -530,11 +530,9 @@ CMaterial * Materials::CreateBook4Material(CCreateMgr * pCreateMgr, D3D12_CPU_DE
 CMaterial * Materials::CreateMinionMaterial(CCreateMgr * pCreateMgr, D3D12_CPU_DESCRIPTOR_HANDLE * pSrvCPUDescriptorStartHandle, D3D12_GPU_DESCRIPTOR_HANDLE * pSrvGPUDescriptorStartHandle)
 {
 	CMaterial *pMaterial{ new CMaterial(pCreateMgr) };
-	CTexture *pTexture{ new CTexture(4, RESOURCE_TEXTURE_2D, 0) };
+	CTexture *pTexture{ new CTexture(2, RESOURCE_TEXTURE_2D, 0) };
 	pTexture->LoadTextureFromFile(pCreateMgr, L"./Resource/Textures/Minion/Diffuse.dds", 0);
 	pTexture->LoadTextureFromFile(pCreateMgr, L"./Resource/Textures/Minion/Normal.dds", 1);
-	pTexture->LoadTextureFromFile(pCreateMgr, L"./Resource/Textures/Minion/RoughnessAndMetallic.dds", 2);
-	pTexture->LoadTextureFromFile(pCreateMgr, L"./Resource/Textures/Minion/Specular.dds", 3);
 
 	CreateShaderResourceViews(
 		pCreateMgr, pTexture,
@@ -553,11 +551,9 @@ CMaterial * Materials::CreateMinionMaterial(CCreateMgr * pCreateMgr, D3D12_CPU_D
 CMaterial * Materials::CreatePlayerMaterial(CCreateMgr * pCreateMgr, D3D12_CPU_DESCRIPTOR_HANDLE * pSrvCPUDescriptorStartHandle, D3D12_GPU_DESCRIPTOR_HANDLE * pSrvGPUDescriptorStartHandle)
 {
 	CMaterial *pMaterial{ new CMaterial(pCreateMgr) };
-	CTexture *pTexture{ new CTexture(4, RESOURCE_TEXTURE_2D, 0) };
+	CTexture *pTexture{ new CTexture(2, RESOURCE_TEXTURE_2D, 0) };
 	pTexture->LoadTextureFromFile(pCreateMgr, L"./Resource/Textures/Player/Diffuse.dds", 0);
 	pTexture->LoadTextureFromFile(pCreateMgr, L"./Resource/Textures/Player/Normal.dds", 1);
-	pTexture->LoadTextureFromFile(pCreateMgr, L"./Resource/Textures/Player/RoughnessAndMetallic.dds", 2);
-	pTexture->LoadTextureFromFile(pCreateMgr, L"./Resource/Textures/Player/Specular.dds", 3);
 
 	CreateShaderResourceViews(
 		pCreateMgr, pTexture,

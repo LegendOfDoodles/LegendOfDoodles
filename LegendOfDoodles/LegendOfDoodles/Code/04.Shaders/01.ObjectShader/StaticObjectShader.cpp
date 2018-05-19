@@ -10,7 +10,7 @@
 /// 목적: 스테틱 오브젝트 그리기 용도의 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-18
+/// 최종 수정 날짜: 2018-05-19
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -190,7 +190,7 @@ D3D12_SHADER_BYTECODE CStaticObjectShader::CreatePixelShader(ID3DBlob **ppShader
 	return(CShader::CompileShaderFromFile(L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl", "PSTexturedLightingDetail", "ps_5_1", ppShaderBlob));
 }
 
-void CStaticObjectShader::CreateShader(CCreateMgr *pCreateMgr)
+void CStaticObjectShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets)
 {
 	m_nPipelineStates = 2;
 	m_ppPipelineStates = new ID3D12PipelineState*[m_nPipelineStates];
@@ -203,8 +203,8 @@ void CStaticObjectShader::CreateShader(CCreateMgr *pCreateMgr)
 	m_nHeaps = 18;
 	CreateDescriptorHeaps();
 
-	CShader::CreateShader(pCreateMgr);
-	CShader::CreateBoundingBoxShader(pCreateMgr);
+	CShader::CreateShader(pCreateMgr, nRenderTargets);
+	CShader::CreateBoundingBoxShader(pCreateMgr, nRenderTargets);
 }
 
 void CStaticObjectShader::CreateShaderVariables(CCreateMgr *pCreateMgr, int nBuffers)

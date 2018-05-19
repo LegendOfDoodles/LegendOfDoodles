@@ -104,7 +104,7 @@ D3D12_SHADER_BYTECODE CTerrainShader::CreatePixelShader(ID3DBlob **ppShaderBlob)
 		ppShaderBlob));
 }
 
-void CTerrainShader::CreateShader(CCreateMgr *pCreateMgr)
+void CTerrainShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets)
 {
 	m_nPipelineStates = 1;
 	m_ppPipelineStates = new ID3D12PipelineState*[m_nPipelineStates];
@@ -112,7 +112,7 @@ void CTerrainShader::CreateShader(CCreateMgr *pCreateMgr)
 	m_nHeaps = 1;
 	CreateDescriptorHeaps();
 
-	CShader::CreateShader(pCreateMgr);
+	CShader::CreateShader(pCreateMgr, nRenderTargets);
 }
 
 void CTerrainShader::CreateShaderVariables(CCreateMgr * pCreateMgr, int nBuffers)

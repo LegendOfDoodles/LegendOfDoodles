@@ -131,7 +131,7 @@ D3D12_SHADER_BYTECODE CSkyBoxShader::CreatePixelShader(ID3DBlob **ppShaderBlob)
 		ppShaderBlob));
 }
 
-void CSkyBoxShader::CreateShader(CCreateMgr *pCreateMgr)
+void CSkyBoxShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets)
 {
 	m_nPipelineStates = 1;
 	m_ppPipelineStates = new ID3D12PipelineState*[m_nPipelineStates];
@@ -139,7 +139,7 @@ void CSkyBoxShader::CreateShader(CCreateMgr *pCreateMgr)
 	m_nHeaps = 1;
 	CreateDescriptorHeaps();
 
-	CShader::CreateShader(pCreateMgr);
+	CShader::CreateShader(pCreateMgr, nRenderTargets);
 }
 
 void CSkyBoxShader::CreateShaderVariables(CCreateMgr * pCreateMgr, int nBuffers)
