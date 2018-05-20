@@ -35,6 +35,12 @@ cbuffer cbGameObjectInfo : register(b2)
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 //  다중 랜더 타겟 용  PS출력
+struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT_DEFAULT
+{
+    float4 color : SV_TARGET0;
+    float4 normal : SV_TARGET1;
+};
+
 struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT
 {
     float4 color : SV_TARGET0;
@@ -72,9 +78,9 @@ VS_OUTPUT VSDiffused(VS_INPUT input)
 
 
 //픽셀 셰이더를 정의한다.
-PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSDiffused(VS_OUTPUT input)
+PS_MULTIPLE_RENDER_TARGETS_OUTPUT_DEFAULT PSDiffused(VS_OUTPUT input)
 {
-    PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
+    PS_MULTIPLE_RENDER_TARGETS_OUTPUT_DEFAULT output;
     output.color = input.color;
     output.normal = float4(0, 0, 0, 0);
 
@@ -105,18 +111,18 @@ VS_TEXTURED_OUTPUT VSTextured(VS_TEXTURED_INPUT input)
     return (output);
 }
 
-PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTextured(VS_TEXTURED_OUTPUT input)
+PS_MULTIPLE_RENDER_TARGETS_OUTPUT_DEFAULT PSTextured(VS_TEXTURED_OUTPUT input)
 {
-    PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
+    PS_MULTIPLE_RENDER_TARGETS_OUTPUT_DEFAULT output;
     output.color = gtxtTexture.Sample(wrapSampler, input.uv);
     output.normal = float4(0, 0, 0, 0);
 
     return (output);
 }
 
-PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedRepeat(VS_TEXTURED_OUTPUT input)
+PS_MULTIPLE_RENDER_TARGETS_OUTPUT_DEFAULT PSTexturedRepeat(VS_TEXTURED_OUTPUT input)
 {
-    PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
+    PS_MULTIPLE_RENDER_TARGETS_OUTPUT_DEFAULT output;
     float2 newUV;
     newUV.x = input.uv.x * 6;
     newUV.y = input.uv.y * 5;
@@ -159,9 +165,9 @@ VS_UI_OUTPUT VSTexturedUI(VS_UI_INPUT input)
     return (output);
 }
 
-PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedUI(VS_UI_OUTPUT input)
+PS_MULTIPLE_RENDER_TARGETS_OUTPUT_DEFAULT PSTexturedUI(VS_UI_OUTPUT input)
 {
-    PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
+    PS_MULTIPLE_RENDER_TARGETS_OUTPUT_DEFAULT output;
     output.color = gtxtTextures[NonUniformResourceIndex(input.texIndex)].Sample(wrapSampler, input.uv);
     output.normal = float4(0, 0, 0, 0);
 
@@ -199,9 +205,9 @@ VS_GAUGE_OUTPUT VSTexturedGauge(VS_GAUGE_INPUT input)
     return (output);
 }
 
-PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedGauge(VS_GAUGE_OUTPUT input)
+PS_MULTIPLE_RENDER_TARGETS_OUTPUT_DEFAULT PSTexturedGauge(VS_GAUGE_OUTPUT input)
 {
-    PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
+    PS_MULTIPLE_RENDER_TARGETS_OUTPUT_DEFAULT output;
 
     if (input.uv.x <= CurrentHP)
     {
@@ -215,9 +221,9 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedGauge(VS_GAUGE_OUTPUT input)
 }
 
 // Icon Gague
-PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedIconGauge(VS_GAUGE_OUTPUT input)
+PS_MULTIPLE_RENDER_TARGETS_OUTPUT_DEFAULT PSTexturedIconGauge(VS_GAUGE_OUTPUT input)
 {
-    PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
+    PS_MULTIPLE_RENDER_TARGETS_OUTPUT_DEFAULT output;
 
     if (1 - input.uv.y <= CurrentHP)
     {
