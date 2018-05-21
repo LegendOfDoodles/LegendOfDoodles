@@ -58,7 +58,7 @@ void CCamera::UpdateShaderVariables()
 	memcpy(&m_pMappedCamera->m_xmf3Position, &m_xmf3Position, sizeof(XMFLOAT3));
 
 	D3D12_GPU_VIRTUAL_ADDRESS gpuVirtualAddress = m_pConstBuffer->GetGPUVirtualAddress();
-	m_pCommandList->SetGraphicsRootConstantBufferView(1, gpuVirtualAddress);
+	m_pCommandList->SetGraphicsRootConstantBufferView(0, gpuVirtualAddress);
 }
 
 void CCamera::SetViewportsAndScissorRects()

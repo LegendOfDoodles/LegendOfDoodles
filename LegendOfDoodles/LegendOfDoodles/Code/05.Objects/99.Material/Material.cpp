@@ -6,7 +6,7 @@
 /// 목적: 텍스처, 알베도, 재질 등 정리용 클래스
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-04-10
+/// 최종 수정 날짜: 2018-05-21
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -102,5 +102,5 @@ void CMaterial::UpdateShaderVariable()
 	::memcpy(m_pcbMappedColor, &m_color, sizeof(COLOR));
 
 	D3D12_GPU_VIRTUAL_ADDRESS cbColorGpuVirtualAddress = m_pcbColor->GetGPUVirtualAddress();
-	m_pCommandList->SetGraphicsRootConstantBufferView(8, cbColorGpuVirtualAddress);
+	m_pCommandList->SetGraphicsRootConstantBufferView(5, cbColorGpuVirtualAddress);
 }

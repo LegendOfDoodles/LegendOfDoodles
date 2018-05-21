@@ -297,13 +297,13 @@ ID3D12Resource* CCreateMgr::CreateBufferResource(
 ID3D12Resource* CCreateMgr::CreateTextureResourceFromFile(
 	wchar_t *pszFileName,
 	ID3D12Resource **ppUploadBuffer,
-	D3D12_RESOURCE_STATES resourceStates)
+	D3D12_RESOURCE_STATES resourceStates,
+	bool bIsCubeMap)
 {
 	ID3D12Resource *pTexture{ NULL };
 	std::unique_ptr<uint8_t[]> ddsData;
 	std::vector<D3D12_SUBRESOURCE_DATA> vSubresources;
 	DDS_ALPHA_MODE ddsAlphaMode = DDS_ALPHA_MODE_UNKNOWN;
-	bool bIsCubeMap = false;
 
 	HRESULT hResult = DirectX::LoadDDSTextureFromFileEx(
 		m_pDevice,
@@ -743,11 +743,11 @@ void CCreateMgr::CreateGraphicsRootSignature()
 	pDescriptorRanges[1].RegisterSpace = 0;
 	pDescriptorRanges[1].OffsetInDescriptorsFromTableStart = 0;
 #else
-	D3D12_DESCRIPTOR_RANGE pDescriptorRanges[7];
+	D3D12_DESCRIPTOR_RANGE pDescriptorRanges[5];
 
 	pDescriptorRanges[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
 	pDescriptorRanges[0].NumDescriptors = 1;
-	pDescriptorRanges[0].BaseShaderRegister = 2; //Game Objects
+	pDescriptorRanges[0].BaseShaderRegister = 1; //Game Objects
 	pDescriptorRanges[0].RegisterSpace = 0;
 	pDescriptorRanges[0].OffsetInDescriptorsFromTableStart = 0;
 
@@ -759,45 +759,28 @@ void CCreateMgr::CreateGraphicsRootSignature()
 
 	pDescriptorRanges[2].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pDescriptorRanges[2].NumDescriptors = 1;
-	pDescriptorRanges[2].BaseShaderRegister = 1; //Normal
+	pDescriptorRanges[2].BaseShaderRegister = 1; //Textures
 	pDescriptorRanges[2].RegisterSpace = 0;
 	pDescriptorRanges[2].OffsetInDescriptorsFromTableStart = 0;
 
-	pDescriptorRanges[3].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	pDescriptorRanges[3].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
 	pDescriptorRanges[3].NumDescriptors = 1;
-	pDescriptorRanges[3].BaseShaderRegister = 2; //RoughnessMetalFresnel
+	pDescriptorRanges[3].BaseShaderRegister = 4; //Animation Objects
 	pDescriptorRanges[3].RegisterSpace = 0;
 	pDescriptorRanges[3].OffsetInDescriptorsFromTableStart = 0;
 
-	pDescriptorRanges[4].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	pDescriptorRanges[4].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
 	pDescriptorRanges[4].NumDescriptors = 1;
-	pDescriptorRanges[4].BaseShaderRegister = 3; //Specular
+	pDescriptorRanges[4].BaseShaderRegister = 5; //UI Gague
 	pDescriptorRanges[4].RegisterSpace = 0;
 	pDescriptorRanges[4].OffsetInDescriptorsFromTableStart = 0;
-
-	pDescriptorRanges[5].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
-	pDescriptorRanges[5].NumDescriptors = 1;
-	pDescriptorRanges[5].BaseShaderRegister = 5; //Animation Objects
-	pDescriptorRanges[5].RegisterSpace = 0;
-	pDescriptorRanges[5].OffsetInDescriptorsFromTableStart = 0;
-
-	pDescriptorRanges[6].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
-	pDescriptorRanges[6].NumDescriptors = 1;
-	pDescriptorRanges[6].BaseShaderRegister = 7; //UI Gague
-	pDescriptorRanges[6].RegisterSpace = 0;
-	pDescriptorRanges[6].OffsetInDescriptorsFromTableStart = 0;
 #endif
 
-	D3D12_ROOT_PARAMETER pRootParameters[11];
+	D3D12_ROOT_PARAMETER pRootParameters[8];
 	pRootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	pRootParameters[0].Descriptor.ShaderRegister = 0; //Player
+	pRootParameters[0].Descriptor.ShaderRegister = 0; //Camera
 	pRootParameters[0].Descriptor.RegisterSpace = 0;
-	pRootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-
-	pRootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	pRootParameters[1].Descriptor.ShaderRegister = 1; //Camera
-	pRootParameters[1].Descriptor.RegisterSpace = 0;
-	pRootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	pRootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 #if USE_INSTANCING
 	pRootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_SRV;
@@ -816,52 +799,42 @@ void CCreateMgr::CreateGraphicsRootSignature()
 	pRootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
 #else
+	pRootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	pRootParameters[1].DescriptorTable.NumDescriptorRanges = 1;
+	pRootParameters[1].DescriptorTable.pDescriptorRanges = &pDescriptorRanges[0]; //Game Objects
+	pRootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+
 	pRootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	pRootParameters[2].DescriptorTable.NumDescriptorRanges = 1;
-	pRootParameters[2].DescriptorTable.pDescriptorRanges = &pDescriptorRanges[0]; //Game Objects
-	pRootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+	pRootParameters[2].DescriptorTable.pDescriptorRanges = &pDescriptorRanges[1]; //Texture
+	pRootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
 	pRootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	pRootParameters[3].DescriptorTable.NumDescriptorRanges = 1;
-	pRootParameters[3].DescriptorTable.pDescriptorRanges = &pDescriptorRanges[1]; //Texture
+	pRootParameters[3].DescriptorTable.pDescriptorRanges = &pDescriptorRanges[2]; //Textures
 	pRootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-
-	pRootParameters[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	pRootParameters[4].DescriptorTable.NumDescriptorRanges = 1;
-	pRootParameters[4].DescriptorTable.pDescriptorRanges = &pDescriptorRanges[2]; //Normal
-	pRootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-
-	pRootParameters[5].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	pRootParameters[5].DescriptorTable.NumDescriptorRanges = 1;
-	pRootParameters[5].DescriptorTable.pDescriptorRanges = &pDescriptorRanges[3]; //RoughnessMetalFresnel
-	pRootParameters[5].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-
-	pRootParameters[6].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	pRootParameters[6].DescriptorTable.NumDescriptorRanges = 1;
-	pRootParameters[6].DescriptorTable.pDescriptorRanges = &pDescriptorRanges[4]; //Specular
-	pRootParameters[6].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
 #endif
 
-	pRootParameters[7].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	pRootParameters[7].Descriptor.ShaderRegister = 3; //Lights
-	pRootParameters[7].Descriptor.RegisterSpace = 0;
+	pRootParameters[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	pRootParameters[4].Descriptor.ShaderRegister = 2; //Lights
+	pRootParameters[4].Descriptor.RegisterSpace = 0;
+	pRootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+
+	pRootParameters[5].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	pRootParameters[5].Descriptor.ShaderRegister = 3; //Materials
+	pRootParameters[5].Descriptor.RegisterSpace = 0;
+	pRootParameters[5].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+
+	pRootParameters[6].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	pRootParameters[6].DescriptorTable.NumDescriptorRanges = 1;
+	pRootParameters[6].DescriptorTable.pDescriptorRanges = &pDescriptorRanges[3]; //Animation Objects
+	pRootParameters[6].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+
+	pRootParameters[7].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	pRootParameters[7].DescriptorTable.NumDescriptorRanges = 1;
+	pRootParameters[7].DescriptorTable.pDescriptorRanges = &pDescriptorRanges[4];  //UI Gauge Textures
 	pRootParameters[7].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
-
-	pRootParameters[8].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	pRootParameters[8].Descriptor.ShaderRegister = 4; //Materials
-	pRootParameters[8].Descriptor.RegisterSpace = 0;
-	pRootParameters[8].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
-
-	pRootParameters[9].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	pRootParameters[9].DescriptorTable.NumDescriptorRanges = 1;
-	pRootParameters[9].DescriptorTable.pDescriptorRanges = &pDescriptorRanges[5]; //Animation Objects
-	pRootParameters[9].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-
-	pRootParameters[10].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	pRootParameters[10].DescriptorTable.NumDescriptorRanges = 1;
-	pRootParameters[10].DescriptorTable.pDescriptorRanges = &pDescriptorRanges[6];  //UI Gauge Textures
-	pRootParameters[10].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 	D3D12_STATIC_SAMPLER_DESC samplerDesc[2];
 	::ZeroMemory(&samplerDesc, sizeof(D3D12_STATIC_SAMPLER_DESC));

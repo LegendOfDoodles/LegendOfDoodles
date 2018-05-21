@@ -105,14 +105,8 @@
     <Filter Include="소스 파일\05.Objects\01.Camera\01.AOSCamera">
       <UniqueIdentifier>{7d070f59-60db-4a7b-a19d-086a99df7d5b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\05.Objects\96.Arrow">
-      <UniqueIdentifier>{da6614e3-61ea-4567-80c7-8b12d82ea4d7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\07.Network">
       <UniqueIdentifier>{ed8f421a-dea7-4a21-92b7-629cad64076d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\05.Objects\95.Billboard">
-      <UniqueIdentifier>{55fe72be-b996-42b9-af24-96806570544b}</UniqueIdentifier>
     </Filter>
     <Filter Include="소스 파일\04.Shaders\04.AniShader">
       <UniqueIdentifier>{dc752d63-37aa-4e94-9f45-9cd6ad7d721c}</UniqueIdentifier>
@@ -173,6 +167,9 @@
     </Filter>
     <Filter Include="소스 파일\04.Shaders\97.TextureToFullScreenShader">
       <UniqueIdentifier>{e693411b-dadf-4c73-8876-99143c8312d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\05.Objects\96.Billboard">
+      <UniqueIdentifier>{55fe72be-b996-42b9-af24-96806570544b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -266,12 +263,6 @@
     <ClInclude Include="Code\05.Objects\09.NexusTower\NexusTower.h">
       <Filter>소스 파일\05.Objects\09.NexusTower</Filter>
     </ClInclude>
-    <ClInclude Include="Code\05.Objects\95.Billboard\Billboard.h">
-      <Filter>소스 파일\05.Objects\95.Billboard</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\05.Objects\96.Arrow\Arrow.h">
-      <Filter>소스 파일\05.Objects\96.Arrow</Filter>
-    </ClInclude>
     <ClInclude Include="Code\05.Objects\97.Skeleton\Skeleton.h">
       <Filter>소스 파일\05.Objects\97.Skeleton</Filter>
     </ClInclude>
@@ -331,6 +322,9 @@
     </ClInclude>
     <ClInclude Include="Code\04.Shaders\97.TextureToFullScreenShader\TextureToFullScreenShader.h">
       <Filter>소스 파일\04.Shaders\97.TextureToFullScreenShader</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\05.Objects\96.Billboard\Billboard.h">
+      <Filter>소스 파일\05.Objects\96.Billboard</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -418,12 +412,6 @@
     <ClCompile Include="Code\05.Objects\09.NexusTower\NexusTower.cpp">
       <Filter>소스 파일\05.Objects\09.NexusTower</Filter>
     </ClCompile>
-    <ClCompile Include="Code\05.Objects\95.Billboard\Billboard.cpp">
-      <Filter>소스 파일\05.Objects\95.Billboard</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\05.Objects\96.Arrow\Arrow.cpp">
-      <Filter>소스 파일\05.Objects\96.Arrow</Filter>
-    </ClCompile>
     <ClCompile Include="Code\05.Objects\97.Skeleton\Skeleton.cpp">
       <Filter>소스 파일\05.Objects\97.Skeleton</Filter>
     </ClCompile>
@@ -468,6 +456,9 @@
     </ClCompile>
     <ClCompile Include="Code\04.Shaders\97.TextureToFullScreenShader\TextureToFullScreenShader.cpp">
       <Filter>소스 파일\04.Shaders\97.TextureToFullScreenShader</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\05.Objects\96.Billboard\Billboard.cpp">
+      <Filter>소스 파일\05.Objects\96.Billboard</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

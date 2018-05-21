@@ -2,29 +2,26 @@
 #define TERRAIN_SIZE_HEIGHT 5000
 #define TERRAIN_SIZE_BORDER 1000
 
+#define gnDiffuse 0
+#define gnNormal 1
+#define gnMix3Data 2
+#define gnSpecular 3
+
 Texture2D gtxtTexture : register(t0);
-Texture2D gtxtNormal : register(t1);
-Texture2D gtxtRoughnessMetalFresnel : register(t2);
-Texture2D gtxtSpecular : register(t3);
+Texture2DArray gtxtTextures : register(t1);
 
 SamplerState wrapSampler : register(s0);
 SamplerState mirrorSampler : register(s1);
 
-//게임 객체의 정보를 위한 상수 버퍼를 선언한다.
-cbuffer cbPlayerInfo : register(b0)
-{
-    matrix gmtxWorld : packoffset(c0);
-};
-
 //카메라의 정보를 위한 상수 버퍼를 선언한다.
-cbuffer cbCameraInfo : register(b1)
+cbuffer cbCameraInfo : register(b0)
 {
     matrix gmtxView : packoffset(c0);
     matrix gmtxProjection : packoffset(c4);
     float3 gvCameraPosition : packoffset(c8);
 };
 
-cbuffer cbGameObjectInfo : register(b2)
+cbuffer cbGameObjectInfo : register(b1)
 {
     matrix gmtxGameObject : packoffset(c0);
 };
@@ -132,9 +129,8 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT_DEFAULT PSTexturedRepeat(VS_TEXTURED_OUTPUT in
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
 // Gauge Object 
-cbuffer cbGaugeObjectInfo : register(b7)
+cbuffer cbGaugeObjectInfo : register(b5)
 {
     matrix gmtxGaugeObject : packoffset(c0);
     float CurrentHP : packoffset(c4);
@@ -269,6 +265,7 @@ VS_TEXTURED_LIGHTING_OUTPUT VSTexturedLighting(VS_TEXTURED_LIGHTING_INPUT input)
     return (output);
 }
 
+// 움직이는 오브젝트 그리기용
 PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLighting(VS_TEXTURED_LIGHTING_OUTPUT input)
 {
     PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
@@ -279,13 +276,13 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLighting(VS_TEXTURED_LIGHTING_OUTPUT
         float3 T = normalize(input.tangentW - dot(input.tangentW, N) * N);
         float3 B = cross(N, T); // 노말과 탄젠트를 외적해서 바이 탄젠트(바이 노말)생성
         float3x3 TBN = float3x3(T, B, N); // 이를 바탕으로 TBN행렬 생성
-        float3 normal = gtxtNormal.Sample(wrapSampler, input.uv); // 노말 맵에서 해당하는 uv에 해당하는 노말 읽기
+        float3 normal = gtxtTextures.Sample(wrapSampler, float3(input.uv, gnNormal)); // 노말 맵에서 해당하는 uv에 해당하는 노말 읽기
         normal = 2.0f * normal - 1.0f; // 노말을 -1에서 1사이의 값으로 변환
         N = mul(normal, TBN); // 노말을 TBN행렬로 변환
         output.normal = float4(N, 1);
     }
 
-    output.color = gtxtTexture.Sample(wrapSampler, input.uv);
+    output.color = gtxtTextures.Sample(wrapSampler, float3(input.uv, gnDiffuse));
     output.roughMetalFresnel = float4(gMaterials.m_cRoughness, gMaterials.m_cMetalic, 1, 0);
     output.albedo = gMaterials.m_cAlbedo;
     output.position = float4(input.positionW, 0);
@@ -296,6 +293,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLighting(VS_TEXTURED_LIGHTING_OUTPUT
     return output;
 }
 
+// 나머지 오브젝트 그리기용
 PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingDetail(VS_TEXTURED_LIGHTING_OUTPUT input)
 {
     PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
@@ -305,14 +303,14 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingDetail(VS_TEXTURED_LIGHTING_
         float3 T = normalize(input.tangentW - dot(input.tangentW, N) * N);
         float3 B = cross(N, T); // 노말과 탄젠트를 외적해서 바이 탄젠트(바이 노말)생성
         float3x3 TBN = float3x3(T, B, N); // 이를 바탕으로 TBN행렬 생성
-        float3 normal = gtxtNormal.Sample(wrapSampler, input.uv); // 노말 맵에서 해당하는 uv에 해당하는 노말 읽기
+        float3 normal = gtxtTextures.Sample(wrapSampler, float3(input.uv, gnNormal)); // 노말 맵에서 해당하는 uv에 해당하는 노말 읽기
         normal = 2.0f * normal - 1.0f; // 노말을 -1에서 1사이의 값으로 변환
         N = mul(normal, TBN); // 노말을 TBN행렬로 변환
         output.normal = float4(N, 1);
     }
 
-    output.color = gtxtTexture.Sample(wrapSampler, input.uv) + gtxtSpecular.Sample(wrapSampler, input.uv);
-    output.roughMetalFresnel = gtxtRoughnessMetalFresnel.Sample(wrapSampler, input.uv);
+    output.color = gtxtTextures.Sample(wrapSampler, float3(input.uv, gnDiffuse)) + gtxtTextures.Sample(wrapSampler, float3(input.uv, gnSpecular));
+    output.roughMetalFresnel = gtxtTextures.Sample(wrapSampler, float3(input.uv, gnMix3Data));
     output.albedo = gMaterials.m_cAlbedo;
     output.position = float4(input.positionW, 0);
     output.position.x /= TERRAIN_SIZE_WIDTH;
@@ -376,7 +374,7 @@ struct VS_BONEINPUT
     float3 tangent : TANGENT;
 };
 
-cbuffer cbSkinnedInfo : register(b5)
+cbuffer cbSkinnedInfo : register(b4)
 {
     float4x4 gmtxBoneWorld : packoffset(c0);
     float4x4 gmtxBoneTransforms[128] : packoffset(c4);
@@ -434,11 +432,11 @@ float4 VSTextureToFullScreen(uint nVertexID : SV_VertexID) : SV_POSITION
     return (float4(0, 0, 0, 0));
 }
 
-Texture2D<float4> gtxtSceneBaseColor : register(t5);
-Texture2D<float4> gtxtSceneNormal : register(t6);
-Texture2D<float4> gtxtSceneRoughMetalFresnel : register(t7);
-Texture2D<float4> gtxtSceneAlbedo : register(t8);
-Texture2D<float4> gtxtScenePosition : register(t9);
+Texture2D<float4> gtxtSceneBaseColor : register(t2);
+Texture2D<float4> gtxtSceneNormal : register(t3);
+Texture2D<float4> gtxtSceneRoughMetalFresnel : register(t4);
+Texture2D<float4> gtxtSceneAlbedo : register(t5);
+Texture2D<float4> gtxtScenePosition : register(t6);
 
 static int2 gnOffsets[9] = { { -1, -1 }, { 0, -1 }, { 1, -1 }, { -1, 0 }, { 0, 0 }, { 1, 0 }, { -1, 1 }, { 0, 1 }, { 1, 1 } };
 

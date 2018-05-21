@@ -295,7 +295,7 @@ void GetShaderResourceViewDesc(
 		pShaderResourceViewDesc->Texture2D.PlaneSlice = 0;
 		pShaderResourceViewDesc->Texture2D.ResourceMinLODClamp = 0.0f;
 		break;
-	case RESOURCE_TEXTURE2DARRAY: //(d3dResourceDesc.Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE2D)(d3dResourceDesc.DepthOrArraySize != 1)
+	case RESOURCE_TEXTURE_2DARRAY: //(d3dResourceDesc.Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE2D)(d3dResourceDesc.DepthOrArraySize != 1)
 		pShaderResourceViewDesc->ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2DARRAY;
 		pShaderResourceViewDesc->Texture2DArray.MipLevels = -1;
 		pShaderResourceViewDesc->Texture2DArray.MostDetailedMip = 0;
@@ -407,8 +407,8 @@ void CShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets)
 	HRESULT hResult = pCreateMgr->GetDevice()->CreateGraphicsPipelineState(
 		&pipelineStateDesc,
 		IID_PPV_ARGS(&m_ppPipelineStates[0]));
-	assert(SUCCEEDED(hResult) && "Device->CreateGraphicsPipelineState Failed");
-	//ExptProcess::ThrowIfFailed(hResult);
+	//assert(SUCCEEDED(hResult) && "Device->CreateGraphicsPipelineState Failed");
+	ExptProcess::ThrowIfFailed(hResult);
 
 	Safe_Delete_Array(pipelineStateDesc.InputLayout.pInputElementDescs);
 }

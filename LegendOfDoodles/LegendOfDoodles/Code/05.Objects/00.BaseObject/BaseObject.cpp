@@ -126,7 +126,7 @@ void CBaseObject::Render(CCamera *pCamera, UINT istanceCnt)
 	}
 
 	if (m_cbvGPUDescriptorHandle.ptr)
-		m_pCommandList->SetGraphicsRootDescriptorTable(2, m_cbvGPUDescriptorHandle);
+		m_pCommandList->SetGraphicsRootDescriptorTable(1, m_cbvGPUDescriptorHandle);
 
 	if (m_pShader)
 	{
@@ -150,7 +150,7 @@ void CBaseObject::RenderBoundingBox(CCamera * pCamera, UINT istanceCnt)
 	if (!IsVisible(pCamera)) return;
 
 	if (m_cbvGPUDescriptorHandleForBB.ptr)
-		m_pCommandList->SetGraphicsRootDescriptorTable(2, m_cbvGPUDescriptorHandleForBB);
+		m_pCommandList->SetGraphicsRootDescriptorTable(1, m_cbvGPUDescriptorHandleForBB);
 
 	if (m_pBoundingMesh) m_pBoundingMesh->Render(istanceCnt);
 }

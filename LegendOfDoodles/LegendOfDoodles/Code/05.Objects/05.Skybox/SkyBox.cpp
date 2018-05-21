@@ -38,7 +38,7 @@ CSkyBox::~CSkyBox()
 void CSkyBox::Render(CCamera *pCamera, UINT istanceCnt)
 {
 	if (m_cbvGPUDescriptorHandle.ptr)
-		m_pCommandList->SetGraphicsRootDescriptorTable(2, m_cbvGPUDescriptorHandle);
+		m_pCommandList->SetGraphicsRootDescriptorTable(1, m_cbvGPUDescriptorHandle);
 
 	if (m_ppMeshes)
 	{

@@ -31,7 +31,7 @@ void CTextureToFullScreenShader::CreateGraphicsRootSignature(CCreateMgr *pCreate
 
 	pDescriptorRanges[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pDescriptorRanges[0].NumDescriptors = 5;
-	pDescriptorRanges[0].BaseShaderRegister = 5; //Texture
+	pDescriptorRanges[0].BaseShaderRegister = 2; //Texture
 	pDescriptorRanges[0].RegisterSpace = 0;
 	pDescriptorRanges[0].OffsetInDescriptorsFromTableStart = 0;
 
@@ -42,12 +42,12 @@ void CTextureToFullScreenShader::CreateGraphicsRootSignature(CCreateMgr *pCreate
 	pRootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
 	pRootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	pRootParameters[1].Descriptor.ShaderRegister = 1; //Camera
+	pRootParameters[1].Descriptor.ShaderRegister = 0; //Camera
 	pRootParameters[1].Descriptor.RegisterSpace = 0;
 	pRootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 	pRootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	pRootParameters[2].Descriptor.ShaderRegister = 3; //Lights
+	pRootParameters[2].Descriptor.ShaderRegister = 2; //Lights
 	pRootParameters[2].Descriptor.RegisterSpace = 0;
 	pRootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 

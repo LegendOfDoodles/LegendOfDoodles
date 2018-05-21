@@ -280,7 +280,7 @@ void CNexusTowerShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
 	CreateShaderVariables(pCreateMgr, m_nObjects);
 	for (int i = 0; i < m_nHeaps - 1; ++i)
 	{
-		CreateCbvAndSrvDescriptorHeaps(pCreateMgr, m_nObjects, 4, i);
+		CreateCbvAndSrvDescriptorHeaps(pCreateMgr, m_nObjects, 1, i);
 		CreateConstantBufferViews(pCreateMgr, m_nObjects, m_pConstBuffer, ncbElementBytes, i);
 	}
 	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, m_nObjects, 0, m_nHeaps - 1);

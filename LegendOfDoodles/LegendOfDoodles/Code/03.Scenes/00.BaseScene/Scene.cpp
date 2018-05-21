@@ -90,7 +90,7 @@ void CScene::AnimateObjects(float timeElapsed)
 void CScene::Render()
 {
 	D3D12_GPU_VIRTUAL_ADDRESS d3dcbLightsGpuVirtualAddress = m_pd3dcbLights->GetGPUVirtualAddress();
-	m_pCommandList->SetGraphicsRootConstantBufferView(7, d3dcbLightsGpuVirtualAddress); //Lights
+	m_pCommandList->SetGraphicsRootConstantBufferView(4, d3dcbLightsGpuVirtualAddress); //Lights
 
 	for (int i = 0; i < m_nShaders; i++)
 	{

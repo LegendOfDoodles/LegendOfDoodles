@@ -26,7 +26,8 @@ public:	// 공개 함수
 	ID3D12Resource *CreateTextureResourceFromFile(
 		wchar_t *pszFileName,
 		ID3D12Resource **ppUploadBuffer,
-		D3D12_RESOURCE_STATES resourceStates = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+		D3D12_RESOURCE_STATES resourceStates = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
+		bool bIsCubeMap = false);
 
 	ID3D12Resource* CreateTexture2DResource(
 		UINT nWidth, UINT nHeight,

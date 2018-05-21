@@ -1,7 +1,7 @@
 #pragma once
 #include "04.Shaders/00.BaseShader/Shader.h"
 #include "05.Objects/02.CollisionObject/CollisionObject.h"
-#include "05.Objects/95.Billboard/Billboard.h"
+#include "05.Objects/96.Billboard/Billboard.h"
 
 typedef std::vector<CCollisionObject*> CollisionObjectList;
 typedef std::vector<CHPGaugeObjects*> HPGaugeObjectList;
