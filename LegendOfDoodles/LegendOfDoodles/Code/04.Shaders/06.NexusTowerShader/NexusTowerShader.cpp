@@ -11,7 +11,7 @@
 /// 목적: 스테틱 오브젝트 그리기 용도의 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-19
+/// 최종 수정 날짜: 2018-05-21
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -380,27 +380,26 @@ void CNexusTowerShader::ReleaseObjects()
 
 void CNexusTowerShader::SetBoundingBoxMeshByIndex(CCreateMgr * pCreateMgr, CBaseObject * target, int index)
 {
+	static CCubeMesh towerBBMesh(pCreateMgr,
+		CONVERT_PaperUnit_to_InG(10), CONVERT_PaperUnit_to_InG(7), CONVERT_PaperUnit_to_InG(20),
+		0, 0, -CONVERT_PaperUnit_to_InG(10));
+	towerBBMesh.AddRef();
+
 	switch (index)
 	{
 	case 0: // 보물 상자
-		target->SetBoundingMesh(pCreateMgr,
-			CONVERT_PaperUnit_to_InG(50), CONVERT_PaperUnit_to_InG(36), CONVERT_PaperUnit_to_InG(32),
-			0, 0, -CONVERT_PaperUnit_to_InG(16));
+		target->SetBoundingMesh(new CCubeMesh(pCreateMgr,
+			CONVERT_PaperUnit_to_InG(50), CONVERT_PaperUnit_to_InG(18), CONVERT_PaperUnit_to_InG(32),
+			0, 0, -CONVERT_PaperUnit_to_InG(16)));
 		break;
 	case 1: // 진주 조개
-		target->SetBoundingMesh(pCreateMgr,
-			CONVERT_PaperUnit_to_InG(36), CONVERT_PaperUnit_to_InG(36), CONVERT_PaperUnit_to_InG(20),
-			0, 0, -CONVERT_PaperUnit_to_InG(10));
+		target->SetBoundingMesh(new CCubeMesh(pCreateMgr,
+			CONVERT_PaperUnit_to_InG(36), CONVERT_PaperUnit_to_InG(18), CONVERT_PaperUnit_to_InG(20),
+			0, 0, -CONVERT_PaperUnit_to_InG(10)));
 		break;
 	case 2: // 동글 비누 타워
-		target->SetBoundingMesh(pCreateMgr,
-			CONVERT_PaperUnit_to_InG(10), CONVERT_PaperUnit_to_InG(14), CONVERT_PaperUnit_to_InG(20),
-			0, 0, -CONVERT_PaperUnit_to_InG(10));
-		break;
 	case 3: // 네모 비누 타워
-		target->SetBoundingMesh(pCreateMgr,
-			CONVERT_PaperUnit_to_InG(10), CONVERT_PaperUnit_to_InG(14), CONVERT_PaperUnit_to_InG(20),
-			0, 0, -CONVERT_PaperUnit_to_InG(10));
+		target->SetBoundingMesh(&towerBBMesh);
 		break;
 	}
 }

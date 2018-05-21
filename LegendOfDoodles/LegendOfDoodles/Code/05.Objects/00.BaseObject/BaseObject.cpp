@@ -82,9 +82,11 @@ void CBaseObject::SetMesh(int nIndex, CMesh *pMesh)
 
 }
 
-void CBaseObject::SetBoundingMesh(CCreateMgr *pCreateMgr, float width, float height, float depth, float xOffset, float yOffSet, float zOffSet)
+void CBaseObject::SetBoundingMesh(CMesh *pMesh)
 {
-	m_pBoundingMesh = new CCubeMesh(pCreateMgr, width, height / 2.f, depth, xOffset, yOffSet, zOffSet);
+	if (m_pBoundingMesh) m_pBoundingMesh->Release();
+	m_pBoundingMesh = pMesh;
+	if (pMesh) pMesh->AddRef();
 }
 
 void CBaseObject::SetShader(CShader *pShader)

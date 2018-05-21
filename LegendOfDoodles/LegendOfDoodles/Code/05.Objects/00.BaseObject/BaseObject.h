@@ -25,7 +25,7 @@ public: // 공개 함수
 	void ReleaseUploadBuffers();
 
 	void SetMesh(int nIndex, CMesh *pMesh);
-	void SetBoundingMesh(CCreateMgr *pCreateMgr, float width, float height, float depth, float xOffset = 0.0f, float yOffSet = 0.0f, float zOffSet = 0.0f);
+	void SetBoundingMesh(CMesh *pMesh);
 	void SetShader(CShader *pShader);
 	void SetMaterial(CMaterial *pMaterial);
 

@@ -10,7 +10,7 @@
 /// 목적: 스테틱 오브젝트 그리기 용도의 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-19
+/// 최종 수정 날짜: 2018-05-21
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -430,92 +430,127 @@ void CStaticObjectShader::ReleaseObjects()
 
 void CStaticObjectShader::SetBoundingBoxMeshByIndex(CCreateMgr *pCreateMgr, CBaseObject * target, int index)
 {
+	static CCubeMesh eraserBBMesh(pCreateMgr,
+		CONVERT_PaperUnit_to_InG(53), CONVERT_PaperUnit_to_InG(7), CONVERT_PaperUnit_to_InG(26),
+		0, 0, -CONVERT_PaperUnit_to_InG(13));
+	eraserBBMesh.AddRef();
+	static CCubeMesh duckBBMesh(pCreateMgr,
+		CONVERT_PaperUnit_to_InG(28), CONVERT_PaperUnit_to_InG(14), CONVERT_PaperUnit_to_InG(28),
+		0, 0, -CONVERT_PaperUnit_to_InG(14));
+	duckBBMesh.AddRef();
+	static CCubeMesh keumWonBoBBMesh(pCreateMgr,
+		CONVERT_PaperUnit_to_InG(36), CONVERT_PaperUnit_to_InG(18), CONVERT_PaperUnit_to_InG(25),
+		0, 0, 0);
+	keumWonBoBBMesh.AddRef();
+	static CCubeMesh pencilCaseBBMesh(pCreateMgr,
+		CONVERT_PaperUnit_to_InG(27), CONVERT_PaperUnit_to_InG(47), CONVERT_PaperUnit_to_InG(24),
+		0, 0, -CONVERT_PaperUnit_to_InG(12));
+	pencilCaseBBMesh.AddRef();
+	static CCubeMesh nailBBMesh(pCreateMgr,
+		CONVERT_PaperUnit_to_InG(42), CONVERT_PaperUnit_to_InG(4), CONVERT_PaperUnit_to_InG(16),
+		CONVERT_PaperUnit_to_InG(12), 0, -CONVERT_PaperUnit_to_InG(8));
+	nailBBMesh.AddRef();
+	static CCubeMesh blueHeadBBMesh(pCreateMgr,
+		CONVERT_PaperUnit_to_InG(130), CONVERT_PaperUnit_to_InG(17), CONVERT_PaperUnit_to_InG(130),
+		0, 0, 0);
+	blueHeadBBMesh.AddRef();
+	static CCubeMesh shortPencilBBMesh(pCreateMgr,
+		CONVERT_PaperUnit_to_InG(15), CONVERT_PaperUnit_to_InG(7.5), CONVERT_PaperUnit_to_InG(50),
+		0, 0, -CONVERT_PaperUnit_to_InG(25));
+	shortPencilBBMesh.AddRef();
+	static CCubeMesh longPencilBBMesh(pCreateMgr,
+		CONVERT_PaperUnit_to_InG(18), CONVERT_PaperUnit_to_InG(9), CONVERT_PaperUnit_to_InG(90),
+		0, 0, -CONVERT_PaperUnit_to_InG(45));
+	longPencilBBMesh.AddRef();
+	static CCubeMesh cupBBMesh(pCreateMgr,
+		CONVERT_PaperUnit_to_InG(26), CONVERT_PaperUnit_to_InG(13), CONVERT_PaperUnit_to_InG(36),
+		0, 0, -CONVERT_PaperUnit_to_InG(18));
+	cupBBMesh.AddRef();
+	static CCubeMesh redHeadBBMesh(pCreateMgr,
+		CONVERT_PaperUnit_to_InG(130), CONVERT_PaperUnit_to_InG(17), CONVERT_PaperUnit_to_InG(100),
+		0, 0, -CONVERT_PaperUnit_to_InG(10));
+	redHeadBBMesh.AddRef();
+	static CCubeMesh penCapBBMesh(pCreateMgr,
+		CONVERT_PaperUnit_to_InG(16), CONVERT_PaperUnit_to_InG(30), CONVERT_PaperUnit_to_InG(16),
+		0, CONVERT_PaperUnit_to_InG(30), 0);
+	penCapBBMesh.AddRef();
+	static CCubeMesh penBBMesh(pCreateMgr,
+		CONVERT_PaperUnit_to_InG(90), CONVERT_PaperUnit_to_InG(9), CONVERT_PaperUnit_to_InG(18),
+		CONVERT_PaperUnit_to_InG(45), 0, -CONVERT_PaperUnit_to_InG(9));
+	penBBMesh.AddRef();
+	static CCubeMesh diceBBMesh(pCreateMgr,
+		CONVERT_PaperUnit_to_InG(25), CONVERT_PaperUnit_to_InG(12.5), CONVERT_PaperUnit_to_InG(25),
+		0, 0, 0);
+	diceBBMesh.AddRef();
+	static CCubeMesh book1BBMesh(pCreateMgr,
+		CONVERT_PaperUnit_to_InG(74), CONVERT_PaperUnit_to_InG(3.75), CONVERT_PaperUnit_to_InG(96),
+		0, 0, -CONVERT_PaperUnit_to_InG(48));
+	book1BBMesh.AddRef();
+	static CCubeMesh book2BBMesh(pCreateMgr,
+		CONVERT_PaperUnit_to_InG(54), CONVERT_PaperUnit_to_InG(3), CONVERT_PaperUnit_to_InG(65),
+		0, 0, -CONVERT_PaperUnit_to_InG(32.5));
+	book2BBMesh.AddRef();
+	static CCubeMesh book3BBMesh(pCreateMgr,
+		CONVERT_PaperUnit_to_InG(54), CONVERT_PaperUnit_to_InG(9), CONVERT_PaperUnit_to_InG(65),
+		0, 0, -CONVERT_PaperUnit_to_InG(32.5));
+	book3BBMesh.AddRef();
+	static CCubeMesh book4BBMesh(pCreateMgr,
+		CONVERT_PaperUnit_to_InG(54), CONVERT_PaperUnit_to_InG(6), CONVERT_PaperUnit_to_InG(65),
+		0, 0, -CONVERT_PaperUnit_to_InG(32.5));
+	book4BBMesh.AddRef();
+
 	switch (index)
 	{
 	case 0: // 지우개
-		target->SetBoundingMesh(pCreateMgr,
-			CONVERT_PaperUnit_to_InG(53), CONVERT_PaperUnit_to_InG(14), CONVERT_PaperUnit_to_InG(26),
-			0, 0, -CONVERT_PaperUnit_to_InG(13));
+		target->SetBoundingMesh(&eraserBBMesh);
 		break;
 	case 1: // 오리
-		target->SetBoundingMesh(pCreateMgr,
-			CONVERT_PaperUnit_to_InG(28), CONVERT_PaperUnit_to_InG(28), CONVERT_PaperUnit_to_InG(28),
-			0, 0, -CONVERT_PaperUnit_to_InG(14));
+		target->SetBoundingMesh(&duckBBMesh);
 		break;
 	case 2: // 금원보
-		target->SetBoundingMesh(pCreateMgr,
-			CONVERT_PaperUnit_to_InG(36), CONVERT_PaperUnit_to_InG(36), CONVERT_PaperUnit_to_InG(25),
-			0, 0, 0);
+		target->SetBoundingMesh(&keumWonBoBBMesh);
 		break;
 	case 3: // 필통
-		target->SetBoundingMesh(pCreateMgr,
-			CONVERT_PaperUnit_to_InG(27), CONVERT_PaperUnit_to_InG(94), CONVERT_PaperUnit_to_InG(24),
-			0, 0, -CONVERT_PaperUnit_to_InG(12));
+		target->SetBoundingMesh(&pencilCaseBBMesh);
 		break;
 	case 4: // 손톱 깎이
-		target->SetBoundingMesh(pCreateMgr,
-			CONVERT_PaperUnit_to_InG(42), CONVERT_PaperUnit_to_InG(8), CONVERT_PaperUnit_to_InG(16),
-			CONVERT_PaperUnit_to_InG(12), 0, -CONVERT_PaperUnit_to_InG(8));
+		target->SetBoundingMesh(&nailBBMesh);
 		break;
 	case 5: // 블루 헤드셋
-		target->SetBoundingMesh(pCreateMgr,
-			CONVERT_PaperUnit_to_InG(130), CONVERT_PaperUnit_to_InG(34), CONVERT_PaperUnit_to_InG(130),
-			0, 0, 0);
+		target->SetBoundingMesh(&blueHeadBBMesh);
 		break;
 	case 6: // 짧은 연필
-		target->SetBoundingMesh(pCreateMgr,
-			CONVERT_PaperUnit_to_InG(15), CONVERT_PaperUnit_to_InG(15), CONVERT_PaperUnit_to_InG(50),
-			0, 0, -CONVERT_PaperUnit_to_InG(25));
+		target->SetBoundingMesh(&shortPencilBBMesh);
 		break;
 	case 7: // 긴 연필
-		target->SetBoundingMesh(pCreateMgr,
-			CONVERT_PaperUnit_to_InG(18), CONVERT_PaperUnit_to_InG(18), CONVERT_PaperUnit_to_InG(90),
-			0, 0, -CONVERT_PaperUnit_to_InG(45));
+		target->SetBoundingMesh(&longPencilBBMesh);
 		break;
 	case 8: // 종이 컵
-		target->SetBoundingMesh(pCreateMgr,
-			CONVERT_PaperUnit_to_InG(26), CONVERT_PaperUnit_to_InG(26), CONVERT_PaperUnit_to_InG(36),
-			0, 0, -CONVERT_PaperUnit_to_InG(18));
+		target->SetBoundingMesh(&cupBBMesh);
 		break;
 	case 9: // 레드 헤드셋
-		target->SetBoundingMesh(pCreateMgr,
-			CONVERT_PaperUnit_to_InG(130), CONVERT_PaperUnit_to_InG(34), CONVERT_PaperUnit_to_InG(100),
-			0, 0, -CONVERT_PaperUnit_to_InG(10));
+		target->SetBoundingMesh(&redHeadBBMesh);
 		break;
 	case 10: // 펜 뚜껑
-		target->SetBoundingMesh(pCreateMgr,
-			CONVERT_PaperUnit_to_InG(16), CONVERT_PaperUnit_to_InG(60), CONVERT_PaperUnit_to_InG(16),
-			0, CONVERT_PaperUnit_to_InG(30), 0);
+		target->SetBoundingMesh(&penCapBBMesh);
 		break;
 	case 11: // 펜 본체
-		target->SetBoundingMesh(pCreateMgr,
-			CONVERT_PaperUnit_to_InG(90), CONVERT_PaperUnit_to_InG(18), CONVERT_PaperUnit_to_InG(18),
-			CONVERT_PaperUnit_to_InG(45), 0, -CONVERT_PaperUnit_to_InG(9));
+		target->SetBoundingMesh(&penBBMesh);
 		break;
 	case 12: // 주사위
-		target->SetBoundingMesh(pCreateMgr,
-			CONVERT_PaperUnit_to_InG(25), CONVERT_PaperUnit_to_InG(25), CONVERT_PaperUnit_to_InG(25),
-			0, 0, 0);
+		target->SetBoundingMesh(&diceBBMesh);
 		break;
 	case 13: // 책 1
-		target->SetBoundingMesh(pCreateMgr,
-			CONVERT_PaperUnit_to_InG(74), CONVERT_PaperUnit_to_InG(7.5), CONVERT_PaperUnit_to_InG(96),
-			0, 0, -CONVERT_PaperUnit_to_InG(48));
+		target->SetBoundingMesh(&book1BBMesh);
 		break;
 	case 14: // 책 2
-		target->SetBoundingMesh(pCreateMgr,
-			CONVERT_PaperUnit_to_InG(54), CONVERT_PaperUnit_to_InG(6), CONVERT_PaperUnit_to_InG(65),
-			0, 0, -CONVERT_PaperUnit_to_InG(32.5));
+		target->SetBoundingMesh(&book2BBMesh);
 		break;
 	case 15: // 책 3
-		target->SetBoundingMesh(pCreateMgr,
-			CONVERT_PaperUnit_to_InG(54), CONVERT_PaperUnit_to_InG(18), CONVERT_PaperUnit_to_InG(65),
-			0, 0, -CONVERT_PaperUnit_to_InG(32.5));
+		target->SetBoundingMesh(&book3BBMesh);
 		break;
 	case 16: // 책 4
-		target->SetBoundingMesh(pCreateMgr,
-			CONVERT_PaperUnit_to_InG(54), CONVERT_PaperUnit_to_InG(12), CONVERT_PaperUnit_to_InG(65),
-			0, 0, -CONVERT_PaperUnit_to_InG(32.5));
+		target->SetBoundingMesh(&book4BBMesh);
 		break;
 	}
 }

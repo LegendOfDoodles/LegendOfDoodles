@@ -8,7 +8,7 @@
 /// 목적: 기본 쉐이터 코드, 인터페이스 용
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-17
+/// 최종 수정 날짜: 2018-05-21
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -288,13 +288,14 @@ void GetShaderResourceViewDesc(
 	switch (nTextureType)
 	{
 	case RESOURCE_TEXTURE_2D: //(d3dResourceDesc.Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE2D)(d3dResourceDesc.DepthOrArraySize == 1)
+	case RESOURCE_TEXTURE_2D_ARRAY:
 		pShaderResourceViewDesc->ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 		pShaderResourceViewDesc->Texture2D.MipLevels = -1;
 		pShaderResourceViewDesc->Texture2D.MostDetailedMip = 0;
 		pShaderResourceViewDesc->Texture2D.PlaneSlice = 0;
 		pShaderResourceViewDesc->Texture2D.ResourceMinLODClamp = 0.0f;
 		break;
-	case RESOURCE_TEXTURE_2D_ARRAY: //(d3dResourceDesc.Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE2D)(d3dResourceDesc.DepthOrArraySize != 1)
+	case RESOURCE_TEXTURE2DARRAY: //(d3dResourceDesc.Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE2D)(d3dResourceDesc.DepthOrArraySize != 1)
 		pShaderResourceViewDesc->ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2DARRAY;
 		pShaderResourceViewDesc->Texture2DArray.MipLevels = -1;
 		pShaderResourceViewDesc->Texture2DArray.MostDetailedMip = 0;

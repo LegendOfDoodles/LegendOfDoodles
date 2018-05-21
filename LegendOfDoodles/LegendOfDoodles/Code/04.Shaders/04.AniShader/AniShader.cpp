@@ -10,7 +10,7 @@
 /// 목적: 움직이는 오브젝트 관리 및 그리기 용도
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-05-19
+/// 최종 수정 날짜: 2018-05-21
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -386,6 +386,10 @@ void CAniShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
 
 	CSkinnedMesh *pMinionMesh = new CSkinnedMesh(m_pCreateMgr, "Resource//3D//Minion//Mesh//Minion.meshinfo");
 
+	CCubeMesh *pBoundingBoxMesh = new CCubeMesh(m_pCreateMgr,
+		CONVERT_PaperUnit_to_InG(3), CONVERT_PaperUnit_to_InG(1.5), CONVERT_PaperUnit_to_InG(7),
+		0, 0, -CONVERT_PaperUnit_to_InG(4));
+
 	CSkeleton *pSIdle = new CSkeleton("Resource//3D//Minion//Animation//Sword//Minion_S_Idle.aniinfo");
 	CSkeleton *pSAtk1 = new CSkeleton("Resource//3D//Minion//Animation//Sword//Minion_S_Attack1.aniinfo");
 	CSkeleton *pSAtk2 = new CSkeleton("Resource//3D//Minion//Animation//Sword//Minion_S_Attack2.aniinfo");
@@ -442,9 +446,7 @@ void CAniShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
 			break;
 		}
 
-		pMinionObject->SetBoundingMesh(m_pCreateMgr,
-			CONVERT_PaperUnit_to_InG(3), CONVERT_PaperUnit_to_InG(3), CONVERT_PaperUnit_to_InG(7),
-			0, 0, -CONVERT_PaperUnit_to_InG(4));
+		pMinionObject->SetBoundingMesh(pBoundingBoxMesh);
 
 		switch (m_kind)
 		{
@@ -514,10 +516,6 @@ void CAniShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
 			pMinionObject->SetMesh(1, m_pWeapons[2]);
 			break;
 		}
-
-		pMinionObject->SetBoundingMesh(m_pCreateMgr,
-			CONVERT_PaperUnit_to_InG(3), CONVERT_PaperUnit_to_InG(3), CONVERT_PaperUnit_to_InG(7),
-			0, 0, -CONVERT_PaperUnit_to_InG(4));
 
 		switch (m_kind)
 		{
