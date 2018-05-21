@@ -19,7 +19,7 @@
 /// 목적: 기본 씬, 인터페이스 용
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-21
+/// 최종 수정 날짜: 2018-05-22
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -199,7 +199,7 @@ void CScene::BuildLights()
 	m_pLights->m_pLights[0].m_bEnable = true;
 	m_pLights->m_pLights[0].m_nType = DIRECTIONAL_LIGHT;
 	m_pLights->m_pLights[0].m_color = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	m_pLights->m_pLights[0].m_direction = Vector3::Normalize(XMFLOAT3(-1.0f, -0.6f, 0.0f));
+	m_pLights->m_pLights[0].m_direction = Vector3::Normalize(XMFLOAT3(0.0f, -0.6f, 1.0f));
 
 	m_pLights->m_pLights[1].m_bEnable = true;
 	m_pLights->m_pLights[1].m_nType = DIRECTIONAL_LIGHT;
@@ -214,7 +214,7 @@ void CScene::BuildLights()
 	m_pLights->m_pLights[3].m_bEnable = true;
 	m_pLights->m_pLights[3].m_nType = DIRECTIONAL_LIGHT;
 	m_pLights->m_pLights[3].m_color = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	m_pLights->m_pLights[3].m_direction = Vector3::Normalize(XMFLOAT3(0.0f, -0.6f, 1.0f));
+	m_pLights->m_pLights[3].m_direction = Vector3::Normalize(XMFLOAT3(-1.0f, -0.6f, 0.0f));
 
 	m_pLights->m_pLights[4].m_bEnable = true;
 	m_pLights->m_pLights[4].m_nType = DIRECTIONAL_LIGHT;

@@ -6,7 +6,7 @@
 /// 목적: 기본 카메라 코드, 인터 페이스 용
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-19
+/// 최종 수정 날짜: 2018-05-22
 /// </summary>
 
 
@@ -257,6 +257,13 @@ void CCamera::GenerateFrustum()
 bool CCamera::IsInFrustum(BoundingOrientedBox & xmBoundingBox)
 {
 	return(m_xmFrustum.Intersects(xmBoundingBox));
+}
+
+void CCamera::SetPosition(float x, float y, float z)
+{
+	m_xmf3Position.x = x;
+	m_xmf3Position.y = y;
+	m_xmf3Position.z = z;
 }
 
 ////////////////////////////////////////////////////////////////////////

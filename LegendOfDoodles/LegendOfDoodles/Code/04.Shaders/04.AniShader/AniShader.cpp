@@ -10,7 +10,7 @@
 /// 목적: 움직이는 오브젝트 관리 및 그리기 용도
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-05-21
+/// 최종 수정 날짜: 2018-05-22
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -277,7 +277,7 @@ D3D12_SHADER_BYTECODE CAniShader::CreateVertexShader(ID3DBlob **ppShaderBlob)
 
 D3D12_SHADER_BYTECODE CAniShader::CreatePixelShader(ID3DBlob **ppShaderBlob)
 {
-	return(CShader::CompileShaderFromFile(L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl", "PSTexturedLighting", "ps_5_1", ppShaderBlob));
+	return(CShader::CompileShaderFromFile(L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl", "PSBone", "ps_5_1", ppShaderBlob));
 }
 
 void CAniShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets)

@@ -5,7 +5,7 @@
 /// 목적: 스카이 박스 출력용 오브젝트
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-04
+/// 최종 수정 날짜: 2018-05-22
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -25,8 +25,6 @@ CSkyBox::CSkyBox(CCreateMgr *pCreateMgr) : CBaseObject(pCreateMgr, 6)
 	SetMesh(4, pSkyBoxMesh);	
 	pSkyBoxMesh = new CTexturedRectMesh(pCreateMgr, 20.0f, 0.0f, 20.0f, 0.0f, -10.0f, 0.0f);
 	SetMesh(5, pSkyBoxMesh);
-
-	CreateShaderVariables(pCreateMgr);
 }
 
 CSkyBox::~CSkyBox()

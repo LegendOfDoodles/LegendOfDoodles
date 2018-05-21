@@ -64,6 +64,8 @@ public:	// 공개 함수
 	void GenerateFrustum();
 	bool IsInFrustum(BoundingOrientedBox& xmBoundingBox);
 
+	void SetPosition(float x, float y, float z);
+
 	void SetMode(DWORD nMode) { m_nMode = nMode; }
 	DWORD GetMode() { return(m_nMode); }
 

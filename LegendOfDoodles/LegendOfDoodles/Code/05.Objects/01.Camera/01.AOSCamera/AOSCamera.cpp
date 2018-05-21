@@ -6,7 +6,7 @@
 /// 목적: In Game 에서 사용할 카메라
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-08
+/// 최종 수정 날짜: 2018-05-22
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ void CAOSCamera::Initialize(CCreateMgr * pCreateMgr)
 
 	SetViewport(0, 0, width, height, 0.0f, 1.0f);
 	SetScissorRect(0, 0, width, height);
-	GenerateProjectionMatrix(1.0f, 50000.0f, float(width) / float(height), m_angleDegree);
+	GenerateProjectionMatrix(1.0f, 50000.0f, float(width) / float(height), 90.0f);
 	GenerateViewMatrix(
 		XMFLOAT3(0.0f, 500.0f, -200.0f),
 		XMFLOAT3(0.0f, 0.0f, 0.0f));
@@ -66,18 +66,23 @@ bool CAOSCamera::OnProcessMouseWheel(WPARAM wParam, LPARAM lParam)
 {
 	short zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
 
+	XMFLOAT3 pos{ GetPosition() };
+
 	if (zDelta < 0)	// 휠 다운
 	{
-		if (m_angleDegree < Zoom_Out_Max)
-			m_angleDegree += Zoom_Change_Value;
+		if (pos.y < Zoom_Out_Max)
+		{
+			SetPosition(pos.x, pos.y + Zoom_Change_Value_Y, pos.z + Zoom_Change_Value_Z);
+		}
 	}
 	else    // 휠 업
 	{
-		if (m_angleDegree > Zoom_In_Max)
-			m_angleDegree -= Zoom_Change_Value;
+		if (pos.y > Zoom_In_Max)
+		{
+			SetPosition(pos.x, pos.y - Zoom_Change_Value_Y, pos.z - Zoom_Change_Value_Z);
+		}
 	}
 
-	GenerateProjectionMatrix(1.0f, 50000.0f, float(m_scissorRect.right) / float(m_scissorRect.bottom), m_angleDegree);
 	return true;
 }
 

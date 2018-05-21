@@ -8,7 +8,7 @@
 /// 목적: 지형 출력용 오브젝트
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-05
+/// 최종 수정 날짜: 2018-05-22
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -57,8 +57,6 @@ CHeightMapTerrain::CHeightMapTerrain(CCreateMgr *pCreateMgr, LPCTSTR pFileName,
 			SetMesh(x + (z*cxBlocks), pHeightMapGridMesh);
 		}
 	}
-
-	CreateShaderVariables(pCreateMgr);
 }
 
 CHeightMapTerrain::~CHeightMapTerrain(void)

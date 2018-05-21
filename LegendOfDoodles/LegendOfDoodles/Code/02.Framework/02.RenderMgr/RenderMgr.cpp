@@ -6,7 +6,7 @@
 /// 목적: 렌더링 관련 함수를 모아 두어 다른 변경사항 없이 그릴 수 있도록 하기 위함
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-19
+/// 최종 수정 날짜: 2018-05-22
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -58,10 +58,12 @@ void CRenderMgr::Render(CScene* pScene)
 
 	// Clear Render Target View
 	float pClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	float pClearColorWhite[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	for (int i = 0; i < RENDER_TARGET_BUFFER_CNT; ++i)
 	{
 		m_pCommandList->ClearRenderTargetView(m_pRtvRenderTargetBufferCPUHandles[i], pClearColor, 0, NULL);
 	}
+	m_pCommandList->ClearRenderTargetView(m_pRtvRenderTargetBufferCPUHandles[6], pClearColorWhite, 0, NULL);
 
 	// Clear Depth Stencil View
 	m_pCommandList->ClearDepthStencilView(m_dsvDepthStencilBufferCPUHandle,

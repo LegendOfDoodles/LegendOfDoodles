@@ -9,7 +9,7 @@
 /// 목적: 기본 오브젝트 클래스, 인터페이스 용
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-17
+/// 최종 수정 날짜: 2018-05-22
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -48,7 +48,6 @@ CBaseObject::~CBaseObject()
 // 공개 함수
 void CBaseObject::Initialize(CCreateMgr *pCreateMgr)
 {
-	CreateShaderVariables(pCreateMgr);
 }
 
 void CBaseObject::Finalize()
