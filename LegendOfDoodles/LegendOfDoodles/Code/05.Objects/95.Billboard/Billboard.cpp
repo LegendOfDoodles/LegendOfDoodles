@@ -5,7 +5,7 @@
 /// 목적: UI 이용을 위한 Bilboard 클래스 제작
 /// 최종 수정자:  김나단
 /// 수정자 목록:  이용선, 김나단
-/// 최종 수정 날짜: 2018-05-14
+/// 최종 수정 날짜: 2018-05-21
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -123,34 +123,6 @@ void CUIObject::Animate(float fTimeElapsed)
 	m_xmf4x4World._43 = newPos.z;
 }
 
-void CUIObject::Render(CCamera *pCamera, UINT istanceCnt)
-{
-	OnPrepareRender();
-
-	if (m_pMaterial)
-	{
-		m_pMaterial->Render(pCamera);
-		m_pMaterial->UpdateShaderVariables();
-	}
-
-	if (m_cbvGPUDescriptorHandle.ptr)
-		m_pCommandList->SetGraphicsRootDescriptorTable(10, m_cbvGPUDescriptorHandle);
-
-	if (m_pShader)
-	{
-		UpdateShaderVariables();
-		m_pShader->Render(pCamera);
-	}
-
-	if (m_ppMeshes)
-	{
-		for (int i = 0; i < m_nMeshes; i++)
-		{
-			if (m_ppMeshes[i]) m_ppMeshes[i]->Render(istanceCnt);
-		}
-	}
-}
-
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
 CHPGaugeObjects::CHPGaugeObjects(CCreateMgr * pCreateMgr)
@@ -233,7 +205,7 @@ void CHPGaugeObjects::Render(CCamera * pCamera, UINT istanceCnt)
 	}
 
 	if (m_cbvGPUDescriptorHandle.ptr)
-		m_pCommandList->SetGraphicsRootDescriptorTable(12, m_cbvGPUDescriptorHandle);
+		m_pCommandList->SetGraphicsRootDescriptorTable(10, m_cbvGPUDescriptorHandle);
 
 	if (m_pShader)
 	{

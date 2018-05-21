@@ -59,7 +59,6 @@ public:
 
 public: // 공개함수
 	virtual void Animate(float fTimeElapsed);
-	virtual void Render(CCamera *pCamera, UINT istanceCnt = 1);
 
 	virtual void SetDistance(float x) {
 		m_xmf4x4World = Matrix4x4::Identity();

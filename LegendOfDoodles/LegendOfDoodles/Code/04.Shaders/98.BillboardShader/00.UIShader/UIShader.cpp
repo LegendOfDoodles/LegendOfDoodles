@@ -8,7 +8,7 @@
 /// 목적: UI 테스트 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  이용선, 김나단
-/// 최종 수정 날짜: 2018-05-19
+/// 최종 수정 날짜: 2018-05-21
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -44,12 +44,11 @@ void CUIObjectShader::ReleaseUploadBuffers()
 
 void CUIObjectShader::UpdateShaderVariables()
 {
-	static UINT elementBytes = ((sizeof(CB_TEXTURE_INFO) + 255) & ~255);
+	static UINT elementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
 
 	for (int i = 0; i < m_nObjects; i++)
 	{
-		CB_TEXTURE_INFO *pMappedObject = (CB_TEXTURE_INFO *)(m_pMappedObjects + (i * elementBytes));
-		pMappedObject->m_index = (i==0)?0:1;
+		CB_GAMEOBJECT_INFO *pMappedObject = (CB_GAMEOBJECT_INFO *)(m_pMappedObjects + (i * elementBytes));
 		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
 			XMMatrixTranspose(XMLoadFloat4x4(m_ppObjects[i]->GetWorldMatrix())));
 	}
@@ -68,12 +67,11 @@ void CUIObjectShader::Render(CCamera * pCamera)
 {
 	CShader::Render(pCamera);
 
+	m_ppMaterials[0]->UpdateShaderVariable(0);
+
 	for (int j = 0; j < m_nObjects; j++)
 	{
-#if USE_BATCH_MATERIAL
-	//	if (m_ppMaterials[j]) m_ppMaterials[j]->UpdateShaderVariables();
-#endif
-	
+		if (j == 1) m_ppMaterials[0]->UpdateShaderVariable(1);
 		if (j == 3 && OnOFF) m_ppObjects[j]->Render(pCamera);
 		else if (j != 3)	 m_ppObjects[j]->Render(pCamera);
 	}
@@ -216,7 +214,7 @@ D3D12_SHADER_BYTECODE CUIObjectShader::CreateVertexShader(ID3DBlob ** ppShaderBl
 	//./Code/04.Shaders/99.GraphicsShader/
 	return(CShader::CompileShaderFromFile(
 		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
-		"VSTexturedUI",
+		"VSTextured",
 		"vs_5_1",
 		ppShaderBlob));
 }
@@ -225,7 +223,7 @@ D3D12_SHADER_BYTECODE CUIObjectShader::CreatePixelShader(ID3DBlob ** ppShaderBlo
 {
 	return(CShader::CompileShaderFromFile(
 		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
-		"PSTexturedUI",
+		"PSTextured",
 		"ps_5_1",
 		ppShaderBlob));
 }
@@ -245,7 +243,7 @@ void CUIObjectShader::CreateShaderVariables(CCreateMgr * pCreateMgr, int nBuffer
 {
 	HRESULT hResult;
 
-	UINT elementBytes = ((sizeof(CB_TEXTURE_INFO) + 255) & ~255);
+	UINT elementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
 
 	m_pConstBuffer = pCreateMgr->CreateBufferResource(
 		NULL,
@@ -264,37 +262,23 @@ void CUIObjectShader::BuildObjects(CCreateMgr * pCreateMgr, void * pContext)
 	
 	m_nObjects = 4;
 	m_ppObjects = new CBaseObject*[m_nObjects];
-	//m_ppMaterials = new CMaterial*[m_nObjects];
 
-	CTexture *pTexture = new CTexture(2, RESOURCE_TEXTURE_2D_ARRAY, 0);
-	pTexture->LoadTextureFromFile(pCreateMgr, L"./Resource/Textures/Terrain/Color.dds", 0);
-	pTexture->LoadTextureFromFile(pCreateMgr, L"./Resource/Textures/UI/Frame/Grey.dds", 1);
-
-	UINT ncbElementBytes = ((sizeof(CB_TEXTURE_INFO) + 255) & ~255);
+	UINT ncbElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
 
 	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, m_nObjects, 2);
 	CreateShaderVariables(pCreateMgr, m_nObjects);
 	CreateConstantBufferViews(pCreateMgr, m_nObjects, m_pConstBuffer, ncbElementBytes);
-
-	CreateShaderResourceViews(pCreateMgr, pTexture, 11, false);
 	
 	UINT incrementSize{ pCreateMgr->GetCbvSrvDescriptorIncrementSize() };
 	CUIObject *pUIObject{ NULL };
 
+	m_nMaterials = 1;
+	m_ppMaterials = new CMaterial*[m_nMaterials];
+	m_ppMaterials[0] = Materials::CreateUIMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[0], &m_psrvGPUDescriptorStartHandle[0]);
+
 	for (int i = 0; i < m_nObjects; ++i)
 	{
-#if USE_BATCH_MATERIAL
-		/*pMaterial = new CMaterial(pCreateMgr);
-		pMaterial->Initialize(pCreateMgr);
-		pMaterial->SetTexture(pTexture);
-		m_ppMaterials[i] = pMaterial;*/
-#endif
-		CMaterial *pMaterial = new CMaterial(pCreateMgr);
-		pMaterial->Initialize(pCreateMgr);
-		pMaterial->SetTexture(pTexture);
-
 		pUIObject = new CUIObject(pCreateMgr, (UIType)i);
-		pUIObject->SetMaterial(pMaterial);
 		pUIObject->SetCamera(m_pCamera);
 		pUIObject->SetDistance(FRAME_BUFFER_WIDTH / 128);	 // distance 10
 		pUIObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * i));

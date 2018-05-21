@@ -7,8 +7,6 @@ Texture2D gtxtNormal : register(t1);
 Texture2D gtxtRoughnessMetalFresnel : register(t2);
 Texture2D gtxtSpecular : register(t3);
 
-Texture2D gtxtTextures[4] : register(t4);
-
 SamplerState wrapSampler : register(s0);
 SamplerState mirrorSampler : register(s1);
 
@@ -128,47 +126,6 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT_DEFAULT PSTexturedRepeat(VS_TEXTURED_OUTPUT in
     newUV.y = input.uv.y * 5;
 
     output.color = gtxtTexture.Sample(mirrorSampler, newUV);
-    output.normal = float4(0, 0, 0, 0);
-
-    return (output);
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////
-//
-cbuffer cbGameObjectInfo : register(b6)
-{
-    matrix gmtxUI : packoffset(c0);
-    uint texIndex : packoffset(c4);
-};
-
-struct VS_UI_INPUT
-{
-    float3 position : POSITION;
-    float2 uv : TEXCOORD;
-};
-
-struct VS_UI_OUTPUT
-{
-    float4 position : SV_POSITION;
-    float2 uv : TEXCOORD;
-    uint texIndex : TEXINDEX;
-};
-
-VS_UI_OUTPUT VSTexturedUI(VS_UI_INPUT input)
-{
-    VS_UI_OUTPUT output;
-
-    output.position = mul(mul(mul(float4(input.position, 1.0f), gmtxUI), gmtxView), gmtxProjection);
-    output.uv = input.uv;
-    output.texIndex = texIndex;
-
-    return (output);
-}
-
-PS_MULTIPLE_RENDER_TARGETS_OUTPUT_DEFAULT PSTexturedUI(VS_UI_OUTPUT input)
-{
-    PS_MULTIPLE_RENDER_TARGETS_OUTPUT_DEFAULT output;
-    output.color = gtxtTextures[NonUniformResourceIndex(input.texIndex)].Sample(wrapSampler, input.uv);
     output.normal = float4(0, 0, 0, 0);
 
     return (output);
