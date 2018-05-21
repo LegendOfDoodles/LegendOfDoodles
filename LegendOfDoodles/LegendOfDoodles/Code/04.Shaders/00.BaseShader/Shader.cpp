@@ -407,8 +407,8 @@ void CShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets)
 	HRESULT hResult = pCreateMgr->GetDevice()->CreateGraphicsPipelineState(
 		&pipelineStateDesc,
 		IID_PPV_ARGS(&m_ppPipelineStates[0]));
-	//assert(SUCCEEDED(hResult) && "Device->CreateGraphicsPipelineState Failed");
-	ExptProcess::ThrowIfFailed(hResult);
+	assert(SUCCEEDED(hResult) && "Device->CreateGraphicsPipelineState Failed");
+	//ExptProcess::ThrowIfFailed(hResult);
 
 	Safe_Delete_Array(pipelineStateDesc.InputLayout.pInputElementDescs);
 }

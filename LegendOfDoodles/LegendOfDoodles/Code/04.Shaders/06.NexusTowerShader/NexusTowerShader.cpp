@@ -203,7 +203,7 @@ D3D12_SHADER_BYTECODE CNexusTowerShader::CreateVertexShader(ID3DBlob **ppShaderB
 
 D3D12_SHADER_BYTECODE CNexusTowerShader::CreatePixelShader(ID3DBlob **ppShaderBlob)
 {
-	return(CShader::CompileShaderFromFile(L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl", "PSTexturedLightingDetail", "ps_5_1", ppShaderBlob));
+	return(CShader::CompileShaderFromFile(L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl", "PSTexturedLightingEmissive", "ps_5_1", ppShaderBlob));
 }
 
 void CNexusTowerShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets)

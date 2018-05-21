@@ -6,7 +6,7 @@
 /// 목적: 디퍼드 쉐이딩 적용하기 위한 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-18
+/// 최종 수정 날짜: 2018-05-21
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ void CTextureToFullScreenShader::CreateGraphicsRootSignature(CCreateMgr *pCreate
 	D3D12_DESCRIPTOR_RANGE pDescriptorRanges[1];
 
 	pDescriptorRanges[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	pDescriptorRanges[0].NumDescriptors = 5;
+	pDescriptorRanges[0].NumDescriptors = RENDER_TARGET_BUFFER_CNT;
 	pDescriptorRanges[0].BaseShaderRegister = 2; //Texture
 	pDescriptorRanges[0].RegisterSpace = 0;
 	pDescriptorRanges[0].OffsetInDescriptorsFromTableStart = 0;
