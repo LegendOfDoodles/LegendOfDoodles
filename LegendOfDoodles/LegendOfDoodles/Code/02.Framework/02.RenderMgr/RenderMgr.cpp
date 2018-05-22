@@ -57,8 +57,8 @@ void CRenderMgr::Render(CScene* pScene)
 	pScene->SetViewportsAndScissorRects();
 
 	// Clear Render Target View
-	float pClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	float pClearColorWhite[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	static float pClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	static float pClearColorWhite[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	for (int i = 0; i < RENDER_TARGET_BUFFER_CNT; ++i)
 	{
 		m_pCommandList->ClearRenderTargetView(m_pRtvRenderTargetBufferCPUHandles[i], pClearColor, 0, NULL);

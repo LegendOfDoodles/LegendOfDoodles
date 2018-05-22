@@ -224,7 +224,7 @@ void CScene::BuildLights()
 	m_pLights->m_pLights[0].m_bEnable = true;
 	m_pLights->m_pLights[0].m_nType = DIRECTIONAL_LIGHT;
 	m_pLights->m_pLights[0].m_color = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	m_pLights->m_pLights[0].m_direction = Vector3::Normalize(XMFLOAT3(0.0f, -0.6f, 1.0f));
+	m_pLights->m_pLights[0].m_direction = Vector3::Normalize(XMFLOAT3(-1.0f, -0.3f, 1.0f));
 
 	m_pLights->m_pLights[1].m_bEnable = true;
 	m_pLights->m_pLights[1].m_nType = DIRECTIONAL_LIGHT;
@@ -249,7 +249,7 @@ void CScene::BuildLights()
 	m_pLights->m_pLights[5].m_bEnable = true;
 	m_pLights->m_pLights[5].m_nType = DIRECTIONAL_LIGHT;
 	m_pLights->m_pLights[5].m_color = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	m_pLights->m_pLights[5].m_direction = Vector3::Normalize(XMFLOAT3(-1.0f, -0.3f, 1.0f));
+	m_pLights->m_pLights[5].m_direction = Vector3::Normalize(XMFLOAT3(0.0f, -0.6f, 1.0f));
 
 	m_pLights->m_pLights[6].m_bEnable = true;
 	m_pLights->m_pLights[6].m_nType = DIRECTIONAL_LIGHT;
