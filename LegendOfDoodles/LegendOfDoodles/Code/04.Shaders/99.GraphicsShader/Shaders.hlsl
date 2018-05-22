@@ -517,6 +517,16 @@ Texture2D<float4> gtxtSceneToonPower : register(t9);
 
 float4 PSTextureToFullScreen(float4 position : SV_POSITION) : SV_Target
 {
+    float2 uv = position.xy;
+    uv.x /= gtxtSceneBaseColor.Length.x;
+    uv.y /= gtxtSceneBaseColor.Length.y;
+
+	// 색상 사용
+    float4 normal = gtxtSceneNormal.Sample(wrapSampler, uv);
+    float4 albedo = gtxtSceneAlbedo.Sample(wrapSampler, uv);
+    float4 baseColor = gtxtSceneBaseColor.Sample(wrapSampler, uv);
+    float4 roughMetalFresnel = gtxtSceneRoughMetalFresnel.Sample(wrapSampler, uv);
+
 	// 외곽선 처리
     float4 outlineColor = float4(0, 0, 0, 0);
     float outlineCnt = 0;
@@ -535,11 +545,11 @@ float4 PSTextureToFullScreen(float4 position : SV_POSITION) : SV_Target
     if (outlineCnt >= 2 && outlineCnt < 6)
         outlineColor = float4(1, 1, 1, 0);
 
-		// 라이팅 안하는 오브젝트
-    if (gtxtSceneNormal[int2(position.xy)].w == 0)
-        return gtxtSceneBaseColor[int2(position.xy)] + outlineColor;
+	// 라이팅 안하는 오브젝트
+    if (normal.w == 0)
+        return baseColor + outlineColor;
 
-    float4 pos = gtxtScenePosition[int2(position.xy)];
+    float4 pos = gtxtScenePosition.Sample(wrapSampler, uv);
     pos.x *= TERRAIN_SIZE_WIDTH;
     pos.y *= TERRAIN_SIZE_BORDER;
     pos.z *= TERRAIN_SIZE_HEIGHT;
@@ -583,23 +593,17 @@ float4 PSTextureToFullScreen(float4 position : SV_POSITION) : SV_Target
         emissiveColor += gtxtSceneEmissive[int2(position.x + i, position.y + i)] * 0.025;
     }
 
-	// 이후 처리에 필요한 값들 미리 저장 -> 차후에 제거할 필요 있을 듯
-    float3 normal = gtxtSceneNormal[int2(position.xy)].xyz;
-    float4 albedo = gtxtSceneAlbedo[int2(position.xy)];
-    float4 baseColor = gtxtSceneBaseColor[int2(position.xy)];
-    float4 roughMetalFresnel = gtxtSceneRoughMetalFresnel[int2(position.xy)];
-
 	// 환경 매핑 처리
     float3 viewDir = normalize(pos.xyz - gvCameraPosition);
-    float3 viewReflectDir = reflect(viewDir, normal);
+    float3 viewReflectDir = reflect(viewDir, normal.xyz);
     float4 cubeMapColor = gtxtTextureCube.Sample(wrapSampler, viewReflectDir);
 
     float4 reflectColor = roughMetalFresnel.g * cubeMapColor + (1 - roughMetalFresnel.g) * baseColor;
     float4 totalReflectColor = (roughMetalFresnel.r * albedo + (1 - roughMetalFresnel.r) * reflectColor) * REFLECTION_POWER;
 
 	// 라이트 처리
-    float4 lightColor = Lighting(pos.xyz, normal, albedo, baseColor, roughMetalFresnel);
+    float4 lightColor = Lighting(pos.xyz, normal.xyz, albedo, baseColor, roughMetalFresnel);
 
 	// 최종 색상 출력
-    return (lightColor + totalReflectColor) * gtxtSceneToonPower[int2(position.xy)] + emissiveColor;
+    return (lightColor + totalReflectColor) * gtxtSceneToonPower.Sample(wrapSampler, uv) + emissiveColor + outlineColor;
 }
