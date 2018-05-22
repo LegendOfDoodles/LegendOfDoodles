@@ -27,7 +27,7 @@ CTextureToFullScreenShader::~CTextureToFullScreenShader()
 void CTextureToFullScreenShader::CreateGraphicsRootSignature(CCreateMgr *pCreateMgr)
 {
 	HRESULT hResult;
-	D3D12_DESCRIPTOR_RANGE pDescriptorRanges[1];
+	D3D12_DESCRIPTOR_RANGE pDescriptorRanges[2];
 
 	pDescriptorRanges[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pDescriptorRanges[0].NumDescriptors = RENDER_TARGET_BUFFER_CNT;
@@ -35,7 +35,13 @@ void CTextureToFullScreenShader::CreateGraphicsRootSignature(CCreateMgr *pCreate
 	pDescriptorRanges[0].RegisterSpace = 0;
 	pDescriptorRanges[0].OffsetInDescriptorsFromTableStart = 0;
 
-	D3D12_ROOT_PARAMETER pRootParameters[3];
+	pDescriptorRanges[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	pDescriptorRanges[1].NumDescriptors = 1;
+	pDescriptorRanges[1].BaseShaderRegister = 2; //TextureCube
+	pDescriptorRanges[1].RegisterSpace = 0;
+	pDescriptorRanges[1].OffsetInDescriptorsFromTableStart = 0;
+
+	D3D12_ROOT_PARAMETER pRootParameters[4];
 	pRootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	pRootParameters[0].DescriptorTable.NumDescriptorRanges = 1;
 	pRootParameters[0].DescriptorTable.pDescriptorRanges = &pDescriptorRanges[0]; //Texture
@@ -50,6 +56,11 @@ void CTextureToFullScreenShader::CreateGraphicsRootSignature(CCreateMgr *pCreate
 	pRootParameters[2].Descriptor.ShaderRegister = 2; //Lights
 	pRootParameters[2].Descriptor.RegisterSpace = 0;
 	pRootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+
+	pRootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	pRootParameters[3].DescriptorTable.NumDescriptorRanges = 1;
+	pRootParameters[3].DescriptorTable.pDescriptorRanges = &pDescriptorRanges[1]; //TextureCube
+	pRootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
 	D3D12_STATIC_SAMPLER_DESC samplerDesc[1];
 	::ZeroMemory(&samplerDesc, sizeof(D3D12_STATIC_SAMPLER_DESC));

@@ -9,6 +9,7 @@
 #define gnEmissive 4
 
 #define EMISSIVE_POWER 20
+#define REFLECTION_POWER 0.25
 
 Texture2D gtxtTexture : register(t0);
 Texture2DArray gtxtTextures : register(t1);
@@ -556,7 +557,19 @@ float4 PSTextureToFullScreen(float4 position : SV_POSITION) : SV_Target
         emissiveColor += gtxtSceneEmissive[int2(emissiveUV.x + i, emissiveUV.y + i)] * 0.025;
     }
 
-    return Lighting(float3(pos.xyz), float3(gtxtSceneNormal[int2(position.xy)].xyz), gtxtSceneAlbedo[int2(position.xy)],
-							gtxtSceneBaseColor[int2(position.xy)], gtxtSceneRoughMetalFresnel[int2(position.xy)])
-							* gtxtSceneToonPower[int2(position.xy)] + emissiveColor;
+    float3 normal = gtxtSceneNormal[int2(position.xy)].xyz;
+    float4 albedo = gtxtSceneAlbedo[int2(position.xy)];
+    float4 baseColor = gtxtSceneBaseColor[int2(position.xy)];
+    float4 roughMetalFresnel = gtxtSceneRoughMetalFresnel[int2(position.xy)];
+
+    float3 viewDir = normalize(pos.xyz - gvCameraPosition);
+    float3 viewReflectDir = reflect(viewDir, normal);
+    float4 cubeMapColor = gtxtTextureCube.Sample(wrapSampler, viewReflectDir);
+
+    float4 reflectColor = roughMetalFresnel.g * cubeMapColor + (1 - roughMetalFresnel.g) * baseColor;
+    float4 totalReflectColor = (roughMetalFresnel.r * albedo + (1 - roughMetalFresnel.r) * reflectColor) * REFLECTION_POWER;
+
+    float4 lightColor = Lighting(pos.xyz, normal, albedo, baseColor, roughMetalFresnel);
+
+    return (lightColor + totalReflectColor) * gtxtSceneToonPower[int2(position.xy)] + emissiveColor;
 }

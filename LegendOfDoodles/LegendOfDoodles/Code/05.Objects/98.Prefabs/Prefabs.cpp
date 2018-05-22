@@ -89,7 +89,7 @@ CMaterial * Materials::CreateCubeMapMaterial(CCreateMgr * pCreateMgr, D3D12_CPU_
 
 	CreateShaderResourceViews(
 		pCreateMgr, pTexture,
-		4, false,
+		3, false,
 		pSrvCPUDescriptorStartHandle,
 		pSrvGPUDescriptorStartHandle);
 

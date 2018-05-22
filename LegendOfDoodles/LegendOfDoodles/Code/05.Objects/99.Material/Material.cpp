@@ -102,5 +102,5 @@ void CMaterial::UpdateShaderVariable()
 	::memcpy(m_pcbMappedColor, &m_color, sizeof(COLOR));
 
 	D3D12_GPU_VIRTUAL_ADDRESS cbColorGpuVirtualAddress = m_pcbColor->GetGPUVirtualAddress();
-	m_pCommandList->SetGraphicsRootConstantBufferView(6, cbColorGpuVirtualAddress);
+	m_pCommandList->SetGraphicsRootConstantBufferView(5, cbColorGpuVirtualAddress);
 }
