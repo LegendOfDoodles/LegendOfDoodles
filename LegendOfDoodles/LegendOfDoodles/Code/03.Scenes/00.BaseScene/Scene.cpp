@@ -50,15 +50,17 @@ void CScene::Finalize()
 
 void CScene::ReleaseUploadBuffers()
 {
-	if (!m_ppShaders) return;
-
-	for (int j = 0; j < m_nShaders; j++)
+	if (m_ppShaders)
 	{
-		if (m_ppShaders[j])
+		for (int j = 0; j < m_nShaders; j++)
 		{
-			m_ppShaders[j]->ReleaseUploadBuffers();
+			if (m_ppShaders[j])
+			{
+				m_ppShaders[j]->ReleaseUploadBuffers();
+			}
 		}
 	}
+	if (m_pCubeMap) m_pCubeMap->ReleaseUploadBuffers();
 }
 
 void CScene::ProcessInput()
@@ -90,7 +92,13 @@ void CScene::AnimateObjects(float timeElapsed)
 void CScene::Render()
 {
 	D3D12_GPU_VIRTUAL_ADDRESS d3dcbLightsGpuVirtualAddress = m_pd3dcbLights->GetGPUVirtualAddress();
-	m_pCommandList->SetGraphicsRootConstantBufferView(4, d3dcbLightsGpuVirtualAddress); //Lights
+	m_pCommandList->SetGraphicsRootConstantBufferView(5, d3dcbLightsGpuVirtualAddress); //Lights
+
+	if (m_pCubeMap)
+	{
+		m_pCommandList->SetDescriptorHeaps(1, &m_pCbvSrvDescriptorHeap);
+		m_pCubeMap->UpdateShaderVariables();
+	}
 
 	for (int i = 0; i < m_nShaders; i++)
 	{
@@ -189,6 +197,23 @@ void CScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID,
 
 ////////////////////////////////////////////////////////////////////////
 // 내부 함수
+void CScene::CreateCbvAndSrvDescriptorHeap(CCreateMgr *pCreateMgr, int nConstantBufferViews, int nShaderResourceViews)
+{
+	UINT incrementSize = pCreateMgr->GetCbvSrvDescriptorIncrementSize();
+	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc;
+	descriptorHeapDesc.NumDescriptors = nConstantBufferViews + nShaderResourceViews; //CBVs + SRVs 
+	descriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	descriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	descriptorHeapDesc.NodeMask = 0;
+	HRESULT hResult = pCreateMgr->GetDevice()->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&m_pCbvSrvDescriptorHeap));
+	assert(hResult == S_OK && "pCreateMgr->GetDevice()->CreateDescriptorHeap Failed");
+
+	m_cbvCPUDescriptorStartHandle = m_pCbvSrvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	m_cbvGPUDescriptorStartHandle = m_pCbvSrvDescriptorHeap->GetGPUDescriptorHandleForHeapStart();
+	m_srvCPUDescriptorStartHandle.ptr = m_cbvCPUDescriptorStartHandle.ptr + (incrementSize * nConstantBufferViews);
+	m_srvGPUDescriptorStartHandle.ptr = m_cbvGPUDescriptorStartHandle.ptr + (incrementSize * nConstantBufferViews);
+}
+
 void CScene::BuildLights()
 {
 	m_pLights = new LIGHTS;
@@ -235,6 +260,9 @@ void CScene::BuildLights()
 	m_pLights->m_pLights[7].m_nType = DIRECTIONAL_LIGHT;
 	m_pLights->m_pLights[7].m_color = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	m_pLights->m_pLights[7].m_direction = Vector3::Normalize(XMFLOAT3(1.0f, -0.3f, 1.0f));
+
+	CreateCbvAndSrvDescriptorHeap(m_pCreateMgr, 0, 1);
+	m_pCubeMap = Materials::CreateCubeMapMaterial(m_pCreateMgr, &m_srvCPUDescriptorStartHandle, &m_srvGPUDescriptorStartHandle);
 }
 
 void CScene::BuildObjects(CCreateMgr *pCreateMgr)
@@ -317,6 +345,8 @@ void CScene::ReleaseObjects()
 		Safe_Delete_Array(m_ppShaders);
 	}
 	if (m_pHPGaugeManager) Safe_Delete(m_pHPGaugeManager);
+
+	if (m_pCubeMap) Safe_Delete(m_pCubeMap);
 }
 
 void CScene::CreateShaderVariables(CCreateMgr *pCreateMgr)

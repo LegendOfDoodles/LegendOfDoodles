@@ -197,7 +197,7 @@ void CHPGaugeObjects::Render(CCamera * pCamera, UINT istanceCnt)
 	}
 
 	if (m_cbvGPUDescriptorHandle.ptr)
-		m_pCommandList->SetGraphicsRootDescriptorTable(7, m_cbvGPUDescriptorHandle);
+		m_pCommandList->SetGraphicsRootDescriptorTable(8, m_cbvGPUDescriptorHandle);
 
 	if (m_pShader)
 	{

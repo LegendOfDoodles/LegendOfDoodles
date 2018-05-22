@@ -80,6 +80,25 @@ CMaterial * Materials::CreateFloorMaterial(CCreateMgr * pCreateMgr, D3D12_CPU_DE
 	return pMaterial;
 }
 
+CMaterial * Materials::CreateCubeMapMaterial(CCreateMgr * pCreateMgr, D3D12_CPU_DESCRIPTOR_HANDLE * pSrvCPUDescriptorStartHandle, D3D12_GPU_DESCRIPTOR_HANDLE * pSrvGPUDescriptorStartHandle)
+{
+	CMaterial *pMaterial{ new CMaterial(pCreateMgr) };
+	CTexture *pTexture{ new CTexture(1, RESOURCE_TEXTURE_CUBE, 1) };
+
+	pTexture->LoadTextureFromFile(pCreateMgr, L"./Resource/Textures/CubeMap/cubeMap.dds", 0);
+
+	CreateShaderResourceViews(
+		pCreateMgr, pTexture,
+		4, false,
+		pSrvCPUDescriptorStartHandle,
+		pSrvGPUDescriptorStartHandle);
+
+	pMaterial->Initialize(pCreateMgr);
+	pMaterial->SetTexture(pTexture);
+
+	return pMaterial;
+}
+
 ////////////////////////////////////////////////////////////////////////
 // Building
 CMaterial * Materials::CreateTresureBoxMaterial(CCreateMgr * pCreateMgr, D3D12_CPU_DESCRIPTOR_HANDLE * pSrvCPUDescriptorStartHandle, D3D12_GPU_DESCRIPTOR_HANDLE * pSrvGPUDescriptorStartHandle)

@@ -12,6 +12,7 @@
 
 Texture2D gtxtTexture : register(t0);
 Texture2DArray gtxtTextures : register(t1);
+TextureCube gtxtTextureCube : register(t2);
 
 SamplerState wrapSampler : register(s0);
 SamplerState mirrorSampler : register(s1);
@@ -498,13 +499,13 @@ float4 VSTextureToFullScreen(uint nVertexID : SV_VertexID) : SV_POSITION
     return (float4(0, 0, 0, 0));
 }
 
-Texture2D<float4> gtxtSceneBaseColor : register(t2);
-Texture2D<float4> gtxtSceneNormal : register(t3);
-Texture2D<float4> gtxtSceneRoughMetalFresnel : register(t4);
-Texture2D<float4> gtxtSceneAlbedo : register(t5);
-Texture2D<float4> gtxtScenePosition : register(t6);
-Texture2D<float4> gtxtSceneEmissive : register(t7);
-Texture2D<float4> gtxtSceneToonPower : register(t8);
+Texture2D<float4> gtxtSceneBaseColor : register(t3);
+Texture2D<float4> gtxtSceneNormal : register(t4);
+Texture2D<float4> gtxtSceneRoughMetalFresnel : register(t5);
+Texture2D<float4> gtxtSceneAlbedo : register(t6);
+Texture2D<float4> gtxtScenePosition : register(t7);
+Texture2D<float4> gtxtSceneEmissive : register(t8);
+Texture2D<float4> gtxtSceneToonPower : register(t9);
 
 float4 PSTextureToFullScreen(float4 position : SV_POSITION) : SV_Target
 {

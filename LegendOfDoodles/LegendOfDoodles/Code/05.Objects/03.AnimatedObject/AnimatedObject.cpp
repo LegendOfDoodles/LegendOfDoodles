@@ -6,7 +6,7 @@
 /// 목적: 움직이는 오브젝트 처리용 기본 클래스
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-05-17
+/// 최종 수정 날짜: 2018-05-22
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -43,7 +43,7 @@ void CAnimatedObject::Render(CCamera * pCamera, UINT instanceCnt)
 	}
 
 	if (m_cbvGPUDescriptorHandle.ptr)
-		m_pCommandList->SetGraphicsRootDescriptorTable(6, m_cbvGPUDescriptorHandle);
+		m_pCommandList->SetGraphicsRootDescriptorTable(7, m_cbvGPUDescriptorHandle);
 
 	if (m_pShader)
 	{
