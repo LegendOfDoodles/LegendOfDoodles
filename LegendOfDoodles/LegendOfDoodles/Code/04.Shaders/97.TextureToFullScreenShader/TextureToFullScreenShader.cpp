@@ -6,7 +6,7 @@
 /// 목적: 디퍼드 쉐이딩 적용하기 위한 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-22
+/// 최종 수정 날짜: 2018-05-24
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ CTextureToFullScreenShader::~CTextureToFullScreenShader()
 void CTextureToFullScreenShader::CreateGraphicsRootSignature(CCreateMgr *pCreateMgr)
 {
 	HRESULT hResult;
-	D3D12_DESCRIPTOR_RANGE pDescriptorRanges[2];
+	D3D12_DESCRIPTOR_RANGE pDescriptorRanges[3];
 
 	pDescriptorRanges[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pDescriptorRanges[0].NumDescriptors = RENDER_TARGET_BUFFER_CNT;
@@ -41,7 +41,13 @@ void CTextureToFullScreenShader::CreateGraphicsRootSignature(CCreateMgr *pCreate
 	pDescriptorRanges[1].RegisterSpace = 0;
 	pDescriptorRanges[1].OffsetInDescriptorsFromTableStart = 0;
 
-	D3D12_ROOT_PARAMETER pRootParameters[4];
+	pDescriptorRanges[2].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	pDescriptorRanges[2].NumDescriptors = 1;
+	pDescriptorRanges[2].BaseShaderRegister = 1; //Textures
+	pDescriptorRanges[2].RegisterSpace = 0;
+	pDescriptorRanges[2].OffsetInDescriptorsFromTableStart = 0;
+
+	D3D12_ROOT_PARAMETER pRootParameters[5];
 	pRootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	pRootParameters[0].DescriptorTable.NumDescriptorRanges = 1;
 	pRootParameters[0].DescriptorTable.pDescriptorRanges = &pDescriptorRanges[0]; //Texture
@@ -61,6 +67,11 @@ void CTextureToFullScreenShader::CreateGraphicsRootSignature(CCreateMgr *pCreate
 	pRootParameters[3].DescriptorTable.NumDescriptorRanges = 1;
 	pRootParameters[3].DescriptorTable.pDescriptorRanges = &pDescriptorRanges[1]; //TextureCube
 	pRootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
+	pRootParameters[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	pRootParameters[4].DescriptorTable.NumDescriptorRanges = 1;
+	pRootParameters[4].DescriptorTable.pDescriptorRanges = &pDescriptorRanges[2]; //Textures
+	pRootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
 	D3D12_STATIC_SAMPLER_DESC samplerDesc[1];
 	::ZeroMemory(&samplerDesc, sizeof(D3D12_STATIC_SAMPLER_DESC));

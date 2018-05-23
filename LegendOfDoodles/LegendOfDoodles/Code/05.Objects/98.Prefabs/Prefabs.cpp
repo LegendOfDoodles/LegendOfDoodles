@@ -6,7 +6,7 @@
 /// 목적: 사용하는 매터리얼 정리용
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단, 이용선
-/// 최종 수정 날짜: 2018-05-21
+/// 최종 수정 날짜: 2018-05-24
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -512,6 +512,26 @@ CMaterial * Materials::CreatePlayerMaterial(CCreateMgr * pCreateMgr, D3D12_CPU_D
 	CreateShaderResourceViews(
 		pCreateMgr, pTexture,
 		3, false,
+		pSrvCPUDescriptorStartHandle,
+		pSrvGPUDescriptorStartHandle);
+
+	pMaterial->Initialize(pCreateMgr);
+	pMaterial->SetTexture(pTexture);
+
+	return pMaterial;
+}
+
+////////////////////////////////////////////////////////////////////////
+// Sketch Effect
+CMaterial * Materials::CreateSketchMaterial(CCreateMgr * pCreateMgr, D3D12_CPU_DESCRIPTOR_HANDLE * pSrvCPUDescriptorStartHandle, D3D12_GPU_DESCRIPTOR_HANDLE * pSrvGPUDescriptorStartHandle)
+{
+	CMaterial *pMaterial{ new CMaterial(pCreateMgr) };
+	CTexture *pTexture{ new CTexture(1, RESOURCE_TEXTURE_2DARRAY, 0) };
+	pTexture->LoadTextureFromFile(pCreateMgr, L"./Resource/Textures/SketchEffect/Textures.dds", 0);
+
+	CreateShaderResourceViews(
+		pCreateMgr, pTexture,
+		4, false,
 		pSrvCPUDescriptorStartHandle,
 		pSrvGPUDescriptorStartHandle);
 

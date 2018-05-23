@@ -19,7 +19,7 @@
 /// 목적: 기본 씬, 인터페이스 용
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-22
+/// 최종 수정 날짜: 2018-05-24
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -61,6 +61,7 @@ void CScene::ReleaseUploadBuffers()
 		}
 	}
 	if (m_pCubeMap) m_pCubeMap->ReleaseUploadBuffers();
+	if (m_pSketchEffect) m_pSketchEffect->ReleaseUploadBuffers();
 }
 
 void CScene::ProcessInput()
@@ -116,8 +117,14 @@ void CScene::RenderWithLights()
 
 	if (m_pCubeMap)
 	{
-		m_pCommandList->SetDescriptorHeaps(1, &m_pCbvSrvDescriptorHeap);
+		m_pCommandList->SetDescriptorHeaps(1, &m_pCbvSrvDescriptorHeaps[0]);
 		m_pCubeMap->UpdateShaderVariables();
+	}
+
+	if (m_pSketchEffect)
+	{
+		m_pCommandList->SetDescriptorHeaps(1, &m_pCbvSrvDescriptorHeaps[1]);
+		m_pSketchEffect->UpdateShaderVariables();
 	}
 
 	D3D12_GPU_VIRTUAL_ADDRESS d3dcbLightsGpuVirtualAddress = m_pd3dcbLights->GetGPUVirtualAddress();
@@ -197,7 +204,7 @@ void CScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID,
 
 ////////////////////////////////////////////////////////////////////////
 // 내부 함수
-void CScene::CreateCbvAndSrvDescriptorHeap(CCreateMgr *pCreateMgr, int nConstantBufferViews, int nShaderResourceViews)
+void CScene::CreateCbvAndSrvDescriptorHeap(CCreateMgr *pCreateMgr, int nConstantBufferViews, int nShaderResourceViews, int index)
 {
 	UINT incrementSize = pCreateMgr->GetCbvSrvDescriptorIncrementSize();
 	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc;
@@ -205,13 +212,13 @@ void CScene::CreateCbvAndSrvDescriptorHeap(CCreateMgr *pCreateMgr, int nConstant
 	descriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	descriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	descriptorHeapDesc.NodeMask = 0;
-	HRESULT hResult = pCreateMgr->GetDevice()->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&m_pCbvSrvDescriptorHeap));
+	HRESULT hResult = pCreateMgr->GetDevice()->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&m_pCbvSrvDescriptorHeaps[index]));
 	assert(hResult == S_OK && "pCreateMgr->GetDevice()->CreateDescriptorHeap Failed");
 
-	m_cbvCPUDescriptorStartHandle = m_pCbvSrvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-	m_cbvGPUDescriptorStartHandle = m_pCbvSrvDescriptorHeap->GetGPUDescriptorHandleForHeapStart();
-	m_srvCPUDescriptorStartHandle.ptr = m_cbvCPUDescriptorStartHandle.ptr + (incrementSize * nConstantBufferViews);
-	m_srvGPUDescriptorStartHandle.ptr = m_cbvGPUDescriptorStartHandle.ptr + (incrementSize * nConstantBufferViews);
+	m_cbvCPUDescriptorStartHandles[index] = m_pCbvSrvDescriptorHeaps[index]->GetCPUDescriptorHandleForHeapStart();
+	m_cbvGPUDescriptorStartHandles[index] = m_pCbvSrvDescriptorHeaps[index]->GetGPUDescriptorHandleForHeapStart();
+	m_srvCPUDescriptorStartHandles[index].ptr = m_cbvCPUDescriptorStartHandles[index].ptr + (incrementSize * nConstantBufferViews);
+	m_srvGPUDescriptorStartHandles[index].ptr = m_cbvGPUDescriptorStartHandles[index].ptr + (incrementSize * nConstantBufferViews);
 }
 
 void CScene::BuildLights()
@@ -261,8 +268,11 @@ void CScene::BuildLights()
 	m_pLights->m_pLights[7].m_color = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	m_pLights->m_pLights[7].m_direction = Vector3::Normalize(XMFLOAT3(1.0f, -0.3f, 1.0f));
 
-	CreateCbvAndSrvDescriptorHeap(m_pCreateMgr, 0, 1);
-	m_pCubeMap = Materials::CreateCubeMapMaterial(m_pCreateMgr, &m_srvCPUDescriptorStartHandle, &m_srvGPUDescriptorStartHandle);
+	CreateCbvAndSrvDescriptorHeap(m_pCreateMgr, 0, 1, 0);
+	m_pCubeMap = Materials::CreateCubeMapMaterial(m_pCreateMgr, &m_srvCPUDescriptorStartHandles[0], &m_srvGPUDescriptorStartHandles[0]);
+
+	CreateCbvAndSrvDescriptorHeap(m_pCreateMgr, 0, 1, 1);
+	m_pSketchEffect = Materials::CreateSketchMaterial(m_pCreateMgr, &m_srvCPUDescriptorStartHandles[1], &m_srvGPUDescriptorStartHandles[1]);
 }
 
 void CScene::BuildObjects(CCreateMgr *pCreateMgr)
@@ -363,6 +373,12 @@ void CScene::ReleaseShaderVariables()
 	{
 		m_pd3dcbLights->Unmap(0, NULL);
 		Safe_Release(m_pd3dcbLights);
+	}
+
+	for (int i = 0; i < m_nHeaps; ++i)
+	{
+		if (m_pCbvSrvDescriptorHeaps[i])
+			Safe_Release(m_pCbvSrvDescriptorHeaps[i]);
 	}
 }
 

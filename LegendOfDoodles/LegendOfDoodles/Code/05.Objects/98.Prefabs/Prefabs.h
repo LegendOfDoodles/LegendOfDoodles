@@ -118,6 +118,11 @@ namespace Materials
 	CMaterial* CreatePlayerMaterial(CCreateMgr *pCreateMgr,
 		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
 		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+
+	// Sketch Effect
+	CMaterial* CreateSketchMaterial(CCreateMgr *pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
 	
 	// UI----------------------------------------------------------
 	CMaterial* CreateUIMaterial(CCreateMgr *pCreateMgr,

@@ -4,7 +4,7 @@
 /// 목적: 메크로 연산을 모아 보기쉽고 처리하기 쉽게 한다.
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-22
+/// 최종 수정 날짜: 2018-05-24
 /// </summary>
 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
@@ -14,7 +14,7 @@
 #define	FRAME_BUFFER_HEIGHT		720
 
 #define	SWAP_CHAIN_BUFFER_CNT	2
-#define	RENDER_TARGET_BUFFER_CNT	7
+#define	RENDER_TARGET_BUFFER_CNT	8
 
 #define RESOURCE_TEXTURE_2D			0x01
 #define RESOURCE_TEXTURE_2D_ARRAY	0x02

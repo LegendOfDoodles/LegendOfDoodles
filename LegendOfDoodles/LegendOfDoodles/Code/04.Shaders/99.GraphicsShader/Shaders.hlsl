@@ -70,6 +70,7 @@ struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT_TOON
     float4 albedo : SV_TARGET3;
     float4 position : SV_TARGET4;
     float4 toonPower : SV_TARGET6;
+    float4 uv : SV_TARGET7;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -482,7 +483,8 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT_TOON PSBone(VS_TEXTURED_LIGHTING_TOON_OUTPUT i
     output.position.y /= TERRAIN_SIZE_BORDER;
     output.position.z /= TERRAIN_SIZE_HEIGHT;
 
-    output.toonPower = float4(floor(input.toonPower * 4) / 4.0f, 1);
+    output.toonPower = float4(floor(input.toonPower * 3) / 3.0f, 1);
+	output.uv.xy = input.uv;
 
     return output;
 }
@@ -514,6 +516,91 @@ Texture2D<float4> gtxtSceneAlbedo : register(t6);
 Texture2D<float4> gtxtScenePosition : register(t7);
 Texture2D<float4> gtxtSceneEmissive : register(t8);
 Texture2D<float4> gtxtSceneToonPower : register(t9);
+Texture2D<float4> gtxtUVBuffer : register(t10);
+
+float4 CalculateOutlineColor(int2 pos)
+{
+    float outlineCnt = 0;
+
+    for (float i = -OUTLINE_POWER; i <= OUTLINE_POWER; ++i)
+    {
+        outlineCnt += gtxtSceneRoughMetalFresnel[int2(pos.x - i, pos.y)].a;
+        outlineCnt += gtxtSceneRoughMetalFresnel[int2(pos.x + i, pos.y)].a;
+        outlineCnt += gtxtSceneRoughMetalFresnel[int2(pos.x, pos.y - i)].a;
+        outlineCnt += gtxtSceneRoughMetalFresnel[int2(pos.x, pos.y + i)].a;
+        outlineCnt += gtxtSceneRoughMetalFresnel[int2(pos.x - i, pos.y - i)].a * 0.5;
+        outlineCnt += gtxtSceneRoughMetalFresnel[int2(pos.x - i, pos.y + i)].a * 0.5;
+        outlineCnt += gtxtSceneRoughMetalFresnel[int2(pos.x + i, pos.y - i)].a * 0.5;
+        outlineCnt += gtxtSceneRoughMetalFresnel[int2(pos.x + i, pos.y + i)].a * 0.5;
+    }
+    if (outlineCnt >= 2 && outlineCnt < 6)
+        return float4(1, 1, 1, 0);
+
+    return float4(0, 0, 0, 0);
+}
+
+float4 CalculateEmissiveColor(int2 pos)
+{
+    float4 emissiveColor = gtxtSceneEmissive[pos] * 0.1;
+
+    for (float i = -EMISSIVE_POWER; i <= EMISSIVE_POWER; ++i)
+    {
+        emissiveColor += gtxtSceneEmissive[int2(pos.x - i, pos.y)] * 0.01;
+        emissiveColor += gtxtSceneEmissive[int2(pos.x + i, pos.y)] * 0.01;
+        emissiveColor += gtxtSceneEmissive[int2(pos.x, pos.y - i)] * 0.01;
+        emissiveColor += gtxtSceneEmissive[int2(pos.x, pos.y + i)] * 0.01;
+        emissiveColor += gtxtSceneEmissive[int2(pos.x - i, pos.y - i)] * 0.005;
+        emissiveColor += gtxtSceneEmissive[int2(pos.x - i, pos.y + i)] * 0.005;
+        emissiveColor += gtxtSceneEmissive[int2(pos.x + i, pos.y - i)] * 0.005;
+        emissiveColor += gtxtSceneEmissive[int2(pos.x + i, pos.y + i)] * 0.005;
+    }
+    for (float i = -EMISSIVE_POWER * 0.5; i <= EMISSIVE_POWER * 0.5; ++i)
+    {
+        emissiveColor += gtxtSceneEmissive[int2(pos.x - i, pos.y)] * 0.03;
+        emissiveColor += gtxtSceneEmissive[int2(pos.x + i, pos.y)] * 0.03;
+        emissiveColor += gtxtSceneEmissive[int2(pos.x, pos.y - i)] * 0.03;
+        emissiveColor += gtxtSceneEmissive[int2(pos.x, pos.y + i)] * 0.03;
+        emissiveColor += gtxtSceneEmissive[int2(pos.x - i, pos.y - i)] * 0.015;
+        emissiveColor += gtxtSceneEmissive[int2(pos.x - i, pos.y + i)] * 0.015;
+        emissiveColor += gtxtSceneEmissive[int2(pos.x + i, pos.y - i)] * 0.015;
+        emissiveColor += gtxtSceneEmissive[int2(pos.x + i, pos.y + i)] * 0.015;
+    }
+    for (float i = -EMISSIVE_POWER * 0.25; i <= EMISSIVE_POWER * 0.25; ++i)
+    {
+        emissiveColor += gtxtSceneEmissive[int2(pos.x - i, pos.y)] * 0.05;
+        emissiveColor += gtxtSceneEmissive[int2(pos.x + i, pos.y)] * 0.05;
+        emissiveColor += gtxtSceneEmissive[int2(pos.x, pos.y - i)] * 0.05;
+        emissiveColor += gtxtSceneEmissive[int2(pos.x, pos.y + i)] * 0.05;
+        emissiveColor += gtxtSceneEmissive[int2(pos.x - i, pos.y - i)] * 0.025;
+        emissiveColor += gtxtSceneEmissive[int2(pos.x - i, pos.y + i)] * 0.025;
+        emissiveColor += gtxtSceneEmissive[int2(pos.x + i, pos.y - i)] * 0.025;
+        emissiveColor += gtxtSceneEmissive[int2(pos.x + i, pos.y + i)] * 0.025;
+    }
+
+    return emissiveColor;
+}
+
+float4 CalculateSketchEffect(float2 uv, float intensity)
+{
+    float3 sketch0 = gtxtTextures.Sample(wrapSampler, float3(uv, 0)).rgb;
+    float3 sketch1 = gtxtTextures.Sample(wrapSampler, float3(uv, 1)).rgb;
+
+    float3 overbright = max(0, intensity - 1.0);
+
+    float3 weightsA = saturate((intensity * 6.0) + float3(-5, -4, -3));
+    float3 weightsB = saturate((intensity * 6.0) + float3(-2, -1, -0));
+
+    weightsB.xy -= weightsB.yz;
+    weightsB.z -= weightsA.x;
+    weightsA.xy -= weightsA.zy;
+
+    sketch0 = sketch0 * weightsA;
+    sketch1 = sketch1 * weightsB;
+
+    float4 finalColor = float4(overbright + sketch0.r + sketch0.g + sketch0.b + sketch1.r + sketch1.g + sketch1.b, 1);
+
+    return float4(0.9 - finalColor.r, 0.9 - finalColor.g, 0.9 - finalColor.b, 1);
+}
 
 float4 PSTextureToFullScreen(float4 position : SV_POSITION) : SV_Target
 {
@@ -528,22 +615,7 @@ float4 PSTextureToFullScreen(float4 position : SV_POSITION) : SV_Target
     float4 roughMetalFresnel = gtxtSceneRoughMetalFresnel.Sample(wrapSampler, uv);
 
 	// 외곽선 처리
-    float4 outlineColor = float4(0, 0, 0, 0);
-    float outlineCnt = 0;
-
-    for (float i = -OUTLINE_POWER; i <= OUTLINE_POWER; ++i)
-    {
-        outlineCnt += gtxtSceneRoughMetalFresnel[int2(position.x - i, position.y)].a;
-        outlineCnt += gtxtSceneRoughMetalFresnel[int2(position.x + i, position.y)].a;
-        outlineCnt += gtxtSceneRoughMetalFresnel[int2(position.x, position.y - i)].a;
-        outlineCnt += gtxtSceneRoughMetalFresnel[int2(position.x, position.y + i)].a;
-        outlineCnt += gtxtSceneRoughMetalFresnel[int2(position.x - i, position.y - i)].a * 0.5;
-        outlineCnt += gtxtSceneRoughMetalFresnel[int2(position.x - i, position.y + i)].a * 0.5;
-        outlineCnt += gtxtSceneRoughMetalFresnel[int2(position.x + i, position.y - i)].a * 0.5;
-        outlineCnt += gtxtSceneRoughMetalFresnel[int2(position.x + i, position.y + i)].a * 0.5;
-    }
-    if (outlineCnt >= 2 && outlineCnt < 6)
-        outlineColor = float4(1, 1, 1, 0);
+    float4 outlineColor = CalculateOutlineColor(position.xy);
 
 	// 라이팅 안하는 오브젝트
     if (normal.w == 0)
@@ -554,44 +626,8 @@ float4 PSTextureToFullScreen(float4 position : SV_POSITION) : SV_Target
     pos.y *= TERRAIN_SIZE_BORDER;
     pos.z *= TERRAIN_SIZE_HEIGHT;
 
-		// Emissive 처리
-    float4 emissiveColor = float4(0, 0, 0, 0);
-
-    emissiveColor += gtxtSceneEmissive[int2(position.xy)] * 0.1;
-
-    for (float i = -EMISSIVE_POWER; i <= EMISSIVE_POWER; ++i)
-    {
-        emissiveColor += gtxtSceneEmissive[int2(position.x - i, position.y)] * 0.01;
-        emissiveColor += gtxtSceneEmissive[int2(position.x + i, position.y)] * 0.01;
-        emissiveColor += gtxtSceneEmissive[int2(position.x, position.y - i)] * 0.01;
-        emissiveColor += gtxtSceneEmissive[int2(position.x, position.y + i)] * 0.01;
-        emissiveColor += gtxtSceneEmissive[int2(position.x - i, position.y - i)] * 0.005;
-        emissiveColor += gtxtSceneEmissive[int2(position.x - i, position.y + i)] * 0.005;
-        emissiveColor += gtxtSceneEmissive[int2(position.x + i, position.y - i)] * 0.005;
-        emissiveColor += gtxtSceneEmissive[int2(position.x + i, position.y + i)] * 0.005;
-    }
-    for (float i = -EMISSIVE_POWER * 0.5; i <= EMISSIVE_POWER * 0.5; ++i)
-    {
-        emissiveColor += gtxtSceneEmissive[int2(position.x - i, position.y)] * 0.03;
-        emissiveColor += gtxtSceneEmissive[int2(position.x + i, position.y)] * 0.03;
-        emissiveColor += gtxtSceneEmissive[int2(position.x, position.y - i)] * 0.03;
-        emissiveColor += gtxtSceneEmissive[int2(position.x, position.y + i)] * 0.03;
-        emissiveColor += gtxtSceneEmissive[int2(position.x - i, position.y - i)] * 0.015;
-        emissiveColor += gtxtSceneEmissive[int2(position.x - i, position.y + i)] * 0.015;
-        emissiveColor += gtxtSceneEmissive[int2(position.x + i, position.y - i)] * 0.015;
-        emissiveColor += gtxtSceneEmissive[int2(position.x + i, position.y + i)] * 0.015;
-    }
-    for (float i = -EMISSIVE_POWER * 0.25; i <= EMISSIVE_POWER * 0.25; ++i)
-    {
-        emissiveColor += gtxtSceneEmissive[int2(position.x - i, position.y)] * 0.05;
-        emissiveColor += gtxtSceneEmissive[int2(position.x + i, position.y)] * 0.05;
-        emissiveColor += gtxtSceneEmissive[int2(position.x, position.y - i)] * 0.05;
-        emissiveColor += gtxtSceneEmissive[int2(position.x, position.y + i)] * 0.05;
-        emissiveColor += gtxtSceneEmissive[int2(position.x - i, position.y - i)] * 0.025;
-        emissiveColor += gtxtSceneEmissive[int2(position.x - i, position.y + i)] * 0.025;
-        emissiveColor += gtxtSceneEmissive[int2(position.x + i, position.y - i)] * 0.025;
-        emissiveColor += gtxtSceneEmissive[int2(position.x + i, position.y + i)] * 0.025;
-    }
+	// Emissive 처리
+    float4 emissiveColor = CalculateEmissiveColor(position.xy);
 
 	// 환경 매핑 처리
     float3 viewDir = normalize(pos.xyz - gvCameraPosition);
@@ -604,6 +640,15 @@ float4 PSTextureToFullScreen(float4 position : SV_POSITION) : SV_Target
 	// 라이트 처리
     float4 lightColor = Lighting(pos.xyz, normal.xyz, albedo, baseColor, roughMetalFresnel);
 
+	// 스케치 이펙트 처리
+    float4 finalColor = (lightColor + totalReflectColor) * gtxtSceneToonPower.Sample(wrapSampler, uv);
+
+    if (roughMetalFresnel.w == 1)
+    {
+        float intensity = dot(finalColor.rgb, float3(0.2326, 0.7152, 0.0722));
+        finalColor = finalColor * CalculateSketchEffect(gtxtUVBuffer.Sample(wrapSampler, uv).xy * 2, intensity);
+    }
+
 	// 최종 색상 출력
-    return (lightColor + totalReflectColor) * gtxtSceneToonPower.Sample(wrapSampler, uv) + emissiveColor + outlineColor;
+    return finalColor + emissiveColor + outlineColor;
 }

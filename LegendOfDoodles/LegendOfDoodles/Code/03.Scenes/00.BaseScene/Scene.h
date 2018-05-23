@@ -57,7 +57,7 @@ public: // 공개 함수
 	CCamera * GetCamera() { return m_pCamera; }
 
 protected: // 내부 함수
-	void CreateCbvAndSrvDescriptorHeap(CCreateMgr *pCreateMgr, int nConstantBufferViews, int nShaderResourceViews);
+	void CreateCbvAndSrvDescriptorHeap(CCreateMgr *pCreateMgr, int nConstantBufferViews, int nShaderResourceViews, int index);
 
 	void BuildLights();
 
@@ -82,6 +82,7 @@ protected: // 변수
 	CShader **m_ppShaders{ NULL };
 	int m_nShaders{ 0 };
 
+	CMaterial			*m_pSketchEffect{ NULL };
 	CMaterial			*m_pCubeMap{ NULL };
 	LIGHTS	 *m_pLights{ NULL };
 
@@ -104,10 +105,11 @@ protected: // 변수
 	
 	int m_FrameCheck{ 0 };
 
-	ID3D12DescriptorHeap			*m_pCbvSrvDescriptorHeap{ NULL };
-	D3D12_CPU_DESCRIPTOR_HANDLE		m_cbvCPUDescriptorStartHandle{ NULL };
-	D3D12_GPU_DESCRIPTOR_HANDLE		m_cbvGPUDescriptorStartHandle{ NULL };
-	D3D12_CPU_DESCRIPTOR_HANDLE		m_srvCPUDescriptorStartHandle{ NULL };
-	D3D12_GPU_DESCRIPTOR_HANDLE		m_srvGPUDescriptorStartHandle{ NULL };
+	const int	m_nHeaps{ 2 };
+	ID3D12DescriptorHeap			*m_pCbvSrvDescriptorHeaps[2];
+	D3D12_CPU_DESCRIPTOR_HANDLE		m_cbvCPUDescriptorStartHandles[2];
+	D3D12_GPU_DESCRIPTOR_HANDLE		m_cbvGPUDescriptorStartHandles[2];
+	D3D12_CPU_DESCRIPTOR_HANDLE		m_srvCPUDescriptorStartHandles[2];
+	D3D12_GPU_DESCRIPTOR_HANDLE		m_srvGPUDescriptorStartHandles[2];
 };
 
