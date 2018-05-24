@@ -2,6 +2,9 @@
 #define TERRAIN_SIZE_HEIGHT 5000
 #define TERRAIN_SIZE_BORDER 1000
 
+#define	FRAME_BUFFER_WIDTH		1280
+#define	FRAME_BUFFER_HEIGHT		720
+
 #define gnDiffuse 0
 #define gnNormal 1
 #define gnMix3Data 2
@@ -60,6 +63,7 @@ struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT_EMISSIVE
     float4 albedo : SV_TARGET3;
     float4 position : SV_TARGET4;
     float4 emissive : SV_TARGET5;
+    float4 uv : SV_TARGET7;
 };
 
 struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT_TOON
@@ -349,6 +353,9 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT_EMISSIVE PSTexturedLightingEmissive(VS_TEXTURE
     output.position.y /= TERRAIN_SIZE_BORDER;
     output.position.z /= TERRAIN_SIZE_HEIGHT;
     output.emissive = gtxtTextures.Sample(wrapSampler, float3(input.uv, gnEmissive));
+    output.uv.x = frac(input.uv.x * TERRAIN_SIZE_WIDTH / FRAME_BUFFER_WIDTH);
+    output.uv.y = frac(input.uv.y * TERRAIN_SIZE_HEIGHT / FRAME_BUFFER_HEIGHT);
+    output.uv.z = 1;
 
     return output;
 }
@@ -382,17 +389,12 @@ VS_DIFFUSE_TEXTURED_OUTPUT VSDiffuseTextured(VS_DIFFUSE_TEXTURED_INPUT input)
     return (output);
 }
 
-PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSDiffuseTextured(VS_DIFFUSE_TEXTURED_OUTPUT input)
+PS_MULTIPLE_RENDER_TARGETS_OUTPUT_DEFAULT PSDiffuseTextured(VS_DIFFUSE_TEXTURED_OUTPUT input)
 {
-    PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
+    PS_MULTIPLE_RENDER_TARGETS_OUTPUT_DEFAULT output;
     output.color = lerp(input.color, gtxtTexture.Sample(wrapSampler, input.uv), 0.7f);
     output.normal = float4(0, 0, 0, 0);
     output.roughMetalFresnel = float4(gMaterials.m_cRoughness, gMaterials.m_cMetalic, 1, 0);
-    output.albedo = gMaterials.m_cAlbedo;
-    output.position = float4(input.positionW, 0);
-    output.position.x /= TERRAIN_SIZE_WIDTH;
-    output.position.y /= TERRAIN_SIZE_BORDER;
-    output.position.z /= TERRAIN_SIZE_HEIGHT;
     return output;
 }
 
@@ -484,7 +486,9 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT_TOON PSBone(VS_TEXTURED_LIGHTING_TOON_OUTPUT i
     output.position.z /= TERRAIN_SIZE_HEIGHT;
 
     output.toonPower = float4(floor(input.toonPower * 3) / 3.0f, 1);
-	output.uv.xy = input.uv;
+    output.uv.x = frac(input.uv.x * TERRAIN_SIZE_WIDTH / FRAME_BUFFER_WIDTH);
+    output.uv.y = frac(input.uv.y * TERRAIN_SIZE_HEIGHT / FRAME_BUFFER_HEIGHT);
+    output.uv.z = 1;
 
     return output;
 }
@@ -509,14 +513,14 @@ float4 VSTextureToFullScreen(uint nVertexID : SV_VertexID) : SV_POSITION
     return (float4(0, 0, 0, 0));
 }
 
-Texture2D<float4> gtxtSceneBaseColor : register(t3);
-Texture2D<float4> gtxtSceneNormal : register(t4);
-Texture2D<float4> gtxtSceneRoughMetalFresnel : register(t5);
-Texture2D<float4> gtxtSceneAlbedo : register(t6);
-Texture2D<float4> gtxtScenePosition : register(t7);
-Texture2D<float4> gtxtSceneEmissive : register(t8);
-Texture2D<float4> gtxtSceneToonPower : register(t9);
-Texture2D<float4> gtxtUVBuffer : register(t10);
+Texture2D<float4> gtxtSceneBaseColor : register(t3); // Texture Diffuse + Specular
+Texture2D<float4> gtxtSceneNormal : register(t4); // xyz: 노말, w: 라이팅 여부
+Texture2D<float4> gtxtSceneRoughMetalFresnel : register(t5); // r:Roughness, g: Metallic, b:Fresnel, a: 외곽선 처리 여부
+Texture2D<float4> gtxtSceneAlbedo : register(t6); // Material 기본 색상
+Texture2D<float4> gtxtScenePosition : register(t7); // xyz: Position 정보
+Texture2D<float4> gtxtSceneEmissive : register(t8); //Emissive 색상
+Texture2D<float4> gtxtSceneToonPower : register(t9); // 툰 쉐이딩 적용 색상
+Texture2D<float4> gtxtUVBuffer : register(t10); // xy: UV, z: 스케치 이펙트 처리 여부
 
 float4 CalculateOutlineColor(int2 pos)
 {
@@ -587,12 +591,12 @@ float4 CalculateSketchEffect(float2 uv, float intensity)
 
     float3 overbright = max(0, intensity - 1.0);
 
-    float3 weightsA = saturate((intensity * 6.0) + float3(-5, -4, -3));
-    float3 weightsB = saturate((intensity * 6.0) + float3(-2, -1, -0));
+    float3 weightsA = saturate((intensity * 6.0) + float3(-3, -4, -5));
+    float3 weightsB = saturate((intensity * 6.0) + float3(-0, -1, -2));
 
-    weightsB.xy -= weightsB.yz;
-    weightsB.z -= weightsA.x;
-    weightsA.xy -= weightsA.zy;
+    weightsA.xy -= weightsA.yz;
+    weightsA.z -= weightsB.x;
+    weightsB.xy -= weightsB.zy;
 
     sketch0 = sketch0 * weightsA;
     sketch1 = sketch1 * weightsB;
@@ -605,8 +609,8 @@ float4 CalculateSketchEffect(float2 uv, float intensity)
 float4 PSTextureToFullScreen(float4 position : SV_POSITION) : SV_Target
 {
     float2 uv = position.xy;
-    uv.x /= gtxtSceneBaseColor.Length.x;
-    uv.y /= gtxtSceneBaseColor.Length.y;
+    uv.x /= FRAME_BUFFER_WIDTH;
+    uv.y /= FRAME_BUFFER_HEIGHT;
 
 	// 색상 사용
     float4 normal = gtxtSceneNormal.Sample(wrapSampler, uv);
@@ -643,7 +647,7 @@ float4 PSTextureToFullScreen(float4 position : SV_POSITION) : SV_Target
 	// 스케치 이펙트 처리
     float4 finalColor = (lightColor + totalReflectColor) * gtxtSceneToonPower.Sample(wrapSampler, uv);
 
-    if (roughMetalFresnel.w == 1)
+    if (gtxtUVBuffer.Sample(wrapSampler, uv).z == 1)
     {
         float intensity = dot(finalColor.rgb, float3(0.2326, 0.7152, 0.0722));
         finalColor = finalColor * CalculateSketchEffect(gtxtUVBuffer.Sample(wrapSampler, uv).xy * 2, intensity);
