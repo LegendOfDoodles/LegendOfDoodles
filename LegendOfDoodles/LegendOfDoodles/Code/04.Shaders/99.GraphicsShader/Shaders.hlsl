@@ -457,15 +457,10 @@ DS_TERRAIN_OUTPUT DSTerrain(PatchTess patchTess, float2 uv : SV_DomainLocation, 
 PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_OUTPUT input)
 {
     PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
-    float3 N = float3(0, 1, 0);
-    float3 T = float3(-1, 0, 0);
-    float3 B = cross(N, T); // 노말과 탄젠트를 외적해서 바이 탄젠트(바이 노말)생성
-    float3x3 TBN = float3x3(T, B, N); // 이를 바탕으로 TBN행렬 생성
     float3 normal = gtxtTextures.Sample(wrapSampler, float3(input.uv, gnNormal)); // 노말 맵에서 해당하는 uv에 해당하는 노말 읽기
     normal = 2.0f * normal - 1.0f; // 노말을 -1에서 1사이의 값으로 변환
-    N = mul(normal, TBN); // 노말을 TBN행렬로 변환
 
-    output.normal = float4(N, 1);
+    output.normal = float4(normal, 1);
     output.color = gtxtTextures.Sample(wrapSampler, float3(input.uv, gnDiffuse)) + gtxtTextures.Sample(wrapSampler, float3(input.uv, gnSpecular));
     output.roughMetalFresnel = float4(gMaterials.m_cRoughness, gMaterials.m_cMetalic, 0, 0);
     output.albedo = gMaterials.m_cAlbedo;
