@@ -9,9 +9,7 @@ struct CB_TERRAIN_INFO
 class CHeightMapTerrain : public CBaseObject
 {
 public: // 생성자, 소멸자
-	CHeightMapTerrain(CCreateMgr *pCreateMgr, LPCTSTR pFileName,
-		int nWidth, int nLength, int nBlockWidth, int nBlockLength, 
-		XMFLOAT3 xmf3Scale, XMFLOAT4 xmf4Color);
+	CHeightMapTerrain(CCreateMgr *pCreateMgr, LPCTSTR pFileName, XMFLOAT3 xmf3Scale);
 	virtual ~CHeightMapTerrain();
 
 public: // 공개 함수
@@ -25,14 +23,6 @@ public: // 공개 함수
 		return(m_pHeightMapImage->GetHeightMapNormal(int(x / m_xmf3Scale.x), int(z /
 			m_xmf3Scale.z)));
 	}
-
-	int GetHeightMapWidth() { return(m_pHeightMapImage->GetHeightMapWidth()); }
-	int GetHeightMapLength() { return(m_pHeightMapImage->GetHeightMapLength()); }
-	XMFLOAT3 GetScale() { return(m_xmf3Scale); }
-
-	//지형의 크기(가로/세로)를 반환한다. 높이 맵의 크기에 스케일을 곱한 값이다.
-	float GetWidth() { return(m_nWidth * m_xmf3Scale.x); }
-	float GetLength() { return(m_nLength * m_xmf3Scale.z); }
 
 protected: // 내부 함수
 

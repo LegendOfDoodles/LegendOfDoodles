@@ -8,7 +8,7 @@
 /// 목적: 테스트 용 메쉬 클래스 생성
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-17
+/// 최종 수정 날짜: 2018-06-01
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -630,30 +630,26 @@ float CHeightMapImage::GetHeight(float fx, float fz)
 // CHeightMapGridMesh
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
-CHeightMapGridMesh::CHeightMapGridMesh(CCreateMgr *pCreateMgr, int xStart, int zStart, int nWidth, int
-	nLength, XMFLOAT3 xmf3Scale, XMFLOAT4 xmf4Color, void *pContext) : CMesh(pCreateMgr)
+CHeightMapGridMesh::CHeightMapGridMesh(CCreateMgr *pCreateMgr, int nWidth, int nLength) : CMesh(pCreateMgr)
 {
+	XMFLOAT3 xmf3Scale = TERRAIN_IMAGE_CELL_SCALE;
+
 	//격자의 교점(정점)의 개수는 (nWidth * nLength)이다.
 	m_nVertices = nWidth * nLength;
-	m_nStride = sizeof(CDiffuseTexturedVertex);
+	m_nStride = sizeof(CTerrainVertex);
 
 	//격자는 삼각형 스트립으로 구성한다.
-	m_primitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
+	m_primitiveTopology = D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST;
 
-	m_nWidth = nWidth;
-	m_nLength = nLength;
-	m_xmf3Scale = xmf3Scale;
+	m_nIndices = (nWidth * 2) * (nLength - 1) * 2 - 4;
 
-	m_nIndices = ((nWidth * 2)*(nLength - 1)) + ((nLength - 1) - 1);
+	CTerrainVertex *pVertices = new CTerrainVertex[m_nVertices];
 
-	CDiffuseTexturedVertex *pVertices = new CDiffuseTexturedVertex[m_nVertices];
-
-	for (int i = 0, z = zStart; z < (zStart + nLength); z++)
+	for (int i = 0, z = 0; z < nLength; z++)
 	{
-		for (int x = xStart; x < (xStart + nWidth); x++, i++)
+		for (int x = 0; x < nWidth; x++, i++)
 		{
-			pVertices[i] = CDiffuseTexturedVertex(XMFLOAT3((x*m_xmf3Scale.x), (OnGetHeight(x, z, pContext) - REVISE_HEIGHT)* m_xmf3Scale.y, (z*m_xmf3Scale.z)),
-				XMFLOAT2( (float)x / (xStart + nWidth - 1), 1 - (float)z / (zStart + nLength - 1)), Vector4::Add(OnGetColor(x * 0.2f, z * 0.2f, pContext), xmf4Color));
+			pVertices[i] = CTerrainVertex(XMFLOAT3((x * xmf3Scale.x), -REVISE_HEIGHT * xmf3Scale.y, (z * xmf3Scale.z)), XMFLOAT2((float)x / (nWidth - 1), 1 - (float)z / (nLength - 1)));
 		}
 	}
 
@@ -678,11 +674,14 @@ CHeightMapGridMesh::CHeightMapGridMesh(CCreateMgr *pCreateMgr, int xStart, int z
 			//홀수 번째 줄이므로(z = 0, 2, 4, ...) 인덱스의 나열 순서는 왼쪽에서 오른쪽 방향이다.
 			for (int x = 0; x < nWidth; x++)
 			{
-				//첫 번째 줄을 제외하고 줄이 바뀔 때마다(x == 0) 첫 번째 인덱스를 추가한다.
-				if ((x == 0) && (z > 0)) pnIndices[j++] = (UINT)(x + (z * nWidth));
-				//아래(x, z), 위(x, z+1)의 순서로 인덱스를 추가한다.
-				pnIndices[j++] = (UINT)(x + (z * nWidth));
+				//위(x, z+1), 아래(x, z)의 순서로 인덱스를 추가한다.
+				if ((x != 0 || z != 0) && (x != nWidth - 1 || z != nLength - 2))
+				{
+					pnIndices[j++] = (UINT)((x + (z * nWidth)) + nWidth);
+					pnIndices[j++] = (UINT)(x + (z * nWidth));
+				}
 				pnIndices[j++] = (UINT)((x + (z * nWidth)) + nWidth);
+				pnIndices[j++] = (UINT)(x + (z * nWidth));
 			}
 		}
 		else
@@ -690,9 +689,11 @@ CHeightMapGridMesh::CHeightMapGridMesh(CCreateMgr *pCreateMgr, int xStart, int z
 			//짝수 번째 줄이므로(z = 1, 3, 5, ...) 인덱스의 나열 순서는 오른쪽에서 왼쪽 방향이다.
 			for (int x = nWidth - 1; x >= 0; x--)
 			{
-				//줄이 바뀔 때마다(x == (nWidth-1)) 첫 번째 인덱스를 추가한다.
-				if (x == (nWidth - 1)) pnIndices[j++] = (UINT)(x + (z * nWidth));
-				//아래(x, z), 위(x, z+1)의 순서로 인덱스를 추가한다.
+				if (x != 0 || z != nLength - 2)
+				{
+					pnIndices[j++] = (UINT)(x + (z * nWidth));
+					pnIndices[j++] = (UINT)((x + (z * nWidth)) + nWidth);
+				}
 				pnIndices[j++] = (UINT)(x + (z * nWidth));
 				pnIndices[j++] = (UINT)((x + (z * nWidth)) + nWidth);
 			}
@@ -719,37 +720,6 @@ CHeightMapGridMesh::~CHeightMapGridMesh()
 
 ////////////////////////////////////////////////////////////////////////
 // 공개 함수
-//높이 맵 이미지의 픽셀 값을 지형의 높이로 반환한다.
-float CHeightMapGridMesh::OnGetHeight(int x, int z, void *pContext)
-{
-	CHeightMapImage *pHeightMapImage = (CHeightMapImage *)pContext;
-	BYTE *pHeightMapPixels = pHeightMapImage->GetHeightMapPixels();
-	XMFLOAT3 xmf3Scale = pHeightMapImage->GetScale();
-	int nWidth = pHeightMapImage->GetHeightMapWidth();
-	float fHeight = pHeightMapPixels[x + (z*nWidth)] * xmf3Scale.y;
-	return(fHeight);
-}
-
-XMFLOAT4 CHeightMapGridMesh::OnGetColor(int x, int z, void *pContext)
-{
-	//조명의 방향 벡터(정점에서 조명까지의 벡터)이다.
-	XMFLOAT3 xmf3LightDirection = XMFLOAT3(-1.0f, 1.0f, 1.0f);
-	xmf3LightDirection = Vector3::Normalize(xmf3LightDirection);
-	CHeightMapImage *pHeightMapImage = (CHeightMapImage *)pContext;
-	XMFLOAT3 xmf3Scale = pHeightMapImage->GetScale();
-	//조명의 색상(세기, 밝기)이다.
-	XMFLOAT4 xmf4IncidentLightColor(0.5f, 0.5f, 0.5f, 1.0f);
-	float fScale = Vector3::DotProduct(pHeightMapImage->GetHeightMapNormal(x, z), xmf3LightDirection);
-	fScale += Vector3::DotProduct(pHeightMapImage->GetHeightMapNormal(x + 1, z), xmf3LightDirection);
-	fScale += Vector3::DotProduct(pHeightMapImage->GetHeightMapNormal(x + 1, z + 1), xmf3LightDirection);
-	fScale += Vector3::DotProduct(pHeightMapImage->GetHeightMapNormal(x, z + 1), xmf3LightDirection);
-	fScale = (fScale / 4.0f) + 0.05f;
-	if (fScale > 1.0f) fScale = 1.0f;
-	if (fScale < 0.25f) fScale = 0.25f;
-	//fScale은 조명 색상(밝기)이 반사되는 비율이다.
-	XMFLOAT4 xmf4Color = Vector4::Multiply(fScale, xmf4IncidentLightColor);
-	return(xmf4Color);
-}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // CTexturedRectMesh

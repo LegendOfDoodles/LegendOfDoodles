@@ -361,40 +361,119 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT_EMISSIVE PSTexturedLightingEmissive(VS_TEXTURE
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-struct VS_DIFFUSE_TEXTURED_INPUT
+// For Terrain
+struct VS_TERRAIN_INPUT
 {
     float3 position : POSITION;
     float2 uv : TEXCOORD;
-    float4 color : BCOLOR;
 };
 
-struct VS_DIFFUSE_TEXTURED_OUTPUT
+struct VS_TERRAIN_OUTPUT
 {
-    float4 position : SV_POSITION;
-    float3 positionW : POSITION;
-	//	nointerpolation float3 normalW : NORMAL;
+    float4 position : POSITION;
     float2 uv : TEXCOORD;
-    float4 color : BCOLOR;
 };
 
-VS_DIFFUSE_TEXTURED_OUTPUT VSDiffuseTextured(VS_DIFFUSE_TEXTURED_INPUT input)
+VS_TERRAIN_OUTPUT VSTerrain(VS_TERRAIN_INPUT input)
 {
-    VS_DIFFUSE_TEXTURED_OUTPUT output;
+    VS_TERRAIN_OUTPUT output;
 
-    output.positionW = (float3) mul(float4(input.position, 1.0f), gmtxGameObject);
-    output.position = mul(mul(float4(output.positionW, 1.0f), gmtxView), gmtxProjection);
+    output.position = mul(mul(mul(float4(input.position, 1.0f), gmtxGameObject), gmtxView), gmtxProjection);
     output.uv = input.uv;
-    output.color = input.color;
+
     return (output);
 }
 
-PS_MULTIPLE_RENDER_TARGETS_OUTPUT_DEFAULT PSDiffuseTextured(VS_DIFFUSE_TEXTURED_OUTPUT input)
+struct PatchTess
 {
-    PS_MULTIPLE_RENDER_TARGETS_OUTPUT_DEFAULT output;
-    output.color = lerp(input.color, gtxtTexture.Sample(wrapSampler, input.uv), 0.7f);
-    output.normal = float4(0, 0, 0, 0);
-    output.roughMetalFresnel = float4(gMaterials.m_cRoughness, gMaterials.m_cMetalic, 1, 0);
+    float EdgeTess[4] : SV_TessFactor;
+    float InsideTess[2] : SV_InsideTessFactor;
+};
+
+PatchTess ConstantHSTerrain(InputPatch<VS_TERRAIN_OUTPUT, 4> patch, uint patchID : SV_PrimitiveID)
+{
+    PatchTess pt;
+
+    pt.EdgeTess[0] = 32;
+    pt.EdgeTess[1] = 32;
+    pt.EdgeTess[2] = 32;
+    pt.EdgeTess[3] = 32;
+
+    pt.InsideTess[0] = 32;
+    pt.InsideTess[1] = 32;
+
+    return pt;
+}
+
+struct HS_TERRAIN_OUTPUT
+{
+    float4 position : POSITION;
+    float2 uv : TEXCOORD;
+};
+
+[domain("quad")]
+[partitioning("integer")]
+[outputtopology("triangle_cw")]
+[outputcontrolpoints(4)]
+[patchconstantfunc("ConstantHSTerrain")]
+[maxtessfactor(32.0f)]
+HS_TERRAIN_OUTPUT HSTerrain(InputPatch<VS_TERRAIN_OUTPUT, 4> P, uint i : SV_OutputControlPointID, uint patchId : SV_PrimitiveID)
+{
+    HS_TERRAIN_OUTPUT output;
+    output.position = P[i].position;
+    output.uv = P[i].uv;
+
+    return output;
+}
+
+struct DS_TERRAIN_OUTPUT
+{
+    float4 position : SV_POSITION;
+    float2 uv : TEXCOORD;
+};
+
+[domain("quad")]
+DS_TERRAIN_OUTPUT DSTerrain(PatchTess patchTess, float2 uv : SV_DomainLocation, const OutputPatch<HS_TERRAIN_OUTPUT, 4> quad)
+{
+    DS_TERRAIN_OUTPUT output;
+
+    float4 v1 = lerp(quad[0].position, quad[1].position, 1 - uv.y);
+    float4 v2 = lerp(quad[2].position, quad[3].position, 1 - uv.y);
+    float4 p = lerp(v1, v2, 1 - uv.x);
+
+    float2 uv1 = lerp(quad[0].uv, quad[1].uv, 1 - uv.y);
+    float2 uv2 = lerp(quad[2].uv, quad[3].uv, 1 - uv.y);
+    float2 uvResult = lerp(uv1, uv2, 1 - uv.x);
+
+	// Displacement Mapping
+    p.y += gtxtTextures.SampleLevel(wrapSampler, float3(uvResult, gnMix3Data), 0).r * 255;
+
+    output.position = p;
+    output.uv = uvResult;
+
+    return output;
+}
+
+PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_OUTPUT input)
+{
+    PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
+    float3 N = float3(0, 1, 0);
+    float3 T = float3(-1, 0, 0);
+    float3 B = cross(N, T); // 노말과 탄젠트를 외적해서 바이 탄젠트(바이 노말)생성
+    float3x3 TBN = float3x3(T, B, N); // 이를 바탕으로 TBN행렬 생성
+    float3 normal = gtxtTextures.Sample(wrapSampler, float3(input.uv, gnNormal)); // 노말 맵에서 해당하는 uv에 해당하는 노말 읽기
+    normal = 2.0f * normal - 1.0f; // 노말을 -1에서 1사이의 값으로 변환
+    N = mul(normal, TBN); // 노말을 TBN행렬로 변환
+
+    output.normal = float4(N, 1);
+    output.color = gtxtTextures.Sample(wrapSampler, float3(input.uv, gnDiffuse)) + gtxtTextures.Sample(wrapSampler, float3(input.uv, gnSpecular));
+    output.roughMetalFresnel = float4(gMaterials.m_cRoughness, gMaterials.m_cMetalic, 0, 0);
+    output.albedo = gMaterials.m_cAlbedo;
+    output.position = input.position;
+    output.position.x /= TERRAIN_SIZE_WIDTH;
+    output.position.y /= TERRAIN_SIZE_BORDER;
+    output.position.z /= TERRAIN_SIZE_HEIGHT;
+
     return output;
 }
 

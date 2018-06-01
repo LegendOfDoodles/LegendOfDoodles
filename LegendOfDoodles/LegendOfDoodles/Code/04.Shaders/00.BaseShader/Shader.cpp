@@ -8,7 +8,7 @@
 /// 목적: 기본 쉐이터 코드, 인터페이스 용
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-21
+/// 최종 수정 날짜: 2018-06-01
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -352,6 +352,24 @@ D3D12_SHADER_BYTECODE CShader::CreateVertexShader(ID3DBlob **ppd3dShaderBlob)
 	return(shaderByteCode);
 }
 
+D3D12_SHADER_BYTECODE CShader::CreateHullShader(ID3DBlob ** ppd3dShaderBlob)
+{
+	D3D12_SHADER_BYTECODE shaderByteCode;
+	shaderByteCode.BytecodeLength = 0;
+	shaderByteCode.pShaderBytecode = NULL;
+
+	return(shaderByteCode);
+}
+
+D3D12_SHADER_BYTECODE CShader::CreateDomainShader(ID3DBlob ** ppd3dShaderBlob)
+{
+	D3D12_SHADER_BYTECODE shaderByteCode;
+	shaderByteCode.BytecodeLength = 0;
+	shaderByteCode.pShaderBytecode = NULL;
+
+	return(shaderByteCode);
+}
+
 D3D12_SHADER_BYTECODE CShader::CreatePixelShader(ID3DBlob **ppShaderBlob)
 {
 	D3D12_SHADER_BYTECODE d3dShaderByteCode;
@@ -377,6 +395,42 @@ D3D12_SHADER_BYTECODE CShader::CreateBoundingBoxPixelShader(ID3DBlob ** ppShader
 		"PSDiffused",
 		"ps_5_1",
 		ppShaderBlob));
+}
+
+void CShader::CreateShaderWithTess(CCreateMgr *pCreateMgr, UINT nRenderTargets)
+{
+	ComPtr<ID3DBlob> pVertexShaderBlob{ NULL }, pHullShaderBlob{ NULL }, pDomainShaderBlob{ NULL }, pPixelShaderBlob{ NULL };
+
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineStateDesc;
+	::ZeroMemory(&pipelineStateDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
+
+	pipelineStateDesc.pRootSignature = pCreateMgr->GetGraphicsRootSignature();
+	pipelineStateDesc.VS = CreateVertexShader(&pVertexShaderBlob);
+	pipelineStateDesc.HS = CreateHullShader(&pHullShaderBlob);
+	pipelineStateDesc.DS = CreateDomainShader(&pDomainShaderBlob);
+	pipelineStateDesc.PS = CreatePixelShader(&pPixelShaderBlob);
+	pipelineStateDesc.RasterizerState = CreateRasterizerState();
+	pipelineStateDesc.BlendState = CreateBlendState();
+	pipelineStateDesc.DepthStencilState = CreateDepthStencilState();
+	pipelineStateDesc.InputLayout = CreateInputLayout();
+	pipelineStateDesc.SampleMask = UINT_MAX;
+	pipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
+	pipelineStateDesc.NumRenderTargets = nRenderTargets;
+	for (UINT i = 0; i < nRenderTargets; i++)
+	{
+		pipelineStateDesc.RTVFormats[i] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	}
+	pipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	pipelineStateDesc.SampleDesc.Count = 1;
+	pipelineStateDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
+
+	HRESULT hResult = pCreateMgr->GetDevice()->CreateGraphicsPipelineState(
+		&pipelineStateDesc,
+		IID_PPV_ARGS(&m_ppPipelineStates[0]));
+	assert(SUCCEEDED(hResult) && "Device->CreateGraphicsPipelineState Failed");
+	//ExptProcess::ThrowIfFailed(hResult);
+
+	Safe_Delete_Array(pipelineStateDesc.InputLayout.pInputElementDescs);
 }
 
 void CShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets)

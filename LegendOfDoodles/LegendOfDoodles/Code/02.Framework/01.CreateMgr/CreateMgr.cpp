@@ -7,7 +7,7 @@
 /// 목적: 생성 관련 함수를 모아 두어 헷갈리는 일 없이 생성 가능하도록 함
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-21
+/// 최종 수정 날짜: 2018-06-01
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -812,7 +812,7 @@ void CCreateMgr::CreateGraphicsRootSignature()
 	pRootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	pRootParameters[3].DescriptorTable.NumDescriptorRanges = 1;
 	pRootParameters[3].DescriptorTable.pDescriptorRanges = &pDescriptorRanges[2]; //Textures
-	pRootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	pRootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 #endif
 
@@ -849,7 +849,7 @@ void CCreateMgr::CreateGraphicsRootSignature()
 	samplerDesc[0].MaxLOD = D3D12_FLOAT32_MAX;
 	samplerDesc[0].ShaderRegister = 0;
 	samplerDesc[0].RegisterSpace = 0;
-	samplerDesc[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	samplerDesc[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 	samplerDesc[1].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
 	samplerDesc[1].AddressU = D3D12_TEXTURE_ADDRESS_MODE_MIRROR;
@@ -862,12 +862,10 @@ void CCreateMgr::CreateGraphicsRootSignature()
 	samplerDesc[1].MaxLOD = D3D12_FLOAT32_MAX;
 	samplerDesc[1].ShaderRegister = 1;
 	samplerDesc[1].RegisterSpace = 0;
-	samplerDesc[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	samplerDesc[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 	D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |
-		D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS |
-		D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
 		D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS;
 
 	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc;

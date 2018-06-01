@@ -6,7 +6,7 @@
 /// 목적: 지형 출력용 Shader
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-09
+/// 최종 수정 날짜: 2018-06-01
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -52,7 +52,7 @@ void CTerrainShader::Render(CCamera * pCamera)
 // 내부 함수
 D3D12_INPUT_LAYOUT_DESC CTerrainShader::CreateInputLayout()
 {
-	UINT nInputElementDescs = 3;
+	UINT nInputElementDescs = 2;
 	D3D12_INPUT_ELEMENT_DESC *pInputElementDescs = new D3D12_INPUT_ELEMENT_DESC[nInputElementDescs];
 
 	pInputElementDescs[0] = {
@@ -64,19 +64,11 @@ D3D12_INPUT_LAYOUT_DESC CTerrainShader::CreateInputLayout()
 		D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
 		0 };
 	pInputElementDescs[1] = {
-		"TEXCOORD", 
+		"TEXCOORD",
 		0,
 		DXGI_FORMAT_R32G32_FLOAT,
 		0,
 		12,
-		D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-		0 };
-	pInputElementDescs[2] = {
-		"BCOLOR",
-		0,
-		DXGI_FORMAT_R32G32B32A32_FLOAT,
-		0,
-		20,
 		D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
 		0 };
 
@@ -90,8 +82,26 @@ D3D12_SHADER_BYTECODE CTerrainShader::CreateVertexShader(ID3DBlob **ppShaderBlob
 {
 	return(CShader::CompileShaderFromFile(
 		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl", 
-		"VSDiffuseTextured", 
+		"VSTerrain", 
 		"vs_5_1",
+		ppShaderBlob));
+}
+
+D3D12_SHADER_BYTECODE CTerrainShader::CreateHullShader(ID3DBlob ** ppShaderBlob)
+{
+	return(CShader::CompileShaderFromFile(
+		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		"HSTerrain",
+		"hs_5_1",
+		ppShaderBlob));
+}
+
+D3D12_SHADER_BYTECODE CTerrainShader::CreateDomainShader(ID3DBlob ** ppShaderBlob)
+{
+	return(CShader::CompileShaderFromFile(
+		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		"DSTerrain",
+		"ds_5_1",
 		ppShaderBlob));
 }
 
@@ -99,7 +109,7 @@ D3D12_SHADER_BYTECODE CTerrainShader::CreatePixelShader(ID3DBlob **ppShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
 		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl", 
-		"PSDiffuseTextured", 
+		"PSTerrain", 
 		"ps_5_1",
 		ppShaderBlob));
 }
@@ -112,7 +122,7 @@ void CTerrainShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets)
 	m_nHeaps = 1;
 	CreateDescriptorHeaps();
 
-	CShader::CreateShader(pCreateMgr, nRenderTargets);
+	CShader::CreateShaderWithTess(pCreateMgr, nRenderTargets);
 }
 
 void CTerrainShader::CreateShaderVariables(CCreateMgr * pCreateMgr, int nBuffers)
@@ -132,20 +142,8 @@ void CTerrainShader::CreateShaderVariables(CCreateMgr * pCreateMgr, int nBuffers
 
 void CTerrainShader::BuildObjects(CCreateMgr * pCreateMgr, void * pContext)
 {
-	XMFLOAT3 xmf3Scale(14.0f, 0.7f, 14.0f);
-	XMFLOAT4 xmf4Color(0.6f, 0.6f, 0.6f, 0.0f);
+	m_pTerrain = new CHeightMapTerrain(pCreateMgr, _T("Resource/Terrain/HeightMap.raw"), TERRAIN_IMAGE_SCALE);
 
-#ifdef _WITH_TERRAIN_PARTITION
-	m_pTerrain = new CHeightMapTerrain(pCreateMgr, _T("Resource/Terrain/HeightMap.raw"),
-		TERRAIN_IMAGE_WIDTH, TERRAIN_IMAGE_HEIGHT,
-		TERRAIN_IMAGE_WIDTH / 10, TERRAIN_IMAGE_HEIGHT / 10,
-		TERRAIN_IMAGE_SCALE, XMFLOAT4(0.6f, 0.6f, 0.6f, 0.0f));
-#else
-	m_pTerrain = new CHeightMapTerrain(pCreateMgr, _T("Resource/Terrain/HeightMap.raw"),
-		TERRAIN_IMAGE_WIDTH, TERRAIN_IMAGE_HEIGHT,
-		TERRAIN_IMAGE_WIDTH, TERRAIN_IMAGE_HEIGHT,
-		TERRAIN_IMAGE_SCALE, XMFLOAT4(0.6f, 0.6f, 0.6f, 0.0f));
-#endif
 	UINT ncbElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
 
 	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, 1, 1);

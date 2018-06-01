@@ -12,7 +12,7 @@
 /// 목적: 플레이어 관리 및 렌더링 용도
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-05-22
+/// 최종 수정 날짜: 2018-06-01
 /// </summary>
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -192,9 +192,9 @@ bool CPlayerShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 D3D12_INPUT_LAYOUT_DESC CPlayerShader::CreateInputLayout()
 {
 	UINT nInputElementDescs = 6;
-	D3D12_INPUT_ELEMENT_DESC *pd3dInputElementDescs = new D3D12_INPUT_ELEMENT_DESC[nInputElementDescs];
+	D3D12_INPUT_ELEMENT_DESC *pInputElementDescs = new D3D12_INPUT_ELEMENT_DESC[nInputElementDescs];
 	UINT cnt = 0;
-	pd3dInputElementDescs[0] = {
+	pInputElementDescs[0] = {
 		"POSITION",
 		0,
 		DXGI_FORMAT_R32G32B32_FLOAT,
@@ -202,7 +202,7 @@ D3D12_INPUT_LAYOUT_DESC CPlayerShader::CreateInputLayout()
 		D3D12_APPEND_ALIGNED_ELEMENT,
 		D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
 		0 };
-	pd3dInputElementDescs[1] = {
+	pInputElementDescs[1] = {
 		"NORMAL",
 		0,
 		DXGI_FORMAT_R32G32B32_FLOAT,
@@ -210,7 +210,7 @@ D3D12_INPUT_LAYOUT_DESC CPlayerShader::CreateInputLayout()
 		D3D12_APPEND_ALIGNED_ELEMENT,
 		D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
 		0 };
-	pd3dInputElementDescs[2] = {
+	pInputElementDescs[2] = {
 		"TEXCOORD",
 		0,
 		DXGI_FORMAT_R32G32_FLOAT,
@@ -219,7 +219,7 @@ D3D12_INPUT_LAYOUT_DESC CPlayerShader::CreateInputLayout()
 		D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
 		0 };
 
-	pd3dInputElementDescs[3] = {
+	pInputElementDescs[3] = {
 		"WEIGHTS",
 		0,
 		DXGI_FORMAT_R32G32B32_FLOAT,
@@ -227,7 +227,7 @@ D3D12_INPUT_LAYOUT_DESC CPlayerShader::CreateInputLayout()
 		D3D12_APPEND_ALIGNED_ELEMENT,
 		D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
 		0 };
-	pd3dInputElementDescs[4] = {
+	pInputElementDescs[4] = {
 		"BONEINDICES",
 		0,
 		DXGI_FORMAT_R8G8B8A8_UINT,
@@ -236,7 +236,7 @@ D3D12_INPUT_LAYOUT_DESC CPlayerShader::CreateInputLayout()
 		D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
 		0 };
 
-	pd3dInputElementDescs[5] = {
+	pInputElementDescs[5] = {
 		"TANGENT",
 		0,
 		DXGI_FORMAT_R32G32B32_FLOAT,
@@ -245,7 +245,7 @@ D3D12_INPUT_LAYOUT_DESC CPlayerShader::CreateInputLayout()
 		D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
 		0 };
 	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc;
-	d3dInputLayoutDesc.pInputElementDescs = pd3dInputElementDescs;
+	d3dInputLayoutDesc.pInputElementDescs = pInputElementDescs;
 	d3dInputLayoutDesc.NumElements = nInputElementDescs;
 
 	return(d3dInputLayoutDesc);
