@@ -446,7 +446,7 @@ DS_TERRAIN_OUTPUT DSTerrain(PatchTess patchTess, float2 uv : SV_DomainLocation, 
     float2 uvResult = lerp(uv1, uv2, 1 - uv.x);
 
 	// Displacement Mapping
-    p.y += gtxtTextures.SampleLevel(wrapSampler, float3(uvResult, gnMix3Data), 0).r * 255;
+    p.y += gtxtTextures.SampleLevel(wrapSampler, float3(uvResult, gnMix3Data), 0).a * 255 * 2;
 
     output.position = p;
     output.uv = uvResult;
@@ -462,7 +462,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_OUTPUT input)
 
     output.normal = float4(normal, 1);
     output.color = gtxtTextures.Sample(wrapSampler, float3(input.uv, gnDiffuse)) + gtxtTextures.Sample(wrapSampler, float3(input.uv, gnSpecular));
-    output.roughMetalFresnel = float4(gMaterials.m_cRoughness, gMaterials.m_cMetalic, 0, 0);
+    output.roughMetalFresnel = float4(gtxtTextures.Sample(wrapSampler, float3(input.uv, gnMix3Data)).rgb, 0);
     output.albedo = gMaterials.m_cAlbedo;
     output.position = input.position;
     output.position.x /= TERRAIN_SIZE_WIDTH;
