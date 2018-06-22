@@ -15,6 +15,8 @@ public:	// 공개 함수
 	void Release();
 
 	void Render(CScene* pScene = NULL);
+	void RenderColor(CScene* pScene = NULL);
+	void RenderLight(CScene* pScene = NULL);
 
 	// Set Depth Stencil View
 	void SetDsvDescriptorHeap(ID3D12DescriptorHeap *pDsvDescriptorHeap);
@@ -56,7 +58,7 @@ private:	// 내부 함수
 	void SynchronizeResourceTransition(ID3D12Resource *pResource, D3D12_RESOURCE_STATES stateBefore, D3D12_RESOURCE_STATES stateAfter);
 
 private:	// 변수
-			// Swap Chain
+	// Swap Chain
 	IDXGISwapChain3 * m_pSwapChain{ NULL };
 	UINT m_swapChainBufferIndex{ 0 };
 
