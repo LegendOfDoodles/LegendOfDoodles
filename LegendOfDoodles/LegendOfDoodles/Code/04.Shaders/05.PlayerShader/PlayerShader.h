@@ -59,12 +59,7 @@ protected: // º¯¼ö
 
 	bool m_buildFinished{ false };
 
-#if USE_INSTANCING
-	CB_GAMEOBJECT_INFO *m_pMappedObjects{ NULL };
-	CMaterial						*m_pMaterial{ NULL };
-#else
 	UINT8 *m_pMappedObjects{ NULL };
-#endif
 	UINT8 *m_pMappedBoundingBoxes{ NULL };
 
 	CHeightMapTerrain * m_pTerrain{ NULL };

@@ -39,11 +39,6 @@ protected: // º¯¼ö
 	CBaseObject * *m_ppObjects{ NULL };
 	int m_nObjects = 0;
 
-#if USE_INSTANCING
-	CB_GAMEOBJECT_INFO *m_pMappedObjects{ NULL };
-	CMaterial						*m_pMaterial{ NULL };
-#else
 	UINT8 *m_pMappedObjects{ NULL };
-#endif
 };
 

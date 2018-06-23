@@ -45,16 +45,6 @@ void CBillboardShader::ReleaseUploadBuffers()
 
 void CBillboardShader::UpdateShaderVariables()
 {
-#if USE_INSTANCING
-	m_pCommandList->SetGraphicsRootShaderResourceView(2,
-		m_pInstanceBuffer->GetGPUVirtualAddress());
-
-	for (int i = 0; i < m_nObjects; i++)
-	{
-		XMStoreFloat4x4(&m_pMappedObjects[i].m_xmf4x4World,
-			XMMatrixTranspose(XMLoadFloat4x4(m_ppObjects[i]->GetWorldMatrix())));
-	}
-#else
 	static UINT elementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
 
 	for (int i = 0; i < m_nObjects; i++)
@@ -63,7 +53,6 @@ void CBillboardShader::UpdateShaderVariables()
 		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
 			XMMatrixTranspose(XMLoadFloat4x4(m_ppObjects[i]->GetWorldMatrix())));
 	}
-#endif
 }
 
 void CBillboardShader::AnimateObjects(float timeElapsed)
@@ -81,14 +70,10 @@ void CBillboardShader::Render(CCamera *pCamera)
 	if (m_ppMaterials) m_ppMaterials[0]->UpdateShaderVariables();
 #endif
 
-#if USE_INSTANCING
-	m_ppObjects[0]->Render(pCamera, m_nObjects);
-#else
 	for (int j = 0; j < m_nObjects; j++)
 	{
 		if (m_ppObjects[j]) m_ppObjects[j]->Render(pCamera);
 	}
-#endif
 }
 
 void CBillboardShader::OnProcessKeyUp(WPARAM wParam, LPARAM lParam, float timeElapsed)
@@ -134,20 +119,11 @@ D3D12_INPUT_LAYOUT_DESC CBillboardShader::CreateInputLayout()
 
 D3D12_SHADER_BYTECODE CBillboardShader::CreateVertexShader(ID3DBlob **ppShaderBlob)
 {
-	//./Code/04.Shaders/99.GraphicsShader/
-#if USE_INSTANCING
-	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
-		"VSTexturedLightingInstancing",
-		"vs_5_1",
-		ppShaderBlob));
-#else
 	return(CShader::CompileShaderFromFile(
 		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
 		"VSTextured",
 		"vs_5_1",
 		ppShaderBlob));
-#endif
 }
 
 D3D12_SHADER_BYTECODE CBillboardShader::CreatePixelShader(ID3DBlob **ppShaderBlob)
@@ -173,17 +149,6 @@ void CBillboardShader::CreateShaderVariables(CCreateMgr *pCreateMgr, int nBuffer
 {
 	HRESULT hResult;
 
-#if USE_INSTANCING
-	m_pInstanceBuffer = pCreateMgr->CreateBufferResource(
-		NULL,
-		sizeof(CB_GAMEOBJECT_INFO) * nBuffers,
-		D3D12_HEAP_TYPE_UPLOAD,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		NULL);
-
-	hResult = m_pInstanceBuffer->Map(0, NULL, (void **)&m_pMappedObjects);
-	assert(SUCCEEDED(hResult) && "m_pInstanceBuffer->Map Failed");
-#else
 	UINT elementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
 
 	m_pConstBuffer = pCreateMgr->CreateBufferResource(
@@ -195,9 +160,6 @@ void CBillboardShader::CreateShaderVariables(CCreateMgr *pCreateMgr, int nBuffer
 
 	hResult = m_pConstBuffer->Map(0, NULL, (void **)&m_pMappedObjects);
 	assert(SUCCEEDED(hResult) && "m_pConstBuffer->Map Failed");
-#endif
-
-
 }
 
 void CBillboardShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
@@ -209,18 +171,11 @@ void CBillboardShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
 	m_nObjects = (xObjects * 2 + 1) * (yObjects * 2 + 1) * (zObjects * 2 + 1);
 	m_ppObjects = new CBaseObject*[m_nObjects];
 
-#if USE_INSTANCING
-	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, 0, 2);
-	CreateShaderVariables(pCreateMgr);
-#else
-
 	UINT ncbElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
 
 	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, m_nObjects, 1);
 	CreateShaderVariables(pCreateMgr, m_nObjects);
 	CreateConstantBufferViews(pCreateMgr, m_nObjects, m_pConstBuffer, ncbElementBytes);
-
-#endif
 
 #if USE_BATCH_MATERIAL
 	m_nMaterials = 1;
@@ -242,26 +197,18 @@ void CBillboardShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
 		{
 			for (int x = -xObjects; x <= xObjects; x++)
 			{
-
 				pBillboardObject = new CBillboardObject(pCreateMgr);
-#if !USE_INSTANCING
-#endif
+
 #if !USE_BATCH_MATERIAL
 				pRotatingObject->SetMaterial(pCubeMaterial);
 #endif
 				pBillboardObject->SetPosition(x * 30 + 200, y * 100 + 100, z * 100 + 1000);
 				pBillboardObject->SetCamera(pCamera);
-#if !USE_INSTANCING
 				pBillboardObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * i));
-#endif
 				m_ppObjects[i++] = pBillboardObject;
 			}
 		}
 	}
-
-#if USE_INSTANCING
-	m_ppObjects[0]->SetMesh(0, pCubeMesh);
-#endif
 }
 
 void CBillboardShader::ReleaseObjects()

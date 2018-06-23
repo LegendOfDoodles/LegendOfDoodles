@@ -83,13 +83,7 @@ protected: // º¯¼ö
 	int *m_nBlues{ NULL };
 	int *m_nReds{ NULL };
 
-#if USE_INSTANCING
-	CB_GAMEOBJECT_INFO *m_pMappedObjects{ NULL };
-	CMaterial		   *m_pMaterial{ NULL };
-#else
 	UINT8 *m_pMappedObjects{ NULL };
-#endif
 
 	CCreateMgr* m_pCreateMgr{ NULL };
-
 };

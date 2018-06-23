@@ -47,16 +47,6 @@ void CPlayerHPGaugeShader::ReleaseUploadBuffers()
 
 void CPlayerHPGaugeShader::UpdateShaderVariables()
 {
-#if USE_INSTANCING
-	m_pCommandList->SetGraphicsRootShaderResourceView(2,
-		m_pInstanceBuffer->GetGPUVirtualAddress());
-
-	for (int i = 0; i < m_nObjects; i++)
-	{
-		XMStoreFloat4x4(&m_pMappedObjects[i].m_xmf4x4World,
-			XMMatrixTranspose(XMLoadFloat4x4(m_ppObjects[i]->GetWorldMatrix())));
-	}
-#else
 	static UINT elementBytes = ((sizeof(CB_GAUGE_INFO) + 255) & ~255);
 
 	for (int i = 0; i < m_nObjects; i++)
@@ -66,7 +56,6 @@ void CPlayerHPGaugeShader::UpdateShaderVariables()
 		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
 			XMMatrixTranspose(XMLoadFloat4x4(m_ppObjects[i]->GetWorldMatrix())));
 	}
-#endif
 }
 
 void CPlayerHPGaugeShader::AnimateObjects(float timeElapsed)
@@ -85,14 +74,10 @@ void CPlayerHPGaugeShader::Render(CCamera * pCamera)
 	if (m_ppMaterials) m_ppMaterials[0]->UpdateShaderVariables();
 #endif
 
-#if USE_INSTANCING
-	m_ppObjects[0]->Render(pCamera, m_nObjects);
-#else
 	for (int j = 0; j < m_nObjects; j++)
 	{
 		if (m_ppObjects[j]) m_ppObjects[j]->Render(pCamera);
 	}
-#endif
 }
 
 void CPlayerHPGaugeShader::GetCamera(CCamera * pCamera)

@@ -49,16 +49,6 @@ void CNexusTowerShader::ReleaseUploadBuffers()
 
 void CNexusTowerShader::UpdateShaderVariables()
 {
-#if USE_INSTANCING
-	m_pCommandList->SetGraphicsRootShaderResourceView(2,
-		m_pInstanceBuffer->GetGPUVirtualAddress());
-
-	for (int i = 0; i < m_nObjects; i++)
-	{
-		XMStoreFloat4x4(&m_pMappedObjects[i].m_xmf4x4World,
-			XMMatrixTranspose(XMLoadFloat4x4(m_ppObjects[i]->GetWorldMatrix())));
-	}
-#else
 	static UINT elementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
 
 	for (int i = 0; i < m_nObjects; i++)
@@ -67,7 +57,6 @@ void CNexusTowerShader::UpdateShaderVariables()
 		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
 			XMMatrixTranspose(XMLoadFloat4x4(m_ppObjects[i]->GetWorldMatrix())));
 	}
-#endif
 }
 
 void CNexusTowerShader::UpdateBoundingBoxShaderVariables()
@@ -194,11 +183,7 @@ D3D12_INPUT_LAYOUT_DESC CNexusTowerShader::CreateInputLayout()
 
 D3D12_SHADER_BYTECODE CNexusTowerShader::CreateVertexShader(ID3DBlob **ppShaderBlob)
 {
-#if USE_INSTANCING
-	return(CShader::CompileShaderFromFile(L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl", "VSTexturedLightingInstancing", "vs_5_1", ppShaderBlob));
-#else
 	return(CShader::CompileShaderFromFile(L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl", "VSTexturedLighting", "vs_5_1", ppShaderBlob));
-#endif
 }
 
 D3D12_SHADER_BYTECODE CNexusTowerShader::CreatePixelShader(ID3DBlob **ppShaderBlob)
@@ -227,17 +212,6 @@ void CNexusTowerShader::CreateShaderVariables(CCreateMgr *pCreateMgr, int nBuffe
 {
 	HRESULT hResult;
 
-#if USE_INSTANCING
-	m_pInstanceBuffer = pCreateMgr->CreateBufferResource(
-		NULL,
-		sizeof(CB_GAMEOBJECT_INFO) * nBuffers,
-		D3D12_HEAP_TYPE_UPLOAD,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		NULL);
-
-	hResult = m_pInstanceBuffer->Map(0, NULL, (void **)&m_pMappedObjects);
-	assert(SUCCEEDED(hResult) && "m_pInstanceBuffer->Map Failed");
-#else
 	UINT elementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
 
 	m_pConstBuffer = pCreateMgr->CreateBufferResource(
@@ -249,7 +223,6 @@ void CNexusTowerShader::CreateShaderVariables(CCreateMgr *pCreateMgr, int nBuffe
 
 	hResult = m_pConstBuffer->Map(0, NULL, (void **)&m_pMappedObjects);
 	assert(SUCCEEDED(hResult) && "m_pConstBuffer->Map Failed");
-#endif
 
 	UINT boundingBoxElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
 
