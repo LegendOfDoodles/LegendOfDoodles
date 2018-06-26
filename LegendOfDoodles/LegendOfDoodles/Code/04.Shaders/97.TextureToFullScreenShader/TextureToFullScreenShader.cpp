@@ -6,7 +6,7 @@
 /// 목적: 디퍼드 쉐이딩 적용하기 위한 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-24
+/// 최종 수정 날짜: 2018-06-26
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -156,12 +156,12 @@ D3D12_INPUT_LAYOUT_DESC CTextureToFullScreenShader::CreateInputLayout()
 
 D3D12_SHADER_BYTECODE CTextureToFullScreenShader::CreateVertexShader(ID3DBlob ** ppShaderBlob)
 {
-	return(CShader::CompileShaderFromFile(L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl", "VSTextureToFullScreen", "vs_5_1", ppShaderBlob));
+	return(CShader::CompileShaderFromFile(L"./code/04.Shaders/99.GraphicsShader/PostProcessShaders.hlsl", "VSTextureToFullScreen", "vs_5_1", ppShaderBlob));
 }
 
 D3D12_SHADER_BYTECODE CTextureToFullScreenShader::CreatePixelShader(ID3DBlob ** ppShaderBlob)
 {
-	return(CShader::CompileShaderFromFile(L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl", "PSTextureToFullScreen", "ps_5_1", ppShaderBlob));
+	return(CShader::CompileShaderFromFile(L"./code/04.Shaders/99.GraphicsShader/PostProcessShaders.hlsl", "PSTextureToFullScreen", "ps_5_1", ppShaderBlob));
 }
 
 void CTextureToFullScreenShader::ReleaseObjects()
