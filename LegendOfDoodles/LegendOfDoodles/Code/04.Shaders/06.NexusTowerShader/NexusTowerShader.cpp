@@ -11,7 +11,7 @@
 /// 목적: 스테틱 오브젝트 그리기 용도의 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-06-01
+/// 최종 수정 날짜: 2018-06-27
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -28,6 +28,12 @@ CNexusTowerShader::~CNexusTowerShader()
 
 ////////////////////////////////////////////////////////////////////////
 // 공개 함수
+void CNexusTowerShader::Initialize(CCreateMgr *pCreateMgr, void *pContext)
+{
+	CreateShader(pCreateMgr, RENDER_TARGET_BUFFER_CNT, true);
+	BuildObjects(pCreateMgr, pContext);
+}
+
 void CNexusTowerShader::ReleaseUploadBuffers()
 {
 	if (m_ppObjects)
@@ -191,7 +197,7 @@ D3D12_SHADER_BYTECODE CNexusTowerShader::CreatePixelShader(ID3DBlob **ppShaderBl
 	return(CShader::CompileShaderFromFile(L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl", "PSTexturedLightingEmissive", "ps_5_1", ppShaderBlob));
 }
 
-void CNexusTowerShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets)
+void CNexusTowerShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets, bool isRenderBB)
 {
 	m_nPipelineStates = 2;
 	m_ppPipelineStates = new ID3D12PipelineState*[m_nPipelineStates];
@@ -204,8 +210,7 @@ void CNexusTowerShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets
 	m_nHeaps = 5;
 	CreateDescriptorHeaps();
 
-	CShader::CreateShader(pCreateMgr, nRenderTargets);
-	CShader::CreateBoundingBoxShader(pCreateMgr, nRenderTargets);
+	CShader::CreateShader(pCreateMgr, nRenderTargets, isRenderBB);
 }
 
 void CNexusTowerShader::CreateShaderVariables(CCreateMgr *pCreateMgr, int nBuffers)

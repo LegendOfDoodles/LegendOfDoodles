@@ -9,7 +9,7 @@
 /// 목적: 미니맵 Icon 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  이용선, 김나단
-/// 최종 수정 날짜: 2018-06-01
+/// 최종 수정 날짜: 2018-06-27
 /// </summary>
 
 CMinimapIconShader::CMinimapIconShader(CCreateMgr *pCreateMgr)
@@ -251,7 +251,7 @@ D3D12_SHADER_BYTECODE CMinimapIconShader::CreatePixelShader(ID3DBlob ** ppShader
 		ppShaderBlob));
 }
 
-void CMinimapIconShader::CreateShader(CCreateMgr * pCreateMgr, UINT nRenderTargets)
+void CMinimapIconShader::CreateShader(CCreateMgr * pCreateMgr, UINT nRenderTargets, bool isRenderBB)
 {
 	m_nPipelineStates = 1;
 	m_ppPipelineStates = new ID3D12PipelineState*[m_nPipelineStates];
@@ -259,7 +259,7 @@ void CMinimapIconShader::CreateShader(CCreateMgr * pCreateMgr, UINT nRenderTarge
 	m_nHeaps = 7;
 	CreateDescriptorHeaps();
 
-	CShader::CreateShader(pCreateMgr, nRenderTargets);
+	CShader::CreateShader(pCreateMgr, nRenderTargets, isRenderBB);
 }
 
 void CMinimapIconShader::CreateShaderVariables(CCreateMgr * pCreateMgr, int nBuffers)

@@ -12,7 +12,7 @@
 /// 목적: 플레이어 관리 및 렌더링 용도
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-06-01
+/// 최종 수정 날짜: 2018-06-27
 /// </summary>
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -27,6 +27,12 @@ CPlayerShader::~CPlayerShader()
 
 ////////////////////////////////////////////////////////////////////////
 // 공개 함수
+void CPlayerShader::Initialize(CCreateMgr *pCreateMgr, void *pContext)
+{
+	CreateShader(pCreateMgr, RENDER_TARGET_BUFFER_CNT, true);
+	BuildObjects(pCreateMgr, pContext);
+}
+
 void CPlayerShader::ReleaseUploadBuffers()
 {
 	if (m_ppObjects)
@@ -257,7 +263,7 @@ D3D12_SHADER_BYTECODE CPlayerShader::CreatePixelShader(ID3DBlob **ppShaderBlob)
 	return(CShader::CompileShaderFromFile(L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl", "PSBone", "ps_5_1", ppShaderBlob));
 }
 
-void CPlayerShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets)
+void CPlayerShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets, bool isRenderBB)
 {
 	m_nPipelineStates = 2;
 	m_ppPipelineStates = new ID3D12PipelineState*[m_nPipelineStates];
@@ -270,8 +276,7 @@ void CPlayerShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets)
 	m_nHeaps = 2;
 	CreateDescriptorHeaps();
 
-	CShader::CreateShader(pCreateMgr, nRenderTargets);
-	CShader::CreateBoundingBoxShader(pCreateMgr, nRenderTargets);
+	CShader::CreateShader(pCreateMgr, nRenderTargets, isRenderBB);
 }
 
 void CPlayerShader::CreateShaderVariables(CCreateMgr *pCreateMgr, int nBuffers)

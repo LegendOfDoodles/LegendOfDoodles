@@ -8,7 +8,7 @@
 /// 목적: 기본 쉐이터 코드, 인터페이스 용
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-06-01
+/// 최종 수정 날짜: 2018-06-27
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -399,6 +399,8 @@ D3D12_SHADER_BYTECODE CShader::CreateBoundingBoxPixelShader(ID3DBlob ** ppShader
 
 void CShader::CreateShaderWithTess(CCreateMgr *pCreateMgr, UINT nRenderTargets)
 {
+	int index{ 0 };
+	HRESULT hResult;
 	ComPtr<ID3DBlob> pVertexShaderBlob{ NULL }, pHullShaderBlob{ NULL }, pDomainShaderBlob{ NULL }, pPixelShaderBlob{ NULL };
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineStateDesc;
@@ -424,17 +426,17 @@ void CShader::CreateShaderWithTess(CCreateMgr *pCreateMgr, UINT nRenderTargets)
 	pipelineStateDesc.SampleDesc.Count = 1;
 	pipelineStateDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
 
-	HRESULT hResult = pCreateMgr->GetDevice()->CreateGraphicsPipelineState(
+	hResult = pCreateMgr->GetDevice()->CreateGraphicsPipelineState(
 		&pipelineStateDesc,
-		IID_PPV_ARGS(&m_ppPipelineStates[0]));
+		IID_PPV_ARGS(&m_ppPipelineStates[index++]));
 	assert(SUCCEEDED(hResult) && "Device->CreateGraphicsPipelineState Failed");
 	//ExptProcess::ThrowIfFailed(hResult);
-
-	Safe_Delete_Array(pipelineStateDesc.InputLayout.pInputElementDescs);
 }
 
-void CShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets)
+void CShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets, bool isRenderBB)
 {
+	int index{ 0 };
+	HRESULT hResult;
 	ComPtr<ID3DBlob> pVertexShaderBlob{ NULL }, pPixelShaderBlob{ NULL };
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineStateDesc;
@@ -458,17 +460,31 @@ void CShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets)
 	pipelineStateDesc.SampleDesc.Count = 1;
 	pipelineStateDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
 
-	HRESULT hResult = pCreateMgr->GetDevice()->CreateGraphicsPipelineState(
+	hResult = pCreateMgr->GetDevice()->CreateGraphicsPipelineState(
 		&pipelineStateDesc,
-		IID_PPV_ARGS(&m_ppPipelineStates[0]));
+		IID_PPV_ARGS(&m_ppPipelineStates[index++]));
 	assert(SUCCEEDED(hResult) && "Device->CreateGraphicsPipelineState Failed");
 	//ExptProcess::ThrowIfFailed(hResult);
 
-	Safe_Delete_Array(pipelineStateDesc.InputLayout.pInputElementDescs);
+	if (isRenderBB)
+	{
+		D3D12_GRAPHICS_PIPELINE_STATE_DESC BBPipelineStateDesc{ pipelineStateDesc };
+		BBPipelineStateDesc.VS = CreateBoundingBoxVertexShader(&pVertexShaderBlob);
+		BBPipelineStateDesc.PS = CreateBoundingBoxPixelShader(&pPixelShaderBlob);
+		BBPipelineStateDesc.RasterizerState = CreateBoundingBoxRasterizerState();
+		BBPipelineStateDesc.InputLayout = CreateBoundingBoxInputLayout();
+		hResult = pCreateMgr->GetDevice()->CreateGraphicsPipelineState(
+			&BBPipelineStateDesc,
+			IID_PPV_ARGS(&m_ppPipelineStates[index++]));
+		assert(SUCCEEDED(hResult) && "Device->CreateGraphicsPipelineState Failed");
+		//ExptProcess::ThrowIfFailed(hResult);
+	}
 }
 
 void CShader::CreateShader(CCreateMgr * pCreateMgr, ID3D12RootSignature * pGraphicsRootSignature, UINT nRenderTargets)
 {
+	int index{ 0 };
+	HRESULT hResult;
 	ComPtr<ID3DBlob> pVertexShaderBlob{ NULL }, pPixelShaderBlob{ NULL };
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineStateDesc;
@@ -492,46 +508,11 @@ void CShader::CreateShader(CCreateMgr * pCreateMgr, ID3D12RootSignature * pGraph
 	pipelineStateDesc.SampleDesc.Count = 1;
 	pipelineStateDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
 
-	HRESULT hResult = pCreateMgr->GetDevice()->CreateGraphicsPipelineState(
+	hResult = pCreateMgr->GetDevice()->CreateGraphicsPipelineState(
 		&pipelineStateDesc,
-		IID_PPV_ARGS(&m_ppPipelineStates[0]));
+		IID_PPV_ARGS(&m_ppPipelineStates[index++]));
 	assert(SUCCEEDED(hResult) && "Device->CreateGraphicsPipelineState Failed");
 	//ExptProcess::ThrowIfFailed(hResult);
-
-	Safe_Delete_Array(pipelineStateDesc.InputLayout.pInputElementDescs);
-}
-
-void CShader::CreateBoundingBoxShader(CCreateMgr * pCreateMgr, UINT nRenderTargets)
-{
-	ComPtr<ID3DBlob> pVertexShaderBlob{ NULL }, pPixelShaderBlob{ NULL };
-
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineStateDesc;
-	::ZeroMemory(&pipelineStateDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
-
-	pipelineStateDesc.pRootSignature = pCreateMgr->GetGraphicsRootSignature();
-	pipelineStateDesc.VS = CreateBoundingBoxVertexShader(&pVertexShaderBlob);
-	pipelineStateDesc.PS = CreateBoundingBoxPixelShader(&pPixelShaderBlob);
-	pipelineStateDesc.RasterizerState = CreateBoundingBoxRasterizerState();
-	pipelineStateDesc.BlendState = CreateBlendState();
-	pipelineStateDesc.DepthStencilState = CreateDepthStencilState();
-	pipelineStateDesc.InputLayout = CreateBoundingBoxInputLayout();
-	pipelineStateDesc.SampleMask = UINT_MAX;
-	pipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-	pipelineStateDesc.NumRenderTargets = nRenderTargets;
-	for (UINT i = 0; i < nRenderTargets; i++)
-	{
-		pipelineStateDesc.RTVFormats[i] = DXGI_FORMAT_R8G8B8A8_UNORM;
-	}
-	pipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	pipelineStateDesc.SampleDesc.Count = 1;
-	pipelineStateDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
-
-	HRESULT hResult = pCreateMgr->GetDevice()->CreateGraphicsPipelineState(
-		&pipelineStateDesc,
-		IID_PPV_ARGS(&m_ppPipelineStates[1]));
-	assert(SUCCEEDED(hResult) && "Device->CreateGraphicsPipelineState Failed");
-
-	Safe_Delete_Array(pipelineStateDesc.InputLayout.pInputElementDescs);
 }
 
 void CShader::CreateShaderVariables(CCreateMgr *pCreateMgr, int nBuffers)

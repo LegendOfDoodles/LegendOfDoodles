@@ -10,7 +10,7 @@
 /// 목적: 움직이는 오브젝트 관리 및 그리기 용도
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-06-01
+/// 최종 수정 날짜: 2018-06-27
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -27,6 +27,12 @@ CAniShader::~CAniShader()
 
 ////////////////////////////////////////////////////////////////////////
 // 공개 함수
+void CAniShader::Initialize(CCreateMgr *pCreateMgr, void *pContext)
+{
+	CreateShader(pCreateMgr, RENDER_TARGET_BUFFER_CNT, true);
+	BuildObjects(pCreateMgr, pContext);
+}
+
 void CAniShader::ReleaseUploadBuffers()
 {
 	if (m_ppBlues)
@@ -275,7 +281,7 @@ D3D12_SHADER_BYTECODE CAniShader::CreatePixelShader(ID3DBlob **ppShaderBlob)
 	return(CShader::CompileShaderFromFile(L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl", "PSBone", "ps_5_1", ppShaderBlob));
 }
 
-void CAniShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets)
+void CAniShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets, bool isRenderBB)
 {
 	m_nPipelineStates = 2;
 	m_ppPipelineStates = new ID3D12PipelineState*[m_nPipelineStates];
@@ -288,8 +294,7 @@ void CAniShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets)
 	m_nHeaps = 3;
 	CreateDescriptorHeaps();
 
-	CShader::CreateShader(pCreateMgr, nRenderTargets);
-	CShader::CreateBoundingBoxShader(pCreateMgr, nRenderTargets);
+	CShader::CreateShader(pCreateMgr, nRenderTargets, isRenderBB);
 }
 
 void CAniShader::CreateShaderVariables(CCreateMgr *pCreateMgr, int nBuffers)

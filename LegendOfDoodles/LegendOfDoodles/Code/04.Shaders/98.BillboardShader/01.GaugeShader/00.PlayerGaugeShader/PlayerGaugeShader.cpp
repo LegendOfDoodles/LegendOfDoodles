@@ -9,7 +9,7 @@
 /// 목적: UI HP 테스트 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  이용선, 김나단
-/// 최종 수정 날짜: 2018-06-01
+/// 최종 수정 날짜: 2018-06-27
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -171,7 +171,7 @@ D3D12_SHADER_BYTECODE CPlayerHPGaugeShader::CreatePixelShader(ID3DBlob ** ppShad
 		ppShaderBlob));
 }
 
-void CPlayerHPGaugeShader::CreateShader(CCreateMgr * pCreateMgr, UINT nRenderTargets)
+void CPlayerHPGaugeShader::CreateShader(CCreateMgr * pCreateMgr, UINT nRenderTargets, bool isRenderBB)
 {
 	m_nPipelineStates = 1;
 	m_ppPipelineStates = new ID3D12PipelineState*[m_nPipelineStates];
@@ -179,7 +179,7 @@ void CPlayerHPGaugeShader::CreateShader(CCreateMgr * pCreateMgr, UINT nRenderTar
 	m_nHeaps = 1;
 	CreateDescriptorHeaps();
 
-	CShader::CreateShader(pCreateMgr, nRenderTargets);
+	CShader::CreateShader(pCreateMgr, nRenderTargets, isRenderBB);
 }
 
 void CPlayerHPGaugeShader::CreateShaderVariables(CCreateMgr * pCreateMgr, int nBuffers)

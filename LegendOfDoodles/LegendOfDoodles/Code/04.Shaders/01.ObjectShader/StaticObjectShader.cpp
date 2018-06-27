@@ -10,7 +10,7 @@
 /// 목적: 스테틱 오브젝트 그리기 용도의 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-06-01
+/// 최종 수정 날짜: 2018-06-27
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -26,6 +26,12 @@ CStaticObjectShader::~CStaticObjectShader()
 
 ////////////////////////////////////////////////////////////////////////
 // 공개 함수
+void CStaticObjectShader::Initialize(CCreateMgr *pCreateMgr, void *pContext)
+{
+	CreateShader(pCreateMgr, RENDER_TARGET_BUFFER_CNT, true);
+	BuildObjects(pCreateMgr, pContext);
+
+}
 void CStaticObjectShader::ReleaseUploadBuffers()
 {
 	if (m_ppObjects)
@@ -175,7 +181,7 @@ D3D12_SHADER_BYTECODE CStaticObjectShader::CreatePixelShader(ID3DBlob **ppShader
 	return(CShader::CompileShaderFromFile(L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl", "PSTexturedLightingDetail", "ps_5_1", ppShaderBlob));
 }
 
-void CStaticObjectShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets)
+void CStaticObjectShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets, bool isRenderBB)
 {
 	m_nPipelineStates = 2;
 	m_ppPipelineStates = new ID3D12PipelineState*[m_nPipelineStates];
@@ -188,8 +194,7 @@ void CStaticObjectShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTarge
 	m_nHeaps = 18;
 	CreateDescriptorHeaps();
 
-	CShader::CreateShader(pCreateMgr, nRenderTargets);
-	CShader::CreateBoundingBoxShader(pCreateMgr, nRenderTargets);
+	CShader::CreateShader(pCreateMgr, nRenderTargets, isRenderBB);
 }
 
 void CStaticObjectShader::CreateShaderVariables(CCreateMgr *pCreateMgr, int nBuffers)

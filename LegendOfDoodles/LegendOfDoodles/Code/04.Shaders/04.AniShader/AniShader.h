@@ -13,6 +13,8 @@ public: // 생성자, 소멸자
 	virtual ~CAniShader();
 
 public: // 공개 함수
+	virtual void Initialize(CCreateMgr *pCreateMgr, void *pContext = NULL);
+
 	virtual void ReleaseUploadBuffers();
 
 	virtual void UpdateShaderVariables();
@@ -36,7 +38,7 @@ protected: // 내부 함수
 	virtual D3D12_SHADER_BYTECODE CreateVertexShader(ID3DBlob **ppShaderBlob);
 	virtual D3D12_SHADER_BYTECODE CreatePixelShader(ID3DBlob **ppShaderBlob);
 
-	virtual void CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets = 1);
+	virtual void CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets = 1, bool isRenderBB = false);
 	virtual void CreateShaderVariables(CCreateMgr *pCreateMgr, int nBuffers = 1);
 
 	virtual void BuildObjects(CCreateMgr *pCreateMgr, void *pContext = NULL);

@@ -71,10 +71,9 @@ protected: // 내부 함수
 	D3D12_SHADER_BYTECODE CreateBoundingBoxPixelShader(ID3DBlob **ppShaderBlob);
 
 	virtual void CreateShaderWithTess(CCreateMgr *pCreateMgr, UINT nRenderTargets = 1);
-	virtual void CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets = 1);
+	virtual void CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets = 1, bool isRenderBB = false);
 	virtual void CreateShader(CCreateMgr *pCreateMgr, ID3D12RootSignature *pGraphicsRootSignature, UINT nRenderTargets = 1);
 
-	void CreateBoundingBoxShader(CCreateMgr *pCreateMgr, UINT nRenderTargets = 1);
 	virtual void CreateShaderVariables(CCreateMgr *pCreateMgr, int nBuffers = 1);
 
 	virtual void BuildObjects(CCreateMgr *pCreateMgr, void *pContext = NULL);

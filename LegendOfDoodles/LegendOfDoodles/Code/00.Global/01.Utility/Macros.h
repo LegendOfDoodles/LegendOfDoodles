@@ -4,7 +4,7 @@
 /// 목적: 메크로 연산을 모아 보기쉽고 처리하기 쉽게 한다.
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-06-10
+/// 최종 수정 날짜: 2018-06-27
 /// </summary>
 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
@@ -31,6 +31,8 @@
 
 #define TERRAIN_SIZE_WIDTH 10000.0f
 #define TERRAIN_SIZE_HEIGHT 5000.0f
+#define TERRAIN_SIZE_DIAGONAL sqrt((TERRAIN_SIZE_WIDTH * TERRAIN_SIZE_WIDTH) + (TERRAIN_SIZE_HEIGHT * TERRAIN_SIZE_HEIGHT))
+#define TERRAIN_SIZE_DIAGONAL_ADJ static_cast<int>(sqrt((TERRAIN_SIZE_WIDTH * TERRAIN_SIZE_WIDTH) + (TERRAIN_SIZE_HEIGHT * TERRAIN_SIZE_HEIGHT)) + 100)
 
 #define TERRAIN_IMAGE_WIDTH 1000.0f
 #define TERRAIN_IMAGE_HEIGHT 500.0f
