@@ -171,6 +171,9 @@
     <Filter Include="소스 파일\05.Objects\96.Billboard">
       <UniqueIdentifier>{55fe72be-b996-42b9-af24-96806570544b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\05.Objects\95.ShadowMap">
+      <UniqueIdentifier>{a18b857e-c6f7-4b3d-9a29-43a5a4bb9cd2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\00.Global\00.Standard\stdafx.h">
@@ -326,6 +329,9 @@
     <ClInclude Include="Code\05.Objects\96.Billboard\Billboard.h">
       <Filter>소스 파일\05.Objects\96.Billboard</Filter>
     </ClInclude>
+    <ClInclude Include="Code\05.Objects\95.ShadowMap\ShadowMap.h">
+      <Filter>소스 파일\05.Objects\95.ShadowMap</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\00.Global\00.Standard\stdafx.cpp">
@@ -460,6 +466,9 @@
     <ClCompile Include="Code\05.Objects\96.Billboard\Billboard.cpp">
       <Filter>소스 파일\05.Objects\96.Billboard</Filter>
     </ClCompile>
+    <ClCompile Include="Code\05.Objects\95.ShadowMap\ShadowMap.cpp">
+      <Filter>소스 파일\05.Objects\95.ShadowMap</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="LegendOfDoodles.ico">
@@ -476,15 +485,11 @@
     <CustomBuild Include="Code\04.Shaders\99.GraphicsShader\Shaders.hlsl">
       <Filter>소스 파일\04.Shaders\99.GraphicsShader</Filter>
     </CustomBuild>
+    <CustomBuild Include="Code\04.Shaders\99.GraphicsShader\PostProcessShaders.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource\LegendOfDoodles.rc">
       <Filter>리소스 파일</Filter>
     </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Code\04.Shaders\99.GraphicsShader\PostProcessShaders.hlsl">
-      <Filter>소스 파일\04.Shaders\99.GraphicsShader</Filter>
-    </FxCompile>
   </ItemGroup>
 </Project>

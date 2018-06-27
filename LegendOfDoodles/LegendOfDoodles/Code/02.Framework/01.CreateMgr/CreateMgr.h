@@ -1,6 +1,7 @@
 #pragma once
 #include "02.Framework/02.RenderMgr/RenderMgr.h"
 #include "04.Shaders/97.TextureToFullScreenShader/TextureToFullScreenShader.h"
+#include "05.Objects/95.ShadowMap/ShadowMap.h"
 
 class CCreateMgr
 {
@@ -116,4 +117,7 @@ private:	 // º¯¼ö
 
 	// Render Manager
 	CRenderMgr m_renderMgr;
+
+	// Shadow Map
+	CShadowMap *m_pShadowMap{ NULL };
 };

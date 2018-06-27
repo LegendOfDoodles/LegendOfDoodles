@@ -7,7 +7,7 @@
 /// 목적: 생성 관련 함수를 모아 두어 헷갈리는 일 없이 생성 가능하도록 함
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-06-01
+/// 최종 수정 날짜: 2018-06-28
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -91,6 +91,9 @@ void CCreateMgr::Release()
 
 	// Render Manager
 	m_renderMgr.Release();
+
+	// Shadow Map
+	Safe_Delete(m_pShadowMap);
 }
 
 void CCreateMgr::Resize(int width, int height)
@@ -597,13 +600,16 @@ void CCreateMgr::CreateRtvAndDsvDescriptorHeaps()
 	m_renderMgr.SetRtvDescriptorIncrementSize(m_nRtvDescriptorIncrementSize);
 
 	// Create Depth Stencil View Descriptor Heap
-	descriptorHeapDesc.NumDescriptors = 1;
+	descriptorHeapDesc.NumDescriptors = 2;
 	descriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
 	hResult = m_pDevice->CreateDescriptorHeap(&descriptorHeapDesc,
 		IID_PPV_ARGS(&m_pDsvDescriptorHeap));
 	assert(SUCCEEDED(hResult) && "CreateDescriptorHeap Failed");
 
 	m_renderMgr.SetDsvDescriptorHeap(m_pDsvDescriptorHeap);
+
+	// Create Shadow Map
+	m_pShadowMap = new CShadowMap(this, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 }
 
 void CCreateMgr::CreateSwapChainRenderTargetViews()

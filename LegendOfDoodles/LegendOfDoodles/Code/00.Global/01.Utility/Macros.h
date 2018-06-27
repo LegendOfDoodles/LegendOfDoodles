@@ -4,7 +4,7 @@
 /// 목적: 메크로 연산을 모아 보기쉽고 처리하기 쉽게 한다.
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-06-27
+/// 최종 수정 날짜: 2018-06-28
 /// </summary>
 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
@@ -28,6 +28,8 @@
 #define POINT_LIGHT				1
 #define SPOT_LIGHT				2
 #define DIRECTIONAL_LIGHT		3
+
+#define SHADOW_MAP_SIZE 2048
 
 #define TERRAIN_SIZE_WIDTH 10000.0f
 #define TERRAIN_SIZE_HEIGHT 5000.0f
