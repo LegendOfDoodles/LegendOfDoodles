@@ -6,7 +6,7 @@
 /// 목적: 디퍼드 쉐이딩 적용하기 위한 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-06-26
+/// 최종 수정 날짜: 2018-06-29
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -27,11 +27,11 @@ CTextureToFullScreenShader::~CTextureToFullScreenShader()
 void CTextureToFullScreenShader::CreateGraphicsRootSignature(CCreateMgr *pCreateMgr)
 {
 	HRESULT hResult;
-	D3D12_DESCRIPTOR_RANGE pDescriptorRanges[3];
+	D3D12_DESCRIPTOR_RANGE pDescriptorRanges[4];
 
 	pDescriptorRanges[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pDescriptorRanges[0].NumDescriptors = RENDER_TARGET_BUFFER_CNT;
-	pDescriptorRanges[0].BaseShaderRegister = 3; //Texture
+	pDescriptorRanges[0].BaseShaderRegister = 3; //Textures By Render Target
 	pDescriptorRanges[0].RegisterSpace = 0;
 	pDescriptorRanges[0].OffsetInDescriptorsFromTableStart = 0;
 
@@ -47,10 +47,16 @@ void CTextureToFullScreenShader::CreateGraphicsRootSignature(CCreateMgr *pCreate
 	pDescriptorRanges[2].RegisterSpace = 0;
 	pDescriptorRanges[2].OffsetInDescriptorsFromTableStart = 0;
 
-	D3D12_ROOT_PARAMETER pRootParameters[5];
+	pDescriptorRanges[3].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	pDescriptorRanges[3].NumDescriptors = 1;
+	pDescriptorRanges[3].BaseShaderRegister = 0; //Textures
+	pDescriptorRanges[3].RegisterSpace = 0;
+	pDescriptorRanges[3].OffsetInDescriptorsFromTableStart = 0;
+
+	D3D12_ROOT_PARAMETER pRootParameters[6];
 	pRootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	pRootParameters[0].DescriptorTable.NumDescriptorRanges = 1;
-	pRootParameters[0].DescriptorTable.pDescriptorRanges = &pDescriptorRanges[0]; //Texture
+	pRootParameters[0].DescriptorTable.pDescriptorRanges = &pDescriptorRanges[0]; //Textures By Render Target
 	pRootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
 	pRootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
@@ -72,6 +78,11 @@ void CTextureToFullScreenShader::CreateGraphicsRootSignature(CCreateMgr *pCreate
 	pRootParameters[4].DescriptorTable.NumDescriptorRanges = 1;
 	pRootParameters[4].DescriptorTable.pDescriptorRanges = &pDescriptorRanges[2]; //Textures
 	pRootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
+	pRootParameters[5].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	pRootParameters[5].DescriptorTable.NumDescriptorRanges = 1;
+	pRootParameters[5].DescriptorTable.pDescriptorRanges = &pDescriptorRanges[3]; //Texture
+	pRootParameters[5].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
 	D3D12_STATIC_SAMPLER_DESC samplerDesc[1];
 	::ZeroMemory(&samplerDesc, sizeof(D3D12_STATIC_SAMPLER_DESC));

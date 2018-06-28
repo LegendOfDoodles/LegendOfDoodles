@@ -7,7 +7,7 @@
 /// 목적: 생성 관련 함수를 모아 두어 헷갈리는 일 없이 생성 가능하도록 함
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-06-28
+/// 최종 수정 날짜: 2018-06-29
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -41,6 +41,7 @@ void CCreateMgr::Initialize(HINSTANCE hInstance, HWND hWnd)
 	CreateRtvAndDsvDescriptorHeaps();
 	CreateSwapChain();
 	CreateGraphicsRootSignature();
+	CreateShadowMapDescriptorHeap();
 
 	m_renderMgr.Initialize(m_nWndClientWidth, m_nWndClientHeight);
 }
@@ -66,7 +67,11 @@ void CCreateMgr::Release()
 
 	// Depth Stencil View
 	Safe_Release(m_pDepthStencilBuffer);
+	Safe_Release(m_pShadowDepthBuffer);
 	Safe_Release(m_pDsvDescriptorHeap);
+
+	// Shadow Map
+	Safe_Release(m_pShadowMapDescriptorHeap);
 
 	// Command Queue
 	Safe_Release(m_pCommandAllocator);
@@ -91,9 +96,6 @@ void CCreateMgr::Release()
 
 	// Render Manager
 	m_renderMgr.Release();
-
-	// Shadow Map
-	Safe_Delete(m_pShadowMap);
 }
 
 void CCreateMgr::Resize(int width, int height)
@@ -129,6 +131,7 @@ void CCreateMgr::OnResizeBackBuffers()
 		}
 	}
 	if (m_pDepthStencilBuffer) { m_pDepthStencilBuffer->Release(); }
+	if (m_pShadowDepthBuffer) { m_pShadowDepthBuffer->Release(); }
 
 	DXGI_SWAP_CHAIN_DESC swapChainDesc;
 	hResult = m_pSwapChain->GetDesc(&swapChainDesc);
@@ -492,6 +495,7 @@ void CCreateMgr::CreateDirect3dDevice()
 
 	// Save CbvSrvDescriptorIncrementSize
 	m_cbvSrvDescriptorIncrementSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	m_dsvDescriptorIncrementSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 
 	if (pAdapter) pAdapter->Release();
 }
@@ -606,10 +610,7 @@ void CCreateMgr::CreateRtvAndDsvDescriptorHeaps()
 		IID_PPV_ARGS(&m_pDsvDescriptorHeap));
 	assert(SUCCEEDED(hResult) && "CreateDescriptorHeap Failed");
 
-	m_renderMgr.SetDsvDescriptorHeap(m_pDsvDescriptorHeap);
-
-	// Create Shadow Map
-	m_pShadowMap = new CShadowMap(this, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
+	m_renderMgr.SetDsvDescriptorHeap(m_pDsvDescriptorHeap, m_dsvDescriptorIncrementSize);
 }
 
 void CCreateMgr::CreateSwapChainRenderTargetViews()
@@ -682,6 +683,29 @@ void CCreateMgr::CreateDepthStencilView()
 		m_pDepthStencilBuffer,
 		NULL,
 		dsvCPUDescriptorHandle);
+
+	// Create Depth Stencil Buffer For ShadowMap
+	CTexture *pTexture = new CTexture(1, RESOURCE_TEXTURE_2D, 0);
+	m_pShadowDepthBuffer = pTexture->CreateTexture(this,
+		SHADOW_MAP_SIZE, SHADOW_MAP_SIZE,
+		DXGI_FORMAT_R24G8_TYPELESS,
+		D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL,
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		&clearValue, 0);
+	m_pShadowDepthBuffer->AddRef();
+
+	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc;
+	dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
+	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	dsvDesc.Texture2D.MipSlice = 0;
+
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvShadowCPUDescriptorHandle;
+	dsvShadowCPUDescriptorHandle.ptr = dsvCPUDescriptorHandle.ptr + m_dsvDescriptorIncrementSize;
+	m_pDevice->CreateDepthStencilView(
+		m_pShadowDepthBuffer,
+		&dsvDesc,
+		dsvShadowCPUDescriptorHandle);
 }
 
 void CCreateMgr::CreateRenderTargetViews()
@@ -864,4 +888,30 @@ void CCreateMgr::CreateGraphicsRootSignature()
 	// ExptProcess::PrintErrorBlob(pErrorBlob);
 
 	m_renderMgr.SaveGraphicsRootSignature(m_pGraphicsRootSignature);
+}
+
+void CCreateMgr::CreateShadowMapDescriptorHeap()
+{
+	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc;
+	descriptorHeapDesc.NumDescriptors = 1;
+	descriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	descriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	descriptorHeapDesc.NodeMask = 0;
+	HRESULT hResult = m_pDevice->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&m_pShadowMapDescriptorHeap));
+	assert(SUCCEEDED(hResult) && "pCreateMgr->GetDevice()->CreateDescriptorHeap Failed");
+
+	m_shadowMapCPUDescriptorStartHandle = m_pShadowMapDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	m_shadowMapGPUDescriptorStartHandle = m_pShadowMapDescriptorHeap->GetGPUDescriptorHandleForHeapStart();
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+	srvDesc.Texture2D.MipLevels = 1;
+	srvDesc.Texture2D.ResourceMinLODClamp = 0.0f;
+	srvDesc.Texture2D.PlaneSlice = 0;
+	m_pDevice->CreateShaderResourceView(m_pShadowDepthBuffer, &srvDesc, m_shadowMapCPUDescriptorStartHandle);
+
+	m_renderMgr.SetShadowMapSrvHandle(m_shadowMapGPUDescriptorStartHandle);
 }

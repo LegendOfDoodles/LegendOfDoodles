@@ -1,7 +1,6 @@
 #pragma once
 #include "02.Framework/02.RenderMgr/RenderMgr.h"
 #include "04.Shaders/97.TextureToFullScreenShader/TextureToFullScreenShader.h"
-#include "05.Objects/95.ShadowMap/ShadowMap.h"
 
 class CCreateMgr
 {
@@ -63,6 +62,7 @@ private:
 	void CreateDepthStencilView();
 	void CreateRenderTargetViews();
 	void CreateGraphicsRootSignature();
+	void CreateShadowMapDescriptorHeap();
 
 private:	 // 변수
 	HINSTANCE m_hInstance;
@@ -94,6 +94,7 @@ private:	 // 변수
 
 	// Depth Stencil View
 	ID3D12Resource *m_pDepthStencilBuffer{ NULL };
+	ID3D12Resource *m_pShadowDepthBuffer{ NULL };
 	ID3D12DescriptorHeap *m_pDsvDescriptorHeap{ NULL };
 
 	// Command Queue
@@ -109,6 +110,7 @@ private:	 // 변수
 #endif
 
 	UINT m_cbvSrvDescriptorIncrementSize{ 0 };
+	UINT m_dsvDescriptorIncrementSize{ 0 };
 
 	CTextureToFullScreenShader *m_pTextureToFullScreenShader{ NULL };
 
@@ -118,6 +120,8 @@ private:	 // 변수
 	// Render Manager
 	CRenderMgr m_renderMgr;
 
-	// Shadow Map
-	CShadowMap *m_pShadowMap{ NULL };
+	// ShadowMap Resources
+	ID3D12DescriptorHeap			*m_pShadowMapDescriptorHeap{ NULL };
+	D3D12_CPU_DESCRIPTOR_HANDLE		m_shadowMapCPUDescriptorStartHandle;
+	D3D12_GPU_DESCRIPTOR_HANDLE		m_shadowMapGPUDescriptorStartHandle;
 };

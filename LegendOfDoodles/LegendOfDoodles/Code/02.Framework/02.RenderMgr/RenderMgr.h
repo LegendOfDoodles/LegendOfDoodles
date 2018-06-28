@@ -19,7 +19,14 @@ public:	// 공개 함수
 	void RenderLight(CScene* pScene = NULL);
 
 	// Set Depth Stencil View
-	void SetDsvDescriptorHeap(ID3D12DescriptorHeap *pDsvDescriptorHeap);
+	void SetDsvDescriptorHeap(ID3D12DescriptorHeap *pDsvDescriptorHeap, UINT incrementSize);
+
+	// Synchronize
+	void WaitForGpuComplete();
+	void MoveToNextFrame();
+
+	void ResetCommandList();
+	void ExecuteCommandList();
 
 	// Set Swap Chain
 	void SetSwapChain(IDXGISwapChain3 *pSwapChain) { m_pSwapChain = pSwapChain; }
@@ -47,12 +54,8 @@ public:	// 공개 함수
 	void SaveGraphicsRootSignature(ID3D12RootSignature *pGraphicsRootSignature) { m_pGraphicsRootSignature = pGraphicsRootSignature; }
 	void SetTextureToFullScreenShader(CTextureToFullScreenShader* pTTFSShader) { m_pTextureToFullScreenShader = pTTFSShader; }
 
-	// Synchronize
-	void WaitForGpuComplete();
-	void MoveToNextFrame();
-
-	void ResetCommandList();
-	void ExecuteCommandList();
+	// Set ShadowMap Texture
+	void SetShadowMapSrvHandle(D3D12_GPU_DESCRIPTOR_HANDLE srvShadowMap) { m_srvShadowMapGPUHandle = srvShadowMap; }
 
 private:	// 내부 함수
 	void SynchronizeResourceTransition(ID3D12Resource *pResource, D3D12_RESOURCE_STATES stateBefore, D3D12_RESOURCE_STATES stateAfter);
@@ -74,6 +77,7 @@ private:	// 변수
 	// Depth Stencil View
 	ID3D12DescriptorHeap *m_pDsvDescriptorHeap{ NULL };
 	D3D12_CPU_DESCRIPTOR_HANDLE		m_dsvDepthStencilBufferCPUHandle;
+	D3D12_CPU_DESCRIPTOR_HANDLE		m_dsvShadowBufferCPUHandle;
 
 	// Command Queue
 	ID3D12CommandQueue *m_pCommandQueue{ NULL };
@@ -91,5 +95,8 @@ private:	// 변수
 
 	// Root Signature
 	ID3D12RootSignature *m_pGraphicsRootSignature{ NULL };
+
+	// Shadow Map Texture
+	D3D12_GPU_DESCRIPTOR_HANDLE m_srvShadowMapGPUHandle;
 };
 

@@ -6,7 +6,7 @@
 /// 목적: 렌더링 관련 함수를 모아 두어 다른 변경사항 없이 그릴 수 있도록 하기 위함
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-06-22
+/// 최종 수정 날짜: 2018-06-29
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -150,10 +150,11 @@ void CRenderMgr::RenderLight(CScene * pScene)
 	//ExptProcess::ThrowIfFailed(hResult);
 }
 
-void CRenderMgr::SetDsvDescriptorHeap(ID3D12DescriptorHeap * pDsvDescriptorHeap)
+void CRenderMgr::SetDsvDescriptorHeap(ID3D12DescriptorHeap * pDsvDescriptorHeap, UINT incrementSize)
 {
 	m_pDsvDescriptorHeap = pDsvDescriptorHeap;
 	m_dsvDepthStencilBufferCPUHandle = m_pDsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	m_dsvShadowBufferCPUHandle.ptr = m_dsvDepthStencilBufferCPUHandle.ptr + incrementSize;
 }
 
 void CRenderMgr::WaitForGpuComplete()
