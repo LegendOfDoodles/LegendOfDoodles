@@ -149,6 +149,12 @@ struct CS_Msg_Demand_Change_Weapon : public Packet
 	BYTE Character_id;
 };
 
+struct SC_Msg_Login_Time : public Packet
+{
+	BYTE Character_id;
+	system_clock::time_point Duration_time;
+};
+
 #pragma pack(pop)
 
 #define MAX_BUFF_SIZE 4000

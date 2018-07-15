@@ -14,6 +14,7 @@
 #include <iostream>
 #include <unordered_set>
 #include <mutex>
+#include <chrono>
 
 //클라쪽 헤더
 #include "03.Scenes\00.BaseScene\Scene.h"
@@ -23,6 +24,7 @@
 #include "05.Objects\06.Minion\Minion.h"
 #include "05.Objects\09.NexusTower\NexusTower.h"
 using namespace std;
+using namespace chrono;
 
 typedef std::list<CCollisionObject*> CollisionObjectList;
 
@@ -43,9 +45,13 @@ public:
 	int m_maxhp;
 	int m_curhp;
 	int m_anistate;
-
+	system_clock::time_point m_login;
+	std::chrono::duration<double> m_duration;
 	int m_weaponstate;
-
+	
+	int m_kill;
+	int m_death;
+	
 	float m_frameTime;
 	XMFLOAT3 m_vLook;
 	EXOVER m_rxover;
@@ -53,20 +59,14 @@ public:
 	int	m_prev_packet_size; // 지난번 recv에서 완성되지 않아서 저장해 놓은 패킷의 앞부분의 크기
 	char m_packet[MAX_PACKET_SIZE];
 	unordered_set <int> m_viewlist;
-	//set? vector? map? list?
-	//view list has to insert, delete, search
-	//set : logN, logN, logN  : more easier than map, map has body 
-	//unordered_set : 1, 1, 1 : It's faster than set except look from first to end
-	//vector : 1(push_back), N, N --> too big
-	//map : logN, logN, logN
-	//list: 1, 1, N : O(N) is too big to use....
-	mutex m_mvl; //mutex for view list
+	mutex m_mvl; 
 
 	Client()
 	{
 		m_isconnected = false;
 		m_x = 500;
 		m_y = 2500;
+		m_login = {};
 		ZeroMemory(&m_rxover.m_over, sizeof(WSAOVERLAPPED));
 		m_rxover.m_wsabuf.buf = m_rxover.m_iobuf;
 		m_rxover.m_wsabuf.len = sizeof(m_rxover.m_wsabuf.buf);
@@ -418,6 +418,7 @@ void accept_thread()	//새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 		g_clients[id].m_isconnected = true;
 		StartRecv(id);
 
+		g_clients[id].m_login = system_clock::now();
 		SC_Msg_Put_Character p;
 		p.Character_id = id;
 		p.size = sizeof(p);
@@ -449,10 +450,12 @@ void accept_thread()	//새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 
 void timer_thread()
 {
+
 	while (1)
 	{
 		//wait for 0.3second
 		Sleep(1);
+		system_clock::time_point duration = system_clock::now();
 		for (int i = 0; i < MAX_USER; ++i) {
 			g_clients[i].m_x = g_ppPlayer[i]->GetPosition().x;
 			g_clients[i].m_y = g_ppPlayer[i]->GetPosition().z;
@@ -462,6 +465,7 @@ void timer_thread()
 			g_clients[i].m_maxhp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->maxHP;
 			g_clients[i].m_curhp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->HP;
 			g_clients[i].m_weaponstate = ((CPlayer*)g_ppPlayer[i])->GetWeaponState();
+			g_clients[i].m_duration = duration - g_clients[i].m_login;
 		}
 
 		//Send Every User's Position Packet
