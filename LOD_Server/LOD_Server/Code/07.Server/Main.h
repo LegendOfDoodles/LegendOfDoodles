@@ -45,13 +45,19 @@ public:
 	int m_maxhp;
 	int m_curhp;
 	int m_anistate;
-	system_clock::time_point m_login;
-	std::chrono::duration<double> m_duration;
 	int m_weaponstate;
 	
+	//아직 정보 설정 안한 얘들
 	int m_kill;
 	int m_death;
-	
+	int m_maxexp;
+	int m_exp;
+	int m_level;
+	system_clock::time_point m_login;
+	std::chrono::duration<double> m_duration;
+
+
+
 	float m_frameTime;
 	XMFLOAT3 m_vLook;
 	EXOVER m_rxover;
@@ -87,6 +93,22 @@ public:
 
 public:
 	Minion()
+	{
+	}
+};
+
+class Royder {
+public:
+	int m_x;
+	int m_y;
+	int m_maxhp;
+	int m_curhp;
+	int m_anistate;
+	float m_frameTime;
+	XMFLOAT3 m_vLook;
+
+public:
+	Royder()
 	{
 	}
 };
@@ -464,6 +486,11 @@ void timer_thread()
 			g_clients[i].m_vLook = g_ppPlayer[i]->GetLook();
 			g_clients[i].m_maxhp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->maxHP;
 			g_clients[i].m_curhp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->HP;
+			
+			g_clients[i].m_level = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->Level;
+			g_clients[i].m_maxexp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->MaxExp;
+			g_clients[i].m_exp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->Exp;
+
 			g_clients[i].m_weaponstate = ((CPlayer*)g_ppPlayer[i])->GetWeaponState();
 			g_clients[i].m_duration = duration - g_clients[i].m_login;
 		}
