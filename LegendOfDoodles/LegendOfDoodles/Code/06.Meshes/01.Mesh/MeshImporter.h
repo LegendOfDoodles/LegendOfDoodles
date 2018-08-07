@@ -22,7 +22,7 @@ public:
 
 	void LoadMeshData(char* in);
 	void LoadStaticMeshData(char* in);
-	
+
 	~CMeshImporter();
 
 };
@@ -35,15 +35,15 @@ struct Transform {
 class CTransformImporter
 {
 public:
+	CTransformImporter();
+	~CTransformImporter();
+
+public:
+	void LoadMeshData(char* in);
+
+public:
 	int m_iTotalCnt;
 	std::vector<Transform> m_Transform;
 	int m_iKindMeshCnt[17];
 	XMFLOAT3 BookScale[4];
-public:
-	CTransformImporter();
-
-	void LoadMeshData(char* in);
-
-	~CTransformImporter();
-
 };

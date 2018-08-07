@@ -4,29 +4,28 @@
 class CTextureToFullScreenShader : public CShader
 {
 public: // 생성자, 소멸자
-	CTextureToFullScreenShader(CCreateMgr *pCreateMgr);
+	CTextureToFullScreenShader(shared_ptr<CCreateMgr> pCreateMgr);
 	virtual ~CTextureToFullScreenShader();
 
 public: // 공개 함수
-	virtual void CreateGraphicsRootSignature(CCreateMgr *pCreateMgr);
+	virtual void CreateGraphicsRootSignature(shared_ptr<CCreateMgr> pCreateMgr);
 
-	virtual void CreateShader(CCreateMgr *pCreateMgr, ID3D12RootSignature *pd3dGraphicsRootSignature, UINT nRenderTargets = 1);
+	void CreateShaderResourceViews(shared_ptr<CCreateMgr> pCreateMgr, shared_ptr<CTexture> pTexture, UINT nRootParameterStartIndex, bool bAutoIncrement, int index = 0);
+	virtual void CreateShader(shared_ptr<CCreateMgr> pCreateMgr, ComPtr<ID3D12RootSignature> pGraphicsRootSignature, UINT nRenderTargets = 1);
 
-	virtual void BuildObjects(CCreateMgr * pCreateMgr, void *pContext = NULL);
+	virtual void BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, shared_ptr<CTexture> pContext = NULL);
 
 	virtual void Render(CCamera *pCamera);
 
-	void SetGraphicsRootSignature() { m_pCommandList->SetGraphicsRootSignature(m_pGraphicsRootSignature); }
+	void SetGraphicsRootSignature() { m_pCommandList->SetGraphicsRootSignature(m_pGraphicsRootSignature.Get()); }
 
 protected: // 내부 함수
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
 
-	virtual D3D12_SHADER_BYTECODE CreateVertexShader(ID3DBlob **ppShaderBlob);
-	virtual D3D12_SHADER_BYTECODE CreatePixelShader(ID3DBlob **ppShaderBlob);
-
-	virtual void ReleaseObjects();
+	virtual D3D12_SHADER_BYTECODE CreateVertexShader(ComPtr<ID3DBlob>& pShaderBlob);
+	virtual D3D12_SHADER_BYTECODE CreatePixelShader(ComPtr<ID3DBlob>& pShaderBlob);
 
 protected: // 변수
-	CTexture * m_pTexture{ NULL };
+	shared_ptr<CTexture> m_pTexture;
 };
 

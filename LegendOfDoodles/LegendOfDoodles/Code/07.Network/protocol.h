@@ -152,7 +152,7 @@ struct CS_Msg_Demand_Change_Weapon : public Packet
 struct SC_Msg_Login_Time : public Packet
 {
 	BYTE Character_id;
-	system_clock::time_point Duration_time;
+	//system_clock::time_point Duration_time;
 };
 
 #pragma pack(pop)

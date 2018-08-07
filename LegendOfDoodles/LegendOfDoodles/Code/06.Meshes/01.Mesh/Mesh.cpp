@@ -8,26 +8,20 @@
 /// 목적: 테스트 용 메쉬 클래스 생성
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-06-01
+/// 최종 수정 날짜: 2018-08-05
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
 // 기본 메쉬
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
-CMesh::CMesh(CCreateMgr *pCreateMgr)
+CMesh::CMesh(shared_ptr<CCreateMgr> pCreateMgr)
 {
 	m_pCommandList = pCreateMgr->GetCommandList();
 }
 
 CMesh::~CMesh()
 {
-	Safe_Release(m_pVertexBuffer);
-	Safe_Release(m_pVertexUploadBuffer);
-
-	Safe_Release(m_pIndexBuffer);
-	Safe_Release(m_pIndexUploadBuffer);
-
 	Safe_Delete(m_pBoundingBox);
 }
 
@@ -35,8 +29,8 @@ CMesh::~CMesh()
 // 공개 함수
 void CMesh::ReleaseUploadBuffers()
 {
-	Safe_Release(m_pVertexUploadBuffer);
-	Safe_Release(m_pIndexUploadBuffer);
+	m_pVertexUploadBuffer.Reset();
+	m_pIndexUploadBuffer.Reset();
 }
 
 void CMesh::Render(UINT istanceCnt)
@@ -67,7 +61,7 @@ bool CMesh::CheckRayIntersection(XMFLOAT3& xmf3RayOrigin, XMFLOAT3& xmf3RayDirec
 	return(bIntersected);
 }
 
-void CMesh::SetBoundingBox(XMFLOAT3& center, XMFLOAT3 & extents)
+void CMesh::SetBoundingBox(const XMFLOAT3& center, const XMFLOAT3 & extents)
 {
 	m_pBoundingBox = new BoundingOrientedBox(center, extents, XMFLOAT4(0, 0, 0, 1));
 }
@@ -77,7 +71,7 @@ void CMesh::SetBoundingBox(XMFLOAT3& center, XMFLOAT3 & extents)
 // CMeshTextured
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
-CMeshTextured::CMeshTextured(CCreateMgr *pCreateMgr)
+CMeshTextured::CMeshTextured(shared_ptr<CCreateMgr> pCreateMgr)
 	: CMesh(pCreateMgr)
 {
 }
@@ -90,7 +84,7 @@ CMeshTextured::~CMeshTextured()
 // CMeshIlluminated
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
-CMeshIlluminated::CMeshIlluminated(CCreateMgr *pCreateMgr) : CMesh(pCreateMgr)
+CMeshIlluminated::CMeshIlluminated(shared_ptr<CCreateMgr> pCreateMgr) : CMesh(pCreateMgr)
 {
 }
 
@@ -188,7 +182,7 @@ void CMeshIlluminated::CalculateVertexNormals(XMFLOAT3 *pxmf3Normals, XMFLOAT3 *
 void CMeshIlluminated::CalculateTriangleListVertexTangents(XMFLOAT3 *pxmf3Tangents, XMFLOAT3 *pxmf3Positions, UINT nVertices,
 	XMFLOAT2 *xmf2TexCoord, UINT *pnIndices, UINT nIndices)
 {
-	int nPrimitives = (pnIndices) ? (nIndices / 3) : (nVertices / 3);
+	UINT nPrimitives = (pnIndices) ? (nIndices / 3) : (nVertices / 3);
 	XMFLOAT3 xmf3SumOfTangent(0.0f, 0.0f, 0.0f);
 	UINT nIndex0, nIndex1, nIndex2;
 	float deltaU0, deltaU1;
@@ -239,7 +233,7 @@ void CMeshIlluminated::CalculateTriangleListVertexTangents(XMFLOAT3 *pxmf3Tangen
 	}
 	else
 	{
-		for (int i = 0; i < nPrimitives; i++)
+		for (UINT i = 0; i < nPrimitives; i++)
 		{
 			for (int j = 0, k = 1, l = 2; j < 3; ++j, ++k, ++l)
 			{
@@ -334,11 +328,11 @@ void CMeshIlluminated::CalculateTriangleStripVertexTangents(XMFLOAT3 *pxmf3Tange
 // CMeshIlluminatedTextured
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
-CMeshIlluminatedTextured::CMeshIlluminatedTextured(CCreateMgr *pCreateMgr) : CMeshIlluminated(pCreateMgr)
+CMeshIlluminatedTextured::CMeshIlluminatedTextured(shared_ptr<CCreateMgr> pCreateMgr) : CMeshIlluminated(pCreateMgr)
 {
 }
 
-CMeshIlluminatedTextured::CMeshIlluminatedTextured(CCreateMgr *pCreateMgr, UINT nVertices, XMFLOAT3 *pxmf3Positions, XMFLOAT3 *pxmf3Normals, XMFLOAT2 *pxmf2UVs, UINT nIndices, UINT *pnIndices) : CMeshIlluminated(pCreateMgr)
+CMeshIlluminatedTextured::CMeshIlluminatedTextured(shared_ptr<CCreateMgr> pCreateMgr, UINT nVertices, XMFLOAT3 *pxmf3Positions, XMFLOAT3 *pxmf3Normals, XMFLOAT2 *pxmf2UVs, UINT nIndices, UINT *pnIndices) : CMeshIlluminated(pCreateMgr)
 {
 	m_nStride = sizeof(CIlluminatedTexturedVertex);
 	m_nVertices = nVertices;
@@ -346,7 +340,12 @@ CMeshIlluminatedTextured::CMeshIlluminatedTextured(CCreateMgr *pCreateMgr, UINT 
 	CIlluminatedTexturedVertex *pVertices = new CIlluminatedTexturedVertex[m_nVertices];
 	for (UINT i = 0; i < m_nVertices; i++) pVertices[i] = CIlluminatedTexturedVertex(pxmf3Positions[i], pxmf3Normals[i], pxmf2UVs[i]);
 
-	m_pVertexBuffer = pCreateMgr->CreateBufferResource(pVertices, m_nStride * m_nVertices, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pVertexUploadBuffer);
+	m_pVertexBuffer = pCreateMgr->CreateBufferResource(
+		pVertices,
+		m_nStride * m_nVertices,
+		D3D12_HEAP_TYPE_DEFAULT,
+		D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER,
+		m_pVertexUploadBuffer.GetAddressOf());
 
 	m_vertexBufferView.BufferLocation = m_pVertexBuffer->GetGPUVirtualAddress();
 	m_vertexBufferView.StrideInBytes = m_nStride;
@@ -356,7 +355,12 @@ CMeshIlluminatedTextured::CMeshIlluminatedTextured(CCreateMgr *pCreateMgr, UINT 
 	{
 		m_nIndices = nIndices;
 
-		m_pIndexBuffer = pCreateMgr->CreateBufferResource(pnIndices, sizeof(UINT) * m_nIndices, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_INDEX_BUFFER, &m_pIndexUploadBuffer);
+		m_pIndexBuffer = pCreateMgr->CreateBufferResource(
+			pnIndices,
+			sizeof(UINT) * m_nIndices,
+			D3D12_HEAP_TYPE_DEFAULT,
+			D3D12_RESOURCE_STATE_INDEX_BUFFER,
+			m_pIndexUploadBuffer.GetAddressOf());
 
 		m_indexBufferView.BufferLocation = m_pIndexBuffer->GetGPUVirtualAddress();
 		m_indexBufferView.Format = DXGI_FORMAT_R32_UINT;
@@ -373,7 +377,7 @@ CMeshIlluminatedTextured::~CMeshIlluminatedTextured()
 // CSkinnedMesh
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
-CSkinnedMesh::CSkinnedMesh(CCreateMgr * pCreateMgr, char* in) : CMeshIlluminatedTextured(pCreateMgr)
+CSkinnedMesh::CSkinnedMesh(shared_ptr<CCreateMgr> pCreateMgr, char* in) : CMeshIlluminatedTextured(pCreateMgr)
 {
 	CMeshImporter importer;
 	importer.LoadMeshData(in);
@@ -387,13 +391,18 @@ CSkinnedMesh::CSkinnedMesh(CCreateMgr * pCreateMgr, char* in) : CMeshIlluminated
 	UINT* pnIndices = new UINT[m_nIndices];
 	int indicesCount = 0;
 	for (auto d : importer.m_xmTriIndex) {
-		pnIndices[indicesCount] = d.x;
-		pnIndices[indicesCount + 1] = d.y;
-		pnIndices[indicesCount + 2] = d.z;
+		pnIndices[indicesCount] = static_cast<UINT>(d.x);
+		pnIndices[indicesCount + 1] = static_cast<UINT>(d.y);
+		pnIndices[indicesCount + 2] = static_cast<UINT>(d.z);
 		indicesCount += 3;
 	}
 
-	m_pIndexBuffer = pCreateMgr->CreateBufferResource(pnIndices, sizeof(UINT) * m_nIndices, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_INDEX_BUFFER, &m_pIndexUploadBuffer);
+	m_pIndexBuffer = pCreateMgr->CreateBufferResource(
+		pnIndices,
+		sizeof(UINT) * m_nIndices,
+		D3D12_HEAP_TYPE_DEFAULT,
+		D3D12_RESOURCE_STATE_INDEX_BUFFER,
+		m_pIndexUploadBuffer.GetAddressOf());
 
 	m_indexBufferView.BufferLocation = m_pIndexBuffer->GetGPUVirtualAddress();
 	m_indexBufferView.Format = DXGI_FORMAT_R32_UINT;
@@ -421,7 +430,7 @@ CSkinnedMesh::CSkinnedMesh(CCreateMgr * pCreateMgr, char* in) : CMeshIlluminated
 	CalculateTriangleListVertexTangents(pxmf3Tangents, pxmf3Positions, m_nVertices, pxmf2TexCoords, pnIndices, m_nIndices);
 
 	CSkinnedVertex *pVertices = new CSkinnedVertex[m_nVertices];
-	for (int i = 0; i < m_nVertices; i++) {
+	for (UINT i = 0; i < m_nVertices; i++) {
 		BYTE index[4];
 
 		index[0] = (BYTE)pxmf4SkinIndex[i].x;
@@ -430,7 +439,12 @@ CSkinnedMesh::CSkinnedMesh(CCreateMgr * pCreateMgr, char* in) : CMeshIlluminated
 		index[3] = (BYTE)pxmf4SkinIndex[i].w;
 		pVertices[i] = CSkinnedVertex(pxmf3Positions[i], index, pxmf3Normals[i], pxmf3Tangents[i], pxmf2TexCoords[i], pxmf4SkinWeight[i]);
 	}
-	m_pVertexBuffer = pCreateMgr->CreateBufferResource(pVertices, m_nStride * m_nVertices, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pVertexUploadBuffer);
+	m_pVertexBuffer = pCreateMgr->CreateBufferResource(
+		pVertices,
+		m_nStride * m_nVertices,
+		D3D12_HEAP_TYPE_DEFAULT,
+		D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER,
+		m_pVertexUploadBuffer.GetAddressOf());
 
 	m_vertexBufferView.BufferLocation = m_pVertexBuffer->GetGPUVirtualAddress();
 	m_vertexBufferView.StrideInBytes = m_nStride;
@@ -454,7 +468,7 @@ CSkinnedMesh::~CSkinnedMesh()
 // CStaticMesh
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
-CStaticMesh::CStaticMesh(CCreateMgr * pCreateMgr, char * in,XMFLOAT3 scalevalue) : CMeshIlluminatedTextured(pCreateMgr)
+CStaticMesh::CStaticMesh(shared_ptr<CCreateMgr> pCreateMgr, char * in, XMFLOAT3 scalevalue) : CMeshIlluminatedTextured(pCreateMgr)
 {
 	CMeshImporter importer;
 	importer.LoadStaticMeshData(in);
@@ -468,13 +482,18 @@ CStaticMesh::CStaticMesh(CCreateMgr * pCreateMgr, char * in,XMFLOAT3 scalevalue)
 	UINT* pnIndices = new UINT[m_nIndices];
 	int indicesCount = 0;
 	for (auto d : importer.m_xmTriIndex) {
-		pnIndices[indicesCount] = d.x;
-		pnIndices[indicesCount + 1] = d.y;
-		pnIndices[indicesCount + 2] = d.z;
+		pnIndices[indicesCount] = static_cast<UINT>(d.x);
+		pnIndices[indicesCount + 1] = static_cast<UINT>(d.y);
+		pnIndices[indicesCount + 2] = static_cast<UINT>(d.z);
 		indicesCount += 3;
 	}
 
-	m_pIndexBuffer = pCreateMgr->CreateBufferResource(pnIndices, sizeof(UINT) * m_nIndices, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_INDEX_BUFFER, &m_pIndexUploadBuffer);
+	m_pIndexBuffer = pCreateMgr->CreateBufferResource(
+		pnIndices,
+		sizeof(UINT) * m_nIndices,
+		D3D12_HEAP_TYPE_DEFAULT,
+		D3D12_RESOURCE_STATE_INDEX_BUFFER,
+		m_pIndexUploadBuffer.GetAddressOf());
 
 	m_indexBufferView.BufferLocation = m_pIndexBuffer->GetGPUVirtualAddress();
 	m_indexBufferView.Format = DXGI_FORMAT_R32_UINT;
@@ -497,10 +516,15 @@ CStaticMesh::CStaticMesh(CCreateMgr * pCreateMgr, char * in,XMFLOAT3 scalevalue)
 	CalculateTriangleListVertexTangents(pxmf3Tangents, pxmf3Positions, m_nVertices, pxmf2TexCoords, pnIndices, m_nIndices);
 
 	CIlluminatedTexturedVertex *pVertices = new CIlluminatedTexturedVertex[m_nVertices];
-	for (int i = 0; i < m_nVertices; i++) {
+	for (UINT i = 0; i < m_nVertices; i++) {
 		pVertices[i] = CIlluminatedTexturedVertex(pxmf3Positions[i], pxmf3Normals[i], pxmf2TexCoords[i], pxmf3Tangents[i]);
 	}
-	m_pVertexBuffer = pCreateMgr->CreateBufferResource(pVertices, m_nStride * m_nVertices, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pVertexUploadBuffer);
+	m_pVertexBuffer = pCreateMgr->CreateBufferResource(
+		pVertices,
+		m_nStride * m_nVertices,
+		D3D12_HEAP_TYPE_DEFAULT,
+		D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER,
+		m_pVertexUploadBuffer.GetAddressOf());
 
 	m_vertexBufferView.BufferLocation = m_pVertexBuffer->GetGPUVirtualAddress();
 	m_vertexBufferView.StrideInBytes = m_nStride;
@@ -630,7 +654,7 @@ float CHeightMapImage::GetHeight(float fx, float fz)
 // CHeightMapGridMesh
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
-CHeightMapGridMesh::CHeightMapGridMesh(CCreateMgr *pCreateMgr, int nWidth, int nLength) : CMesh(pCreateMgr)
+CHeightMapGridMesh::CHeightMapGridMesh(shared_ptr<CCreateMgr> pCreateMgr, int nWidth, int nLength) : CMesh(pCreateMgr)
 {
 	XMFLOAT3 xmf3Scale = TERRAIN_IMAGE_CELL_SCALE;
 
@@ -658,7 +682,7 @@ CHeightMapGridMesh::CHeightMapGridMesh(CCreateMgr *pCreateMgr, int nWidth, int n
 		m_nStride * m_nVertices,
 		D3D12_HEAP_TYPE_DEFAULT,
 		D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER,
-		&m_pVertexUploadBuffer);
+		m_pVertexUploadBuffer.GetAddressOf());
 
 	m_vertexBufferView.BufferLocation = m_pVertexBuffer->GetGPUVirtualAddress();
 	m_vertexBufferView.StrideInBytes = m_nStride;
@@ -705,7 +729,7 @@ CHeightMapGridMesh::CHeightMapGridMesh(CCreateMgr *pCreateMgr, int nWidth, int n
 		sizeof(UINT) * m_nIndices,
 		D3D12_HEAP_TYPE_DEFAULT,
 		D3D12_RESOURCE_STATE_INDEX_BUFFER,
-		&m_pIndexUploadBuffer);
+		m_pIndexUploadBuffer.GetAddressOf());
 
 	m_indexBufferView.BufferLocation = m_pIndexBuffer->GetGPUVirtualAddress();
 	m_indexBufferView.Format = DXGI_FORMAT_R32_UINT;
@@ -725,7 +749,7 @@ CHeightMapGridMesh::~CHeightMapGridMesh()
 // CTexturedRectMesh
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
-CTexturedRectMesh::CTexturedRectMesh(CCreateMgr *pCreateMgr, float fWidth, float fHeight, float fDepth, float fxPosition, float fyPosition, float fzPosition) : CMesh(pCreateMgr)
+CTexturedRectMesh::CTexturedRectMesh(shared_ptr<CCreateMgr> pCreateMgr, float fWidth, float fHeight, float fDepth, float fxPosition, float fyPosition, float fzPosition) : CMesh(pCreateMgr)
 {
 	m_nVertices = 6;
 	m_nStride = sizeof(CTexturedVertex);
@@ -799,7 +823,12 @@ CTexturedRectMesh::CTexturedRectMesh(CCreateMgr *pCreateMgr, float fWidth, float
 		}
 	}
 
-	m_pVertexBuffer = pCreateMgr->CreateBufferResource(pVertices, m_nStride * m_nVertices, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pVertexUploadBuffer);
+	m_pVertexBuffer = pCreateMgr->CreateBufferResource(
+		pVertices,
+		m_nStride * m_nVertices,
+		D3D12_HEAP_TYPE_DEFAULT,
+		D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER,
+		m_pVertexUploadBuffer.GetAddressOf());
 
 	m_vertexBufferView.BufferLocation = m_pVertexBuffer->GetGPUVirtualAddress();
 	m_vertexBufferView.StrideInBytes = m_nStride;
@@ -814,7 +843,7 @@ CTexturedRectMesh::~CTexturedRectMesh()
 // CArrowMesh
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
-CArrowMesh::CArrowMesh(CCreateMgr * pCreateMgr, float length) : CMesh(pCreateMgr)
+CArrowMesh::CArrowMesh(shared_ptr<CCreateMgr> pCreateMgr, float length) : CMesh(pCreateMgr)
 {
 	m_nVertices = 24;
 	m_nIndices = 108;
@@ -824,9 +853,9 @@ CArrowMesh::CArrowMesh(CCreateMgr * pCreateMgr, float length) : CMesh(pCreateMgr
 	m_primitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 	float fx = 3, fy = 3, fz = 3;
-	
+
 	CDiffusedVertex pVertices[24];
-	
+
 	pVertices[0] = CDiffusedVertex(-fx, fy, -fz, XMFLOAT4(Colors::Red));
 	pVertices[1] = CDiffusedVertex(length, fy, -fz, XMFLOAT4(Colors::Red));
 	pVertices[2] = CDiffusedVertex(length, -fy, -fz, XMFLOAT4(Colors::Red));
@@ -840,7 +869,7 @@ CArrowMesh::CArrowMesh(CCreateMgr * pCreateMgr, float length) : CMesh(pCreateMgr
 	pVertices[9] = CDiffusedVertex(fx, length, -fz, XMFLOAT4(Colors::Green));
 	pVertices[10] = CDiffusedVertex(fx, -fy, -fz, XMFLOAT4(Colors::Green));
 	pVertices[11] = CDiffusedVertex(-fx, -fy, -fz, XMFLOAT4(Colors::Green));
-	pVertices[12]= CDiffusedVertex(-fx, length, fz, XMFLOAT4(Colors::Green));
+	pVertices[12] = CDiffusedVertex(-fx, length, fz, XMFLOAT4(Colors::Green));
 	pVertices[13] = CDiffusedVertex(fx, length, fz, XMFLOAT4(Colors::Green));
 	pVertices[14] = CDiffusedVertex(fx, -fy, fz, XMFLOAT4(Colors::Green));
 	pVertices[15] = CDiffusedVertex(-fx, -fy, fz, XMFLOAT4(Colors::Green));
@@ -859,7 +888,7 @@ CArrowMesh::CArrowMesh(CCreateMgr * pCreateMgr, float length) : CMesh(pCreateMgr
 		m_nStride * m_nVertices,
 		D3D12_HEAP_TYPE_DEFAULT,
 		D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER,
-		&m_pVertexUploadBuffer);
+		m_pVertexUploadBuffer.GetAddressOf());
 
 	m_vertexBufferView.BufferLocation = m_pVertexBuffer->GetGPUVirtualAddress();
 	m_vertexBufferView.StrideInBytes = m_nStride;
@@ -889,11 +918,11 @@ CArrowMesh::CArrowMesh(CCreateMgr * pCreateMgr, float length) : CMesh(pCreateMgr
 	}
 
 	m_pIndexBuffer = pCreateMgr->CreateBufferResource(
-		pnIndices, 
-		sizeof(UINT) * m_nIndices, 
-		D3D12_HEAP_TYPE_DEFAULT, 
+		pnIndices,
+		sizeof(UINT) * m_nIndices,
+		D3D12_HEAP_TYPE_DEFAULT,
 		D3D12_RESOURCE_STATE_INDEX_BUFFER,
-		&m_pIndexUploadBuffer);
+		m_pIndexUploadBuffer.GetAddressOf());
 
 	m_indexBufferView.BufferLocation = m_pIndexBuffer->GetGPUVirtualAddress();
 	m_indexBufferView.Format = DXGI_FORMAT_R32_UINT;
@@ -908,7 +937,7 @@ CArrowMesh::~CArrowMesh()
 // CCubeMesh
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
-CCubeMesh::CCubeMesh(CCreateMgr *pCreateMgr, float fWidth, float fHeight, float fDepth, float xOffset, float yOffSet, float zOffSet) : CMesh(pCreateMgr)
+CCubeMesh::CCubeMesh(shared_ptr<CCreateMgr> pCreateMgr, float fWidth, float fHeight, float fDepth, float xOffset, float yOffSet, float zOffSet) : CMesh(pCreateMgr)
 {
 	m_nVertices = 8;
 	m_nIndices = 36;
@@ -932,7 +961,7 @@ CCubeMesh::CCubeMesh(CCreateMgr *pCreateMgr, float fWidth, float fHeight, float 
 		m_nStride * m_nVertices,
 		D3D12_HEAP_TYPE_DEFAULT,
 		D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER,
-		&m_pVertexUploadBuffer);
+		m_pVertexUploadBuffer.GetAddressOf());
 
 	m_vertexBufferView.BufferLocation = m_pVertexBuffer->GetGPUVirtualAddress();
 	m_vertexBufferView.StrideInBytes = m_nStride;
@@ -955,9 +984,9 @@ CCubeMesh::CCubeMesh(CCreateMgr *pCreateMgr, float fWidth, float fHeight, float 
 	m_pIndexBuffer = pCreateMgr->CreateBufferResource(
 		pIndices,
 		sizeof(UINT) * m_nIndices,
-		D3D12_HEAP_TYPE_DEFAULT, 
+		D3D12_HEAP_TYPE_DEFAULT,
 		D3D12_RESOURCE_STATE_INDEX_BUFFER,
-		&m_pIndexUploadBuffer);
+		m_pVertexUploadBuffer.GetAddressOf());
 
 	m_indexBufferView.BufferLocation = m_pIndexBuffer->GetGPUVirtualAddress();
 	m_indexBufferView.Format = DXGI_FORMAT_R32_UINT;
@@ -1015,8 +1044,6 @@ bool CCollisionMapImage::GetCollision(float fx, float fz)
 	//높이 맵의 좌표의 정수 부분과 소수 부분을 계산한다.
 	int x = (int)fx;
 	int z = (int)fz;
-	float fxPercent = fx - x;
-	float fzPercent = fz - z;
 
 	float fBottomLeft = (float)m_pCollisionMapPixels[x + (z*m_nWidth)];
 	float fBottomRight = (float)m_pCollisionMapPixels[(x + 1) + (z*m_nWidth)];
@@ -1026,5 +1053,5 @@ bool CCollisionMapImage::GetCollision(float fx, float fz)
 	//사각형의 네 점 중 두개 이상이 충돌 지역인 경우 충돌하는 것으로 가정한다.
 	float sumValue = fBottomLeft + fBottomRight + fTopLeft + fTopRight;
 
-	return(sumValue>=510);
+	return(sumValue >= 510);
 }

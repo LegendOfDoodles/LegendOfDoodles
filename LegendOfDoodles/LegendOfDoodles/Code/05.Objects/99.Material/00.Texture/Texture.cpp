@@ -6,7 +6,7 @@
 /// 목적: 텍스처에 필요한 처리 담당하는 클래스
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-19
+/// 최종 수정 날짜: 2018-08-05
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -18,8 +18,8 @@ CTexture::CTexture(int nTextures, UINT nTextureType, int nSamplers)
 	if (m_nTextures > 0)
 	{
 		m_pRootArgumentInfos = new SRVROOTARGUMENTINFO[m_nTextures];
-		m_ppTextureUploadBuffers = new ID3D12Resource*[m_nTextures];
-		m_ppTextures = new ID3D12Resource*[m_nTextures];
+		m_ppTextureUploadBuffers = new ComPtr<ID3D12Resource>[m_nTextures];
+		m_ppTextures = new ComPtr<ID3D12Resource>[m_nTextures];
 	}
 
 	m_nSamplers = nSamplers;
@@ -30,7 +30,8 @@ CTexture::~CTexture()
 {
 	if (m_ppTextures)
 	{
-		for (int i = 0; i < m_nTextures; i++) if (m_ppTextures[i]) m_ppTextures[i]->Release();
+		for (int i = 0; i < m_nTextures; i++) m_ppTextures[i].Reset();
+		Safe_Delete_Array(m_ppTextures);
 	}
 
 	if (m_pRootArgumentInfos)
@@ -50,17 +51,16 @@ void CTexture::Finalize()
 
 void CTexture::ReleaseUploadBuffers()
 {
-	if (!m_ppTextureUploadBuffers) return;
-
-	for (int i = 0; i < m_nTextures; i++)
+	if (m_ppTextureUploadBuffers)
 	{
-		if (m_ppTextureUploadBuffers[i])
-		{
-			m_ppTextureUploadBuffers[i]->Release();
-		}
-	}
 
-	Safe_Delete_Array(m_ppTextureUploadBuffers);
+		for (int i = 0; i < m_nTextures; i++)
+		{
+			m_ppTextureUploadBuffers[i].Reset();
+		}
+
+		Safe_Delete_Array(m_ppTextureUploadBuffers);
+	}
 }
 
 void CTexture::SetRootArgument(int nIndex, UINT nRootParameterIndex, D3D12_GPU_DESCRIPTOR_HANDLE srvGpuDescriptorHandle)
@@ -94,13 +94,13 @@ void CTexture::UpdateShaderVariable(int nIndex)
 	m_pCommandList->SetGraphicsRootDescriptorTable(m_pRootArgumentInfos[nIndex].m_nRootParameterIndex, m_pRootArgumentInfos[nIndex].m_srvGpuDescriptorHandle);
 }
 
-void CTexture::LoadTextureFromFile(CCreateMgr *pCreateMgr, wchar_t *pszFileName, UINT nIndex)
+void CTexture::LoadTextureFromFile(shared_ptr<CCreateMgr> pCreateMgr, wchar_t *pszFileName, UINT nIndex)
 {
 	m_pCommandList = pCreateMgr->GetCommandList();
 	m_ppTextures[nIndex] = pCreateMgr->CreateTextureResourceFromFile(pszFileName, &m_ppTextureUploadBuffers[nIndex], D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 }
 
-ID3D12Resource * CTexture::CreateTexture(CCreateMgr *pCreateMgr, UINT nWidth, UINT nHeight, DXGI_FORMAT dxgiFormat, D3D12_RESOURCE_FLAGS resourceFlags, D3D12_RESOURCE_STATES resourceStates, D3D12_CLEAR_VALUE * pClearValue, UINT nIndex)
+ComPtr<ID3D12Resource> CTexture::CreateTexture(shared_ptr<CCreateMgr> pCreateMgr, UINT nWidth, UINT nHeight, DXGI_FORMAT dxgiFormat, D3D12_RESOURCE_FLAGS resourceFlags, D3D12_RESOURCE_STATES resourceStates, D3D12_CLEAR_VALUE * pClearValue, UINT nIndex)
 {
 	m_pCommandList = pCreateMgr->GetCommandList();
 	m_ppTextures[nIndex] = pCreateMgr->CreateTexture2DResource(nWidth, nHeight, dxgiFormat, resourceFlags, resourceStates, pClearValue);

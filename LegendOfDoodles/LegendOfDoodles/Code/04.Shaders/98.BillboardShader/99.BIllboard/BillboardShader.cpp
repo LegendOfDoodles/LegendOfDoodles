@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "BillboardShader.h"
-#include "05.Objects/96.Billboard/Billboard.h"
+#include "05.Objects/96.Billboard/99.BillboardObject/Billboard.h"
 #include "02.Framework/01.CreateMgr/CreateMgr.h"
 #include "05.Objects/99.Material/Material.h"
 
@@ -8,12 +8,12 @@
 /// 목적: Billboard 테스트 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  이용선, 김나단
-/// 최종 수정 날짜: 2018-06-27
+/// 최종 수정 날짜: 2018-07-03
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
-CBillboardShader::CBillboardShader(CCreateMgr *pCreateMgr)
+CBillboardShader::CBillboardShader(shared_ptr<CCreateMgr> pCreateMgr)
 	: CShader(pCreateMgr)
 {
 }
@@ -43,8 +43,9 @@ void CBillboardShader::ReleaseUploadBuffers()
 #endif
 }
 
-void CBillboardShader::UpdateShaderVariables()
+void CBillboardShader::UpdateShaderVariables(int opt)
 {
+	UNREFERENCED_PARAMETER(opt);
 	static UINT elementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
 
 	for (int i = 0; i < m_nObjects; i++)
@@ -78,12 +79,16 @@ void CBillboardShader::Render(CCamera *pCamera)
 
 void CBillboardShader::OnProcessKeyUp(WPARAM wParam, LPARAM lParam, float timeElapsed)
 {
-
+	UNREFERENCED_PARAMETER(wParam);
+	UNREFERENCED_PARAMETER(lParam);
+	UNREFERENCED_PARAMETER(timeElapsed);
 }
 
 void CBillboardShader::OnProcessKeyDown(WPARAM wParam, LPARAM lParam, float timeElapsed)
 {
-
+	UNREFERENCED_PARAMETER(wParam);
+	UNREFERENCED_PARAMETER(lParam);
+	UNREFERENCED_PARAMETER(timeElapsed);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -117,98 +122,58 @@ D3D12_INPUT_LAYOUT_DESC CBillboardShader::CreateInputLayout()
 	return(d3dInputLayoutDesc);
 }
 
-D3D12_SHADER_BYTECODE CBillboardShader::CreateVertexShader(ID3DBlob **ppShaderBlob)
+D3D12_BLEND_DESC CBillboardShader::CreateBlendState()
+{
+	D3D12_BLEND_DESC blendDesc;
+	::ZeroMemory(&blendDesc, sizeof(D3D12_BLEND_DESC));
+
+	blendDesc.AlphaToCoverageEnable = TRUE;
+	blendDesc.IndependentBlendEnable = FALSE;
+	blendDesc.RenderTarget[0].BlendEnable = FALSE;
+	blendDesc.RenderTarget[0].LogicOpEnable = FALSE;
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ZERO;
+	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].LogicOp = D3D12_LOGIC_OP_NOOP;
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+
+	return(blendDesc);
+}
+
+D3D12_SHADER_BYTECODE CBillboardShader::CreateVertexShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
 		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
 		"VSTextured",
 		"vs_5_1",
-		ppShaderBlob));
+		pShaderBlob));
 }
 
-D3D12_SHADER_BYTECODE CBillboardShader::CreatePixelShader(ID3DBlob **ppShaderBlob)
+D3D12_SHADER_BYTECODE CBillboardShader::CreatePixelShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
 		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
 		"PSTextured",
 		"ps_5_1",
-		ppShaderBlob));
+		pShaderBlob));
 }
 
-void CBillboardShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets, bool isRenderBB)
+void CBillboardShader::CreateShader(shared_ptr<CCreateMgr> pCreateMgr, UINT nRenderTargets, bool isRenderBB, bool isRenderShadow)
 {
 	m_nPipelineStates = 1;
-	m_ppPipelineStates = new ID3D12PipelineState*[m_nPipelineStates];
 
 	CreateDescriptorHeaps();
 
-	CShader::CreateShader(pCreateMgr, nRenderTargets, isRenderBB);
+	CShader::CreateShader(pCreateMgr, nRenderTargets, isRenderBB, isRenderShadow);
 }
 
-void CBillboardShader::CreateShaderVariables(CCreateMgr *pCreateMgr, int nBuffers)
+void CBillboardShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pContext)
 {
-	HRESULT hResult;
-
-	UINT elementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
-
-	m_pConstBuffer = pCreateMgr->CreateBufferResource(
-		NULL,
-		elementBytes * nBuffers,
-		D3D12_HEAP_TYPE_UPLOAD,
-		D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER,
-		NULL);
-
-	hResult = m_pConstBuffer->Map(0, NULL, (void **)&m_pMappedObjects);
-	assert(SUCCEEDED(hResult) && "m_pConstBuffer->Map Failed");
-}
-
-void CBillboardShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
-{
-	CCamera *pCamera = (CCamera*)pContext;
-
-	int xObjects = 10, yObjects = 0, zObjects = 10, i = 0;
-
-	m_nObjects = (xObjects * 2 + 1) * (yObjects * 2 + 1) * (zObjects * 2 + 1);
-	m_ppObjects = new CBaseObject*[m_nObjects];
-
-	UINT ncbElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
-
-	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, m_nObjects, 1);
-	CreateShaderVariables(pCreateMgr, m_nObjects);
-	CreateConstantBufferViews(pCreateMgr, m_nObjects, m_pConstBuffer, ncbElementBytes);
-
-#if USE_BATCH_MATERIAL
-	m_nMaterials = 1;
-	m_ppMaterials = new CMaterial*[m_nMaterials];
-	m_ppMaterials[0] = Materials::CreateGreyMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[0], &m_psrvGPUDescriptorStartHandle[0]);
-#else
-	CMaterial *pCubeMaterial = Materials::CreateBrickMaterial(pCreateMgr, &m_srvCPUDescriptorStartHandle, &m_srvGPUDescriptorStartHandle);
-#endif
-
-	float fxPitch = 12.0f * 5.f;
-	float fyPitch = 12.0f * 5.f;
-	float fzPitch = 12.0f * 5.f;
-
-	UINT incrementSize{ pCreateMgr->GetCbvSrvDescriptorIncrementSize() };
-	CBillboardObject *pBillboardObject = NULL;
-	for (int y = -yObjects; y <= yObjects; y++)
-	{
-		for (int z = -zObjects; z <= zObjects; z++)
-		{
-			for (int x = -xObjects; x <= xObjects; x++)
-			{
-				pBillboardObject = new CBillboardObject(pCreateMgr);
-
-#if !USE_BATCH_MATERIAL
-				pRotatingObject->SetMaterial(pCubeMaterial);
-#endif
-				pBillboardObject->SetPosition(x * 30 + 200, y * 100 + 100, z * 100 + 1000);
-				pBillboardObject->SetCamera(pCamera);
-				pBillboardObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * i));
-				m_ppObjects[i++] = pBillboardObject;
-			}
-		}
-	}
+	UNREFERENCED_PARAMETER(pCreateMgr);
+	UNREFERENCED_PARAMETER(pContext);
 }
 
 void CBillboardShader::ReleaseObjects()
@@ -227,9 +192,9 @@ void CBillboardShader::ReleaseObjects()
 	{
 		for (int i = 0; i < m_nMaterials; ++i)
 		{
-			if (m_ppMaterials[i]) delete m_ppMaterials[i];
+			Safe_Delete(m_ppMaterials[i]);
 		}
-		Safe_Delete(m_ppMaterials);
+		Safe_Delete_Array(m_ppMaterials);
 	}
 #endif
 }

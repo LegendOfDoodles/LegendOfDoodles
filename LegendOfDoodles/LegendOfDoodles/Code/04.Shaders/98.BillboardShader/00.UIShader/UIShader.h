@@ -1,35 +1,28 @@
 #pragma once
-#include "04.Shaders/00.BaseShader/Shader.h"
+#include "04.Shaders/98.BillboardShader/99.BIllboard/BillboardShader.h"
 
 class CBillboardObject;
-class CUIObject;
+class CUIFrameObject;
 class CMaterial;
+class CPlayer;
 
-struct CB_TEXTURE_INFO
-{
-	XMFLOAT4X4 m_xmf4x4World;
-	int	m_index;
-};
-
-class CUIObjectShader : public CShader
+class CUIObjectShader : public CBillboardShader
 {
 public: // 생성자, 소멸자
-	CUIObjectShader(CCreateMgr *pCreateMgr);
+	CUIObjectShader(shared_ptr<CCreateMgr> pCreateMgr);
 	virtual ~CUIObjectShader();
 
 public: // 공개 함수
 	virtual void ReleaseUploadBuffers();
 
-	virtual void UpdateShaderVariables();
+	virtual void UpdateShaderVariables(int opt = 0);
 
 	virtual void AnimateObjects(float timeElapsed);
 
 	virtual void Render(CCamera *pCamera);
 
-	virtual void GetCamera(CCamera *pCamera);
-
-	virtual void OnStatus(int ObjectType);
-	virtual void OffStatus() { if (OnOFF) OnOFF = false; };
+	virtual void SetCamera(CCamera *pCamera);
+	virtual void SetPlayer(CBaseObject *pPlayer) { m_pPlayer = (CPlayer*)pPlayer; };
 
 	virtual bool OnProcessKeyInput(UCHAR* pKeyBuffer);
 	virtual bool OnProcessMouseInput(WPARAM pKeyBuffer);
@@ -37,28 +30,21 @@ public: // 공개 함수
 protected: // 내부 함수
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
 	virtual D3D12_BLEND_DESC CreateBlendState();
-	
-	virtual D3D12_SHADER_BYTECODE CreateVertexShader(ID3DBlob **ppShaderBlob);
-	virtual D3D12_SHADER_BYTECODE CreatePixelShader(ID3DBlob **ppShaderBlob);
 
-	virtual void CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets = 1, bool isRenderBB = false);
-	virtual void CreateShaderVariables(CCreateMgr *pCreateMgr, int nBuffers = 1);
+	virtual D3D12_SHADER_BYTECODE CreateVertexShader(ComPtr<ID3DBlob>& pShaderBlob);
+	virtual D3D12_SHADER_BYTECODE CreatePixelShader(ComPtr<ID3DBlob>& pShaderBlob);
 
-	virtual void BuildObjects(CCreateMgr *pCreateMgr, void *pContext = NULL);
+	virtual void CreateShader(shared_ptr<CCreateMgr> pCreateMgr, UINT nRenderTargets = 1, bool isRenderBB = false, bool isRenderShadow = false);
 
-	virtual void ReleaseShaderVariables();
+	virtual void BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pContext = NULL);
+
 	virtual void ReleaseObjects();
 
 protected: // 변수
-	CBaseObject **m_ppObjects{ NULL };
-	int m_nObjects = 0;
+	CCamera * m_pCamera;
+	CPlayer *m_pPlayer;
 
-	CMaterial	**m_ppMaterials{ NULL };
-
-	CCamera *m_pCamera;
-
-	bool OnOFF = false;
-
-	UINT8 *m_pMappedObjects{ NULL };
+	bool isRendering{ true };
+	bool LButton{ false };
 };
 

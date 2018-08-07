@@ -29,7 +29,6 @@ void CMeshImporter::LoadMeshData(char * in)
 	while (std::getline(ifs, line) && line.find("</triangles>", 0) == -1)
 	{
 		float index[3];
-		int n = 0;
 		char *end = NULL;
 		index[0] = strtof(line.c_str(), &end);
 		index[1] = strtof(end, &end);
@@ -99,6 +98,7 @@ void CMeshImporter::LoadMeshData(char * in)
 		}
 		m_xmVertex.push_back(vertex);
 	}
+	ifs.close();
 }
 
 void CMeshImporter::LoadStaticMeshData(char * in)
@@ -124,7 +124,6 @@ void CMeshImporter::LoadStaticMeshData(char * in)
 	while (std::getline(ifs, line) && line.find("</triangles>", 0) == -1)
 	{
 		float index[3];
-		int n = 0;
 		char *end = NULL;
 		index[0] = strtof(line.c_str(), &end);
 		index[1] = strtof(end, &end);
@@ -181,6 +180,7 @@ void CMeshImporter::LoadStaticMeshData(char * in)
 		}
 		m_xmVertex.push_back(vertex);
 	}
+	ifs.close();
 }
 
 CMeshImporter::~CMeshImporter()
@@ -204,16 +204,17 @@ void CTransformImporter::LoadMeshData(char * in)
 	//¿Œµ¶Ω∫ √ﬂ√‚
 	while (std::getline(ifs, line)) {
 		std::getline(ifs, line);
-		int cnt = strtof(line.c_str(), NULL);
+
+		int cnt = static_cast<int>(strtof(line.c_str(), NULL));
 		m_iTotalCnt += cnt;
 		m_iKindMeshCnt[i] = cnt;
-		
+
 		while (std::getline(ifs, line) && line.find("<end>", 0) == -1)
 		{
 			Transform vertex;
 			int LineNum = 0;
 			float index[3];
-			for(int k=0 ; k<3 ; ++k)
+			for (int k = 0; k<3; ++k)
 			{
 				char *end = NULL;
 				switch (LineNum)
@@ -251,7 +252,7 @@ void CTransformImporter::LoadMeshData(char * in)
 		}
 		++i;
 	}
-
+	ifs.close();
 }
 
 CTransformImporter::~CTransformImporter()

@@ -6,12 +6,12 @@
 /// 목적: 지형 출력용 Shader
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-06-01
+/// 최종 수정 날짜: 2018-07-03
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
-CTerrainShader::CTerrainShader(CCreateMgr *pCreateMgr) : CShader(pCreateMgr)
+CTerrainShader::CTerrainShader(shared_ptr<CCreateMgr> pCreateMgr) : CShader(pCreateMgr)
 {
 }
 
@@ -21,6 +21,12 @@ CTerrainShader::~CTerrainShader()
 
 ////////////////////////////////////////////////////////////////////////
 // 공개 함수
+void CTerrainShader::Initialize(shared_ptr<CCreateMgr> pCreateMgr, void * pContext)
+{
+	CreateShader(pCreateMgr, RENDER_TARGET_BUFFER_CNT, false, true);
+	BuildObjects(pCreateMgr, pContext);
+}
+
 void CTerrainShader::ReleaseUploadBuffers()
 {
 	if (m_pTerrain)  m_pTerrain->ReleaseUploadBuffers();
@@ -31,13 +37,13 @@ void CTerrainShader::ReleaseUploadBuffers()
 	}
 }
 
-void CTerrainShader::UpdateShaderVariables()
+void CTerrainShader::UpdateShaderVariables(int opt)
 {
-	if (m_pMappedTerrain)
-	{
-		XMStoreFloat4x4(&m_pMappedTerrain->m_xmf4x4World,
-			XMMatrixTranspose(XMLoadFloat4x4(m_pTerrain->GetWorldMatrix())));
-	}
+	UNREFERENCED_PARAMETER(opt);
+	static CB_GAMEOBJECT_INFO *pMappedObject = (CB_GAMEOBJECT_INFO *)(m_pMappedObjects);
+
+	XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
+		XMMatrixTranspose(XMLoadFloat4x4(m_pTerrain->GetWorldMatrix())));
 }
 
 void CTerrainShader::Render(CCamera * pCamera)
@@ -45,6 +51,13 @@ void CTerrainShader::Render(CCamera * pCamera)
 	CShader::Render(pCamera);
 
 	if (m_ppMaterials) m_ppMaterials[0]->UpdateShaderVariables();
+	if (m_pTerrain) m_pTerrain->Render(pCamera);
+}
+
+void CTerrainShader::RenderShadow(CCamera * pCamera)
+{
+	CShader::Render(pCamera, 0, 1);
+
 	if (m_pTerrain) m_pTerrain->Render(pCamera);
 }
 
@@ -78,77 +91,101 @@ D3D12_INPUT_LAYOUT_DESC CTerrainShader::CreateInputLayout()
 	return(inputLayoutDesc);
 }
 
-D3D12_SHADER_BYTECODE CTerrainShader::CreateVertexShader(ID3DBlob **ppShaderBlob)
+D3D12_SHADER_BYTECODE CTerrainShader::CreateVertexShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl", 
-		"VSTerrain", 
+		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		"VSTerrain",
 		"vs_5_1",
-		ppShaderBlob));
+		pShaderBlob));
 }
 
-D3D12_SHADER_BYTECODE CTerrainShader::CreateHullShader(ID3DBlob ** ppShaderBlob)
+D3D12_SHADER_BYTECODE CTerrainShader::CreateHullShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
 		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
 		"HSTerrain",
 		"hs_5_1",
-		ppShaderBlob));
+		pShaderBlob));
 }
 
-D3D12_SHADER_BYTECODE CTerrainShader::CreateDomainShader(ID3DBlob ** ppShaderBlob)
+D3D12_SHADER_BYTECODE CTerrainShader::CreateDomainShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
 		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
 		"DSTerrain",
 		"ds_5_1",
-		ppShaderBlob));
+		pShaderBlob));
 }
 
-D3D12_SHADER_BYTECODE CTerrainShader::CreatePixelShader(ID3DBlob **ppShaderBlob)
+D3D12_SHADER_BYTECODE CTerrainShader::CreatePixelShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl", 
-		"PSTerrain", 
+		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		"PSTerrain",
 		"ps_5_1",
-		ppShaderBlob));
+		pShaderBlob));
 }
 
-void CTerrainShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets, bool isRenderBB)
+D3D12_SHADER_BYTECODE CTerrainShader::CreateShadowVertexShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
-	m_nPipelineStates = 1;
-	m_ppPipelineStates = new ID3D12PipelineState*[m_nPipelineStates];
+	return(CShader::CompileShaderFromFile(
+		L"./code/04.Shaders/99.GraphicsShader/ShadowShader.hlsl",
+		"VSTerrain",
+		"vs_5_1",
+		pShaderBlob));
+}
+
+D3D12_SHADER_BYTECODE CTerrainShader::CreateShadowHullShader(ComPtr<ID3DBlob>& pShaderBlob)
+{
+	return(CShader::CompileShaderFromFile(
+		L"./code/04.Shaders/99.GraphicsShader/ShadowShader.hlsl",
+		"HSTerrain",
+		"hs_5_1",
+		pShaderBlob));
+}
+
+D3D12_SHADER_BYTECODE CTerrainShader::CreateShadowDomainShader(ComPtr<ID3DBlob>& pShaderBlob)
+{
+	return(CShader::CompileShaderFromFile(
+		L"./code/04.Shaders/99.GraphicsShader/ShadowShader.hlsl",
+		"DSTerrain",
+		"ds_5_1",
+		pShaderBlob));
+}
+
+D3D12_SHADER_BYTECODE CTerrainShader::CreateShadowPixelShader(ComPtr<ID3DBlob>& pShaderBlob)
+{
+	return(CShader::CompileShaderFromFile(
+		L"./code/04.Shaders/99.GraphicsShader/ShadowShader.hlsl",
+		"PSTerrain",
+		"ps_5_1",
+		pShaderBlob));
+}
+
+void CTerrainShader::CreateShader(shared_ptr<CCreateMgr> pCreateMgr, UINT nRenderTargets, bool isRenderBB, bool isRenderShadow)
+{
+	UNREFERENCED_PARAMETER(isRenderBB);
+
+	m_nPipelineStates = 2;
 
 	m_nHeaps = 1;
 	CreateDescriptorHeaps();
 
-	CShader::CreateShaderWithTess(pCreateMgr, nRenderTargets);
+	CShader::CreateShaderWithTess(pCreateMgr, nRenderTargets, isRenderShadow);
 }
 
-void CTerrainShader::CreateShaderVariables(CCreateMgr * pCreateMgr, int nBuffers)
+void CTerrainShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pContext)
 {
-	UINT elementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
+	UNREFERENCED_PARAMETER(pContext);
 
-	m_pConstBuffer = pCreateMgr->CreateBufferResource(
-		NULL,
-		elementBytes,
-		D3D12_HEAP_TYPE_UPLOAD,
-		D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER,
-		NULL);
-
-	HRESULT hResult = m_pConstBuffer->Map(0, NULL, (void **)&m_pMappedTerrain);
-	assert(SUCCEEDED(hResult) && "m_pConstBuffer->Map Failed");
-}
-
-void CTerrainShader::BuildObjects(CCreateMgr * pCreateMgr, void * pContext)
-{
 	m_pTerrain = new CHeightMapTerrain(pCreateMgr, _T("Resource/Terrain/HeightMap.raw"), TERRAIN_IMAGE_SCALE);
 
 	UINT ncbElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
 
 	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, 1, 1);
-	CreateShaderVariables(pCreateMgr);
-	CreateConstantBufferViews(pCreateMgr, 1, m_pConstBuffer, ncbElementBytes);
+	CreateShaderVariables(pCreateMgr, ncbElementBytes);
+	CreateConstantBufferViews(pCreateMgr, 1, m_pConstBuffer.Get(), ncbElementBytes);
 
 	m_nMaterials = 1;
 	m_ppMaterials = new CMaterial*[m_nMaterials];
@@ -164,8 +201,8 @@ void CTerrainShader::ReleaseObjects()
 	{
 		for (int i = 0; i < m_nMaterials; ++i)
 		{
-			if (m_ppMaterials[i]) delete m_ppMaterials[i];
+			Safe_Delete(m_ppMaterials[i]);
 		}
-		Safe_Delete(m_ppMaterials);
+		Safe_Delete_Array(m_ppMaterials);
 	}
 }

@@ -2,10 +2,15 @@
 #include "02.Framework/00.Frame/Framework.h"
 #include "04.Shaders/00.BaseShader/Shader.h"
 #include "05.Objects/01.Camera/00.BaseCamera/Camera.h"
-#include "05.Objects/02.CollisionObject/CollisionObject.h"
+#include "05.Objects/03.AnimatedObject/AnimatedObject.h"
 
 class CCreateMgr;
+class CWayFinder;
+class CCollisionManager;
 class CUIObjectManager;
+class CThrowingMgr;
+class CEffectMgr;
+class CFSMMgr;
 
 struct LIGHT
 {
@@ -28,6 +33,12 @@ struct LIGHTS
 	XMFLOAT4				m_xmf4GlobalAmbient;
 };
 
+
+struct FOW
+{
+	int m_bFoW[256];
+};
+
 class CScene	// Warning! 인 게임 씬이랑 공백 씬이랑 분리할 필요 있음
 {
 public:	// 생성자, 소멸자
@@ -35,7 +46,7 @@ public:	// 생성자, 소멸자
 	virtual ~CScene();
 
 public: // 공개 함수
-	virtual void Initialize(CCreateMgr *pCreateMgr, Network* pNetwork);
+	virtual void Initialize(shared_ptr<CCreateMgr> pCreateMgr);
 	virtual void Finalize();
 
 	void ReleaseUploadBuffers();
@@ -43,10 +54,13 @@ public: // 공개 함수
 	void ProcessInput();
 	void AnimateObjects(float timeElapsed);
 	void Render();
+	void RenderShadow();
 	void RenderWithLights();
 
 	void SetViewportsAndScissorRects();
+	void SetShadowViewportsAndScissorRects();
 	void UpdateCamera();
+	void UpdateShadowCamera(int renderStage = 0);
 
 	// Message Process
 	void OnProcessingMouseMessage(HWND hWnd, UINT messageID,
@@ -57,14 +71,14 @@ public: // 공개 함수
 	CCamera * GetCamera() { return m_pCamera; }
 
 protected: // 내부 함수
-	void CreateCbvAndSrvDescriptorHeap(CCreateMgr *pCreateMgr, int nConstantBufferViews, int nShaderResourceViews, int index);
+	void CreateCbvAndSrvDescriptorHeap(shared_ptr<CCreateMgr> pCreateMgr, int nConstantBufferViews, int nShaderResourceViews, int index);
 
 	void BuildLights();
 
-	void BuildObjects(CCreateMgr *pCreateMgr);
+	void BuildObjects(shared_ptr<CCreateMgr> pCreateMgr);
 	void ReleaseObjects();
 
-	virtual void CreateShaderVariables(CCreateMgr *pCreateMgr);
+	virtual void CreateShaderVariables(shared_ptr<CCreateMgr> pCreateMgr);
 	virtual void ReleaseShaderVariables();
 	virtual void UpdateShaderVariables();
 
@@ -75,9 +89,10 @@ protected: // 내부 함수
 
 protected: // 변수
 	HWND m_hWnd{ NULL };
-	ID3D12GraphicsCommandList *m_pCommandList{ NULL };
+	ComPtr<ID3D12GraphicsCommandList> m_pCommandList;
 
 	CCamera *m_pCamera{ NULL };
+	CCamera *m_pLightCamera{ NULL };
 
 	CShader **m_ppShaders{ NULL };
 	int m_nShaders{ 0 };
@@ -86,10 +101,18 @@ protected: // 변수
 	CMaterial			*m_pCubeMap{ NULL };
 	LIGHTS	 *m_pLights{ NULL };
 
-	ID3D12Resource	*m_pd3dcbLights{ NULL };
+	ComPtr<ID3D12Resource>	m_pcbLights;
 	LIGHTS *m_pcbMappedLights{ NULL };
 
-	CCollisionObject *m_pSelectedObject{ NULL };
+	FOW		 *m_pFoW{ NULL };
+	ComPtr<ID3D12Resource>	m_pcbbFoW;
+	FOW *m_pcbMappedFoW = NULL;
+
+
+	CCollisionObject ** m_ppObjects{ NULL };
+	int m_nObjects{ 0 };
+
+	CAnimatedObject * m_pSelectedObject{ NULL };
 
 	bool m_bCurCamIsAOS{ true };
 	bool m_bCamChanged{ false };
@@ -97,16 +120,17 @@ protected: // 변수
 
 	XMFLOAT3 m_pickWorldPosition{ 0.f, 0.f, 0.f };
 
-	CCreateMgr* m_pCreateMgr{ NULL };
-
-	CUIObjectManager *m_pHPGaugeManager{NULL};
-
-	Network* m_pNetwork{ NULL };
-	
-	int m_FrameCheck{ 0 };
+	// 매니저 클래스
+	shared_ptr<CWayFinder> m_pWayFinder;
+	shared_ptr<CCreateMgr> m_pCreateMgr;
+	shared_ptr<CCollisionManager>m_pCollisionManager;
+	shared_ptr<CUIObjectManager> m_pUIObjectsManager;
+	shared_ptr<CThrowingMgr> m_pThrowingMgr;
+	shared_ptr<CEffectMgr> m_pEffectMgr;
+	shared_ptr<CFSMMgr> m_pFSMMgr;
 
 	const int	m_nHeaps{ 2 };
-	ID3D12DescriptorHeap			*m_pCbvSrvDescriptorHeaps[2];
+	std::vector<ComPtr<ID3D12DescriptorHeap>>	m_pCbvSrvDescriptorHeaps;
 	D3D12_CPU_DESCRIPTOR_HANDLE		m_cbvCPUDescriptorStartHandles[2];
 	D3D12_GPU_DESCRIPTOR_HANDLE		m_cbvGPUDescriptorStartHandles[2];
 	D3D12_CPU_DESCRIPTOR_HANDLE		m_srvCPUDescriptorStartHandles[2];

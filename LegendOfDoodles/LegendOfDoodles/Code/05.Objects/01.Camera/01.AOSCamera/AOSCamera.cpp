@@ -6,7 +6,7 @@
 /// 목적: In Game 에서 사용할 카메라
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-22
+/// 최종 수정 날짜: 2018-07-04
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@ CAOSCamera::~CAOSCamera()
 
 ////////////////////////////////////////////////////////////////////////
 // 공개 함수
-void CAOSCamera::Initialize(CCreateMgr * pCreateMgr)
+void CAOSCamera::Initialize(shared_ptr<CCreateMgr> pCreateMgr)
 {
 	int width = pCreateMgr->GetWindowWidth();
 	int height = pCreateMgr->GetWindowHeight();
@@ -30,22 +30,24 @@ void CAOSCamera::Initialize(CCreateMgr * pCreateMgr)
 	m_edgeSize.top = Window_Edge_Size;
 	m_edgeSize.right = width - Window_Edge_Size;
 	m_edgeSize.bottom = height - Window_Edge_Size;
-	
+
 	m_hWnd = pCreateMgr->GetHwnd();
 	m_pCommandList = pCreateMgr->GetCommandList();
 
 	SetViewport(0, 0, width, height, 0.0f, 1.0f);
 	SetScissorRect(0, 0, width, height);
-	GenerateProjectionMatrix(1.0f, 50000.0f, float(width) / float(height), 90.0f);
+	GeneratePerspectiveProjectionMatrix(1.0f, 50000.0f, float(width) / float(height), 90.0f);
 	GenerateViewMatrix(
 		XMFLOAT3(0.0f, 500.0f, -200.0f),
 		XMFLOAT3(0.0f, 0.0f, 0.0f));
 
-	CreateShaderVariables(pCreateMgr);
+	CreateShaderVariables(pCreateMgr, ((sizeof(VS_CB_CAMERA_INFO) + 255) & ~255));
 }
 
 void CAOSCamera::Move(float fTimeElapsed, bool bVelocity)
 {
+	UNREFERENCED_PARAMETER(bVelocity);
+
 	if (m_direction)
 	{
 		XMFLOAT3 xmf3Shift = XMFLOAT3(0, 0, 0);
@@ -64,6 +66,8 @@ void CAOSCamera::Move(float fTimeElapsed, bool bVelocity)
 
 bool CAOSCamera::OnProcessMouseWheel(WPARAM wParam, LPARAM lParam)
 {
+	UNREFERENCED_PARAMETER(lParam);
+
 	short zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
 
 	XMFLOAT3 pos{ GetPosition() };
@@ -88,6 +92,8 @@ bool CAOSCamera::OnProcessMouseWheel(WPARAM wParam, LPARAM lParam)
 
 bool CAOSCamera::OnProcessMouseInput(UCHAR * pKeyBuffer)
 {
+	UNREFERENCED_PARAMETER(pKeyBuffer);
+
 	POINT cursorPos;
 
 	GetCursorPos(&cursorPos);

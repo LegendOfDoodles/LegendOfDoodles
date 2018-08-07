@@ -6,7 +6,7 @@
 /// 목적: 기본 카메라 코드, 인터 페이스 용
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-22
+/// 최종 수정 날짜: 2018-08-05
 /// </summary>
 
 
@@ -26,7 +26,7 @@ CCamera::~CCamera()
 
 ////////////////////////////////////////////////////////////////////////
 // 공개 함수
-void CCamera::Initialize(CCreateMgr *pCreateMgr)
+void CCamera::Initialize(shared_ptr<CCreateMgr> pCreateMgr)
 {
 	int width = pCreateMgr->GetWindowWidth();
 	int height = pCreateMgr->GetWindowHeight();
@@ -36,13 +36,13 @@ void CCamera::Initialize(CCreateMgr *pCreateMgr)
 
 	SetViewport(0, 0, width, height, 0.0f, 1.0f);
 	SetScissorRect(0, 0, width, height);
-	GenerateProjectionMatrix(1.0f, 50000.0f, float(width) / 	float(height), 90.0f);
+	GeneratePerspectiveProjectionMatrix(1.0f, 50000.0f, float(width) / float(height), 90.0f);
 	GenerateViewMatrix(
 		XMFLOAT3(0.0f, 70.0f, 0.0f),
 		XMFLOAT3(0.0f, 0.0f, 0.0f),
 		XMFLOAT3(0.0f, 1.0f, 0.0f));
 
-	CreateShaderVariables(pCreateMgr);
+	CreateShaderVariables(pCreateMgr, ((sizeof(VS_CB_CAMERA_INFO) + 255) & ~255));
 }
 
 void CCamera::Finalize()
@@ -50,15 +50,17 @@ void CCamera::Finalize()
 	ReleaseShaderVariables();
 }
 
-void CCamera::UpdateShaderVariables()
+void CCamera::UpdateShaderVariables(int rootSignatureIndex)
 {
-	XMStoreFloat4x4(&m_pMappedCamera->m_xmf4x4View, XMMatrixTranspose(XMLoadFloat4x4(&m_xmf4x4View)));
-	XMStoreFloat4x4(&m_pMappedCamera->m_xmf4x4Projection, XMMatrixTranspose(XMLoadFloat4x4(&m_xmf4x4Projection)));
+	VS_CB_CAMERA_INFO *pMappedCamera = (VS_CB_CAMERA_INFO *)(m_pMappedCamera);
 
-	memcpy(&m_pMappedCamera->m_xmf3Position, &m_xmf3Position, sizeof(XMFLOAT3));
+	XMStoreFloat4x4(&pMappedCamera->m_xmf4x4View, XMMatrixTranspose(XMLoadFloat4x4(&m_xmf4x4View)));
+	XMStoreFloat4x4(&pMappedCamera->m_xmf4x4Projection, XMMatrixTranspose(XMLoadFloat4x4(&m_xmf4x4Projection)));
+
+	memcpy(&pMappedCamera->m_xmf3Position, &m_xmf3Position, sizeof(XMFLOAT3));
 
 	D3D12_GPU_VIRTUAL_ADDRESS gpuVirtualAddress = m_pConstBuffer->GetGPUVirtualAddress();
-	m_pCommandList->SetGraphicsRootConstantBufferView(0, gpuVirtualAddress);
+	m_pCommandList->SetGraphicsRootConstantBufferView(rootSignatureIndex, gpuVirtualAddress);
 }
 
 void CCamera::SetViewportsAndScissorRects()
@@ -69,6 +71,8 @@ void CCamera::SetViewportsAndScissorRects()
 
 void CCamera::Move(float fTimeElapsed, bool bVelocity)
 {
+	UNREFERENCED_PARAMETER(bVelocity);
+
 	if (m_direction)
 	{
 		XMFLOAT3 xmf3Shift = XMFLOAT3(0, 0, 0);
@@ -92,7 +96,7 @@ void CCamera::Move(float fTimeElapsed, bool bVelocity)
 void CCamera::Move(XMFLOAT3& xmf3Shift)
 {
 	m_xmf3Position.x += xmf3Shift.x;
-	m_xmf3Position.y += xmf3Shift.y; 
+	m_xmf3Position.y += xmf3Shift.y;
 	m_xmf3Position.z += xmf3Shift.z;
 }
 
@@ -138,6 +142,7 @@ void CCamera::Update(float fTimeElapsed)
 
 void CCamera::SetLookAt(XMFLOAT3& xmf3LookAt)
 {
+	UNREFERENCED_PARAMETER(xmf3LookAt);
 }
 
 void CCamera::SetOffset(XMFLOAT3 xmf3Offset) {
@@ -165,12 +170,27 @@ void CCamera::RegenerateViewMatrix()
 	GenerateFrustum();
 }
 
-void CCamera::GenerateProjectionMatrix(
+void CCamera::GeneratePerspectiveProjectionMatrix(
 	float fNearPlaneDistance, float fFarPlaneDistance,
 	float fAspectRatio, float fFOVAngle)
 {
 	m_xmf4x4Projection = Matrix4x4::PerspectiveFovLH(XMConvertToRadians(fFOVAngle),
 		fAspectRatio, fNearPlaneDistance, fFarPlaneDistance);
+}
+
+void CCamera::GenerateOrthographicProjectionMatrix(
+	float fWidth, float fHeight,
+	float fNearPlaneDistance, float fFarPlaneDistance)
+{
+	m_xmf4x4Projection = Matrix4x4::OrthographicLH(fWidth, fHeight, fNearPlaneDistance, fFarPlaneDistance);
+}
+
+void CCamera::GenerateOrthographicOffCenterProjectionMatrix(
+	float left, float right,
+	float top, float bottom,
+	float fNearPlaneDistance, float fFarPlaneDistance)
+{
+	m_xmf4x4Projection = Matrix4x4::OrthographicOffCenterLH(left, right, top, bottom, fNearPlaneDistance, fFarPlaneDistance);
 }
 
 void CCamera::SavePickedPos()
@@ -180,6 +200,8 @@ void CCamera::SavePickedPos()
 
 bool CCamera::OnProcessMouseWheel(WPARAM wParam, LPARAM lParam)
 {
+	UNREFERENCED_PARAMETER(lParam);
+
 	m_speed += GET_WHEEL_DELTA_WPARAM(wParam);
 
 	if (m_speed < MIN_CAMERA_SPEED) m_speed = MIN_CAMERA_SPEED;
@@ -241,7 +263,7 @@ bool CCamera::OnProcessKeyInput(UCHAR * pKeyBuffer)
 	{
 		direction |= DIR_DOWN;
 	}
-	
+
 	m_direction = direction;
 
 	return false;
@@ -287,7 +309,7 @@ void CCamera::GenerateViewMatrix(XMFLOAT3 xmf3Position, XMFLOAT3 xmf3LookAt, XMF
 	{
 		m_xmf3Up = xmf3Up;
 	}
-	
+
 	GenerateViewMatrix();
 }
 
@@ -310,24 +332,23 @@ void CCamera::SetScissorRect(
 	m_scissorRect.bottom = yBottom;
 }
 
-void CCamera::CreateShaderVariables(CCreateMgr *pCreateMgr)
+void CCamera::CreateShaderVariables(shared_ptr<CCreateMgr> pCreateMgr, UINT stride)
 {
-	UINT ncbElementBytes = ((sizeof(VS_CB_CAMERA_INFO) + 255) & ~255); //256의 배수
-
 	m_pConstBuffer = pCreateMgr->CreateBufferResource(
-		NULL, 
-		ncbElementBytes, 
-		D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, 
+		NULL,
+		stride,
+		D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER,
 		NULL);
 
 	HRESULT hResult = m_pConstBuffer->Map(0, NULL, (void **)&m_pMappedCamera);
-	assert(SUCCEEDED(hResult) && "CommandList->Reset Failed");
+	ThrowIfFailed(hResult);
 }
 
 void CCamera::ReleaseShaderVariables()
 {
-	if (!m_pConstBuffer) return;
-
-	m_pConstBuffer->Unmap(0, NULL);
-	Safe_Release(m_pConstBuffer);
+	if (m_pConstBuffer.Get())
+	{
+		m_pConstBuffer->Unmap(0, NULL);
+		m_pConstBuffer.Reset();
+	}
 }

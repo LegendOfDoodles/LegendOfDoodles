@@ -6,12 +6,12 @@
 /// 목적: 텍스처, 알베도, 재질 등 정리용 클래스
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-21
+/// 최종 수정 날짜: 2018-08-05
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
-CMaterial::CMaterial(CCreateMgr *pCreateMgr)
+CMaterial::CMaterial(shared_ptr<CCreateMgr> pCreateMgr)
 {
 	m_pCommandList = pCreateMgr->GetCommandList();
 }
@@ -24,7 +24,7 @@ CMaterial::~CMaterial()
 
 ////////////////////////////////////////////////////////////////////////
 // 공개 함수
-void CMaterial::Initialize(CCreateMgr *pCreateMgr)
+void CMaterial::Initialize(shared_ptr<CCreateMgr> pCreateMgr)
 {
 	CreateShaderVariables(pCreateMgr);
 }
@@ -57,7 +57,7 @@ void CMaterial::UpdateShaderVariable(int nIndex)
 
 void CMaterial::Render(CCamera *pCamera)
 {
-	if(m_pShader) m_pShader->Render(pCamera);
+	if (m_pShader) m_pShader->Render(pCamera);
 }
 
 void CMaterial::SetTexture(CTexture *pTexture)
@@ -76,13 +76,13 @@ void CMaterial::SetShader(CShader *pShader)
 
 ////////////////////////////////////////////////////////////////////////
 // 내부 함수
-void CMaterial::CreateShaderVariables(CCreateMgr *pCreateMgr)
+void CMaterial::CreateShaderVariables(shared_ptr<CCreateMgr> pCreateMgr)
 {
-	UINT ncbMaterialBytes = ((sizeof(COLOR) + 255) & ~255); //256의 배수
+	static UINT ncbMaterialBytes = ((sizeof(COLOR) + 255) & ~255); //256의 배수
 	m_pcbColor = pCreateMgr->CreateBufferResource(
-		NULL, 
+		NULL,
 		ncbMaterialBytes,
-		D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, 
+		D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER,
 		NULL);
 
 	m_pcbColor->Map(0, NULL, (void **)&m_pcbMappedColor);
@@ -90,10 +90,10 @@ void CMaterial::CreateShaderVariables(CCreateMgr *pCreateMgr)
 
 void CMaterial::ReleaseShaderVariables()
 {
-	if (m_pcbColor)
+	if (m_pcbColor.Get())
 	{
 		m_pcbColor->Unmap(0, NULL);
-		m_pcbColor->Release();
+		m_pcbColor.Reset();
 	}
 }
 

@@ -6,20 +6,20 @@
 #include "05.Objects/07.StaticObjects/Obstacle.h"
 #include "05.Objects/09.NexusTower/NexusTower.h"
 #include "06.Meshes/01.Mesh/MeshImporter.h"
+#include "00.Global/02.AI/00.FSMMgr/FSMMgr.h"
 
 /// <summary>
-/// 목적: 스테틱 오브젝트 그리기 용도의 쉐이더
+/// 목적: 넥서스 및 타워 그리기 용도의 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-06-27
+/// 최종 수정 날짜: 2018-08-04
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
-CNexusTowerShader::CNexusTowerShader(CCreateMgr *pCreateMgr, Network* network)
+CNexusTowerShader::CNexusTowerShader(shared_ptr<CCreateMgr> pCreateMgr)
 	: CShader(pCreateMgr)
 {
-	m_pNetwork = network;
 }
 
 CNexusTowerShader::~CNexusTowerShader()
@@ -28,33 +28,15 @@ CNexusTowerShader::~CNexusTowerShader()
 
 ////////////////////////////////////////////////////////////////////////
 // 공개 함수
-void CNexusTowerShader::Initialize(CCreateMgr *pCreateMgr, void *pContext)
+void CNexusTowerShader::Initialize(shared_ptr<CCreateMgr> pCreateMgr, void *pContext)
 {
-	CreateShader(pCreateMgr, RENDER_TARGET_BUFFER_CNT, true);
+	CreateShader(pCreateMgr, RENDER_TARGET_BUFFER_CNT, true, true);
 	BuildObjects(pCreateMgr, pContext);
 }
 
-void CNexusTowerShader::ReleaseUploadBuffers()
+void CNexusTowerShader::UpdateShaderVariables(int opt)
 {
-	if (m_ppObjects)
-	{
-		for (int j = 0; j < m_nObjects; j++)
-		{
-			m_ppObjects[j]->ReleaseUploadBuffers();
-		}
-	}
-
-#if USE_BATCH_MATERIAL
-	if (m_ppMaterials)
-	{
-		for (int i = 0; i<m_nMaterials; ++i)
-			m_ppMaterials[i]->ReleaseUploadBuffers();
-	}
-#endif
-}
-
-void CNexusTowerShader::UpdateShaderVariables()
-{
+	UNREFERENCED_PARAMETER(opt);
 	static UINT elementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
 
 	for (int i = 0; i < m_nObjects; i++)
@@ -82,7 +64,7 @@ void CNexusTowerShader::AnimateObjects(float timeElapsed)
 {
 	for (int j = 0; j < m_nObjects; j++)
 	{
-		m_ppObjects[j]->Animate(timeElapsed);
+		m_pFSMMgr->Update(timeElapsed, m_ppObjects[j]);
 	}
 }
 
@@ -91,13 +73,10 @@ void CNexusTowerShader::Render(CCamera *pCamera)
 	int cnt{ 0 };
 	for (int i = 0; i < m_nMaterials; ++i)
 	{
+		CShader::Render(pCamera, i);
+		m_ppMaterials[i]->UpdateShaderVariables();
 		for (int j = 0; j < m_meshCounts[i]; ++j, ++cnt)
 		{
-			if (j == 0)
-			{
-				CShader::Render(pCamera, i);
-				m_ppMaterials[i]->UpdateShaderVariables();
-			}
 			if (m_ppObjects[cnt]) m_ppObjects[cnt]->Render(pCamera);
 		}
 	}
@@ -110,6 +89,19 @@ void CNexusTowerShader::RenderBoundingBox(CCamera * pCamera)
 	for (int j = 0; j < m_nObjects; j++)
 	{
 		if (m_ppObjects[j]) m_ppObjects[j]->RenderBoundingBox(pCamera);
+	}
+}
+
+void CNexusTowerShader::RenderShadow(CCamera * pCamera)
+{
+	int cnt{ 0 };
+	for (int i = 0; i < m_nMaterials; ++i)
+	{
+		CShader::Render(pCamera, i, 2);
+		for (int j = 0; j < m_meshCounts[i]; ++j, ++cnt)
+		{
+			if (m_ppObjects[cnt]) m_ppObjects[cnt]->Render(pCamera);
+		}
 	}
 }
 
@@ -137,7 +129,30 @@ CBaseObject *CNexusTowerShader::PickObjectByRayIntersection(
 
 bool CNexusTowerShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 {
+	UNREFERENCED_PARAMETER(pKeyBuffer);
+
+	if (GetAsyncKeyState('U') & 0x0001)
+	{
+		m_ppObjects[0]->SetState(States::Die);
+
+	}
 	return true;
+}
+
+void CNexusTowerShader::SetColManagerToObject(shared_ptr<CCollisionManager> manager)
+{
+	for (int i = 0; i < m_nObjects; ++i) {
+
+		m_ppObjects[i]->SetCollisionManager(manager);
+	}
+}
+
+void CNexusTowerShader::SetThrowingManagerToObject(shared_ptr<CThrowingMgr> manager)
+{
+	for (int i = 0; i < m_nObjects; ++i)
+	{
+		m_ppObjects[i]->SetThrowingManager(manager);
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -187,82 +202,66 @@ D3D12_INPUT_LAYOUT_DESC CNexusTowerShader::CreateInputLayout()
 	return(d3dInputLayoutDesc);
 }
 
-D3D12_SHADER_BYTECODE CNexusTowerShader::CreateVertexShader(ID3DBlob **ppShaderBlob)
+D3D12_SHADER_BYTECODE CNexusTowerShader::CreateVertexShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
-	return(CShader::CompileShaderFromFile(L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl", "VSTexturedLighting", "vs_5_1", ppShaderBlob));
+	return(CShader::CompileShaderFromFile(
+		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		"VSTexturedLighting",
+		"vs_5_1",
+		pShaderBlob));
 }
 
-D3D12_SHADER_BYTECODE CNexusTowerShader::CreatePixelShader(ID3DBlob **ppShaderBlob)
+D3D12_SHADER_BYTECODE CNexusTowerShader::CreatePixelShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
-	return(CShader::CompileShaderFromFile(L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl", "PSTexturedLightingEmissive", "ps_5_1", ppShaderBlob));
+	return(CShader::CompileShaderFromFile(
+		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		"PSTexturedLightingEmissive",
+		"ps_5_1",
+		pShaderBlob));
 }
 
-void CNexusTowerShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets, bool isRenderBB)
+D3D12_SHADER_BYTECODE CNexusTowerShader::CreateShadowVertexShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
-	m_nPipelineStates = 2;
-	m_ppPipelineStates = new ID3D12PipelineState*[m_nPipelineStates];
+	return(CShader::CompileShaderFromFile(
+		L"./code/04.Shaders/99.GraphicsShader/ShadowShader.hlsl",
+		"VSTexturedLighting",
+		"vs_5_1",
+		pShaderBlob));
+}
 
-	for (int i = 0; i < m_nPipelineStates; ++i)
-	{
-		m_ppPipelineStates[i] = NULL;
-	}
+void CNexusTowerShader::CreateShader(shared_ptr<CCreateMgr> pCreateMgr, UINT nRenderTargets, bool isRenderBB, bool isRenderShadow)
+{
+	m_nPipelineStates = 3;
 
 	m_nHeaps = 5;
 	CreateDescriptorHeaps();
 
-	CShader::CreateShader(pCreateMgr, nRenderTargets, isRenderBB);
+	CShader::CreateShader(pCreateMgr, nRenderTargets, isRenderBB, isRenderShadow);
 }
 
-void CNexusTowerShader::CreateShaderVariables(CCreateMgr *pCreateMgr, int nBuffers)
+void CNexusTowerShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pContext)
 {
-	HRESULT hResult;
-
-	UINT elementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
-
-	m_pConstBuffer = pCreateMgr->CreateBufferResource(
-		NULL,
-		elementBytes * nBuffers,
-		D3D12_HEAP_TYPE_UPLOAD,
-		D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER,
-		NULL);
-
-	hResult = m_pConstBuffer->Map(0, NULL, (void **)&m_pMappedObjects);
-	assert(SUCCEEDED(hResult) && "m_pConstBuffer->Map Failed");
-
-	UINT boundingBoxElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
-
-	m_pBoundingBoxBuffer = pCreateMgr->CreateBufferResource(
-		NULL,
-		boundingBoxElementBytes * nBuffers,
-		D3D12_HEAP_TYPE_UPLOAD,
-		D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER,
-		NULL);
-
-	hResult = m_pBoundingBoxBuffer->Map(0, NULL, (void **)&m_pMappedBoundingBoxes);
-	assert(SUCCEEDED(hResult) && "m_pBoundingBoxBuffer->Map Failed");
-}
-
-void CNexusTowerShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
-{
+	UNREFERENCED_PARAMETER(pContext);
 
 	CTransformImporter transformInporter;
 
 	transformInporter.LoadMeshData("Resource//Data//NexusTowerSetting.txt");
 
 	m_nObjects = transformInporter.m_iTotalCnt;
-	m_ppObjects = new CBaseObject*[m_nObjects];
+	m_ppObjects = new CCollisionObject*[m_nObjects];
 
 	UINT ncbElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
-	UINT boundingBoxElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
+	int accCnt{ 0 };
 
-	CreateShaderVariables(pCreateMgr, m_nObjects);
+	CreateShaderVariables(pCreateMgr, ncbElementBytes, m_nObjects, true, ncbElementBytes, m_nObjects);
 	for (int i = 0; i < m_nHeaps - 1; ++i)
 	{
-		CreateCbvAndSrvDescriptorHeaps(pCreateMgr, m_nObjects, 1, i);
-		CreateConstantBufferViews(pCreateMgr, m_nObjects, m_pConstBuffer, ncbElementBytes, i);
+		CreateCbvAndSrvDescriptorHeaps(pCreateMgr, transformInporter.m_iKindMeshCnt[i], 1, i);
+		CreateConstantBufferViews(pCreateMgr, transformInporter.m_iKindMeshCnt[i], m_pConstBuffer.Get(), ncbElementBytes, accCnt, i);
+		accCnt += transformInporter.m_iKindMeshCnt[i];
 	}
 	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, m_nObjects, 0, m_nHeaps - 1);
-	CreateConstantBufferViews(pCreateMgr, m_nObjects, m_pBoundingBoxBuffer, ncbElementBytes, m_nHeaps - 1);
+	CreateConstantBufferViews(pCreateMgr, m_nObjects, m_pBoundingBoxBuffer.Get(), ncbElementBytes, 0, m_nHeaps - 1);
 
 	SaveBoundingBoxHeapNumber(m_nHeaps - 1);
 
@@ -300,7 +299,9 @@ void CNexusTowerShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
 		XMFLOAT3(CONVERT_PaperUnit_to_InG(5), CONVERT_PaperUnit_to_InG(7), CONVERT_PaperUnit_to_InG(10)));
 	CNexusTower *pBuild = NULL;
 
-	
+	m_nNexus = transformInporter.m_iKindMeshCnt[0] + transformInporter.m_iKindMeshCnt[1];
+	m_nTower = transformInporter.m_iKindMeshCnt[2] + transformInporter.m_iKindMeshCnt[3];
+
 	int cnt = 0;
 	for (int i = 0; i < m_nMaterials; ++i) {
 		m_meshCounts[i] = transformInporter.m_iKindMeshCnt[i];
@@ -316,47 +317,31 @@ void CNexusTowerShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
 			else {
 				pBuild->SetTeam(TeamType::Red);
 			}
-			if (i < 2) pBuild->SetType(ObjectType::Nexus);
-			else pBuild->SetType(ObjectType::FirstTower);
+			if (i < 2) {
+				pBuild->SetCollisionSize(CONVERT_PaperUnit_to_InG(40));
+				pBuild->SetType(ObjectType::Nexus);
+			}
+			else {
+				pBuild->SetCollisionSize(CONVERT_PaperUnit_to_InG(8));
+				pBuild->SetType(ObjectType::FirstTower);
 
+			}
 			pBuild->Rotate(0, 180, 0);
 			pBuild->Rotate(-rot.x, rot.y, -rot.z);
 			pBuild->SetMesh(0, pMeshes[i]);
 			SetBoundingBoxMeshByIndex(pCreateMgr, pBuild, i);
 
+			pBuild->ResetCollisionLevel();
 			pBuild->SetStatic(StaticType::Static);
 
-			pBuild->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * cnt));
+			pBuild->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[i].ptr + (incrementSize * j));
 			pBuild->SetCbvGPUDescriptorHandlePtrForBB(m_pcbvGPUDescriptorStartHandle[m_nHeaps - 1].ptr + (incrementSize * cnt));
 			m_ppObjects[cnt++] = pBuild;
 		}
 	}
 }
 
-void CNexusTowerShader::ReleaseObjects()
-{
-	if (m_ppObjects)
-	{
-		for (int j = 0; j < m_nObjects; j++)
-		{
-			delete m_ppObjects[j];
-		}
-		Safe_Delete_Array(m_ppObjects);
-	}
-
-#if USE_BATCH_MATERIAL
-	if (m_ppMaterials)
-	{
-		for (int i = 0; i < m_nMaterials; ++i)
-		{
-			if (m_ppMaterials[i]) delete m_ppMaterials[i];
-		}
-		Safe_Delete(m_ppMaterials);
-	}
-#endif
-}
-
-void CNexusTowerShader::SetBoundingBoxMeshByIndex(CCreateMgr * pCreateMgr, CBaseObject * target, int index)
+void CNexusTowerShader::SetBoundingBoxMeshByIndex(shared_ptr<CCreateMgr> pCreateMgr, CBaseObject * target, int index)
 {
 	static CCubeMesh towerBBMesh(pCreateMgr,
 		CONVERT_PaperUnit_to_InG(10), CONVERT_PaperUnit_to_InG(7), CONVERT_PaperUnit_to_InG(20),

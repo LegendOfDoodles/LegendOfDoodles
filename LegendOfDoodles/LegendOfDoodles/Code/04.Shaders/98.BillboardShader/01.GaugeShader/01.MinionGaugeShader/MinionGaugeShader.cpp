@@ -4,18 +4,19 @@
 #include "05.Objects/06.Minion/Minion.h"
 #include "05.Objects/99.Material/Material.h"
 #include "00.Global/01.Utility/06.HPGaugeManager/HPGaugeManager.h"
+#include "05.Objects/96.Billboard/02.GaugeObject/GaugeObject.h"
 
 /// <summary>
-/// 목적: Billboard 테스트 쉐이더
-/// 최종 수정자:  김나단
+/// 목적: 미니언 HP Gauge 쉐이더
+/// 최종 수정자:  김나단(Shader Code 변경 hlsl)
 /// 수정자 목록:  이용선, 김나단
-/// 최종 수정 날짜: 2018-06-27
+/// 최종 수정 날짜: 2018-07-03
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
-CMinionHPGaugeShader::CMinionHPGaugeShader(CCreateMgr *pCreateMgr)
-	: CShader(pCreateMgr)
+CMinionHPGaugeShader::CMinionHPGaugeShader(shared_ptr<CCreateMgr> pCreateMgr)
+	: CBillboardShader(pCreateMgr)
 {
 	m_pCreateMgr = pCreateMgr;
 }
@@ -37,71 +38,68 @@ void CMinionHPGaugeShader::ReleaseUploadBuffers()
 #endif
 }
 
-void CMinionHPGaugeShader::UpdateShaderVariables()
+void CMinionHPGaugeShader::UpdateShaderVariables(int opt)
 {
+	UNREFERENCED_PARAMETER(opt);
 	static UINT elementBytes = ((sizeof(CB_GAUGE_INFO) + 255) & ~255);
 
-	for (int i = 0; i < *m_nBlues; ++i)
-	{
-		CB_GAUGE_INFO *pMappedObject = (CB_GAUGE_INFO *)(m_pMappedObjects + (i * elementBytes));
-		pMappedObject->m_fCurrentHP = m_HPGaugeObjectList[i]->GetCurrentHP();
+	for (auto iter = m_HPGaugeObjectList.begin(); iter != m_HPGaugeObjectList.end(); ++iter) {
+		CB_GAUGE_INFO *pMappedObject = (CB_GAUGE_INFO *)(m_pMappedObjects + ((*iter)->GetIndex() * elementBytes));
+		pMappedObject->m_fCurrentHP = (*iter)->GetCurrentHP();
 		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
-			XMMatrixTranspose(XMLoadFloat4x4(m_HPGaugeObjectList[i]->GetWorldMatrix())));
-	}
-
-	for (int i = MAX_MINION; i < MAX_MINION + *m_nReds; ++i)
-	{
-		CB_GAUGE_INFO *pMappedObject = (CB_GAUGE_INFO *)(m_pMappedObjects + (i * elementBytes));
-		pMappedObject->m_fCurrentHP = m_HPGaugeObjectList[i]->GetCurrentHP();
-		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
-			XMMatrixTranspose(XMLoadFloat4x4(m_HPGaugeObjectList[i]->GetWorldMatrix())));
+			XMMatrixTranspose(XMLoadFloat4x4((*iter)->GetWorldMatrix())));
 	}
 }
 
 void CMinionHPGaugeShader::AnimateObjects(float timeElapsed)
 {
-	if (m_pGaugeManger->SpawnStarted()) SpawnGauge();
-
-	for (int i = 0; i < *m_nBlues; ++i)
+	m_HPGaugeObjectList.remove_if([this](CGaugeObject* obj)
 	{
-		m_HPGaugeObjectList[i]->Animate(timeElapsed);
+		if (obj->GetState() == States::Die)
+		{
+			ResetPossibleIndex(obj->GetIndex());
+			return true;
+		}
+		return false;
+	});
+
+	for (auto iter = m_HPGaugeObjectList.begin(); iter != m_HPGaugeObjectList.end(); ++iter) {
+		(*iter)->Animate(timeElapsed);
 	}
 
-	for (int i = MAX_MINION; i < MAX_MINION + *m_nReds; ++i)
-	{
-		m_HPGaugeObjectList[i]->Animate(timeElapsed);
-	}
+	if (m_pGaugeManger->GetCount() > 0) SpawnGauge();
 }
 
 void CMinionHPGaugeShader::Render(CCamera *pCamera)
 {
 	CShader::Render(pCamera);
-	if (m_ppMaterials) m_ppMaterials[0]->UpdateShaderVariables();
+	//	if (m_ppMaterials) m_ppMaterials[0]->UpdateShaderVariables();
 
-	for (int i = 0; i < *m_nBlues; ++i)
-	{
-		if(!static_cast<CAnimatedObject*>((*m_MinionObjectList)[i])->IsDead())
-			m_HPGaugeObjectList[i]->Render(pCamera);
-	}
+	for (auto iter = m_HPGaugeObjectList.begin(); iter != m_HPGaugeObjectList.end(); ++iter) {
 
-	for (int i = MAX_MINION; i < MAX_MINION + *m_nReds; ++i)
-	{
-		if (!static_cast<CAnimatedObject*>((*m_MinionObjectList)[i])->IsDead())
-			m_HPGaugeObjectList[i]->Render(pCamera);
+		CCollisionObject* master = ((CGaugeObject*)*iter)->GetMasterObject();
+
+		if (master->GetTeam() == TeamType::Blue)
+			m_ppMaterials[0]->UpdateShaderVariable(1);
+		else if (master->GetTeam() == TeamType::Red)
+			m_ppMaterials[0]->UpdateShaderVariable(0);
+
+		(*iter)->Render(pCamera);
 	}
 }
 
-void CMinionHPGaugeShader::GetCamera(CCamera * pCamera)
+void CMinionHPGaugeShader::SetCamera(CCamera * pCamera)
 {
 	m_pCamera = pCamera;
 
-	for (int i = 0; i < MAX_MINION * 2; ++i)
-	{
-		m_HPGaugeObjectList[i]->SetCamera(m_pCamera);
+	for (auto iter = m_HPGaugeObjectList.begin(); iter != m_HPGaugeObjectList.end(); ++iter) {
+
+
+		static_cast<CGaugeObject*>(*iter)->SetCamera(m_pCamera);
 	}
 }
 
-void CMinionHPGaugeShader::SetGaugeManager(CUIObjectManager * pManger)
+void CMinionHPGaugeShader::SetUIObjectsManager(shared_ptr<CUIObjectManager> pManger)
 {
 	m_pGaugeManger = pManger;
 	m_MinionObjectList = m_pGaugeManger->GetMinionObjectList();
@@ -109,12 +107,15 @@ void CMinionHPGaugeShader::SetGaugeManager(CUIObjectManager * pManger)
 
 bool CMinionHPGaugeShader::OnProcessKeyInput(UCHAR * pKeyBuffer)
 {
+	UNREFERENCED_PARAMETER(pKeyBuffer);
 
 	return true;
 }
 
 bool CMinionHPGaugeShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 {
+	UNREFERENCED_PARAMETER(pKeyBuffer);
+
 	return false;
 }
 
@@ -149,73 +150,68 @@ D3D12_INPUT_LAYOUT_DESC CMinionHPGaugeShader::CreateInputLayout()
 	return(d3dInputLayoutDesc);
 }
 
-D3D12_SHADER_BYTECODE CMinionHPGaugeShader::CreateVertexShader(ID3DBlob **ppShaderBlob)
+D3D12_SHADER_BYTECODE CMinionHPGaugeShader::CreateVertexShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
 		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
 		"VSTexturedGauge",
 		"vs_5_1",
-		ppShaderBlob));
+		pShaderBlob));
 }
 
-D3D12_SHADER_BYTECODE CMinionHPGaugeShader::CreatePixelShader(ID3DBlob **ppShaderBlob)
+D3D12_SHADER_BYTECODE CMinionHPGaugeShader::CreatePixelShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
 		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
 		"PSTexturedGauge",
 		"ps_5_1",
-		ppShaderBlob));
+		pShaderBlob));
 }
 
-void CMinionHPGaugeShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets, bool isRenderBB)
+void CMinionHPGaugeShader::CreateShader(shared_ptr<CCreateMgr> pCreateMgr, UINT nRenderTargets, bool isRenderBB, bool isRenderShadow)
 {
 	m_nPipelineStates = 1;
-	m_ppPipelineStates = new ID3D12PipelineState*[m_nPipelineStates];
 
 	m_nHeaps = 1;
 	CreateDescriptorHeaps();
 
-	CShader::CreateShader(pCreateMgr, nRenderTargets, isRenderBB);
+	CShader::CreateShader(pCreateMgr, nRenderTargets, isRenderBB, isRenderShadow);
 }
 
-void CMinionHPGaugeShader::CreateShaderVariables(CCreateMgr *pCreateMgr, int nBuffers)
-{
-	HRESULT hResult;
-
-	UINT elementBytes = ((sizeof(CB_GAUGE_INFO) + 255) & ~255);
-
-	m_pConstBuffer = pCreateMgr->CreateBufferResource(
-		NULL,
-		elementBytes * nBuffers,
-		D3D12_HEAP_TYPE_UPLOAD,
-		D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER,
-		NULL);
-
-	hResult = m_pConstBuffer->Map(0, NULL, (void **)&m_pMappedObjects);
-	assert(SUCCEEDED(hResult) && "m_pConstBuffer->Map Failed");
-}
-
-void CMinionHPGaugeShader::BuildObjects(CCreateMgr *pCreateMgr, void *pContext)
+void CMinionHPGaugeShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pContext)
 {
 	m_pCamera = (CCamera*)pContext;
 
 	UINT ncbElementBytes = ((sizeof(CB_GAUGE_INFO) + 255) & ~255);
 
-	CreateShaderVariables(pCreateMgr, MAX_MINION * 2);
+	CreateShaderVariables(pCreateMgr, ncbElementBytes, MAX_MINION);
 
-	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, MAX_MINION * 2, 1);
+	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, MAX_MINION, 2);
 
-	CreateConstantBufferViews(pCreateMgr, MAX_MINION * 2, m_pConstBuffer, ncbElementBytes);
+	CreateConstantBufferViews(pCreateMgr, MAX_MINION, m_pConstBuffer.Get(), ncbElementBytes);
 
 #if USE_BATCH_MATERIAL
 	m_nMaterials = 1;
 	m_ppMaterials = new CMaterial*[m_nMaterials];
 
-	m_ppMaterials[0] = Materials::CreateRedMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[0], &m_psrvGPUDescriptorStartHandle[0]);
+	m_ppMaterials[0] = Materials::CreateHPGaugeMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[0], &m_psrvGPUDescriptorStartHandle[0]);
 #else
 	CMaterial *pCubeMaterial = Materials::CreateRedMaterial(pCreateMgr, &m_srvCPUDescriptorStartHandle[0], &m_srvGPUDescriptorStartHandle[0]);
 #endif
 
+}
+
+int CMinionHPGaugeShader::GetPossibleIndex()
+{
+	for (int idx = 0; idx < MAX_MINION; ++idx)
+	{
+		if (!m_indexArr[idx])
+		{
+			m_indexArr[idx] = true;
+			return idx;
+		}
+	}
+	return NONE;
 }
 
 void CMinionHPGaugeShader::SpawnGauge()
@@ -225,38 +221,58 @@ void CMinionHPGaugeShader::SpawnGauge()
 	m_pCreateMgr->ResetCommandList();
 
 	int cnt{ 0 };
+	CollisionObjectList::reverse_iterator minion{ m_MinionObjectList->rbegin() };
 
 	for (; cnt < m_pGaugeManger->GetCount(); ++cnt)
 	{
-		CHPGaugeObjects *pGaugeObject{ NULL };
+		int index = GetPossibleIndex();
+		if (index == NONE) break;
+
+		CGaugeObject *pGaugeObject{ NULL };
 		CCollisionObject *pMinionObjects{ NULL };
 
-		pGaugeObject = new CHPGaugeObjects(m_pCreateMgr, GagueUIType::MinionGauge);
-		pMinionObjects = (*m_MinionObjectList)[cnt];
+		pGaugeObject = new CGaugeObject(m_pCreateMgr, GaugeUIType::MinionGauge);
+		pMinionObjects = (*minion);
 
+		m_ppMaterials[0]->AddRef();
 		pGaugeObject->SetObject(pMinionObjects);
 		pGaugeObject->SetCamera(m_pCamera);
 
-		pGaugeObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * cnt));
+		pGaugeObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * index));
 
+		pGaugeObject->SaveIndex(index);
+
+		XMFLOAT3 xmfGaugePosition;
+		xmfGaugePosition = pMinionObjects->GetPosition();
+		xmfGaugePosition.y += 70.f;
+		pGaugeObject->SetPosition(xmfGaugePosition);
 		m_HPGaugeObjectList.emplace_back(pGaugeObject);
+
+		if (minion != m_MinionObjectList->rend()) ++minion;
 	}
 	m_pCreateMgr->ExecuteCommandList();
 
+	if (!cnt) return;
+
+	HPGaugeObjectList::reverse_iterator gaugeBegin{ m_HPGaugeObjectList.rbegin() };
+	HPGaugeObjectList::reverse_iterator gaugeEnd{ m_HPGaugeObjectList.rbegin() };
+
+	for (int i = 0; i < cnt - 1; ++i) ++gaugeBegin;
+
 	for (int i = 0; i < cnt; ++i)
 	{
-		m_HPGaugeObjectList[i]->ReleaseUploadBuffers();
+		(*gaugeBegin)->ReleaseUploadBuffers();
+		if (gaugeBegin != gaugeEnd) --gaugeBegin;
 	}
 
-	m_nBlues = m_pGaugeManger->GetBlueMinionCnt();
-	m_nReds = m_pGaugeManger->GetRedMinionCnt();
-
+	//m_pGaugeManger->ResetCount();
 }
 
 void CMinionHPGaugeShader::ReleaseObjects()
 {
-	for (auto& iter = m_HPGaugeObjectList.begin(); iter != m_HPGaugeObjectList.end();)
+	for (auto iter = m_HPGaugeObjectList.begin(); iter != m_HPGaugeObjectList.end();)
 	{
+		delete(*iter);
 		iter = m_HPGaugeObjectList.erase(iter);
 	}
 	m_HPGaugeObjectList.clear();
@@ -266,9 +282,9 @@ void CMinionHPGaugeShader::ReleaseObjects()
 	{
 		for (int i = 0; i < m_nMaterials; ++i)
 		{
-			if (m_ppMaterials[i]) delete m_ppMaterials[i];
+			Safe_Delete(m_ppMaterials[i]);
 		}
-		Safe_Delete(m_ppMaterials);
+		Safe_Delete_Array(m_ppMaterials);
 	}
 #endif
 }

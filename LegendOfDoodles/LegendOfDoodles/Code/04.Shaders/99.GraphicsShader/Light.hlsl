@@ -132,6 +132,8 @@ float4 PointLight(int nIndex, float3 vPosition, float3 vNormal, float3 vCamera, 
 {
     float3 vToLight = gLights[nIndex].m_vPosition - vPosition;
     float fDistance = length(vToLight);
+    float4 result = float4(0, 0, 0, 0);
+
     if (fDistance <= gLights[nIndex].m_fRange)
     {
         vToLight /= fDistance;
@@ -139,16 +141,20 @@ float4 PointLight(int nIndex, float3 vPosition, float3 vNormal, float3 vCamera, 
         float fAttenuationFactor = 1.0f / dot(gLights[nIndex].m_vAttenuation, float3(1.0f, fDistance, fDistance * fDistance));
 
         if (fAttenuationFactor != 0)
-            return gLights[nIndex].m_cAlbedo * ((1 - roughnessMetallicFresnel.g) * baseColor * OrenNayarDiffuse(vToLight, vNormal, vCamera, roughnessMetallicFresnel.r) +
+        {
+            result = gLights[nIndex].m_cAlbedo * ((1 - roughnessMetallicFresnel.g) * baseColor * OrenNayarDiffuse(vToLight, vNormal, vCamera, roughnessMetallicFresnel.r) +
 						roughnessMetallicFresnel.g * baseColor * CookTorranceSpecular(vToLight, vNormal, vCamera, roughnessMetallicFresnel.r, roughnessMetallicFresnel.b)) * fAttenuationFactor;
+        }
     }
-    return (float4(0.0f, 0.0f, 0.0f, 0.0f));
+    return result;
 }
 
 float4 SpotLight(int nIndex, float3 vPosition, float3 vNormal, float3 vCamera, float4 baseColor, float4 roughnessMetallicFresnel)
 {
     float3 vToLight = gLights[nIndex].m_vPosition - vPosition;
     float fDistance = length(vToLight);
+    float4 result = float4(0, 0, 0, 0);
+
     if (fDistance <= gLights[nIndex].m_fRange)
     {
         vToLight /= fDistance;
@@ -162,13 +168,15 @@ float4 SpotLight(int nIndex, float3 vPosition, float3 vNormal, float3 vCamera, f
         float fAttenuationFactor = 1.0f / dot(gLights[nIndex].m_vAttenuation, float3(1.0f, fDistance, fDistance * fDistance));
 
         if (fSpotFactor != 0 && fAttenuationFactor != 0)
-            return gLights[nIndex].m_cAlbedo * ((1 - roughnessMetallicFresnel.g) * baseColor * OrenNayarDiffuse(vToLight, vNormal, vCamera, roughnessMetallicFresnel.r) +
-			roughnessMetallicFresnel.g * baseColor * CookTorranceSpecular(vToLight, vNormal, vCamera, roughnessMetallicFresnel.r, roughnessMetallicFresnel.b)) * fAttenuationFactor * fSpotFactor;
+        {
+            result = gLights[nIndex].m_cAlbedo * ((1 - roughnessMetallicFresnel.g) * baseColor * OrenNayarDiffuse(vToLight, vNormal, vCamera, roughnessMetallicFresnel.r) +
+						roughnessMetallicFresnel.g * baseColor * CookTorranceSpecular(vToLight, vNormal, vCamera, roughnessMetallicFresnel.r, roughnessMetallicFresnel.b)) * fAttenuationFactor * fSpotFactor;
+        }
     }
-    return (float4(0.0f, 0.0f, 0.0f, 0.0f));
+    return result;
 }
 
-float4 Lighting(float3 vPosition, float3 vNormal, float4 albedo, float4 baseColor, float4 roughnessMetallicFresnel)
+float4 Lighting(float3 vPosition, float3 vNormal, float4 albedo, float4 baseColor, float4 roughnessMetallicFresnel, float shadowFactor)
 {
     float3 vCameraPosition = float3(gvCameraPosition.x, gvCameraPosition.y, gvCameraPosition.z);
     float3 vCamera = vCameraPosition - vPosition;
@@ -179,7 +187,7 @@ float4 Lighting(float3 vPosition, float3 vNormal, float4 albedo, float4 baseColo
         {
             if (gLights[i].m_nType == DIRECTIONAL_LIGHT)
             {
-                cColor += DirectionalLight(i, vNormal, vCamera, baseColor, roughnessMetallicFresnel);
+                cColor += DirectionalLight(i, vNormal, vCamera, baseColor, roughnessMetallicFresnel) * shadowFactor;
             }
             else if (gLights[i].m_nType == POINT_LIGHT)
             {

@@ -7,12 +7,12 @@
 /// 목적: 스카이 박스 처리용 Shader
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-06-27
+/// 최종 수정 날짜: 2018-07-03
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
-CSkyBoxShader::CSkyBoxShader(CCreateMgr *pCreateMgr) : CShader(pCreateMgr)
+CSkyBoxShader::CSkyBoxShader(shared_ptr<CCreateMgr> pCreateMgr) : CShader(pCreateMgr)
 {
 }
 
@@ -33,18 +33,18 @@ void CSkyBoxShader::ReleaseUploadBuffers()
 	}
 }
 
-void CSkyBoxShader::UpdateShaderVariables()
+void CSkyBoxShader::UpdateShaderVariables(int opt)
 {
-	if (m_pMappedSkyBox)
-	{
-		if(m_pSkyBox)
-			XMStoreFloat4x4(&m_pMappedSkyBox->m_xmf4x4World, 
-				XMMatrixTranspose(XMLoadFloat4x4(m_pSkyBox->GetWorldMatrix())));
+	UNREFERENCED_PARAMETER(opt);
+	static CB_GAMEOBJECT_INFO *pMappedObject = (CB_GAMEOBJECT_INFO *)(m_pMappedObjects);
 
-		if (m_pFloor)
-			XMStoreFloat4x4(&m_pMappedSkyBox->m_xmf4x4World, 
-				XMMatrixTranspose(XMLoadFloat4x4(m_pFloor->GetWorldMatrix())));
-	}
+	if (m_pSkyBox)
+		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
+			XMMatrixTranspose(XMLoadFloat4x4(m_pSkyBox->GetWorldMatrix())));
+
+	if (m_pFloor)
+		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
+			XMMatrixTranspose(XMLoadFloat4x4(m_pFloor->GetWorldMatrix())));
 }
 
 void CSkyBoxShader::Render(CCamera * pCamera)
@@ -113,52 +113,38 @@ D3D12_DEPTH_STENCIL_DESC CSkyBoxShader::CreateDepthStencilState()
 	return(depthStencilDesc);
 }
 
-D3D12_SHADER_BYTECODE CSkyBoxShader::CreateVertexShader(ID3DBlob **ppShaderBlob)
+D3D12_SHADER_BYTECODE CSkyBoxShader::CreateVertexShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
 		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
 		"VSTextured",
 		"vs_5_1",
-		ppShaderBlob));
+		pShaderBlob));
 }
 
-D3D12_SHADER_BYTECODE CSkyBoxShader::CreatePixelShader(ID3DBlob **ppShaderBlob)
+D3D12_SHADER_BYTECODE CSkyBoxShader::CreatePixelShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
 		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
 		"PSTexturedRepeat",
 		"ps_5_1",
-		ppShaderBlob));
+		pShaderBlob));
 }
 
-void CSkyBoxShader::CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets, bool isRenderBB)
+void CSkyBoxShader::CreateShader(shared_ptr<CCreateMgr> pCreateMgr, UINT nRenderTargets, bool isRenderBB, bool isRenderShadow)
 {
 	m_nPipelineStates = 1;
-	m_ppPipelineStates = new ID3D12PipelineState*[m_nPipelineStates];
 
 	m_nHeaps = 1;
 	CreateDescriptorHeaps();
 
-	CShader::CreateShader(pCreateMgr, nRenderTargets, isRenderBB);
+	CShader::CreateShader(pCreateMgr, nRenderTargets, isRenderBB, isRenderShadow);
 }
 
-void CSkyBoxShader::CreateShaderVariables(CCreateMgr * pCreateMgr, int nBuffers)
+void CSkyBoxShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pContext)
 {
-	UINT elementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
+	UNREFERENCED_PARAMETER(pContext);
 
-	m_pConstBuffer = pCreateMgr->CreateBufferResource(
-		NULL,
-		elementBytes,
-		D3D12_HEAP_TYPE_UPLOAD,
-		D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER,
-		NULL);
-
-	HRESULT hResult = m_pConstBuffer->Map(0, NULL, (void **)&m_pMappedSkyBox);
-	assert(SUCCEEDED(hResult) && "m_pConstBuffer->Map Failed");
-}
-
-void CSkyBoxShader::BuildObjects(CCreateMgr * pCreateMgr, void * pContext)
-{
 	//m_pSkyBox = new CSkyBox(pCreateMgr);
 	m_pFloor = new CFloor(pCreateMgr);
 
@@ -167,8 +153,8 @@ void CSkyBoxShader::BuildObjects(CCreateMgr * pCreateMgr, void * pContext)
 	if (m_pSkyBox) CreateCbvAndSrvDescriptorHeaps(pCreateMgr, 1, 6);
 	if (m_pFloor) CreateCbvAndSrvDescriptorHeaps(pCreateMgr, 1, 1);
 
-	CreateShaderVariables(pCreateMgr);
-	CreateConstantBufferViews(pCreateMgr, 1, m_pConstBuffer, ncbElementBytes);
+	CreateShaderVariables(pCreateMgr, ncbElementBytes);
+	CreateConstantBufferViews(pCreateMgr, 1, m_pConstBuffer.Get(), ncbElementBytes);
 
 	if (m_pSkyBox)
 	{
@@ -191,8 +177,8 @@ void CSkyBoxShader::ReleaseObjects()
 	{
 		for (int i = 0; i < m_nMaterials; ++i)
 		{
-			if (m_ppMaterials[i]) delete m_ppMaterials[i];
+			Safe_Delete(m_ppMaterials[i]);
 		}
-		Safe_Delete(m_ppMaterials);
+		Safe_Delete_Array(m_ppMaterials);
 	}
 }

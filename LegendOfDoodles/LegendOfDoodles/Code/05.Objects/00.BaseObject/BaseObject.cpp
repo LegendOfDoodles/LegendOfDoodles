@@ -9,12 +9,12 @@
 /// 목적: 기본 오브젝트 클래스, 인터페이스 용
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-22
+/// 최종 수정 날짜: 2018-08-01
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
-CBaseObject::CBaseObject(CCreateMgr *pCreateMgr, int nMeshes)
+CBaseObject::CBaseObject(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes)
 {
 	m_pCommandList = pCreateMgr->GetCommandList();
 
@@ -40,19 +40,19 @@ CBaseObject::~CBaseObject()
 	}
 	if (m_pBoundingMesh) Safe_Release(m_pBoundingMesh);
 
-	if (m_pShader){ m_pShader->Finalize(); }
+	if (m_pShader) { m_pShader->Finalize(); }
 	if (m_pMaterial) m_pMaterial->Finalize();
 }
 
 ////////////////////////////////////////////////////////////////////////
 // 공개 함수
-void CBaseObject::Initialize(CCreateMgr *pCreateMgr)
+void CBaseObject::Initialize(shared_ptr<CCreateMgr> pCreateMgr)
 {
+	UNREFERENCED_PARAMETER(pCreateMgr);
 }
 
 void CBaseObject::Finalize()
 {
-	ReleaseShaderVariables();
 }
 
 void CBaseObject::ReleaseUploadBuffers()
@@ -70,6 +70,7 @@ void CBaseObject::ReleaseUploadBuffers()
 
 void CBaseObject::SetMesh(int nIndex, CMesh *pMesh)
 {
+
 	if (!m_ppMeshes) return;
 	if (nIndex >= m_nMeshes) return;
 
@@ -110,6 +111,7 @@ void CBaseObject::SetMaterial(CMaterial *pMaterial)
 
 void CBaseObject::Animate(float timeElapsed)
 {
+	UNREFERENCED_PARAMETER(timeElapsed);
 }
 
 void CBaseObject::Render(CCamera *pCamera, UINT istanceCnt)
@@ -126,12 +128,6 @@ void CBaseObject::Render(CCamera *pCamera, UINT istanceCnt)
 
 	if (m_cbvGPUDescriptorHandle.ptr)
 		m_pCommandList->SetGraphicsRootDescriptorTable(1, m_cbvGPUDescriptorHandle);
-
-	if (m_pShader)
-	{
-		UpdateShaderVariables();
-		m_pShader->Render(pCamera);
-	}
 
 	if (m_ppMeshes)
 	{
@@ -155,7 +151,7 @@ void CBaseObject::RenderBoundingBox(CCamera * pCamera, UINT istanceCnt)
 }
 
 void CBaseObject::GenerateRayForPicking(
-	XMFLOAT3& pickPosition, XMFLOAT4X4&	 xmf4x4View, 
+	XMFLOAT3& pickPosition, XMFLOAT4X4&	 xmf4x4View,
 	XMFLOAT3 &pickRayOrigin, XMFLOAT3 &pickRayDirection)
 {
 	XMFLOAT4X4 xmf4x4WorldView{ Matrix4x4::Multiply(m_xmf4x4World, xmf4x4View) };
@@ -175,13 +171,13 @@ bool CBaseObject::PickObjectByRayIntersection(
 {
 	if (!m_ppMeshes) return false;
 	if (!m_ppMeshes[0]) return false;
-	
+
 	bool intersected{ false };
 	XMFLOAT3 pickRayOrigin, pickRayDirection;
 
 	GenerateRayForPicking(xmf3PickPosition, xmf4x4View, pickRayOrigin, pickRayDirection);
 
-	intersected = m_ppMeshes[0]->CheckRayIntersection(pickRayOrigin,	pickRayDirection, hitDistance);
+	intersected = m_ppMeshes[0]->CheckRayIntersection(pickRayOrigin, pickRayDirection, hitDistance);
 
 	return(intersected);
 }
@@ -213,7 +209,7 @@ void CBaseObject::MoveForward(float fDistance)
 void CBaseObject::Rotate(XMFLOAT3 *pxmf3Axis, float fAngle)
 {
 	XMMATRIX mtxRotate = XMMatrixRotationAxis(
-		XMLoadFloat3(pxmf3Axis), 
+		XMLoadFloat3(pxmf3Axis),
 		XMConvertToRadians(fAngle));
 
 	m_xmf4x4World = Matrix4x4::Multiply(mtxRotate, m_xmf4x4World);
@@ -221,7 +217,7 @@ void CBaseObject::Rotate(XMFLOAT3 *pxmf3Axis, float fAngle)
 
 void CBaseObject::Rotate(float fPitch, float fYaw, float fRoll)
 {
-	XMMATRIX mtxRotate =XMMatrixRotationRollPitchYaw(
+	XMMATRIX mtxRotate = XMMatrixRotationRollPitchYaw(
 		XMConvertToRadians(fPitch),
 		XMConvertToRadians(fYaw),
 		XMConvertToRadians(fRoll));
@@ -239,7 +235,7 @@ void CBaseObject::Translate(XMFLOAT3 * pxmf3Axis)
 void CBaseObject::Translate(float x, float y, float z)
 {
 	XMFLOAT3 xmf3Position = GetPosition();
-	XMFLOAT3 xmf3Translate = XMFLOAT3(x,y,z);
+	XMFLOAT3 xmf3Translate = XMFLOAT3(x, y, z);
 	xmf3Position = Vector3::Add(xmf3Position, xmf3Translate);
 	CBaseObject::SetPosition(xmf3Position);
 }
@@ -268,7 +264,7 @@ XMFLOAT3 CBaseObject::GetUp()
 
 XMFLOAT3 CBaseObject::GetRight()
 {
-	return(Vector3::Normalize(XMFLOAT3( m_xmf4x4World._11, m_xmf4x4World._12, m_xmf4x4World._13)));
+	return(Vector3::Normalize(XMFLOAT3(m_xmf4x4World._11, m_xmf4x4World._12, m_xmf4x4World._13)));
 }
 
 void CBaseObject::SetPosition(float x, float z)
@@ -289,53 +285,8 @@ void CBaseObject::SetPosition(XMFLOAT3 xmf3Position)
 	SetPosition(xmf3Position.x, xmf3Position.y, xmf3Position.z);
 }
 
-void CBaseObject::SetLook(XMFLOAT3 vLook)
-{
-	m_xmf4x4World._31 = vLook.x;
-	m_xmf4x4World._32 = vLook.y;
-	m_xmf4x4World._33 = vLook.z;
-}
-
-void CBaseObject::SetUp(XMFLOAT3 vUp)
-{
-	m_xmf4x4World._21 = vUp.x;
-	m_xmf4x4World._22 = vUp.y;
-	m_xmf4x4World._23 = vUp.z;
-}
-
-void CBaseObject::SetRight(XMFLOAT3 vRight)
-{
-	m_xmf4x4World._11 = vRight.x;
-	m_xmf4x4World._12 = vRight.y;
-	m_xmf4x4World._13 = vRight.z;
-}
-
 ////////////////////////////////////////////////////////////////////////
 // 내부 함수
-void CBaseObject::CreateShaderVariables(CCreateMgr *pCreateMgr)
-{
-	UINT ncbElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255); //256의 배수
-	m_pcbGameObject = pCreateMgr->CreateBufferResource(
-		NULL,
-		ncbElementBytes, 
-		D3D12_HEAP_TYPE_UPLOAD, 
-		D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER,
-		NULL);
-
-	m_pcbGameObject->Map(0, NULL, (void **)&m_pMappedObject);
-}
-
-void CBaseObject::ReleaseShaderVariables()
-{
-}
-
-void CBaseObject::UpdateShaderVariables()
-{
-	CB_GAMEOBJECT_INFO *pMappedObject = (CB_GAMEOBJECT_INFO *)(m_pMappedObject);
-
-	XMStoreFloat4x4(&pMappedObject->m_xmf4x4World, XMMatrixTranspose(XMLoadFloat4x4(&m_xmf4x4World)));
-}
-
 void CBaseObject::OnPrepareRender()
 {
 }

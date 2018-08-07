@@ -17,7 +17,7 @@ public:	// 생성자, 소멸자
 	virtual ~CAOSCamera();
 
 public:	// 공개 함수
-	virtual void Initialize(CCreateMgr *pCreateMgr) override;
+	virtual void Initialize(shared_ptr<CCreateMgr> pCreateMgr) override;
 
 	virtual void Move(float fTimeElapsed, bool bVelocity) override;
 

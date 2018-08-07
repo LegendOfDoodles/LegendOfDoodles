@@ -162,10 +162,19 @@
     <ClInclude Include="Code\00.Global\01.Utility\02.TextureLoader\d3dx12.h" />
     <ClInclude Include="Code\00.Global\01.Utility\02.TextureLoader\DDSTextureLoader12.h" />
     <ClInclude Include="Code\00.Global\01.Utility\03.SafeFunc\SafeFunc.h" />
+    <ClInclude Include="Code\00.Global\01.Utility\04.WayFinder\00.Node\Node.h" />
+    <ClInclude Include="Code\00.Global\01.Utility\04.WayFinder\01.Edge\Edge.h" />
+    <ClInclude Include="Code\00.Global\01.Utility\04.WayFinder\02.Astar\Astar.h" />
+    <ClInclude Include="Code\00.Global\01.Utility\04.WayFinder\WayFinder.h" />
+    <ClInclude Include="Code\00.Global\01.Utility\05.CollisionManager\CollisionManager.h" />
     <ClInclude Include="Code\00.Global\01.Utility\06.HPGaugeManager\HPGaugeManager.h" />
+    <ClInclude Include="Code\00.Global\01.Utility\07.ThrowingManager\ThrowingMgr.h" />
+    <ClInclude Include="Code\00.Global\01.Utility\08.EffectManager\EffectManager.h" />
+    <ClInclude Include="Code\00.Global\01.Utility\09.SoundManager\SoundManager.h" />
     <ClInclude Include="Code\00.Global\01.Utility\Enumerations.h" />
     <ClInclude Include="Code\00.Global\01.Utility\Macros.h" />
     <ClInclude Include="Code\00.Global\01.Utility\Vectors.h" />
+    <ClInclude Include="Code\00.Global\02.AI\00.FSMMgr\FSMMgr.h" />
     <ClInclude Include="Code\01.Main\LegendOfDoodles.h" />
     <ClInclude Include="Code\02.Framework\00.Frame\Framework.h" />
     <ClInclude Include="Code\02.Framework\01.CreateMgr\CreateMgr.h" />
@@ -175,18 +184,31 @@
     <ClInclude Include="Code\04.Shaders\01.ObjectShader\StaticObjectShader.h" />
     <ClInclude Include="Code\04.Shaders\02.TerrainShader\TerrainShader.h" />
     <ClInclude Include="Code\04.Shaders\03.SkyBoxShader\SkyBoxShader.h" />
-    <ClInclude Include="Code\04.Shaders\04.AniShader\AniShader.h" />
+    <ClInclude Include="Code\04.Shaders\04.AniShader\MinionShader.h" />
     <ClInclude Include="Code\04.Shaders\05.PlayerShader\PlayerShader.h" />
     <ClInclude Include="Code\04.Shaders\06.NexusTowerShader\NexusTowerShader.h" />
+    <ClInclude Include="Code\04.Shaders\07.NeutralityShader\NeutralityShader.h" />
+    <ClInclude Include="Code\04.Shaders\08.FlyingShader\FlyingShader.h" />
+    <ClInclude Include="Code\04.Shaders\09.EffectShader\EffectShader.h" />
     <ClInclude Include="Code\04.Shaders\97.TextureToFullScreenShader\TextureToFullScreenShader.h" />
     <ClInclude Include="Code\04.Shaders\98.BillboardShader\00.UIShader\UIShader.h" />
     <ClInclude Include="Code\04.Shaders\98.BillboardShader\01.GaugeShader\00.PlayerGaugeShader\PlayerGaugeShader.h" />
     <ClInclude Include="Code\04.Shaders\98.BillboardShader\01.GaugeShader\01.MinionGaugeShader\MinionGaugeShader.h" />
-    <ClInclude Include="Code\04.Shaders\98.BillboardShader\02.IconShader\MinimapIconShader.h" />
+    <ClInclude Include="Code\04.Shaders\98.BillboardShader\01.GaugeShader\02.NexusAndTowerGaugeShader\NexusAndTowerGaugeShader.h" />
+    <ClInclude Include="Code\04.Shaders\98.BillboardShader\01.GaugeShader\03.CharacterGaugeShader\CharacterFrameGaugeShader.h" />
+    <ClInclude Include="Code\04.Shaders\98.BillboardShader\01.GaugeShader\04.NeutralityGaugeShader\NeutralityGaugeShader.h" />
+    <ClInclude Include="Code\04.Shaders\98.BillboardShader\02.IconShader\00.MinimapIconShader\MinimapIconShader.h" />
+    <ClInclude Include="Code\04.Shaders\98.BillboardShader\02.IconShader\01.BuildingMinimapIconShader\BuildingMinimapIconShader.h" />
+    <ClInclude Include="Code\04.Shaders\98.BillboardShader\03.MinimapUIShader\MinimapShader.h" />
+    <ClInclude Include="Code\04.Shaders\98.BillboardShader\04.SkillShader\SkillShader.h" />
+    <ClInclude Include="Code\04.Shaders\98.BillboardShader\05.SpecialShader\01.SpecialSelectShader\SpecialSelectShader.h" />
+    <ClInclude Include="Code\04.Shaders\98.BillboardShader\05.SpecialShader\02.SelectedSpecialShader\SelectedSpecialShader.h" />
+    <ClInclude Include="Code\04.Shaders\98.BillboardShader\98.NumberShader\NumberShader.h" />
     <ClInclude Include="Code\04.Shaders\98.BillboardShader\99.BIllboard\BillboardShader.h" />
     <ClInclude Include="Code\05.Objects\00.BaseObject\BaseObject.h" />
     <ClInclude Include="Code\05.Objects\01.Camera\00.BaseCamera\Camera.h" />
     <ClInclude Include="Code\05.Objects\01.Camera\01.AOSCamera\AOSCamera.h" />
+    <ClInclude Include="Code\05.Objects\01.Camera\02.LightCamera\LightCamera.h" />
     <ClInclude Include="Code\05.Objects\02.CollisionObject\CollisionObject.h" />
     <ClInclude Include="Code\05.Objects\03.AnimatedObject\AnimatedObject.h" />
     <ClInclude Include="Code\05.Objects\04.Terrain\HeightMapTerrain.h" />
@@ -195,8 +217,17 @@
     <ClInclude Include="Code\05.Objects\07.StaticObjects\Obstacle.h" />
     <ClInclude Include="Code\05.Objects\08.Player\Player.h" />
     <ClInclude Include="Code\05.Objects\09.NexusTower\NexusTower.h" />
-    <ClInclude Include="Code\05.Objects\95.ShadowMap\ShadowMap.h" />
-    <ClInclude Include="Code\05.Objects\96.Billboard\Billboard.h" />
+    <ClInclude Include="Code\05.Objects\10.Neutrality\00.Roider\Roider.h" />
+    <ClInclude Include="Code\05.Objects\10.Neutrality\01.Golem\Golem.h" />
+    <ClInclude Include="Code\05.Objects\11.FlyingObject\FlyingObject.h" />
+    <ClInclude Include="Code\05.Objects\96.Billboard\01.FrameObject\UIFrameObject.h" />
+    <ClInclude Include="Code\05.Objects\96.Billboard\02.GaugeObject\GaugeObject.h" />
+    <ClInclude Include="Code\05.Objects\96.Billboard\03.IconObject\IconObject.h" />
+    <ClInclude Include="Code\05.Objects\96.Billboard\04.SkillObject\SkillObject.h" />
+    <ClInclude Include="Code\05.Objects\96.Billboard\05.SpecialObject\SpecialObject.h" />
+    <ClInclude Include="Code\05.Objects\96.Billboard\06.EffectObject\EffectObject.h" />
+    <ClInclude Include="Code\05.Objects\96.Billboard\98.NumberObject\NumberObject.h" />
+    <ClInclude Include="Code\05.Objects\96.Billboard\99.BillboardObject\Billboard.h" />
     <ClInclude Include="Code\05.Objects\97.Skeleton\Skeleton.h" />
     <ClInclude Include="Code\05.Objects\98.Prefabs\Prefabs.h" />
     <ClInclude Include="Code\05.Objects\99.Material\00.Texture\Texture.h" />
@@ -219,7 +250,16 @@
     <ClCompile Include="Code\00.Global\01.Utility\01.Exception\ExptProcess.cpp" />
     <ClCompile Include="Code\00.Global\01.Utility\02.TextureLoader\DDSTextureLoader12.cpp" />
     <ClCompile Include="Code\00.Global\01.Utility\03.SafeFunc\SafeFunc.cpp" />
+    <ClCompile Include="Code\00.Global\01.Utility\04.WayFinder\00.Node\Node.cpp" />
+    <ClCompile Include="Code\00.Global\01.Utility\04.WayFinder\01.Edge\Edge.cpp" />
+    <ClCompile Include="Code\00.Global\01.Utility\04.WayFinder\02.Astar\Astar.cpp" />
+    <ClCompile Include="Code\00.Global\01.Utility\04.WayFinder\WayFinder.cpp" />
+    <ClCompile Include="Code\00.Global\01.Utility\05.CollisionManager\CollisionManager.cpp" />
     <ClCompile Include="Code\00.Global\01.Utility\06.HPGaugeManager\HPGaugeManager.cpp" />
+    <ClCompile Include="Code\00.Global\01.Utility\07.ThrowingManager\ThrowingMgr.cpp" />
+    <ClCompile Include="Code\00.Global\01.Utility\08.EffectManager\EffectManager.cpp" />
+    <ClCompile Include="Code\00.Global\01.Utility\09.SoundManager\SoundManager.cpp" />
+    <ClCompile Include="Code\00.Global\02.AI\00.FSMMgr\FSMMgr.cpp" />
     <ClCompile Include="Code\01.Main\LegendOfDoodles.cpp" />
     <ClCompile Include="Code\02.Framework\00.Frame\Framework.cpp" />
     <ClCompile Include="Code\02.Framework\01.CreateMgr\CreateMgr.cpp" />
@@ -229,18 +269,31 @@
     <ClCompile Include="Code\04.Shaders\01.ObjectShader\StaticObjectShader.cpp" />
     <ClCompile Include="Code\04.Shaders\02.TerrainShader\TerrainShader.cpp" />
     <ClCompile Include="Code\04.Shaders\03.SkyBoxShader\SkyBoxShader.cpp" />
-    <ClCompile Include="Code\04.Shaders\04.AniShader\AniShader.cpp" />
+    <ClCompile Include="Code\04.Shaders\04.AniShader\MinionShader.cpp" />
     <ClCompile Include="Code\04.Shaders\05.PlayerShader\PlayerShader.cpp" />
     <ClCompile Include="Code\04.Shaders\06.NexusTowerShader\NexusTowerShader.cpp" />
+    <ClCompile Include="Code\04.Shaders\07.NeutralityShader\NeutralityShader.cpp" />
+    <ClCompile Include="Code\04.Shaders\08.FlyingShader\FlyingShader.cpp" />
+    <ClCompile Include="Code\04.Shaders\09.EffectShader\EffectShader.cpp" />
     <ClCompile Include="Code\04.Shaders\97.TextureToFullScreenShader\TextureToFullScreenShader.cpp" />
     <ClCompile Include="Code\04.Shaders\98.BillboardShader\00.UIShader\UIShader.cpp" />
     <ClCompile Include="Code\04.Shaders\98.BillboardShader\01.GaugeShader\00.PlayerGaugeShader\PlayerGaugeShader.cpp" />
     <ClCompile Include="Code\04.Shaders\98.BillboardShader\01.GaugeShader\01.MinionGaugeShader\MinionGaugeShader.cpp" />
-    <ClCompile Include="Code\04.Shaders\98.BillboardShader\02.IconShader\MinimapIconShader.cpp" />
+    <ClCompile Include="Code\04.Shaders\98.BillboardShader\01.GaugeShader\02.NexusAndTowerGaugeShader\NexusAndTowerGaugeShader.cpp" />
+    <ClCompile Include="Code\04.Shaders\98.BillboardShader\01.GaugeShader\03.CharacterGaugeShader\CharacterFrameGaugeShader.cpp" />
+    <ClCompile Include="Code\04.Shaders\98.BillboardShader\01.GaugeShader\04.NeutralityGaugeShader\NeutralityGaugeShader.cpp" />
+    <ClCompile Include="Code\04.Shaders\98.BillboardShader\02.IconShader\00.MinimapIconShader\MinimapIconShader.cpp" />
+    <ClCompile Include="Code\04.Shaders\98.BillboardShader\02.IconShader\01.BuildingMinimapIconShader\BuildingMinimapIconShader.cpp" />
+    <ClCompile Include="Code\04.Shaders\98.BillboardShader\03.MinimapUIShader\MinimapShader.cpp" />
+    <ClCompile Include="Code\04.Shaders\98.BillboardShader\04.SkillShader\SkillShader.cpp" />
+    <ClCompile Include="Code\04.Shaders\98.BillboardShader\05.SpecialShader\01.SpecialSelectShader\SpecialSelectShader.cpp" />
+    <ClCompile Include="Code\04.Shaders\98.BillboardShader\05.SpecialShader\02.SelectedSpecialShader\SelectedSpecialShader.cpp" />
+    <ClCompile Include="Code\04.Shaders\98.BillboardShader\98.NumberShader\NumberShader.cpp" />
     <ClCompile Include="Code\04.Shaders\98.BillboardShader\99.BIllboard\BillboardShader.cpp" />
     <ClCompile Include="Code\05.Objects\00.BaseObject\BaseObject.cpp" />
     <ClCompile Include="Code\05.Objects\01.Camera\00.BaseCamera\Camera.cpp" />
     <ClCompile Include="Code\05.Objects\01.Camera\01.AOSCamera\AOSCamera.cpp" />
+    <ClCompile Include="Code\05.Objects\01.Camera\02.LightCamera\LightCamera.cpp" />
     <ClCompile Include="Code\05.Objects\02.CollisionObject\CollisionObject.cpp" />
     <ClCompile Include="Code\05.Objects\03.AnimatedObject\AnimatedObject.cpp" />
     <ClCompile Include="Code\05.Objects\04.Terrain\HeightMapTerrain.cpp" />
@@ -249,8 +302,17 @@
     <ClCompile Include="Code\05.Objects\07.StaticObjects\Obstacle.cpp" />
     <ClCompile Include="Code\05.Objects\08.Player\Player.cpp" />
     <ClCompile Include="Code\05.Objects\09.NexusTower\NexusTower.cpp" />
-    <ClCompile Include="Code\05.Objects\95.ShadowMap\ShadowMap.cpp" />
-    <ClCompile Include="Code\05.Objects\96.Billboard\Billboard.cpp" />
+    <ClCompile Include="Code\05.Objects\10.Neutrality\00.Roider\Roider.cpp" />
+    <ClCompile Include="Code\05.Objects\10.Neutrality\01.Golem\Golem.cpp" />
+    <ClCompile Include="Code\05.Objects\11.FlyingObject\FlyingObject.cpp" />
+    <ClCompile Include="Code\05.Objects\96.Billboard\01.FrameObject\UIFrameObject.cpp" />
+    <ClCompile Include="Code\05.Objects\96.Billboard\02.GaugeObject\GaugeObject.cpp" />
+    <ClCompile Include="Code\05.Objects\96.Billboard\03.IconObject\IconObject.cpp" />
+    <ClCompile Include="Code\05.Objects\96.Billboard\04.SkillObject\SkillObject.cpp" />
+    <ClCompile Include="Code\05.Objects\96.Billboard\05.SpecialObject\SpecialObject.cpp" />
+    <ClCompile Include="Code\05.Objects\96.Billboard\06.EffectObject\EffectObject.cpp" />
+    <ClCompile Include="Code\05.Objects\96.Billboard\98.NumberObject\NumberObject.cpp" />
+    <ClCompile Include="Code\05.Objects\96.Billboard\99.BillboardObject\Billboard.cpp" />
     <ClCompile Include="Code\05.Objects\97.Skeleton\Skeleton.cpp" />
     <ClCompile Include="Code\05.Objects\98.Prefabs\Prefabs.cpp" />
     <ClCompile Include="Code\05.Objects\99.Material\00.Texture\Texture.cpp" />
@@ -269,11 +331,13 @@
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <FileType>Document</FileType>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
     </CustomBuild>
     <CustomBuild Include="Code\04.Shaders\99.GraphicsShader\Shaders.hlsl">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <FileType>Document</FileType>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
@@ -286,6 +350,16 @@
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Code\04.Shaders\99.GraphicsShader\Common.hlsl">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="Code\04.Shaders\99.GraphicsShader\ShadowShader.hlsl">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <FileType>Document</FileType>
     </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

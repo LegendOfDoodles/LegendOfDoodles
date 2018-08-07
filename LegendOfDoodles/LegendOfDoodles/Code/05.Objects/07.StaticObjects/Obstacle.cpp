@@ -6,12 +6,12 @@
 /// 목적: 장애물 오브젝트 생성 시 구분 용도
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-04
+/// 최종 수정 날짜: 2018-05-17
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
-CObstacle::CObstacle(CCreateMgr *pCreateMgr) : CBaseObject(pCreateMgr)
+CObstacle::CObstacle(shared_ptr<CCreateMgr> pCreateMgr) : CBaseObject(pCreateMgr)
 {
 }
 

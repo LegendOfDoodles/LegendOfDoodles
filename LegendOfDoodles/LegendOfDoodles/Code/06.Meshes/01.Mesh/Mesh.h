@@ -7,7 +7,7 @@ class CSkinnedVertex;
 class CMesh
 {
 public: // 생성자, 소멸자
-	CMesh(CCreateMgr *pCreateMgr);
+	CMesh(shared_ptr<CCreateMgr> pCreateMgr);
 	virtual ~CMesh();
 
 public: // 공개 함수
@@ -17,10 +17,10 @@ public: // 공개 함수
 
 	bool CheckRayIntersection(XMFLOAT3& rayPosition, XMFLOAT3& rayDirection, float &nearHitDistance);
 
-	void SetBoundingBox(XMFLOAT3& center, XMFLOAT3& extents);
-	
-	ID3D12Resource* GetVertexBuffer() { return m_pVertexBuffer; 	}
-	ID3D12Resource* GetVertexUploadBuffer() { 	return m_pVertexUploadBuffer; }
+	void SetBoundingBox(const XMFLOAT3& center, const XMFLOAT3& extents);
+
+	ComPtr<ID3D12Resource> GetVertexBuffer() { return m_pVertexBuffer; }
+	ComPtr<ID3D12Resource> GetVertexUploadBuffer() { return m_pVertexUploadBuffer; }
 
 	BoundingOrientedBox GetBoundingBox() { return(*m_pBoundingBox); }
 
@@ -34,11 +34,11 @@ protected: // 내부 함수
 protected: // 변수
 	int m_nReferences{ 0 };
 
-	ID3D12Resource *m_pVertexBuffer{ NULL };
-	ID3D12Resource *m_pVertexUploadBuffer{ NULL };
+	ComPtr<ID3D12Resource> m_pVertexBuffer;
+	ComPtr<ID3D12Resource> m_pVertexUploadBuffer;
 
-	ID3D12Resource *m_pIndexBuffer{ NULL };
-	ID3D12Resource *m_pIndexUploadBuffer{ NULL };
+	ComPtr<ID3D12Resource> m_pIndexBuffer;
+	ComPtr<ID3D12Resource> m_pIndexUploadBuffer;
 
 	D3D12_VERTEX_BUFFER_VIEW m_vertexBufferView;
 	D3D12_INDEX_BUFFER_VIEW m_indexBufferView;
@@ -57,7 +57,7 @@ protected: // 변수
 
 	BoundingOrientedBox	 *m_pBoundingBox{ NULL };
 
-	ID3D12GraphicsCommandList *m_pCommandList{ NULL };
+	ComPtr<ID3D12GraphicsCommandList> m_pCommandList;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ protected: // 변수
 class CMeshTextured : public CMesh
 {
 public: // 생성자, 소멸자
-	CMeshTextured(CCreateMgr *pCreateMgr);
+	CMeshTextured(shared_ptr<CCreateMgr> pCreateMgr);
 	virtual ~CMeshTextured();
 };
 
@@ -74,7 +74,7 @@ public: // 생성자, 소멸자
 class CMeshIlluminated : public CMesh
 {
 public: // 생성자, 소멸자
-	CMeshIlluminated(CCreateMgr *pCreateMgr);
+	CMeshIlluminated(shared_ptr<CCreateMgr> pCreateMgr);
 	virtual ~CMeshIlluminated();
 
 public: // 공개 함수
@@ -92,8 +92,8 @@ public: // 공개 함수
 class CMeshIlluminatedTextured : public CMeshIlluminated
 {
 public: // 생성자, 소멸자
-	CMeshIlluminatedTextured(CCreateMgr *pCreateMgr);
-	CMeshIlluminatedTextured(CCreateMgr *pCreateMgr, UINT nVertices, XMFLOAT3 *pxmf3Positions, XMFLOAT3 *pxmf3Normals, XMFLOAT2 *pxmf2UVs, UINT nIndices, UINT *pnIndices);
+	CMeshIlluminatedTextured(shared_ptr<CCreateMgr> pCreateMgr);
+	CMeshIlluminatedTextured(shared_ptr<CCreateMgr> pCreateMgr, UINT nVertices, XMFLOAT3 *pxmf3Positions, XMFLOAT3 *pxmf3Normals, XMFLOAT2 *pxmf2UVs, UINT nIndices, UINT *pnIndices);
 	virtual ~CMeshIlluminatedTextured();
 };
 
@@ -102,7 +102,7 @@ public: // 생성자, 소멸자
 class CSkinnedMesh : public CMeshIlluminatedTextured
 {
 public: // 생성자, 소멸자
-	CSkinnedMesh(CCreateMgr* pCreateMgr, char* in);
+	CSkinnedMesh(shared_ptr<CCreateMgr> pCreateMgr, char* in);
 	virtual ~CSkinnedMesh();
 };
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -111,7 +111,7 @@ public: // 생성자, 소멸자
 class CStaticMesh : public CMeshIlluminatedTextured
 {
 public: // 생성자, 소멸자
-	CStaticMesh(CCreateMgr* pCreateMgr, char* in, XMFLOAT3 scalevalue = XMFLOAT3(1,1,1));
+	CStaticMesh(shared_ptr<CCreateMgr> pCreateMgr, char* in, XMFLOAT3 scalevalue = XMFLOAT3(1, 1, 1));
 	virtual ~CStaticMesh();
 };
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -126,7 +126,7 @@ public: // 생성자, 소멸자
 	virtual ~CHeightMapImage(void);
 
 public: // 공개 함수
-	//높이 맵 이미지에서 (x, z) 위치의 픽셀 값에 기반한 지형의 높이를 반환한다.
+		//높이 맵 이미지에서 (x, z) 위치의 픽셀 값에 기반한 지형의 높이를 반환한다.
 	float GetHeight(float x, float z);
 	//높이 맵 이미지에서 (x, z) 위치의 법선 벡터를 반환한다.
 	XMFLOAT3 GetHeightMapNormal(int x, int z);
@@ -138,13 +138,13 @@ public: // 공개 함수
 	int GetHeightMapLength() { return(m_nLength); }
 
 private: // 변수
-	//높이 맵 이미지 픽셀(8-비트)들의 이차원 배열이다. 각 픽셀은 0~255의 값을 갖는다.
-	BYTE * m_pHeightMapPixels;
+		 //높이 맵 이미지 픽셀(8-비트)들의 이차원 배열이다. 각 픽셀은 0~255의 값을 갖는다.
+	BYTE * m_pHeightMapPixels{ NULL };
 	//높이 맵 이미지의 가로와 세로 크기이다.
-	int m_nWidth;
-	int m_nLength;
+	int m_nWidth{ 0 };
+	int m_nLength{ 0 };
 	//높이 맵 이미지를 실제로 몇 배 확대하여 사용할 것인가를 나타내는 스케일 벡터이다.
-	XMFLOAT3 m_xmf3Scale;
+	XMFLOAT3 m_xmf3Scale{};
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -152,7 +152,7 @@ private: // 변수
 class CHeightMapGridMesh : public CMesh
 {
 public: // 생성자, 소멸자
-	CHeightMapGridMesh(CCreateMgr *pCreateMgr, int nWidth, int nLength);
+	CHeightMapGridMesh(shared_ptr<CCreateMgr> pCreateMgr, int nWidth, int nLength);
 	virtual ~CHeightMapGridMesh();
 
 public: // 공개 함수
@@ -166,7 +166,7 @@ protected: // 변수
 class CTexturedRectMesh : public CMesh
 {
 public: // 생성자, 소멸자
-	CTexturedRectMesh(CCreateMgr *pCreateMgr, float fWidth = 20.0f, float fHeight = 20.0f, float fDepth = 20.0f, float fxPosition = 0.0f, float fyPosition = 0.0f, float fzPosition = 0.0f);
+	CTexturedRectMesh(shared_ptr<CCreateMgr> pCreateMgr, float fWidth = 20.0f, float fHeight = 20.0f, float fDepth = 20.0f, float fxPosition = 0.0f, float fyPosition = 0.0f, float fzPosition = 0.0f);
 	virtual ~CTexturedRectMesh();
 };
 
@@ -175,7 +175,7 @@ public: // 생성자, 소멸자
 class CArrowMesh : public CMesh
 {
 public: // 생성자, 소멸자
-	CArrowMesh(CCreateMgr *pCreateMgr, float length = 100.0f);
+	CArrowMesh(shared_ptr<CCreateMgr> pCreateMgr, float length = 100.0f);
 	virtual ~CArrowMesh();
 };
 
@@ -184,8 +184,8 @@ public: // 생성자, 소멸자
 class CCubeMesh : public CMesh
 {
 public: // 생성자, 소멸자
-	//직육면체의 가로, 세로, 깊이의 길이를 지정하여 직육면체 메쉬를 생성한다.
-	CCubeMesh(CCreateMgr *pCreateMgr, float fWidth = 2.0f, float fHeight = 2.0f, float fDepth = 2.0f, float xOffset = 0.0f, float yOffSet = 0.0f, float zOffSet = 0.0f);
+		//직육면체의 가로, 세로, 깊이의 길이를 지정하여 직육면체 메쉬를 생성한다.
+	CCubeMesh(shared_ptr<CCreateMgr> pCreateMgr, float fWidth = 2.0f, float fHeight = 2.0f, float fDepth = 2.0f, float xOffset = 0.0f, float yOffSet = 0.0f, float zOffSet = 0.0f);
 	virtual ~CCubeMesh();
 };
 
@@ -207,9 +207,9 @@ public: // 공개 함수
 	int GetHeightMapLength() { return(m_nLength); }
 
 private: // 변수
-	BYTE * m_pCollisionMapPixels;
-	int m_nWidth;
-	int m_nLength;
+	BYTE * m_pCollisionMapPixels{ NULL };
+	int m_nWidth{ 0 };
+	int m_nLength{ 0 };
 
-	XMFLOAT3 m_xmf3Scale;
+	XMFLOAT3 m_xmf3Scale{};
 };

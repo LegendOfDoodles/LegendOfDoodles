@@ -6,13 +6,13 @@
 /// 목적: 디퍼드 쉐이딩 적용하기 위한 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-06-29
+/// 최종 수정 날짜: 2018-08-05
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
 
-CTextureToFullScreenShader::CTextureToFullScreenShader(CCreateMgr *pCreateMgr) : CShader(pCreateMgr)
+CTextureToFullScreenShader::CTextureToFullScreenShader(shared_ptr<CCreateMgr> pCreateMgr) : CShader(pCreateMgr)
 {
 }
 
@@ -24,13 +24,13 @@ CTextureToFullScreenShader::~CTextureToFullScreenShader()
 
 ////////////////////////////////////////////////////////////////////////
 // 공개 함수
-void CTextureToFullScreenShader::CreateGraphicsRootSignature(CCreateMgr *pCreateMgr)
+void CTextureToFullScreenShader::CreateGraphicsRootSignature(shared_ptr<CCreateMgr> pCreateMgr)
 {
 	HRESULT hResult;
 	D3D12_DESCRIPTOR_RANGE pDescriptorRanges[4];
 
 	pDescriptorRanges[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	pDescriptorRanges[0].NumDescriptors = RENDER_TARGET_BUFFER_CNT;
+	pDescriptorRanges[0].NumDescriptors = RENDER_TARGET_BUFFER_CNT + 1;
 	pDescriptorRanges[0].BaseShaderRegister = 3; //Textures By Render Target
 	pDescriptorRanges[0].RegisterSpace = 0;
 	pDescriptorRanges[0].OffsetInDescriptorsFromTableStart = 0;
@@ -49,11 +49,11 @@ void CTextureToFullScreenShader::CreateGraphicsRootSignature(CCreateMgr *pCreate
 
 	pDescriptorRanges[3].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pDescriptorRanges[3].NumDescriptors = 1;
-	pDescriptorRanges[3].BaseShaderRegister = 0; //Textures
+	pDescriptorRanges[3].BaseShaderRegister = 0; //Texture
 	pDescriptorRanges[3].RegisterSpace = 0;
 	pDescriptorRanges[3].OffsetInDescriptorsFromTableStart = 0;
 
-	D3D12_ROOT_PARAMETER pRootParameters[6];
+	D3D12_ROOT_PARAMETER pRootParameters[7];
 	pRootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	pRootParameters[0].DescriptorTable.NumDescriptorRanges = 1;
 	pRootParameters[0].DescriptorTable.pDescriptorRanges = &pDescriptorRanges[0]; //Textures By Render Target
@@ -84,7 +84,12 @@ void CTextureToFullScreenShader::CreateGraphicsRootSignature(CCreateMgr *pCreate
 	pRootParameters[5].DescriptorTable.pDescriptorRanges = &pDescriptorRanges[3]; //Texture
 	pRootParameters[5].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
-	D3D12_STATIC_SAMPLER_DESC samplerDesc[1];
+	pRootParameters[6].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	pRootParameters[6].Descriptor.ShaderRegister = 6; //Light Camera
+	pRootParameters[6].Descriptor.RegisterSpace = 0;
+	pRootParameters[6].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+
+	D3D12_STATIC_SAMPLER_DESC samplerDesc[2];
 	::ZeroMemory(&samplerDesc, sizeof(D3D12_STATIC_SAMPLER_DESC));
 	samplerDesc[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
 	samplerDesc[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
@@ -98,6 +103,20 @@ void CTextureToFullScreenShader::CreateGraphicsRootSignature(CCreateMgr *pCreate
 	samplerDesc[0].ShaderRegister = 0;
 	samplerDesc[0].RegisterSpace = 0;
 	samplerDesc[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
+	samplerDesc[1].Filter = D3D12_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
+	samplerDesc[1].AddressU = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
+	samplerDesc[1].AddressV = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
+	samplerDesc[1].AddressW = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
+	samplerDesc[1].MipLODBias = 0;
+	samplerDesc[1].MaxAnisotropy = 16;
+	samplerDesc[1].ComparisonFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+	samplerDesc[1].MinLOD = 0;
+	samplerDesc[1].MaxLOD = D3D12_FLOAT32_MAX;
+	samplerDesc[1].ShaderRegister = 2;
+	samplerDesc[1].RegisterSpace = 0;
+	samplerDesc[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	samplerDesc[1].BorderColor = D3D12_STATIC_BORDER_COLOR_OPAQUE_BLACK;
 
 	D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS;
 	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc;
@@ -115,19 +134,48 @@ void CTextureToFullScreenShader::CreateGraphicsRootSignature(CCreateMgr *pCreate
 		pSignatureBlob->GetBufferPointer(),
 		pSignatureBlob->GetBufferSize(),
 		IID_PPV_ARGS(&m_pGraphicsRootSignature));
-	assert(SUCCEEDED(hResult) && "CreateRootSignature Failed");
-	// ExptProcess::PrintErrorBlob(pErrorBlob);
+	if (pErrorBlob != nullptr) PrintErrorBlob(pErrorBlob);
+	ThrowIfFailed(hResult);
 }
 
-void CTextureToFullScreenShader::CreateShader(CCreateMgr * pCreateMgr, ID3D12RootSignature * pGraphicsRootSignature, UINT nRenderTargets)
+void CTextureToFullScreenShader::CreateShaderResourceViews(shared_ptr<CCreateMgr> pCreateMgr, shared_ptr<CTexture> pTexture, UINT nRootParameterStartIndex, bool bAutoIncrement, int index)
+{
+	UINT incrementSize = pCreateMgr->GetCbvSrvDescriptorIncrementSize();
+	D3D12_CPU_DESCRIPTOR_HANDLE srvCPUDescriptorHandle = m_psrvCPUDescriptorStartHandle[index];
+	D3D12_GPU_DESCRIPTOR_HANDLE srvGPUDescriptorHandle = m_psrvGPUDescriptorStartHandle[index];
+	D3D12_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
+
+	int nTextureType = pTexture->GetTextureType();
+	for (int i = 0; i < RENDER_TARGET_BUFFER_CNT; i++)
+	{
+		ComPtr<ID3D12Resource> pShaderResource = pTexture->GetTexture(i);
+		D3D12_RESOURCE_DESC resourceDesc = pShaderResource->GetDesc();
+		GetShaderResourceViewDesc(resourceDesc, nTextureType, &shaderResourceViewDesc);
+		pCreateMgr->GetDevice()->CreateShaderResourceView(pShaderResource.Get(), &shaderResourceViewDesc, srvCPUDescriptorHandle);
+		srvCPUDescriptorHandle.ptr += incrementSize;
+
+		pTexture->SetRootArgument(i, (bAutoIncrement) ? (nRootParameterStartIndex + i) : nRootParameterStartIndex, srvGPUDescriptorHandle);
+		srvGPUDescriptorHandle.ptr += incrementSize;
+	}
+
+	// Shadow 텍스처
+	ComPtr<ID3D12Resource> pShadowDepthBuffer = pTexture->GetTexture(RENDER_TARGET_BUFFER_CNT);
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDescForShadow = {};
+	srvDescForShadow.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDescForShadow.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+	srvDescForShadow.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	srvDescForShadow.Texture2D.MostDetailedMip = 0;
+	srvDescForShadow.Texture2D.MipLevels = 1;
+	srvDescForShadow.Texture2D.ResourceMinLODClamp = 0.0f;
+	srvDescForShadow.Texture2D.PlaneSlice = 0;
+	pCreateMgr->GetDevice()->CreateShaderResourceView(pShadowDepthBuffer.Get(), &srvDescForShadow, srvCPUDescriptorHandle);
+
+	pTexture->SetRootArgument(RENDER_TARGET_BUFFER_CNT, nRootParameterStartIndex, srvGPUDescriptorHandle);
+}
+
+void CTextureToFullScreenShader::CreateShader(shared_ptr<CCreateMgr> pCreateMgr, ComPtr<ID3D12RootSignature> pGraphicsRootSignature, UINT nRenderTargets)
 {
 	m_nPipelineStates = 1;
-	m_ppPipelineStates = new ID3D12PipelineState*[m_nPipelineStates];
-
-	for (int i = 0; i < m_nPipelineStates; ++i)
-	{
-		m_ppPipelineStates[i] = NULL;
-	}
 
 	m_nHeaps = 1;
 	CreateDescriptorHeaps();
@@ -135,12 +183,11 @@ void CTextureToFullScreenShader::CreateShader(CCreateMgr * pCreateMgr, ID3D12Roo
 	CShader::CreateShader(pCreateMgr, pGraphicsRootSignature, nRenderTargets);
 }
 
-void CTextureToFullScreenShader::BuildObjects(CCreateMgr * pCreateMgr, void * pContext)
+void CTextureToFullScreenShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, shared_ptr<CTexture> pContext)
 {
-	m_pTexture = (CTexture *)pContext;
+	m_pTexture = pContext;
 
 	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, 0, m_pTexture->GetTextureCount());
-	CreateShaderVariables(pCreateMgr);
 	CreateShaderResourceViews(pCreateMgr, m_pTexture, 0, false);
 }
 
@@ -165,18 +212,20 @@ D3D12_INPUT_LAYOUT_DESC CTextureToFullScreenShader::CreateInputLayout()
 	return(inputLayoutDesc);
 }
 
-D3D12_SHADER_BYTECODE CTextureToFullScreenShader::CreateVertexShader(ID3DBlob ** ppShaderBlob)
+D3D12_SHADER_BYTECODE CTextureToFullScreenShader::CreateVertexShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
-	return(CShader::CompileShaderFromFile(L"./code/04.Shaders/99.GraphicsShader/PostProcessShaders.hlsl", "VSTextureToFullScreen", "vs_5_1", ppShaderBlob));
+	return(CShader::CompileShaderFromFile(
+		L"./code/04.Shaders/99.GraphicsShader/PostProcessShaders.hlsl",
+		"VSTextureToFullScreen",
+		"vs_5_1",
+		pShaderBlob));
 }
 
-D3D12_SHADER_BYTECODE CTextureToFullScreenShader::CreatePixelShader(ID3DBlob ** ppShaderBlob)
+D3D12_SHADER_BYTECODE CTextureToFullScreenShader::CreatePixelShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
-	return(CShader::CompileShaderFromFile(L"./code/04.Shaders/99.GraphicsShader/PostProcessShaders.hlsl", "PSTextureToFullScreen", "ps_5_1", ppShaderBlob));
-}
-
-void CTextureToFullScreenShader::ReleaseObjects()
-{
-	Safe_Delete(m_pTexture);
-	Safe_Release(m_pGraphicsRootSignature);
+	return(CShader::CompileShaderFromFile(
+		L"./code/04.Shaders/99.GraphicsShader/PostProcessShaders.hlsl",
+		"PSTextureToFullScreen",
+		"ps_5_1",
+		pShaderBlob));
 }

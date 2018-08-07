@@ -4,7 +4,7 @@
 class CSkyBox : public CBaseObject
 {
 public: // 생성자, 소멸자
-	CSkyBox(CCreateMgr *pCreateMgr);
+	CSkyBox(shared_ptr<CCreateMgr> pCreateMgr);
 	virtual ~CSkyBox();
 
 public: // 공개 함수
@@ -14,7 +14,7 @@ public: // 공개 함수
 class CFloor : public CBaseObject
 {
 public: // 생성자, 소멸자
-	CFloor(CCreateMgr *pCreateMgr);
+	CFloor(shared_ptr<CCreateMgr> pCreateMgr);
 	virtual ~CFloor();
 
 public: // 공개 함수

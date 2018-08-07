@@ -1,11 +1,11 @@
 #pragma once
 #include "06.Meshes/01.Mesh/Mesh.h"
-#include "00.Global/01.Utility/Enumerations.h"
 
 class CCreateMgr;
 class CShader;
 class CCamera;
 class CMaterial;
+class CCollisionObject;
 
 struct CB_GAMEOBJECT_INFO
 {
@@ -15,11 +15,11 @@ struct CB_GAMEOBJECT_INFO
 class CBaseObject
 {
 public:	// 생성자, 소멸자
-	CBaseObject(CCreateMgr *pCreateMgr, int nMeshes = 1);
+	CBaseObject(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes = 1);
 	virtual ~CBaseObject();
 
 public: // 공개 함수
-	virtual void Initialize(CCreateMgr *pCreateMgr);
+	virtual void Initialize(shared_ptr<CCreateMgr> pCreateMgr);
 	virtual void Finalize();
 
 	void ReleaseUploadBuffers();
@@ -46,26 +46,23 @@ public: // 공개 함수
 	void Rotate(float fPitch = 10.0f, float fYaw = 10.0f, float fRoll = 10.0f);
 
 	void Translate(XMFLOAT3 *pxmf3Axis);
-	void Translate(float x,float y, float z);
+	void Translate(float x, float y, float z);
 
 	void Scale(float x = 1.0f, float y = 1.0f, float z = 1.0f);
 
 	XMFLOAT3 GetPosition();
-	XMFLOAT3 GetLook();
-	XMFLOAT3 GetUp();
+	virtual XMFLOAT3 GetLook();
+	virtual XMFLOAT3 GetUp();
 	XMFLOAT3 GetRight();
 
 	virtual void SetPosition(float x, float z);
 	void SetPosition(float x, float y, float z);
 	void SetPosition(XMFLOAT3 xmf3Position);
-	void SetLook(XMFLOAT3 vLook);
-	void SetUp(XMFLOAT3 vUp);
-	void SetRight(XMFLOAT3 vRight);
-
-	bool IsVisible(CCamera *pCamera = NULL);
 
 	void AddRef() { m_nReferences++; }
 	void Release() { if (--m_nReferences <= 0) delete this; }
+
+	void ResetWorldMatrix() { XMStoreFloat4x4(&m_xmf4x4World, XMMatrixIdentity()); }
 
 	XMFLOAT4X4* GetWorldMatrix() { return &m_xmf4x4World; }
 	XMFLOAT4X4* GetFrameMatrix() { return m_xmf4x4Frame; }
@@ -81,15 +78,20 @@ public: // 공개 함수
 	void SaveIndex(int idx) { m_index = idx; }
 	int GetIndex() { return m_index; }
 
-	int GetType() {	return m_ObjectType; };
-	void SetType(ObjectType newObjectType) {m_ObjectType = newObjectType;};
+	int GetType() { return m_ObjectType; };
+	void SetType(ObjectType newObjectType) { m_ObjectType = newObjectType; };
+
+	virtual TeamType GetTeam() { return m_TeamType; }
+	virtual void SetTeam(TeamType type) { m_TeamType = type; }
+	virtual CCollisionObject* GetMasterObject() { return NULL; }
+
+	virtual void SetState(StatesType newState) { newState; }
+	virtual void ActiveSkill(AnimationsType act) { act; }
 
 protected: // 내부 함수
-	virtual void CreateShaderVariables(CCreateMgr *pCreateMgr);
-	virtual void ReleaseShaderVariables();
-	virtual void UpdateShaderVariables();
-
 	virtual void OnPrepareRender();
+
+	bool IsVisible(CCamera *pCamera = NULL);
 
 protected: // 변수
 	int m_nReferences{ 0 };
@@ -110,10 +112,8 @@ protected: // 변수
 	D3D12_GPU_DESCRIPTOR_HANDLE m_cbvGPUDescriptorHandle{ NULL };
 	D3D12_GPU_DESCRIPTOR_HANDLE m_cbvGPUDescriptorHandleForBB{ NULL };
 
-	ID3D12Resource					*m_pcbGameObject{ NULL };
-	UINT8				*m_pMappedObject{ NULL };
-
 	ObjectType m_ObjectType{ ObjectType::StickPlayer };
+	TeamType m_TeamType{ None };
 
-	ID3D12GraphicsCommandList *m_pCommandList{ NULL };
+	ComPtr<ID3D12GraphicsCommandList> m_pCommandList;
 };

@@ -1,64 +1,63 @@
-
 #pragma once
 #include "04.Shaders/00.BaseShader/Shader.h"
 
 class CMaterial;
 class CHeightMapTerrain;
 class CCollisionManager;
+class CFSMMgr;
 
 class CNexusTowerShader : public CShader
 {
 public: // 생성자, 소멸자
-	CNexusTowerShader(CCreateMgr *pCreateMgr, Network* network);
+	CNexusTowerShader(shared_ptr<CCreateMgr> pCreateMgr);
 	virtual ~CNexusTowerShader();
 
 public: // 공개 함수
-	virtual void Initialize(CCreateMgr *pCreateMgr, void *pContext = NULL);
+	virtual void Initialize(shared_ptr<CCreateMgr> pCreateMgr, void *pContext = NULL);
 
-	virtual void ReleaseUploadBuffers();
-
-	virtual void UpdateShaderVariables();
+	virtual void UpdateShaderVariables(int opt = 0);
 	virtual void UpdateBoundingBoxShaderVariables();
 
 	virtual void AnimateObjects(float timeElapsed);
 
 	virtual void Render(CCamera *pCamera);
 	virtual void RenderBoundingBox(CCamera *pCamera);
+	virtual void RenderShadow(CCamera *pCamera);
 
 	virtual CBaseObject *PickObjectByRayIntersection(
 		XMFLOAT3& pickPosition, XMFLOAT4X4& xmf4x4View, float &nearHitDistance);
 
 	virtual bool OnProcessKeyInput(UCHAR* pKeyBuffer);
 
-	int GetObjectCount() { return m_nObjects; }
-	virtual CBaseObject **GetCollisionObjects() { return m_ppObjects; }
+	void SetColManagerToObject(shared_ptr<CCollisionManager> manager);
+	void SetThrowingManagerToObject(shared_ptr<CThrowingMgr> manager);
+
+	int GetNexusCount() { return m_nNexus; }
+	int GetTowerCount() { return m_nTower; }
+
+	void SetFSMManager(shared_ptr<CFSMMgr> pManger) { m_pFSMMgr = pManger; }
 
 protected: // 내부 함수
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
 
-	virtual D3D12_SHADER_BYTECODE CreateVertexShader(ID3DBlob **ppShaderBlob);
-	virtual D3D12_SHADER_BYTECODE CreatePixelShader(ID3DBlob **ppShaderBlob);
+	virtual D3D12_SHADER_BYTECODE CreateVertexShader(ComPtr<ID3DBlob>& pShaderBlob);
+	virtual D3D12_SHADER_BYTECODE CreatePixelShader(ComPtr<ID3DBlob>& pShaderBlob);
 
-	virtual void CreateShader(CCreateMgr *pCreateMgr, UINT nRenderTargets = 1, bool isRenderBB = false);
-	virtual void CreateShaderVariables(CCreateMgr *pCreateMgr, int nBuffers = 1);
+	virtual D3D12_SHADER_BYTECODE CreateShadowVertexShader(ComPtr<ID3DBlob>& pShaderBlob);
 
-	virtual void BuildObjects(CCreateMgr *pCreateMgr, void *pContext = NULL);
+	virtual void CreateShader(shared_ptr<CCreateMgr> pCreateMgr, UINT nRenderTargets = 1, bool isRenderBB = false, bool isRenderShadow = false);
 
-	virtual void ReleaseObjects();
+	virtual void BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pContext = NULL);
 
-	void SetBoundingBoxMeshByIndex(CCreateMgr *pCreateMgr, CBaseObject* target, int index);
+	void SetBoundingBoxMeshByIndex(shared_ptr<CCreateMgr> pCreateMgr, CBaseObject* target, int index);
 
 protected: // 변수
-	CBaseObject * *m_ppObjects{ NULL };
-	int m_nObjects{ 0 };
+	int m_nNexus{ 0 };
+	int m_nTower{ 0 };
+
 	int m_meshCounts[4];
-
-	ID3D12Resource *m_myConstBuffer{ NULL };
-
-	UINT8 *m_pMappedObjects{ NULL };
-	UINT8 *m_pMappedBoundingBoxes{ NULL };
 
 	CHeightMapTerrain * m_pTerrain{ NULL };
 
-	Network* m_pNetwork;
+	shared_ptr<CFSMMgr> m_pFSMMgr;
 };

@@ -11,18 +11,18 @@
 ////////////////////////////////////////////////////////////////////////
 // CSkyBox
 // 생성자, 소멸자
-CSkyBox::CSkyBox(CCreateMgr *pCreateMgr) : CBaseObject(pCreateMgr, 6)
+CSkyBox::CSkyBox(shared_ptr<CCreateMgr> pCreateMgr) : CBaseObject(pCreateMgr, 6)
 {
 	CTexturedRectMesh *pSkyBoxMesh = new CTexturedRectMesh(pCreateMgr, 20.0f, 20.0f, 0.0f, 0.0f, 0.0f, +10.0f);
 	SetMesh(0, pSkyBoxMesh);
 	pSkyBoxMesh = new CTexturedRectMesh(pCreateMgr, 20.0f, 20.0f, 0.0f, 0.0f, 0.0f, -10.0f);
-	SetMesh(1, pSkyBoxMesh);	
+	SetMesh(1, pSkyBoxMesh);
 	pSkyBoxMesh = new CTexturedRectMesh(pCreateMgr, 0.0f, 20.0f, 20.0f, -10.0f, 0.0f, 0.0f);
-	SetMesh(2, pSkyBoxMesh);	
+	SetMesh(2, pSkyBoxMesh);
 	pSkyBoxMesh = new CTexturedRectMesh(pCreateMgr, 0.0f, 20.0f, 20.0f, +10.0f, 0.0f, 0.0f);
-	SetMesh(3, pSkyBoxMesh);	
+	SetMesh(3, pSkyBoxMesh);
 	pSkyBoxMesh = new CTexturedRectMesh(pCreateMgr, 20.0f, 0.0f, 20.0f, 0.0f, +10.0f, 0.0f);
-	SetMesh(4, pSkyBoxMesh);	
+	SetMesh(4, pSkyBoxMesh);
 	pSkyBoxMesh = new CTexturedRectMesh(pCreateMgr, 20.0f, 0.0f, 20.0f, 0.0f, -10.0f, 0.0f);
 	SetMesh(5, pSkyBoxMesh);
 }
@@ -35,6 +35,8 @@ CSkyBox::~CSkyBox()
 // 공개 함수
 void CSkyBox::Render(CCamera *pCamera, UINT istanceCnt)
 {
+	UNREFERENCED_PARAMETER(pCamera);
+
 	if (m_cbvGPUDescriptorHandle.ptr)
 		m_pCommandList->SetGraphicsRootDescriptorTable(1, m_cbvGPUDescriptorHandle);
 
@@ -51,7 +53,7 @@ void CSkyBox::Render(CCamera *pCamera, UINT istanceCnt)
 ////////////////////////////////////////////////////////////////////////
 // CFloor
 // 생성자, 소멸자
-CFloor::CFloor(CCreateMgr * pCreateMgr) : CBaseObject(pCreateMgr)
+CFloor::CFloor(shared_ptr<CCreateMgr> pCreateMgr) : CBaseObject(pCreateMgr)
 {
 	CTexturedRectMesh *pFloorMesh = new CTexturedRectMesh(pCreateMgr, 1.0f, 0.0f, 1.0f, 8000.0f, -100.0f, 4000.0f);
 	SetMesh(0, pFloorMesh);

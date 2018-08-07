@@ -13,12 +13,12 @@
 
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
-CHeightMapTerrain::CHeightMapTerrain(CCreateMgr *pCreateMgr, LPCTSTR pFileName,
+CHeightMapTerrain::CHeightMapTerrain(shared_ptr<CCreateMgr> pCreateMgr, LPCTSTR pFileName,
 	XMFLOAT3 xmf3Scale) : CBaseObject(pCreateMgr, 0)
 {
 	//지형에 사용할 높이 맵의 가로, 세로의 크기이다.
-	m_nWidth = TERRAIN_IMAGE_WIDTH;
-	m_nLength = TERRAIN_IMAGE_HEIGHT;
+	m_nWidth = static_cast<int>(TERRAIN_IMAGE_WIDTH);
+	m_nLength = static_cast<int>(TERRAIN_IMAGE_HEIGHT);
 
 	//xmf3Scale는 지형을 실제로 몇 배 확대할 것인가를 나타낸다.
 	m_xmf3Scale = xmf3Scale;
@@ -35,7 +35,8 @@ CHeightMapTerrain::CHeightMapTerrain(CCreateMgr *pCreateMgr, LPCTSTR pFileName,
 
 	CHeightMapGridMesh *pHeightMapGridMesh = new CHeightMapGridMesh(
 		pCreateMgr,
-		TERRAIN_IMAGE_CELL_WIDTH, TERRAIN_IMAGE_CELL_HEIGHT);
+		static_cast<int>(TERRAIN_IMAGE_CELL_WIDTH),
+		static_cast<int>(TERRAIN_IMAGE_CELL_HEIGHT));
 	SetMesh(0, pHeightMapGridMesh);
 }
 

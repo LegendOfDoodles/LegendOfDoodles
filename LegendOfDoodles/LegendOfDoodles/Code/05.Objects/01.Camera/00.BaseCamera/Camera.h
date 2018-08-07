@@ -33,10 +33,10 @@ public:	// 생성자, 소멸자
 	virtual ~CCamera();
 
 public:	// 공개 함수
-	virtual void Initialize(CCreateMgr *pCreateMgr);
+	virtual void Initialize(shared_ptr<CCreateMgr> pCreateMgr);
 	void Finalize();
 
-	virtual void UpdateShaderVariables();
+	virtual void UpdateShaderVariables(int rootSignatureIndex = 0);
 
 	virtual void SetViewportsAndScissorRects();
 
@@ -50,9 +50,18 @@ public:	// 공개 함수
 
 	void RegenerateViewMatrix();
 
-	void GenerateProjectionMatrix(
+	void GeneratePerspectiveProjectionMatrix(
 		float fNearPlaneDistance, float fFarPlaneDistance,
 		float fAspectRatio, float fFOVAngle);
+
+	void GenerateOrthographicProjectionMatrix(
+		float fWidth, float fHeight,
+		float fNearPlaneDistance, float fFarPlaneDistance);
+
+	void GenerateOrthographicOffCenterProjectionMatrix(
+		float left, float right,
+		float top, float bottom,
+		float fNearPlaneDistance, float fFarPlaneDistance);
 
 	void SavePickedPos();
 
@@ -62,7 +71,7 @@ public:	// 공개 함수
 	virtual bool OnProcessKeyInput(UCHAR* pKeyBuffer);
 
 	void GenerateFrustum();
-	bool IsInFrustum(BoundingOrientedBox& xmBoundingBox);
+	virtual bool IsInFrustum(BoundingOrientedBox& xmBoundingBox);
 
 	void SetPosition(float x, float y, float z);
 
@@ -101,7 +110,7 @@ protected: // 내부 함수
 	void SetViewport(int xTopLeft, int yTopLeft, int nWidth, int nHeight, float fMinZ = 0.0f, float fMaxZ = 1.0f);
 	void SetScissorRect(LONG xLeft, LONG yTop, LONG xRight, LONG yBottom);
 
-	virtual void CreateShaderVariables(CCreateMgr *pCreateMgr);
+	virtual void CreateShaderVariables(shared_ptr<CCreateMgr> pCreateMgr, UINT stride);
 	virtual void ReleaseShaderVariables();
 
 protected: // 변수
@@ -122,6 +131,7 @@ protected: // 변수
 
 	XMFLOAT4X4 m_xmf4x4View;
 	XMFLOAT4X4 m_xmf4x4Projection;
+	XMFLOAT4X4 m_xmf4x4ShadowViewProjTex;
 
 	D3D12_VIEWPORT m_viewport;
 	D3D12_RECT m_scissorRect;
@@ -133,11 +143,11 @@ protected: // 변수
 
 	POINT m_pickCursorPos{ 0, 0 };
 
-	ID3D12Resource *m_pConstBuffer{ NULL };
-	VS_CB_CAMERA_INFO	 *m_pMappedCamera{ NULL };
+	ComPtr<ID3D12Resource> m_pConstBuffer;
+	UINT8 *m_pMappedCamera{ NULL };
 
 	HWND m_hWnd{ NULL };
-	ID3D12GraphicsCommandList *m_pCommandList{ NULL };
+	ComPtr<ID3D12GraphicsCommandList> m_pCommandList;
 
 	BoundingFrustum m_xmFrustum;
 };
