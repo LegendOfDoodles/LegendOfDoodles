@@ -27,7 +27,7 @@ public: // 공개 함수
 
 	virtual void Render(CCamera *pCamera);
 
-	void SpawnFlyingObject(const XMFLOAT3& position, const float positionOffset, const XMFLOAT3& direction, TeamType teamType, FlyingObjectType objectType);
+	void SpawnFlyingObject(const XMFLOAT3& position, const XMFLOAT3& direction, TeamType teamType, FlyingObjectType objectType);
 
 	void SetColManagerToObject(shared_ptr<CCollisionManager> manager);
 

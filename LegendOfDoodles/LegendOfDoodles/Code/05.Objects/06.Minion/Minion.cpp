@@ -5,7 +5,7 @@
 /// 목적: 미니언 클래스 분할
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-08-01
+/// 최종 수정 날짜: 2018-08-07
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -311,7 +311,7 @@ void CMagicMinion::Animate(float timeElapsed)
 		}
 		if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f
 			&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f) {
-			m_pThrowingMgr->RequestSpawn(GetPosition(), m_fCollisionSize * 2, GetLook(), m_TeamType, FlyingObjectType::Minion_Magic);
+			m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Minion_Magic);
 		}
 		if (m_nCurrAnimation == Animations::Attack1) {
 			if (m_curState == m_nextState)
@@ -400,7 +400,7 @@ void CBowMinion::Animate(float timeElapsed)
 		}
 		if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f
 			&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f) {
-			m_pThrowingMgr->RequestSpawn(GetPosition(), m_fCollisionSize * 2, GetLook(), m_TeamType, FlyingObjectType::Minion_Arrow);
+			m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Minion_Arrow);
 		}
 		if (m_nCurrAnimation == Animations::Attack1)
 		{

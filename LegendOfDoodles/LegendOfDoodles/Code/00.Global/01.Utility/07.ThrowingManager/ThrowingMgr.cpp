@@ -6,7 +6,7 @@
 /// 목적: 날아가는 오브젝트(화살, 아령 등)의 생성 요청 관리를 위한 클래스
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-07-27
+/// 최종 수정 날짜: 2018-08-07
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -21,9 +21,9 @@ CThrowingMgr::~CThrowingMgr()
 
 ////////////////////////////////////////////////////////////////////////
 // 공개 함수
-void CThrowingMgr::RequestSpawn(const XMFLOAT3 & position, const float positionOffset, const XMFLOAT3 & direction, TeamType teamType, FlyingObjectType objectType)
+void CThrowingMgr::RequestSpawn(const XMFLOAT3 & position, const XMFLOAT3 & direction, TeamType teamType, FlyingObjectType objectType)
 {
-	m_pFlyingShader->SpawnFlyingObject(position, positionOffset, direction, teamType, objectType);
+	m_pFlyingShader->SpawnFlyingObject(position, direction, teamType, objectType);
 }
 
 void CThrowingMgr::RequestPause()

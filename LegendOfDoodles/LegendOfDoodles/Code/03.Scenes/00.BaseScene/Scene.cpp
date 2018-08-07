@@ -110,7 +110,6 @@ void CScene::ProcessInput()
 	{
 		m_pThrowingMgr->RequestSpawn(
 			m_pSelectedObject->GetPosition(),
-			m_pSelectedObject->GetCollisionSize() * 2,
 			m_pSelectedObject->GetLook(),
 			m_pSelectedObject->GetTeam(),
 			FlyingObjectType::Minion_Magic);

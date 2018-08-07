@@ -6,7 +6,7 @@
 /// 목적: 넥서스 및 타워 관리 클래스
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-08-04
+/// 최종 수정 날짜: 2018-08-07
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -70,7 +70,7 @@ void CNexusTower::PlayAttack(float timeElapsed, shared_ptr<CWayFinder> pWayFinde
 			XMFLOAT3 curPos{ GetPosition() };
 			curPos.y += m_fCollisionSize * 2;
 			m_atkCoolTime = COOLTIME_TOWER_ATTACK;
-			m_pThrowingMgr->RequestSpawn(curPos, 0, Vector3::Subtract(m_pEnemy->GetPosition(), curPos, true), m_TeamType, FlyingObjectType::Roider_Dumbel);
+			m_pThrowingMgr->RequestSpawn(curPos, Vector3::Subtract(m_pEnemy->GetPosition(), curPos, true), m_TeamType, FlyingObjectType::Roider_Dumbel);
 		}
 	}
 }

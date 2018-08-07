@@ -6,7 +6,7 @@
 /// 목적: 중립 몬스터(로이더) 클래스 분할
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-08-03
+/// 최종 수정 날짜: 2018-08-07
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -296,7 +296,7 @@ void CRoider::AnimateByCurState()
 		{
 			if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f
 				&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f) {
-				m_pThrowingMgr->RequestSpawn(GetPosition(), m_fCollisionSize * 2, GetLook(), m_TeamType, FlyingObjectType::Roider_Dumbel);
+				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Roider_Dumbel);
 			}
 		}
 		if (m_curState != m_nextState)
