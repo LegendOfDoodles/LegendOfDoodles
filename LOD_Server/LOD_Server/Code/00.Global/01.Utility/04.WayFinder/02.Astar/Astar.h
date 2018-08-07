@@ -32,7 +32,7 @@ private: // 변수
 class CAstar
 {
 public: // 생성자, 소멸자
-	CAstar(const CWayFinder *finder, int source, int target);
+	CAstar(shared_ptr<CWayFinder> finder, int source, int target);
 	~CAstar();
 
 public: // 공개 함수
@@ -45,10 +45,10 @@ protected: // 내부 함수
 	double Heuristic_Euclidean(int from, int to);
 	double Heuristic_EuclideanSquare(int from, int to);
 	double Heuristic_NoisyEuclidean(int from, int to);
-	double Heuristic_Dijkstra(int from, int to);
+	double Heuristic_Dijkstra();
 
 protected: // 변수
-	const CWayFinder *m_pFinder;
+	shared_ptr<CWayFinder> m_pFinder;
 
 	int m_source;	// 길찾기 시작 노드
 	int m_target;	// 길찾기 목표 노드

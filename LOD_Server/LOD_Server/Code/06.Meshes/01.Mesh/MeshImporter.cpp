@@ -17,16 +17,18 @@ void CTransformImporter::LoadMeshData(char * in)
 	//¿Œµ¶Ω∫ √ﬂ√‚
 	while (std::getline(ifs, line)) {
 		std::getline(ifs, line);
-		int cnt = strtof(line.c_str(), NULL);
+
+		int cnt = static_cast<int>(strtof(line.c_str(), NULL));
+
 		m_iTotalCnt += cnt;
 		m_iKindMeshCnt[i] = cnt;
-		
+
 		while (std::getline(ifs, line) && line.find("<end>", 0) == -1)
 		{
 			Transform vertex;
 			int LineNum = 0;
 			float index[3];
-			for(int k=0 ; k<3 ; ++k)
+			for (int k = 0; k < 3; ++k)
 			{
 				char *end = NULL;
 				switch (LineNum)

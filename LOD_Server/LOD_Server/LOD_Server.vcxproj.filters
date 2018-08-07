@@ -81,9 +81,6 @@
     <Filter Include="소스 파일\00.Global\02.AI\00.FSMMgr">
       <UniqueIdentifier>{e37989c4-9fda-4973-9d9f-f7789d0fcb53}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\04.Shaders\04.AniShader">
-      <UniqueIdentifier>{dc752d63-37aa-4e94-9f45-9cd6ad7d721c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\05.Objects\03.AnimatedObject">
       <UniqueIdentifier>{be3fc130-7dbf-4272-9abf-efccf81d9bf4}</UniqueIdentifier>
     </Filter>
@@ -113,6 +110,30 @@
     </Filter>
     <Filter Include="소스 파일\07.Server">
       <UniqueIdentifier>{31a96cad-7a00-46fc-a3ba-0fced9f21f0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\00.Global\01.Utility\07.ThrowingManager">
+      <UniqueIdentifier>{b0770f00-3539-4a92-ace9-9aa82ad85ea6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04.Shaders\04.MinionShader">
+      <UniqueIdentifier>{dc752d63-37aa-4e94-9f45-9cd6ad7d721c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04.Shaders\07.NeutralityShader">
+      <UniqueIdentifier>{e2eda636-43ab-470a-9117-90414b73e943}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04.Shaders\08.FlyingShader">
+      <UniqueIdentifier>{b1e33b38-fd61-42ed-b362-9eee90bca1c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\05.Objects\11.FlyingObject">
+      <UniqueIdentifier>{d77b537b-f7fd-4160-823c-355e6cf1c8f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\05.Objects\10.Neutrality">
+      <UniqueIdentifier>{fb381a24-d162-4508-8207-e11dd723f27c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\05.Objects\10.Neutrality\00.Roider">
+      <UniqueIdentifier>{b87dcada-478b-47b7-ad5b-db38676661a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\05.Objects\10.Neutrality\01.Golem">
+      <UniqueIdentifier>{b566cd71-e4b6-4de6-8a40-e04a8a2995d4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -173,9 +194,6 @@
     <ClInclude Include="Code\04.Shaders\00.BaseShader\Shader.h">
       <Filter>소스 파일\04.Shaders\00.BaseShader</Filter>
     </ClInclude>
-    <ClInclude Include="Code\04.Shaders\04.AniShader\AniShader.h">
-      <Filter>소스 파일\04.Shaders\04.AniShader</Filter>
-    </ClInclude>
     <ClInclude Include="Code\04.Shaders\05.PlayerShader\PlayerShader.h">
       <Filter>소스 파일\04.Shaders\05.PlayerShader</Filter>
     </ClInclude>
@@ -214,6 +232,27 @@
     </ClInclude>
     <ClInclude Include="Code\07.Server\Main.h">
       <Filter>소스 파일\07.Server</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\00.Global\01.Utility\07.ThrowingManager\ThrowingMgr.h">
+      <Filter>소스 파일\00.Global\01.Utility\07.ThrowingManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\04.Shaders\04.AniShader\MinionShader.h">
+      <Filter>소스 파일\04.Shaders\04.MinionShader</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\04.Shaders\07.NeutralityShader\NeutralityShader.h">
+      <Filter>소스 파일\04.Shaders\07.NeutralityShader</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\04.Shaders\08.FlyingShader\FlyingShader.h">
+      <Filter>소스 파일\04.Shaders\08.FlyingShader</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\05.Objects\10.Neutrality\00.Roider\Roider.h">
+      <Filter>소스 파일\05.Objects\10.Neutrality\00.Roider</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\05.Objects\10.Neutrality\01.Golem\Golem.h">
+      <Filter>소스 파일\05.Objects\10.Neutrality\01.Golem</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\05.Objects\11.FlyingObject\FlyingObject.h">
+      <Filter>소스 파일\05.Objects\11.FlyingObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -272,9 +311,6 @@
     <ClCompile Include="Code\04.Shaders\00.BaseShader\Shader.cpp">
       <Filter>소스 파일\04.Shaders\00.BaseShader</Filter>
     </ClCompile>
-    <ClCompile Include="Code\04.Shaders\04.AniShader\AniShader.cpp">
-      <Filter>소스 파일\04.Shaders\04.AniShader</Filter>
-    </ClCompile>
     <ClCompile Include="Code\04.Shaders\05.PlayerShader\PlayerShader.cpp">
       <Filter>소스 파일\04.Shaders\05.PlayerShader</Filter>
     </ClCompile>
@@ -310,6 +346,27 @@
     </ClCompile>
     <ClCompile Include="Code\06.Meshes\01.Mesh\MeshImporter.cpp">
       <Filter>소스 파일\06.Meshes\01.Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\00.Global\01.Utility\07.ThrowingManager\ThrowingMgr.cpp">
+      <Filter>소스 파일\00.Global\01.Utility\07.ThrowingManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\04.Shaders\04.AniShader\MinionShader.cpp">
+      <Filter>소스 파일\04.Shaders\04.MinionShader</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\04.Shaders\07.NeutralityShader\NeutralityShader.cpp">
+      <Filter>소스 파일\04.Shaders\07.NeutralityShader</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\04.Shaders\08.FlyingShader\FlyingShader.cpp">
+      <Filter>소스 파일\04.Shaders\08.FlyingShader</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\05.Objects\10.Neutrality\00.Roider\Roider.cpp">
+      <Filter>소스 파일\05.Objects\10.Neutrality\00.Roider</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\05.Objects\10.Neutrality\01.Golem\Golem.cpp">
+      <Filter>소스 파일\05.Objects\10.Neutrality\01.Golem</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\05.Objects\11.FlyingObject\FlyingObject.cpp">
+      <Filter>소스 파일\05.Objects\11.FlyingObject</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

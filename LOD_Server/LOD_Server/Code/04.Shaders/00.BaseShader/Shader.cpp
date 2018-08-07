@@ -5,7 +5,7 @@
 /// 목적: 기본 쉐이터 코드, 인터페이스 용
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-09
+/// 최종 수정 날짜: 2018-08-07
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -33,24 +33,24 @@ void CShader::Finalize()
 
 void CShader::AnimateObjects(float timeElapsed)
 {
-}
-
-bool CShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
-{
-	return true;
-}
-
-bool CShader::OnProcessMouseInput(WPARAM pKeyBuffer)
-{
-	return false;
+	UNREFERENCED_PARAMETER(timeElapsed);
 }
 
 ////////////////////////////////////////////////////////////////////////
 // 내부 함수
 void CShader::BuildObjects(void *pContext)
 {
+	UNREFERENCED_PARAMETER(pContext);
 }
 
 void CShader::ReleaseObjects()
 {
+	if (m_ppObjects)
+	{
+		for (int j = 0; j < m_nObjects; j++)
+		{
+			delete m_ppObjects[j];
+		}
+		Safe_Delete_Array(m_ppObjects);
+	}
 }

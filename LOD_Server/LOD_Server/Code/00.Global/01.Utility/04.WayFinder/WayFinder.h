@@ -10,37 +10,50 @@ typedef std::list<CPathEdge> Path;
 
 class CAstar;
 class CCollisionObject;
-
-class CWayFinder
+struct NodeMap {
+	bool Detected{ false };
+	bool Static{ false };
+};
+class CWayFinder : public std::enable_shared_from_this<CWayFinder>
 {
 public: // 생성자, 소멸자
 	CWayFinder();
 	~CWayFinder();
 
 public: // 공개 함수
-	bool CanGoDirectly(XMFLOAT2 &source, XMFLOAT2 &target, float collisionSize);
-	bool CanGoDirectly(XMFLOAT3 &source, XMFLOAT3 &target, float collisionSize);
-	XMFLOAT2 GetClosestNotCollidePos(XMFLOAT2 &source, XMFLOAT2 &target, float collisionSize);
-	XMFLOAT3 GetClosestNotCollidePos(XMFLOAT3 &source, XMFLOAT3 &target, float collisionSize);
-	Path *GetPathToPosition(XMFLOAT2 &source, XMFLOAT2 &target, float collisionSize);
+	bool CanGoDirectly(const XMFLOAT2 &source, const XMFLOAT2 &target);
+	bool CanGoDirectly(const XMFLOAT3 &source, const XMFLOAT3 &target);
+	XMFLOAT2 GetClosestNotCollidePos(const XMFLOAT2 &source, const XMFLOAT2 &target);
+	XMFLOAT3 GetClosestNotCollidePos(const XMFLOAT3 &source, const XMFLOAT3 &target);
+	Path *GetPathToPosition(const XMFLOAT2 &source, const XMFLOAT2 &target);
+	Path *GetPathToPosition(const XMFLOAT3 &source, const XMFLOAT3 &target);
+	Path *GetPathToPosition(const XMFLOAT3 &source, const XMFLOAT2 &target);
 
-	void SmoothPath(Path *path, float collisionSize);
-	void SmoothPathDetail(Path *path, float collisionSize);
+	void SmoothPath(Path *path);
+	void SmoothPathDetail(Path *path);
 
 	int FindClosestNodeIndexWithPosition(const XMFLOAT2 &position);
 
-	void AdjustValueByWallCollision(CCollisionObject* collider, XMFLOAT3& dir, float val);
+	void AdjustValueByWallCollision(CCollisionObject* collider, const XMFLOAT3& dir, float val);
 
-	int GetNodeCount() const { return m_nodes.size(); }
+	bool IsInTerrain(const XMFLOAT2& target);
+
+	int GetNodeCount() const { return static_cast<int>(m_nodes.size()); }
 	const CNode& GetNodeAt(int idx) const { return m_nodes[idx]; }
 	const EdgeVector& GetEdgesAt(int idx) const { return m_edges[idx]; }
-
+	std::vector<NodeMap> GetNodeMap() { return m_nodeMap; }
+	float GetNodeSize() { return nodeSize; }
+	XMFLOAT2 GetNodeWH() { return m_nodeWH; }
 protected: // 내부 함수
 
 protected: // 변수
 	NodeVector m_nodes;
 	EdgeArray m_edges;
 
-	CAstar* m_pCurSearch{ NULL };
-	CCollisionMapImage *m_pCollisionMapImage{ NULL };
+	std::vector<NodeMap> m_nodeMap;
+	float nodeSize{ 0 };
+	XMFLOAT2 m_nodeWH;
+
+	shared_ptr<CAstar> m_pCurSearch;
+	shared_ptr<CCollisionMapImage> m_pCollisionMapImage;
 };

@@ -6,7 +6,7 @@
 /// 목적: 테스트 용 메쉬 클래스 생성
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-05
+/// 최종 수정 날짜: 2018-08-07
 /// </summary>
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -163,8 +163,6 @@ bool CCollisionMapImage::GetCollision(float fx, float fz)
 	//높이 맵의 좌표의 정수 부분과 소수 부분을 계산한다.
 	int x = (int)fx;
 	int z = (int)fz;
-	float fxPercent = fx - x;
-	float fzPercent = fz - z;
 
 	float fBottomLeft = (float)m_pCollisionMapPixels[x + (z*m_nWidth)];
 	float fBottomRight = (float)m_pCollisionMapPixels[(x + 1) + (z*m_nWidth)];
@@ -174,5 +172,5 @@ bool CCollisionMapImage::GetCollision(float fx, float fz)
 	//사각형의 네 점 중 두개 이상이 충돌 지역인 경우 충돌하는 것으로 가정한다.
 	float sumValue = fBottomLeft + fBottomRight + fTopLeft + fTopRight;
 
-	return(sumValue>=510);
+	return(sumValue >= 510);
 }

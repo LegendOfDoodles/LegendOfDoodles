@@ -1,5 +1,5 @@
 #pragma once
-#include "05.Objects/00.BaseObject/BaseObject.h"
+#include "05.Objects/02.CollisionObject/CollisionObject.h"
 
 class CShader
 {
@@ -13,18 +13,21 @@ public: // 공개 함수
 
 	virtual void AnimateObjects(float timeElapsed);
 
-	virtual bool OnProcessKeyInput(UCHAR* pKeyBuffer);
-	virtual bool OnProcessMouseInput(WPARAM pKeyBuffer);
+	CCollisionObject **GetCollisionObjects() { return m_ppObjects; }
+	int GetObjectCount() { return m_nObjects; }
 
 	void AddRef() { m_nReferences++; }
 	void Release() { if (--m_nReferences <= 0) delete this; }
-	virtual CBaseObject * * GetCollisionObjects() { return nullptr; }
 
 protected: // 내부 함수
 	virtual void BuildObjects(void *pContext = NULL);
+
 	virtual void ReleaseObjects();
 
 protected: // 변수
 	int m_nReferences{ 0 };
+
+	CCollisionObject **m_ppObjects{ NULL };
+	int m_nObjects{ 0 };
 };
 

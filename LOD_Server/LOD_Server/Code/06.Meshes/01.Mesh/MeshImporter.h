@@ -13,6 +13,7 @@ public:
 	CTransformImporter();
 	~CTransformImporter();
 
+public:
 	void LoadMeshData(char* in);
 
 public:

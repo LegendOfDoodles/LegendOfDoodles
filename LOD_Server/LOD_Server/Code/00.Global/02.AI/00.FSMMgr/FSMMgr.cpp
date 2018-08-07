@@ -1,20 +1,19 @@
 #include "stdafx.h"
 #include "FSMMgr.h"
 #include "05.Objects/02.CollisionObject/CollisionObject.h"
-#include "05.Objects/03.AnimatedObject/AnimatedObject.h"
 
 /// <summary>
 /// 목적: FSM을 하나의 클래스로 관리하여 처리하기 위함
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-05-11
+/// 최종 수정 날짜: 2018-08-05
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
-CFSMMgr::CFSMMgr(CWayFinder* pWayFinder)
+CFSMMgr::CFSMMgr(shared_ptr<CWayFinder> pWayFinder)
+	:m_pWayFinder(pWayFinder)
 {
-	m_pWayFinder = pWayFinder;
 }
 
 CFSMMgr::~CFSMMgr()
@@ -31,19 +30,23 @@ void CFSMMgr::Update(float timeElapsed, CCollisionObject * obj)
 		obj->PlayIdle(timeElapsed);
 		break;
 	case States::Walk:
-		obj->PlayWalk(timeElapsed);
+		obj->PlayWalk(timeElapsed, m_pWayFinder);
 		break;
 	case States::Chase:
 		obj->PlayChase(timeElapsed, m_pWayFinder);
 		break;
 	case States::Attack:
-		obj->PlayAttack(timeElapsed);
+		obj->PlayAttack(timeElapsed, m_pWayFinder);
 		break;
 	case States::Die:
 		obj->PlayDie(timeElapsed);
 		break;
 	case States::Remove:
-		obj->PlayRemove(timeElapsed);
+		obj->PlayRemove(timeElapsed, m_pWayFinder);
+		break;
+	case States::Win:
+		break;
+	case States::Defeat:
 		break;
 	default:
 		assert(!"Error:: There is No State");
@@ -53,26 +56,3 @@ void CFSMMgr::Update(float timeElapsed, CCollisionObject * obj)
 
 ////////////////////////////////////////////////////////////////////////
 // 내부 함수
-void CFSMMgr::PlayIdle(float timeElapsed, CCollisionObject * obj)
-{
-}
-
-void CFSMMgr::PlayWalk(float timeElapsed, CCollisionObject * obj)
-{
-}
-
-void CFSMMgr::PlayChase(float timeElapsed, CCollisionObject * obj)
-{
-}
-
-void CFSMMgr::PlayAttack(float timeElapsed, CCollisionObject * obj)
-{
-}
-
-void CFSMMgr::PlayDie(float timeElapsed, CCollisionObject * obj)
-{
-}
-
-void CFSMMgr::PlayRemove(float timeElapsed, CCollisionObject * obj)
-{
-}

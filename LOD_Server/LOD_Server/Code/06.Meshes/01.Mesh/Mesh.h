@@ -9,7 +9,7 @@ public: // 생성자, 소멸자
 	virtual ~CHeightMapImage(void);
 
 public: // 공개 함수
-	//높이 맵 이미지에서 (x, z) 위치의 픽셀 값에 기반한 지형의 높이를 반환한다.
+		//높이 맵 이미지에서 (x, z) 위치의 픽셀 값에 기반한 지형의 높이를 반환한다.
 	float GetHeight(float x, float z);
 	//높이 맵 이미지에서 (x, z) 위치의 법선 벡터를 반환한다.
 	XMFLOAT3 GetHeightMapNormal(int x, int z);
@@ -21,13 +21,13 @@ public: // 공개 함수
 	int GetHeightMapLength() { return(m_nLength); }
 
 private: // 변수
-	//높이 맵 이미지 픽셀(8-비트)들의 이차원 배열이다. 각 픽셀은 0~255의 값을 갖는다.
-	BYTE * m_pHeightMapPixels;
+		 //높이 맵 이미지 픽셀(8-비트)들의 이차원 배열이다. 각 픽셀은 0~255의 값을 갖는다.
+	BYTE * m_pHeightMapPixels{ NULL };
 	//높이 맵 이미지의 가로와 세로 크기이다.
-	int m_nWidth;
-	int m_nLength;
+	int m_nWidth{ 0 };
+	int m_nLength{ 0 };
 	//높이 맵 이미지를 실제로 몇 배 확대하여 사용할 것인가를 나타내는 스케일 벡터이다.
-	XMFLOAT3 m_xmf3Scale;
+	XMFLOAT3 m_xmf3Scale{};
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -48,9 +48,9 @@ public: // 공개 함수
 	int GetHeightMapLength() { return(m_nLength); }
 
 private: // 변수
-	BYTE * m_pCollisionMapPixels;
-	int m_nWidth;
-	int m_nLength;
+	BYTE * m_pCollisionMapPixels{ NULL };
+	int m_nWidth{ 0 };
+	int m_nLength{ 0 };
 
-	XMFLOAT3 m_xmf3Scale;
+	XMFLOAT3 m_xmf3Scale{};
 };
