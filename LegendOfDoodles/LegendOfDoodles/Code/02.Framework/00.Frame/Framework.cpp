@@ -20,7 +20,7 @@ CFramework::~CFramework()
 
 ////////////////////////////////////////////////////////////////////////
 // 공개 함수
-bool CFramework::Initialize(HINSTANCE hInstance, HWND hWnd, CNetwork* pNetwork)
+bool CFramework::Initialize(HINSTANCE hInstance, HWND hWnd, shared_ptr<CNetwork> pNetwork)
 {
 	m_hWnd = hWnd;
 	
@@ -29,9 +29,7 @@ bool CFramework::Initialize(HINSTANCE hInstance, HWND hWnd, CNetwork* pNetwork)
 	m_pCreateMgr->Initialize(hInstance, hWnd);
 	m_pRenderMgr = m_pCreateMgr->GetRenderMgr();
 
-	m_pNetwork = (shared_ptr<CNetwork>)pNetwork;
-	
-
+	m_pNetwork = pNetwork;
 
 	BuildObjects();
 
