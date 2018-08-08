@@ -27,6 +27,8 @@ bool CFramework::Initialize()
 	return(true);
 }
 
+
+
 void CFramework::Finalize()
 {
 	ReleaseObjects();
@@ -38,6 +40,8 @@ void CFramework::FrameAdvance(float timeElapsed)
 	// Warning! 임시 종료 확인 -> 향우 변경 필요
 	m_running = !(GetAsyncKeyState(VK_ESCAPE) & 0x8000);
 }
+
+
 
 ////////////////////////////////////////////////////////////////////////
 // 내부 함수

@@ -29,7 +29,7 @@ void CNetwork::Initialize()
 	ServerAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
 	int Result = WSAConnect(m_mysocket, (sockaddr *)&ServerAddr, sizeof(ServerAddr), NULL, NULL, NULL, NULL);
-
+	WSAGetLastError();
 	WSAAsyncSelect(m_mysocket, m_hWnd, WM_SOCKET, FD_CLOSE | FD_READ);
 
 	m_send_wsabuf.buf = m_send_buffer;

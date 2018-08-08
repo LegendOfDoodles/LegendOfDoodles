@@ -12,7 +12,7 @@
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
 CHeightMapTerrain::CHeightMapTerrain(LPCTSTR pFileName,
-	XMFLOAT3 xmf3Scale) : CBaseObject(0)
+	XMFLOAT3 xmf3Scale) : CBaseObject()
 {
 	//지형에 사용할 높이 맵의 가로, 세로의 크기이다.
 	m_nWidth = static_cast<int>(TERRAIN_IMAGE_WIDTH);

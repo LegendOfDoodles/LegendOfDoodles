@@ -20,6 +20,9 @@ public: // 공개 함수
 	virtual void Finalize();
 
 	void AnimateObjects(float timeElapsed);
+	void GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, int id);
+
+	CAnimatedObject** GetPlayerObject() { return  (CAnimatedObject**)m_ppShaders[2]->GetCollisionObjects();}
 
 protected: // 내부 함수
 	void BuildObjects();
@@ -27,6 +30,7 @@ protected: // 내부 함수
 
 	void PickObjectPointedByCursor(WPARAM wParam, LPARAM lParam);
 	void GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, XMFLOAT4X4&	 xmf4x4View);
+	
 
 protected: // 변수
 	CHeightMapTerrain * m_pTerrain{ NULL };

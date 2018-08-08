@@ -62,11 +62,11 @@ void CScene::BuildObjects()
 
 	m_nShaders = 5;
 	m_ppShaders = new CShader*[m_nShaders];
-	m_ppShaders[0] = new CMinionShader(pCreateMgr);
-	m_ppShaders[1] = new CPlayerShader(pCreateMgr);
-	m_ppShaders[2] = new CNeutralityShader(pCreateMgr);
-	m_ppShaders[3] = new CNexusTowerShader(pCreateMgr);
-	m_ppShaders[4] = new CFlyingShader(pCreateMgr);
+	m_ppShaders[0] = new CMinionShader();
+	m_ppShaders[1] = new CPlayerShader();
+	m_ppShaders[2] = new CNeutralityShader();
+	m_ppShaders[3] = new CNexusTowerShader();
+	m_ppShaders[4] = new CFlyingShader();
 
 	for (int i = 0; i < m_nShaders; ++i)
 	{
@@ -134,13 +134,26 @@ void CScene::ReleaseObjects()
 	}
 }
 
-void CScene::GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, XMFLOAT4X4&	 xmf4x4View)
+
+// 플레이어 이동 시 사용 -> 입력 값 월드 포지션 패킷으로 받아서 적용
+void CScene::GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, int id)
 {
 	XMFLOAT3 m_pickWorldPosition = pickPosition;
 	CAnimatedObject* pPlayer = ((CAnimatedObject * *)m_ppShaders[2]->GetCollisionObjects())[id];
 	pPlayer->LookAt(m_pickWorldPosition);
 	pPlayer->SetPathToGo(m_pWayFinder->GetPathToPosition(
 		XMFLOAT2(pPlayer->GetPosition().x, pPlayer->GetPosition().z),
-		XMFLOAT2(m_pickWorldPosition.x, m_pickWorldPosition.z),
-		pPlayer->GetCollisionSize()));
+		XMFLOAT2(m_pickWorldPosition.x, m_pickWorldPosition.z)));
+		//pPlayer->GetCollisionSize()));
 }
+
+//void CScene::GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, XMFLOAT4X4&	 xmf4x4View)
+//{
+//	XMFLOAT3 m_pickWorldPosition = pickPosition;
+//	CAnimatedObject* pPlayer = ((CAnimatedObject * *)m_ppShaders[2]->GetCollisionObjects())[id];
+//	pPlayer->LookAt(m_pickWorldPosition);
+//	pPlayer->SetPathToGo(m_pWayFinder->GetPathToPosition(
+//		XMFLOAT2(pPlayer->GetPosition().x, pPlayer->GetPosition().z),
+//		XMFLOAT2(m_pickWorldPosition.x, m_pickWorldPosition.z),
+//		pPlayer->GetCollisionSize()));
+//}

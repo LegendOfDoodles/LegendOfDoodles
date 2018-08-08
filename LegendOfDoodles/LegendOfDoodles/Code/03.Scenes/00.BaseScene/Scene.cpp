@@ -132,7 +132,7 @@ void CScene::AnimateObjects(float timeElapsed)
 {
 	m_pCamera->Update(timeElapsed);
 
-	m_pNetwork->ReadPacket(m_pNetwork->m_mysocket);
+	//m_pNetwork->ReadPacket(m_pNetwork->m_mysocket);
 
 	UpdateShaderVariables();
 
