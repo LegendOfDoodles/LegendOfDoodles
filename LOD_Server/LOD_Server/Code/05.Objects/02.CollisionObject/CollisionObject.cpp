@@ -10,7 +10,7 @@
 
 ////////////////////////////////////////////////////////////////////////
 // 持失切, 社瑚切
-CCollisionObject::CCollisionObject(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes) : CBaseObject(pCreateMgr, nMeshes)
+CCollisionObject::CCollisionObject(int nMeshes) : CBaseObject(nMeshes)
 {
 	ResetCollisionLevel();
 }

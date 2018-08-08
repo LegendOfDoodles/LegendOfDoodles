@@ -6,12 +6,11 @@
 class CPlayer : public CAnimatedObject
 {
 public:
-	CPlayer(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes = 1);
+	CPlayer(int nMeshes = 1);
 	virtual ~CPlayer();
 
 public:	// 외부 함수
 	virtual void Animate(float timeElapsed);
-	virtual void Render(CCamera *pCamera, UINT instanceCnt = 1);
 
 	virtual void LookAt(XMFLOAT3 objPosition);
 	virtual void LookAt(XMFLOAT2 objPosition);

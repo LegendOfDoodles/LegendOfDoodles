@@ -8,7 +8,7 @@ class CWayFinder;
 class CCollisionObject : public CBaseObject
 {
 public:	// 생성자, 소멸자
-	CCollisionObject(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes = 1);
+	CCollisionObject(int nMeshes = 1);
 	virtual ~CCollisionObject();
 
 public: // 공개 함수

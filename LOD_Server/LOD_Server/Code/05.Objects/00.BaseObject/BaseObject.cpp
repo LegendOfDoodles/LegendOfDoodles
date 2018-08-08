@@ -14,9 +14,9 @@
 
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
-CBaseObject::CBaseObject(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes)
+CBaseObject::CBaseObject(int nMeshes)
 {
-	m_pCommandList = pCreateMgr->GetCommandList();
+	//m_pCommandList = pCreateMgr->GetCommandList();
 
 	XMStoreFloat4x4(&m_xmf4x4World, XMMatrixIdentity());
 
@@ -46,27 +46,15 @@ CBaseObject::~CBaseObject()
 
 ////////////////////////////////////////////////////////////////////////
 // 공개 함수
-void CBaseObject::Initialize(shared_ptr<CCreateMgr> pCreateMgr)
+void CBaseObject::Initialize()
 {
-	UNREFERENCED_PARAMETER(pCreateMgr);
+	
 }
 
 void CBaseObject::Finalize()
 {
 }
 
-void CBaseObject::ReleaseUploadBuffers()
-{
-	if (m_ppMeshes)
-	{
-		for (int i = 0; i < m_nMeshes; i++)
-		{
-			if (m_ppMeshes[i]) m_ppMeshes[i]->ReleaseUploadBuffers();
-		}
-	}
-
-	if (m_pMaterial) m_pMaterial->ReleaseUploadBuffers();
-}
 
 void CBaseObject::SetMesh(int nIndex, CMesh *pMesh)
 {
@@ -101,85 +89,17 @@ void CBaseObject::SetShader(CShader *pShader)
 	//}
 	//if (m_pMaterial) m_pMaterial->SetShader(pShader);
 }
-
-void CBaseObject::SetMaterial(CMaterial *pMaterial)
-{
-	if (m_pMaterial) m_pMaterial->Release();
-	m_pMaterial = pMaterial;
-	if (m_pMaterial) m_pMaterial->AddRef();
-}
+//
+//void CBaseObject::SetMaterial(CMaterial *pMaterial)
+//{
+//	if (m_pMaterial) m_pMaterial->Release();
+//	m_pMaterial = pMaterial;
+//	if (m_pMaterial) m_pMaterial->AddRef();
+//}
 
 void CBaseObject::Animate(float timeElapsed)
 {
 	UNREFERENCED_PARAMETER(timeElapsed);
-}
-
-void CBaseObject::Render(CCamera *pCamera, UINT istanceCnt)
-{
-	OnPrepareRender();
-
-	if (!IsVisible(pCamera)) return;
-
-	if (m_pMaterial)
-	{
-		m_pMaterial->Render(pCamera);
-		m_pMaterial->UpdateShaderVariables();
-	}
-
-	if (m_cbvGPUDescriptorHandle.ptr)
-		m_pCommandList->SetGraphicsRootDescriptorTable(1, m_cbvGPUDescriptorHandle);
-
-	if (m_ppMeshes)
-	{
-		for (int i = 0; i < m_nMeshes; i++)
-		{
-			if (m_ppMeshes[i]) m_ppMeshes[i]->Render(istanceCnt);
-		}
-	}
-}
-
-void CBaseObject::RenderBoundingBox(CCamera * pCamera, UINT istanceCnt)
-{
-	OnPrepareRender();
-
-	if (!IsVisible(pCamera)) return;
-
-	if (m_cbvGPUDescriptorHandleForBB.ptr)
-		m_pCommandList->SetGraphicsRootDescriptorTable(1, m_cbvGPUDescriptorHandleForBB);
-
-	if (m_pBoundingMesh) m_pBoundingMesh->Render(istanceCnt);
-}
-
-void CBaseObject::GenerateRayForPicking(
-	XMFLOAT3& pickPosition, XMFLOAT4X4&	 xmf4x4View,
-	XMFLOAT3 &pickRayOrigin, XMFLOAT3 &pickRayDirection)
-{
-	XMFLOAT4X4 xmf4x4WorldView{ Matrix4x4::Multiply(m_xmf4x4World, xmf4x4View) };
-	XMFLOAT4X4 xmf4x4Inverse{ Matrix4x4::Inverse(xmf4x4WorldView) };
-	XMFLOAT3 xmf3CameraOrigin(0.0f, 0.0f, 0.0f);
-
-	//카메라 좌표계의 원점을 모델 좌표계로 변환한다.
-	pickRayOrigin = Vector3::TransformCoord(xmf3CameraOrigin, xmf4x4Inverse);
-	//카메라 좌표계의 점(마우스 좌표를 역변환하여 구한 점)을 모델 좌표계로 변환한다.
-	pickRayDirection = Vector3::TransformCoord(pickPosition, xmf4x4Inverse);
-	//광선의 방향 벡터를 구한다.
-	pickRayDirection = Vector3::Normalize(Vector3::Subtract(pickRayDirection, pickRayOrigin));
-}
-
-bool CBaseObject::PickObjectByRayIntersection(
-	XMFLOAT3& xmf3PickPosition, XMFLOAT4X4& xmf4x4View, float &hitDistance)
-{
-	if (!m_ppMeshes) return false;
-	if (!m_ppMeshes[0]) return false;
-
-	bool intersected{ false };
-	XMFLOAT3 pickRayOrigin, pickRayDirection;
-
-	GenerateRayForPicking(xmf3PickPosition, xmf4x4View, pickRayOrigin, pickRayDirection);
-
-	intersected = m_ppMeshes[0]->CheckRayIntersection(pickRayOrigin, pickRayDirection, hitDistance);
-
-	return(intersected);
 }
 
 void CBaseObject::MoveStrafe(float fDistance)
@@ -289,16 +209,4 @@ void CBaseObject::SetPosition(XMFLOAT3 xmf3Position)
 // 내부 함수
 void CBaseObject::OnPrepareRender()
 {
-}
-
-bool CBaseObject::IsVisible(CCamera * pCamera)
-{
-	if (!m_ppMeshes) return false;
-	if (!m_ppMeshes[0]->HasBoundingBox()) return true;
-	bool bIsVisible = false;
-	BoundingOrientedBox boundingBox = m_ppMeshes[0]->GetBoundingBox();
-	//모델 좌표계의 바운딩 박스를 월드 좌표계로 변환한다.
-	boundingBox.Transform(boundingBox, XMLoadFloat4x4(&m_xmf4x4World));
-	if (pCamera) bIsVisible = pCamera->IsInFrustum(boundingBox);
-	return(bIsVisible);
 }

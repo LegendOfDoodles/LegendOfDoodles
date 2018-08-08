@@ -6,12 +6,11 @@
 class CGolem : public CAnimatedObject
 {
 public: // 생성자, 소멸자
-	CGolem(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes = 1);
+	CGolem(int nMeshes = 1);
 	virtual ~CGolem();
 
 public:	// 외부 함수
 	virtual void Animate(float timeElapsed);
-	virtual void Render(CCamera *pCamera, UINT instanceCnt = 1);
 
 	virtual 	void SetState(StatesType newState);
 
@@ -39,7 +38,7 @@ public:	// 외부 함수
 	void SetPathes(Path* pathes) { m_pathes = pathes; }
 
 protected:	// 내부 함수
-	void BuildSelf(shared_ptr<CCreateMgr> pCreateMgr);
+	void BuildSelf();
 	virtual void AdjustAnimationIndex();
 	void AnimateByCurState();
 	void ReadyToAtk(shared_ptr<CWayFinder> pWayFinder);

@@ -3,8 +3,6 @@
 
 class CCreateMgr;
 class CShader;
-class CCamera;
-class CMaterial;
 class CCollisionObject;
 
 struct CB_GAMEOBJECT_INFO
@@ -15,11 +13,11 @@ struct CB_GAMEOBJECT_INFO
 class CBaseObject
 {
 public:	// 생성자, 소멸자
-	CBaseObject(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes = 1);
+	CBaseObject(int nMeshes = 1);
 	virtual ~CBaseObject();
 
 public: // 공개 함수
-	virtual void Initialize(shared_ptr<CCreateMgr> pCreateMgr);
+	virtual void Initialize();
 	virtual void Finalize();
 
 	void ReleaseUploadBuffers();
@@ -27,16 +25,8 @@ public: // 공개 함수
 	void SetMesh(int nIndex, CMesh *pMesh);
 	void SetBoundingMesh(CMesh *pMesh);
 	void SetShader(CShader *pShader);
-	void SetMaterial(CMaterial *pMaterial);
 
 	virtual void Animate(float timeElapsed);
-
-	virtual void Render(CCamera *pCamera, UINT istanceCnt = 1);
-	virtual void RenderBoundingBox(CCamera *pCamera, UINT istanceCnt = 1);
-
-	void GenerateRayForPicking(XMFLOAT3& pickPosition, XMFLOAT4X4& xmf4x4View,
-		XMFLOAT3 &pickRayOrigin, XMFLOAT3 &pickRayDirection);
-	bool PickObjectByRayIntersection(XMFLOAT3& pickPosition, XMFLOAT4X4& xmf4x4View, float &hitDistance);
 
 	void MoveStrafe(float fDistance = 1.0f);
 	virtual void MoveUp(float fDistance = 1.0f);
@@ -91,8 +81,7 @@ public: // 공개 함수
 protected: // 내부 함수
 	virtual void OnPrepareRender();
 
-	bool IsVisible(CCamera *pCamera = NULL);
-
+	//CHECK!
 protected: // 변수
 	int m_nReferences{ 0 };
 
@@ -107,10 +96,6 @@ protected: // 변수
 	CMesh *m_pBoundingMesh{ NULL };
 
 	CShader *m_pShader{ NULL };
-	CMaterial	 *m_pMaterial{ NULL };
-
-	D3D12_GPU_DESCRIPTOR_HANDLE m_cbvGPUDescriptorHandle{ NULL };
-	D3D12_GPU_DESCRIPTOR_HANDLE m_cbvGPUDescriptorHandleForBB{ NULL };
 
 	ObjectType m_ObjectType{ ObjectType::StickPlayer };
 	TeamType m_TeamType{ None };

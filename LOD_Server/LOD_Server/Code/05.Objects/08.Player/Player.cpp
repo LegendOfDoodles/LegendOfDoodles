@@ -10,7 +10,7 @@
 
 ////////////////////////////////////////////////////////////////////////
 // 持失切, 社瑚切
-CPlayer::CPlayer(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes) : CAnimatedObject(pCreateMgr, nMeshes)
+CPlayer::CPlayer( int nMeshes) : CAnimatedObject( nMeshes)
 {
 	m_detectRange = CONVERT_PaperUnit_to_InG(80.0f);
 	m_sightRange = CONVERT_PaperUnit_to_InG(80.0f);
@@ -114,29 +114,6 @@ void CPlayer::Animate(float timeElapsed)
 	CAnimatedObject::Animate(timeElapsed);
 }
 
-void CPlayer::Render(CCamera * pCamera, UINT instanceCnt)
-{
-	OnPrepareRender();
-
-	if (!IsVisible(pCamera) || !m_Detected) return;
-
-	if (m_pMaterial)
-	{
-		m_pMaterial->Render(pCamera);
-		m_pMaterial->UpdateShaderVariables();
-	}
-
-	if (m_cbvGPUDescriptorHandle.ptr)
-		m_pCommandList->SetGraphicsRootDescriptorTable(6, m_cbvGPUDescriptorHandle);
-
-	if (m_ppMeshes)
-	{
-		for (int i = 0; i < m_nMeshes; i++)
-		{
-			if (m_ppMeshes[i]) m_ppMeshes[i]->Render(instanceCnt);
-		}
-	}
-}
 
 void CPlayer::LookAt(XMFLOAT3 objPosition)
 {

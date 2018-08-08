@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "AnimatedObject.h"
-#include "06.Meshes/00.Vertex/Vertex.h"
 #include "00.Global/01.Utility/04.WayFinder/WayFinder.h"
 
 /// <summary>
@@ -12,7 +11,7 @@
 
 ////////////////////////////////////////////////////////////////////////
 // 持失切, 社瑚切
-CAnimatedObject::CAnimatedObject(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes) : CCollisionObject(pCreateMgr, nMeshes)
+CAnimatedObject::CAnimatedObject(int nMeshes) : CCollisionObject(nMeshes)
 {
 }
 
@@ -36,29 +35,6 @@ void CAnimatedObject::Animate(float timeElapsed)
 	}
 }
 
-void CAnimatedObject::Render(CCamera * pCamera, UINT instanceCnt)
-{
-	OnPrepareRender();
-
-	if (!IsVisible(pCamera) || !m_Detected) return;
-
-	if (m_pMaterial)
-	{
-		m_pMaterial->Render(pCamera);
-		m_pMaterial->UpdateShaderVariables();
-	}
-
-	if (m_cbvGPUDescriptorHandle.ptr)
-		m_pCommandList->SetGraphicsRootDescriptorTable(6, m_cbvGPUDescriptorHandle);
-
-	if (m_ppMeshes)
-	{
-		for (int i = 0; i < m_nMeshes; i++)
-		{
-			if (m_ppMeshes[i]) m_ppMeshes[i]->Render(instanceCnt);
-		}
-	}
-}
 
 void CAnimatedObject::SetSkeleton(CSkeleton *skeleton)
 {

@@ -11,7 +11,7 @@
 
 ////////////////////////////////////////////////////////////////////////
 // 持失切, 社瑚切
-CGolem::CGolem(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes) : CAnimatedObject(pCreateMgr, nMeshes)
+CGolem::CGolem(int nMeshes) : CAnimatedObject(nMeshes)
 {
 	srand((unsigned)time(NULL));
 
@@ -29,7 +29,7 @@ CGolem::CGolem(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes) : CAnimatedObject
 
 	m_attackRange = CONVERT_PaperUnit_to_InG(30);
 
-	BuildSelf(pCreateMgr);
+	BuildSelf();
 }
 
 CGolem::~CGolem()
@@ -64,28 +64,6 @@ void CGolem::Animate(float timeElapsed)
 	CAnimatedObject::Animate(timeElapsed);
 }
 
-void CGolem::Render(CCamera * pCamera, UINT instanceCnt)
-{
-	OnPrepareRender();
-
-	if (!IsVisible(pCamera)||!m_Detected) return;
-
-	if (m_pMaterial)
-	{
-		m_pMaterial->UpdateShaderVariables();
-	}
-
-	if (m_cbvGPUDescriptorHandle.ptr)
-		m_pCommandList->SetGraphicsRootDescriptorTable(6, m_cbvGPUDescriptorHandle);
-
-	if (m_ppMeshes)
-	{
-		for (int i = 0; i < m_nMeshes; i++)
-		{
-			if (m_ppMeshes[i]) m_ppMeshes[i]->Render(instanceCnt);
-		}
-	}
-}
 
 void CGolem::SetState(StatesType newState)
 {
@@ -277,8 +255,8 @@ void CGolem::ReceiveDamage(float damage)
 		}
 	}
 }
-
-void CGolem::BuildSelf(shared_ptr<CCreateMgr> pCreateMgr)
+//CHECK!
+void CGolem::BuildSelf()
 {
 	CSkinnedMesh *pGolemMesh = new CSkinnedMesh(pCreateMgr, "Resource//3D//Golem//Mesh//GuardGolem.meshinfo");
 
@@ -436,7 +414,7 @@ void CGolem::AnimateByCurState()
 		break;
 	}
 }
-
+//CHECK
 void CGolem::ReadyToAtk(shared_ptr<CWayFinder> pWayFinder)
 {
 	if (m_lastDamageTeam == TeamType::Red)

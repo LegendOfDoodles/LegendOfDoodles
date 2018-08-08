@@ -6,13 +6,12 @@
 class CMinion : public CAnimatedObject
 {
 public: // 생성자, 소멸자
-	CMinion(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes = 1);
+	CMinion(int nMeshes = 1);
 	virtual ~CMinion();
 
 public:	// 외부 함수
 	virtual void Animate(float timeElapsed);
-	virtual void Render(CCamera *pCamera, UINT instanceCnt = 1);
-
+	
 	virtual void SetState(StatesType newState);
 
 	virtual void PlayIdle(float timeElapsed);
@@ -58,7 +57,7 @@ protected:	// 변수
 class CSwordMinion : public CMinion
 {
 public: // 생성자, 소멸자
-	CSwordMinion(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes = 1);
+	CSwordMinion(int nMeshes = 1);
 	virtual ~CSwordMinion();
 
 public:	// 외부 함수
@@ -72,7 +71,7 @@ public:	// 외부 함수
 class CMagicMinion : public CMinion
 {
 public: // 생성자, 소멸자
-	CMagicMinion(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes = 1);
+	CMagicMinion(int nMeshes = 1);
 	virtual ~CMagicMinion();
 
 public:	// 외부 함수
@@ -86,7 +85,7 @@ public:	// 외부 함수
 class CBowMinion : public CMinion
 {
 public: // 생성자, 소멸자
-	CBowMinion(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes = 1);
+	CBowMinion(int nMeshes = 1);
 	virtual ~CBowMinion();
 
 public:	// 외부 함수

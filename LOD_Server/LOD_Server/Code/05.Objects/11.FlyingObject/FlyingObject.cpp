@@ -11,7 +11,7 @@
 
 ////////////////////////////////////////////////////////////////////////
 // 持失切, 社瑚切
-CFlyingObject::CFlyingObject(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes) : CCollisionObject(pCreateMgr, nMeshes)
+CFlyingObject::CFlyingObject(int nMeshes) : CCollisionObject(nMeshes)
 {
 	m_ObjectType = ObjectType::FlyingObject;
 }

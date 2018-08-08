@@ -9,7 +9,7 @@ struct CB_TERRAIN_INFO
 class CHeightMapTerrain : public CBaseObject
 {
 public: // 생성자, 소멸자
-	CHeightMapTerrain(shared_ptr<CCreateMgr> pCreateMgr, LPCTSTR pFileName, XMFLOAT3 xmf3Scale);
+	CHeightMapTerrain(LPCTSTR pFileName, XMFLOAT3 xmf3Scale);
 	virtual ~CHeightMapTerrain();
 
 public: // 공개 함수

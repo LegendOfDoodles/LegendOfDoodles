@@ -1,9 +1,6 @@
 #include "stdafx.h"
 #include "NexusTowerShader.h"
-#include "02.Framework/01.CreateMgr/CreateMgr.h"
-#include "05.Objects/99.Material/Material.h"
 #include "05.Objects/04.Terrain/HeightMapTerrain.h"
-#include "05.Objects/07.StaticObjects/Obstacle.h"
 #include "05.Objects/09.NexusTower/NexusTower.h"
 #include "06.Meshes/01.Mesh/MeshImporter.h"
 #include "00.Global/02.AI/00.FSMMgr/FSMMgr.h"
@@ -17,8 +14,8 @@
 
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
-CNexusTowerShader::CNexusTowerShader(shared_ptr<CCreateMgr> pCreateMgr)
-	: CShader(pCreateMgr)
+CNexusTowerShader::CNexusTowerShader()
+	: CShader()
 {
 }
 
@@ -28,37 +25,13 @@ CNexusTowerShader::~CNexusTowerShader()
 
 ////////////////////////////////////////////////////////////////////////
 // 공개 함수
-void CNexusTowerShader::Initialize(shared_ptr<CCreateMgr> pCreateMgr, void *pContext)
+void CNexusTowerShader::Initialize(void *pContext)
 {
-	CreateShader(pCreateMgr, RENDER_TARGET_BUFFER_CNT, true, true);
-	BuildObjects(pCreateMgr, pContext);
+	
+	BuildObjects(pContext);
 }
 
-void CNexusTowerShader::UpdateShaderVariables(int opt)
-{
-	UNREFERENCED_PARAMETER(opt);
-	static UINT elementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
 
-	for (int i = 0; i < m_nObjects; i++)
-	{
-		CB_GAMEOBJECT_INFO *pMappedObject = (CB_GAMEOBJECT_INFO *)(m_pMappedObjects + (i * elementBytes));
-		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
-			XMMatrixTranspose(XMLoadFloat4x4(m_ppObjects[i]->GetWorldMatrix())));
-	}
-}
-
-void CNexusTowerShader::UpdateBoundingBoxShaderVariables()
-{
-	UINT boundingBoxElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
-
-	for (int i = 0; i < m_nObjects; i++)
-	{
-		CB_GAMEOBJECT_INFO *pMappedObject = (CB_GAMEOBJECT_INFO *)(m_pMappedBoundingBoxes + (i * boundingBoxElementBytes));
-
-		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
-			XMMatrixTranspose(XMLoadFloat4x4(m_ppObjects[i]->GetWorldMatrix())));
-	}
-}
 
 void CNexusTowerShader::AnimateObjects(float timeElapsed)
 {
@@ -68,76 +41,6 @@ void CNexusTowerShader::AnimateObjects(float timeElapsed)
 	}
 }
 
-void CNexusTowerShader::Render(CCamera *pCamera)
-{
-	int cnt{ 0 };
-	for (int i = 0; i < m_nMaterials; ++i)
-	{
-		CShader::Render(pCamera, i);
-		m_ppMaterials[i]->UpdateShaderVariables();
-		for (int j = 0; j < m_meshCounts[i]; ++j, ++cnt)
-		{
-			if (m_ppObjects[cnt]) m_ppObjects[cnt]->Render(pCamera);
-		}
-	}
-}
-
-void CNexusTowerShader::RenderBoundingBox(CCamera * pCamera)
-{
-	CShader::RenderBoundingBox(pCamera);
-
-	for (int j = 0; j < m_nObjects; j++)
-	{
-		if (m_ppObjects[j]) m_ppObjects[j]->RenderBoundingBox(pCamera);
-	}
-}
-
-void CNexusTowerShader::RenderShadow(CCamera * pCamera)
-{
-	int cnt{ 0 };
-	for (int i = 0; i < m_nMaterials; ++i)
-	{
-		CShader::Render(pCamera, i, 2);
-		for (int j = 0; j < m_meshCounts[i]; ++j, ++cnt)
-		{
-			if (m_ppObjects[cnt]) m_ppObjects[cnt]->Render(pCamera);
-		}
-	}
-}
-
-CBaseObject *CNexusTowerShader::PickObjectByRayIntersection(
-	XMFLOAT3& pickPosition, XMFLOAT4X4& xmf4x4View, float &nearHitDistance)
-{
-	bool intersected = 0;
-
-	nearHitDistance = FLT_MAX;
-	float hitDistance = FLT_MAX;
-	CBaseObject *pSelectedObject{ NULL };
-
-	for (int j = 0; j < m_nObjects; j++)
-	{
-		intersected = m_ppObjects[j]->PickObjectByRayIntersection(pickPosition, xmf4x4View, hitDistance);
-		if (intersected && (hitDistance < nearHitDistance))
-		{
-			nearHitDistance = hitDistance;
-			pSelectedObject = m_ppObjects[j];
-		}
-	}
-
-	return(pSelectedObject);
-}
-
-bool CNexusTowerShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
-{
-	UNREFERENCED_PARAMETER(pKeyBuffer);
-
-	if (GetAsyncKeyState('U') & 0x0001)
-	{
-		m_ppObjects[0]->SetState(States::Die);
-
-	}
-	return true;
-}
 
 void CNexusTowerShader::SetColManagerToObject(shared_ptr<CCollisionManager> manager)
 {
@@ -157,89 +60,8 @@ void CNexusTowerShader::SetThrowingManagerToObject(shared_ptr<CThrowingMgr> mana
 
 ////////////////////////////////////////////////////////////////////////
 // 내부 함수
-D3D12_INPUT_LAYOUT_DESC CNexusTowerShader::CreateInputLayout()
-{
-	UINT nInputElementDescs = 4;
-	D3D12_INPUT_ELEMENT_DESC *pInputElementDescs = new D3D12_INPUT_ELEMENT_DESC[nInputElementDescs];
-
-	pInputElementDescs[0] = {
-		"POSITION",
-		0,
-		DXGI_FORMAT_R32G32B32_FLOAT,
-		0,
-		0,
-		D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-		0 };
-	pInputElementDescs[1] = {
-		"NORMAL",
-		0,
-		DXGI_FORMAT_R32G32B32_FLOAT,
-		0,
-		12,
-		D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-		0 };
-	pInputElementDescs[2] = {
-		"TEXCOORD",
-		0,
-		DXGI_FORMAT_R32G32_FLOAT,
-		0,
-		24,
-		D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-		0 };
-	pInputElementDescs[3] = {
-		"TANGENT",
-		0,
-		DXGI_FORMAT_R32G32B32_FLOAT,
-		0,
-		32,
-		D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-		0 };
-
-	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc;
-	d3dInputLayoutDesc.pInputElementDescs = pInputElementDescs;
-	d3dInputLayoutDesc.NumElements = nInputElementDescs;
-
-	return(d3dInputLayoutDesc);
-}
-
-D3D12_SHADER_BYTECODE CNexusTowerShader::CreateVertexShader(ComPtr<ID3DBlob>& pShaderBlob)
-{
-	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
-		"VSTexturedLighting",
-		"vs_5_1",
-		pShaderBlob));
-}
-
-D3D12_SHADER_BYTECODE CNexusTowerShader::CreatePixelShader(ComPtr<ID3DBlob>& pShaderBlob)
-{
-	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
-		"PSTexturedLightingEmissive",
-		"ps_5_1",
-		pShaderBlob));
-}
-
-D3D12_SHADER_BYTECODE CNexusTowerShader::CreateShadowVertexShader(ComPtr<ID3DBlob>& pShaderBlob)
-{
-	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/ShadowShader.hlsl",
-		"VSTexturedLighting",
-		"vs_5_1",
-		pShaderBlob));
-}
-
-void CNexusTowerShader::CreateShader(shared_ptr<CCreateMgr> pCreateMgr, UINT nRenderTargets, bool isRenderBB, bool isRenderShadow)
-{
-	m_nPipelineStates = 3;
-
-	m_nHeaps = 5;
-	CreateDescriptorHeaps();
-
-	CShader::CreateShader(pCreateMgr, nRenderTargets, isRenderBB, isRenderShadow);
-}
-
-void CNexusTowerShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pContext)
+//CHECK!
+void CNexusTowerShader::BuildObjects(void *pContext)
 {
 	UNREFERENCED_PARAMETER(pContext);
 
@@ -253,8 +75,7 @@ void CNexusTowerShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pC
 	UINT ncbElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
 	int accCnt{ 0 };
 
-	CreateShaderVariables(pCreateMgr, ncbElementBytes, m_nObjects, true, ncbElementBytes, m_nObjects);
-	for (int i = 0; i < m_nHeaps - 1; ++i)
+	/*for (int i = 0; i < m_nHeaps - 1; ++i)
 	{
 		CreateCbvAndSrvDescriptorHeaps(pCreateMgr, transformInporter.m_iKindMeshCnt[i], 1, i);
 		CreateConstantBufferViews(pCreateMgr, transformInporter.m_iKindMeshCnt[i], m_pConstBuffer.Get(), ncbElementBytes, accCnt, i);
@@ -263,18 +84,18 @@ void CNexusTowerShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pC
 	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, m_nObjects, 0, m_nHeaps - 1);
 	CreateConstantBufferViews(pCreateMgr, m_nObjects, m_pBoundingBoxBuffer.Get(), ncbElementBytes, 0, m_nHeaps - 1);
 
-	SaveBoundingBoxHeapNumber(m_nHeaps - 1);
+	SaveBoundingBoxHeapNumber(m_nHeaps - 1);*/
 
-#if USE_BATCH_MATERIAL
-	m_nMaterials = m_nHeaps - 1;
-	m_ppMaterials = new CMaterial*[m_nMaterials];
-	m_ppMaterials[0] = Materials::CreateTresureBoxMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[0], &m_psrvGPUDescriptorStartHandle[0]);
-	m_ppMaterials[1] = Materials::CreateShellMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[1], &m_psrvGPUDescriptorStartHandle[1]);
-	m_ppMaterials[2] = Materials::CreateRoundSoapDispenserMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[2], &m_psrvGPUDescriptorStartHandle[2]);
-	m_ppMaterials[3] = Materials::CreateSquareSoapDispenserMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[3], &m_psrvGPUDescriptorStartHandle[3]);
-#else
-	CMaterial *pCubeMaterial = Materials::CreateBrickMaterial(pCreateMgr, &m_srvCPUDescriptorStartHandle, &m_srvGPUDescriptorStartHandle);
-#endif
+//#if USE_BATCH_MATERIAL
+//	m_nMaterials = m_nHeaps - 1;
+//	m_ppMaterials = new CMaterial*[m_nMaterials];
+//	m_ppMaterials[0] = Materials::CreateTresureBoxMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[0], &m_psrvGPUDescriptorStartHandle[0]);
+//	m_ppMaterials[1] = Materials::CreateShellMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[1], &m_psrvGPUDescriptorStartHandle[1]);
+//	m_ppMaterials[2] = Materials::CreateRoundSoapDispenserMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[2], &m_psrvGPUDescriptorStartHandle[2]);
+//	m_ppMaterials[3] = Materials::CreateSquareSoapDispenserMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[3], &m_psrvGPUDescriptorStartHandle[3]);
+//#else
+//	CMaterial *pCubeMaterial = Materials::CreateBrickMaterial(pCreateMgr, &m_srvCPUDescriptorStartHandle, &m_srvGPUDescriptorStartHandle);
+//#endif
 
 	UINT incrementSize{ pCreateMgr->GetCbvSrvDescriptorIncrementSize() };
 	CStaticMesh *pMeshes[4];
@@ -303,7 +124,7 @@ void CNexusTowerShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pC
 	m_nTower = transformInporter.m_iKindMeshCnt[2] + transformInporter.m_iKindMeshCnt[3];
 
 	int cnt = 0;
-	for (int i = 0; i < m_nMaterials; ++i) {
+	/*for (int i = 0; i < m_nMaterials; ++i) {
 		m_meshCounts[i] = transformInporter.m_iKindMeshCnt[i];
 		for (int j = 0; j < transformInporter.m_iKindMeshCnt[i]; ++j) {
 			XMFLOAT3 pos = transformInporter.m_Transform[cnt].pos;
@@ -338,31 +159,31 @@ void CNexusTowerShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pC
 			pBuild->SetCbvGPUDescriptorHandlePtrForBB(m_pcbvGPUDescriptorStartHandle[m_nHeaps - 1].ptr + (incrementSize * cnt));
 			m_ppObjects[cnt++] = pBuild;
 		}
-	}
+	}*/
 }
-
-void CNexusTowerShader::SetBoundingBoxMeshByIndex(shared_ptr<CCreateMgr> pCreateMgr, CBaseObject * target, int index)
-{
-	static CCubeMesh towerBBMesh(pCreateMgr,
-		CONVERT_PaperUnit_to_InG(10), CONVERT_PaperUnit_to_InG(7), CONVERT_PaperUnit_to_InG(20),
-		0, 0, -CONVERT_PaperUnit_to_InG(10));
-	towerBBMesh.AddRef();
-
-	switch (index)
-	{
-	case 0: // 보물 상자
-		target->SetBoundingMesh(new CCubeMesh(pCreateMgr,
-			CONVERT_PaperUnit_to_InG(50), CONVERT_PaperUnit_to_InG(18), CONVERT_PaperUnit_to_InG(32),
-			0, 0, -CONVERT_PaperUnit_to_InG(16)));
-		break;
-	case 1: // 진주 조개
-		target->SetBoundingMesh(new CCubeMesh(pCreateMgr,
-			CONVERT_PaperUnit_to_InG(36), CONVERT_PaperUnit_to_InG(18), CONVERT_PaperUnit_to_InG(20),
-			0, 0, -CONVERT_PaperUnit_to_InG(10)));
-		break;
-	case 2: // 동글 비누 타워
-	case 3: // 네모 비누 타워
-		target->SetBoundingMesh(&towerBBMesh);
-		break;
-	}
-}
+//
+//void CNexusTowerShader::SetBoundingBoxMeshByIndex( CBaseObject * target, int index)
+//{
+//	static CCubeMesh towerBBMesh(pCreateMgr,
+//		CONVERT_PaperUnit_to_InG(10), CONVERT_PaperUnit_to_InG(7), CONVERT_PaperUnit_to_InG(20),
+//		0, 0, -CONVERT_PaperUnit_to_InG(10));
+//	towerBBMesh.AddRef();
+//
+//	switch (index)
+//	{
+//	case 0: // 보물 상자
+//		target->SetBoundingMesh(new CCubeMesh(pCreateMgr,
+//			CONVERT_PaperUnit_to_InG(50), CONVERT_PaperUnit_to_InG(18), CONVERT_PaperUnit_to_InG(32),
+//			0, 0, -CONVERT_PaperUnit_to_InG(16)));
+//		break;
+//	case 1: // 진주 조개
+//		target->SetBoundingMesh(new CCubeMesh(pCreateMgr,
+//			CONVERT_PaperUnit_to_InG(36), CONVERT_PaperUnit_to_InG(18), CONVERT_PaperUnit_to_InG(20),
+//			0, 0, -CONVERT_PaperUnit_to_InG(10)));
+//		break;
+//	case 2: // 동글 비누 타워
+//	case 3: // 네모 비누 타워
+//		target->SetBoundingMesh(&towerBBMesh);
+//		break;
+//	}
+//}

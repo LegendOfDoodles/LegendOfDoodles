@@ -3,8 +3,6 @@
 #include "05.Objects/03.AnimatedObject/AnimatedObject.h"
 #include "05.Objects/06.Minion/Minion.h"
 #include "05.Objects/08.Player/Player.h"
-#include "02.Framework/01.CreateMgr/CreateMgr.h"
-#include "05.Objects/99.Material/Material.h"
 #include "05.Objects/04.Terrain/HeightMapTerrain.h"
 #include "06.Meshes/01.Mesh/MeshImporter.h"
 
@@ -16,7 +14,7 @@
 /// </summary>
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
-CPlayerShader::CPlayerShader(shared_ptr<CCreateMgr> pCreateMgr) : CShader(pCreateMgr)
+CPlayerShader::CPlayerShader() : CShader()
 {
 }
 
@@ -26,41 +24,11 @@ CPlayerShader::~CPlayerShader()
 
 ////////////////////////////////////////////////////////////////////////
 // 공개 함수
-void CPlayerShader::Initialize(shared_ptr<CCreateMgr> pCreateMgr, void *pContext)
+void CPlayerShader::Initialize(void *pContext)
 {
-	CreateShader(pCreateMgr, RENDER_TARGET_BUFFER_CNT, true, true);
-	BuildObjects(pCreateMgr, pContext);
+	BuildObjects(pContext);
 }
 
-void CPlayerShader::UpdateShaderVariables(int opt)
-{
-	UNREFERENCED_PARAMETER(opt);
-	static UINT elementBytes = ((sizeof(CB_ANIOBJECT_INFO) + 255) & ~255);
-
-	for (int i = 0; i < m_nObjects; i++)
-	{
-		CB_ANIOBJECT_INFO *pMappedObject = (CB_ANIOBJECT_INFO *)(m_pMappedObjects + (i * elementBytes));
-		XMFLOAT4X4 tmp[128];
-		memcpy(tmp, m_ppObjects[i]->GetFrameMatrix(), sizeof(XMFLOAT4X4) * 128);
-		memcpy(pMappedObject->m_xmf4x4Frame, tmp, sizeof(XMFLOAT4X4) * 128);
-
-		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World0,
-			XMMatrixTranspose(XMLoadFloat4x4(m_ppObjects[i]->GetWorldMatrix())));
-	}
-}
-
-void CPlayerShader::UpdateBoundingBoxShaderVariables()
-{
-	UINT boundingBoxElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
-
-	for (int i = 0; i < m_nObjects; i++)
-	{
-		CB_GAMEOBJECT_INFO *pMappedObject = (CB_GAMEOBJECT_INFO *)(m_pMappedBoundingBoxes + (i * boundingBoxElementBytes));
-
-		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
-			XMMatrixTranspose(XMLoadFloat4x4(m_ppObjects[i]->GetWorldMatrix())));
-	}
-}
 
 void CPlayerShader::AnimateObjects(float timeElapsed)
 {
@@ -68,160 +36,6 @@ void CPlayerShader::AnimateObjects(float timeElapsed)
 	{
 		m_ppObjects[j]->Animate(timeElapsed);
 	}
-}
-
-void CPlayerShader::Render(CCamera *pCamera)
-{
-	CShader::Render(pCamera);
-#if USE_BATCH_MATERIAL
-	if (m_ppMaterials) m_ppMaterials[0]->UpdateShaderVariables();
-#endif
-
-	for (int j = 0; j < m_nObjects; j++)
-	{
-		m_ppObjects[j]->Render(pCamera);
-	}
-}
-
-void CPlayerShader::RenderBoundingBox(CCamera * pCamera)
-{
-	CShader::RenderBoundingBox(pCamera);
-
-	for (int j = 0; j < m_nObjects; j++)
-	{
-		if (m_ppObjects[j]) m_ppObjects[j]->RenderBoundingBox(pCamera);
-	}
-}
-
-void CPlayerShader::RenderShadow(CCamera * pCamera)
-{
-	CShader::Render(pCamera, 0, 2);
-
-	for (int j = 0; j < m_nObjects; j++)
-	{
-		m_ppObjects[j]->Render(pCamera);
-	}
-}
-
-CBaseObject *CPlayerShader::PickObjectByRayIntersection(
-	XMFLOAT3& pickPosition, XMFLOAT4X4& xmf4x4View, float &nearHitDistance)
-{
-	bool intersected = 0;
-
-	nearHitDistance = FLT_MAX;
-	float hitDistance = FLT_MAX;
-	CBaseObject *pSelectedObject{ NULL };
-
-	for (int j = 0; j < m_nObjects; j++)
-	{
-		intersected = m_ppObjects[j]->PickObjectByRayIntersection(pickPosition, xmf4x4View, hitDistance);
-		if (intersected && (hitDistance < nearHitDistance))
-		{
-			nearHitDistance = hitDistance;
-			pSelectedObject = m_ppObjects[j];
-		}
-	}
-
-	return(pSelectedObject);
-}
-
-bool CPlayerShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
-{
-	UNREFERENCED_PARAMETER(pKeyBuffer);
-
-	static float R = 0.0f;
-	static float M = 0.0f;
-
-	if (GetAsyncKeyState('L') & 0x0001)
-	{
-		UINT type = dynamic_cast<CPlayer*>(m_ppObjects[0])->GetWeaponType();
-		UINT num = dynamic_cast<CPlayer*>(m_ppObjects[0])->GetWeaponNum();
-		num++;
-		switch (type)
-		{
-		case 1:
-			if (num >= m_nSword) num = 0;
-			m_ppObjects[0]->SetMesh(1, m_pSword[num]);
-			break;
-		case 2:
-			if (num >= m_nStaff) num = 0;
-			m_ppObjects[0]->SetMesh(1, m_pStaff[num]);
-
-			break;
-		case 3:
-			if (num >= m_nBow) num = 0;
-			m_ppObjects[0]->SetMesh(1, m_pBow[num]);
-
-			break;
-		default:
-			break;
-		}
-		dynamic_cast<CPlayer*>(m_ppObjects[0])->SetWeaponData(type, num);
-
-		m_ppObjects[0]->SetType((ObjectType)m_nWeaponState);
-		// 무기에 따라 수정필요
-	}
-	else if (GetAsyncKeyState('1') & 0x0001)
-	{
-		UINT type = dynamic_cast<CPlayer*>(m_ppObjects[0])->GetWeaponType();
-		if (type != 1)
-		{
-			m_ppObjects[0]->SetType((ObjectType)m_nWeaponState);
-			m_ppObjects[0]->SetMesh(1, m_pSword[0]);
-			m_ppObjects[0]->SetType(ObjectType::SwordPlayer);
-			dynamic_cast<CPlayer*>(m_ppObjects[0])->ChangeSkillSet(m_ppSwordAni);
-			dynamic_cast<CPlayer*>(m_ppObjects[0])->SetWeaponData(ObjectType::SwordPlayer, 0);
-
-			m_ChangeWeapon = true;
-		}
-	}
-	else if (GetAsyncKeyState('2') & 0x0001)
-	{
-		if (UINT type = dynamic_cast<CPlayer*>(m_ppObjects[0])->GetWeaponType() != 2)
-		{
-			m_ppObjects[0]->SetType((ObjectType)m_nWeaponState);
-			m_ppObjects[0]->SetMesh(1, m_pStaff[0]);
-			m_ppObjects[0]->SetType(ObjectType::StaffPlayer);
-			dynamic_cast<CPlayer*>(m_ppObjects[0])->ChangeSkillSet(m_ppStaffAni);
-			dynamic_cast<CPlayer*>(m_ppObjects[0])->SetWeaponData(ObjectType::StaffPlayer, 0);
-
-			m_ChangeWeapon = true;
-		}
-	}
-	else if (GetAsyncKeyState('3') & 0x0001)
-	{
-		if (UINT type = dynamic_cast<CPlayer*>(m_ppObjects[0])->GetWeaponType() != 3)
-		{
-			m_ppObjects[0]->SetType((ObjectType)m_nWeaponState);
-			m_ppObjects[0]->SetMesh(1, m_pBow[0]);
-			m_ppObjects[0]->SetType(ObjectType::BowPlayer);
-			dynamic_cast<CPlayer*>(m_ppObjects[0])->ChangeSkillSet(m_ppBowAni);
-			dynamic_cast<CPlayer*>(m_ppObjects[0])->SetWeaponData(ObjectType::BowPlayer, 0);
-
-			m_ChangeWeapon = true;
-		}
-	}
-	else if (GetAsyncKeyState('Q') & 0x0001)
-	{
-		dynamic_cast<CPlayer*>(m_ppObjects[0])->ActiveSkill(AnimationsType::SkillQ);
-	}
-	else if (GetAsyncKeyState('W') & 0x0001)
-	{
-		dynamic_cast<CPlayer*>(m_ppObjects[0])->ActiveSkill(AnimationsType::SkillW);
-	}
-	else if (GetAsyncKeyState('E') & 0x0001)
-	{
-		dynamic_cast<CPlayer*>(m_ppObjects[0])->ActiveSkill(AnimationsType::SkillE);
-	}
-	else if (GetAsyncKeyState('R') & 0x0001)
-	{
-		dynamic_cast<CPlayer*>(m_ppObjects[0])->ActiveSkill(AnimationsType::SkillR);
-	}
-	if (GetAsyncKeyState('Q') & 0xFF00)
-	{
-		m_ppObjects[0]->ActiveSkill(AnimationsType::SkillQ);
-	}
-	return true;
 }
 
 void CPlayerShader::SetColManagerToObject(shared_ptr<CCollisionManager> manager)
@@ -233,131 +47,15 @@ void CPlayerShader::SetColManagerToObject(shared_ptr<CCollisionManager> manager)
 
 ////////////////////////////////////////////////////////////////////////
 // 내부 함수
-D3D12_INPUT_LAYOUT_DESC CPlayerShader::CreateInputLayout()
-{
-	UINT nInputElementDescs = 6;
-	D3D12_INPUT_ELEMENT_DESC *pInputElementDescs = new D3D12_INPUT_ELEMENT_DESC[nInputElementDescs];
-	pInputElementDescs[0] = {
-		"POSITION",
-		0,
-		DXGI_FORMAT_R32G32B32_FLOAT,
-		0,
-		D3D12_APPEND_ALIGNED_ELEMENT,
-		D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-		0 };
-	pInputElementDescs[1] = {
-		"NORMAL",
-		0,
-		DXGI_FORMAT_R32G32B32_FLOAT,
-		0,
-		D3D12_APPEND_ALIGNED_ELEMENT,
-		D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-		0 };
-	pInputElementDescs[2] = {
-		"TEXCOORD",
-		0,
-		DXGI_FORMAT_R32G32_FLOAT,
-		0,
-		D3D12_APPEND_ALIGNED_ELEMENT,
-		D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-		0 };
-
-	pInputElementDescs[3] = {
-		"WEIGHTS",
-		0,
-		DXGI_FORMAT_R32G32B32_FLOAT,
-		0,
-		D3D12_APPEND_ALIGNED_ELEMENT,
-		D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-		0 };
-	pInputElementDescs[4] = {
-		"BONEINDICES",
-		0,
-		DXGI_FORMAT_R8G8B8A8_UINT,
-		0,
-		D3D12_APPEND_ALIGNED_ELEMENT,
-		D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-		0 };
-
-	pInputElementDescs[5] = {
-		"TANGENT",
-		0,
-		DXGI_FORMAT_R32G32B32_FLOAT,
-		0,
-		D3D12_APPEND_ALIGNED_ELEMENT,
-		D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-		0 };
-	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc;
-	d3dInputLayoutDesc.pInputElementDescs = pInputElementDescs;
-	d3dInputLayoutDesc.NumElements = nInputElementDescs;
-
-	return(d3dInputLayoutDesc);
-}
-
-D3D12_SHADER_BYTECODE CPlayerShader::CreateVertexShader(ComPtr<ID3DBlob>& pShaderBlob)
-{
-	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
-		"VSBone",
-		"vs_5_1",
-		pShaderBlob));
-}
-
-D3D12_SHADER_BYTECODE CPlayerShader::CreatePixelShader(ComPtr<ID3DBlob>& pShaderBlob)
-{
-	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
-		"PSBone",
-		"ps_5_1",
-		pShaderBlob));
-}
-
-D3D12_SHADER_BYTECODE CPlayerShader::CreateShadowVertexShader(ComPtr<ID3DBlob>& pShaderBlob)
-{
-	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/ShadowShader.hlsl",
-		"VSBone",
-		"vs_5_1",
-		pShaderBlob));
-}
-
-void CPlayerShader::CreateShader(shared_ptr<CCreateMgr> pCreateMgr, UINT nRenderTargets, bool isRenderBB, bool isRenderShadow)
-{
-	m_nPipelineStates = 3;
-
-	m_nHeaps = 2;
-	CreateDescriptorHeaps();
-
-	CShader::CreateShader(pCreateMgr, nRenderTargets, isRenderBB, isRenderShadow);
-}
-
-void CPlayerShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pContext)
+//CHECK!
+void CPlayerShader::BuildObjects(void *pContext)
 {
 	if (pContext) m_pTerrain = (CHeightMapTerrain*)pContext;
 
 	m_nObjects = 4;
 	m_ppObjects = new CCollisionObject*[m_nObjects];
 
-	UINT ncbElementBytes = ((sizeof(CB_ANIOBJECT_INFO) + 255) & ~255);
-	UINT boundingBoxElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
-
-	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, m_nObjects, 1);
-	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, m_nObjects, 0, 1);
-	CreateShaderVariables(pCreateMgr, ncbElementBytes, m_nObjects, true, boundingBoxElementBytes, m_nObjects);
-	CreateConstantBufferViews(pCreateMgr, m_nObjects, m_pConstBuffer.Get(), ncbElementBytes, 0, 0);
-	CreateConstantBufferViews(pCreateMgr, m_nObjects, m_pBoundingBoxBuffer.Get(), boundingBoxElementBytes, 0, 1);
-
-	SaveBoundingBoxHeapNumber(1);
-
-#if USE_BATCH_MATERIAL
-	m_nMaterials = 1;
-	m_ppMaterials = new CMaterial*[m_nMaterials];
-	m_ppMaterials[0] = Materials::CreatePlayerMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[0], &m_psrvGPUDescriptorStartHandle[0]);
-#else
-	CMaterial *pCubeMaterial = Materials::CreateBrickMaterial(pCreateMgr, &m_srvCPUDescriptorStartHandle, &m_srvGPUDescriptorStartHandle);
-#endif
-
-	CSkinnedMesh *pPlayerMesh = new CSkinnedMesh(pCreateMgr, "Resource//3D//Player//Mesh//Player.meshinfo");
+	/*CSkinnedMesh *pPlayerMesh = new CSkinnedMesh(pCreateMgr, "Resource//3D//Player//Mesh//Player.meshinfo");
 	m_pStick = new CSkinnedMesh(pCreateMgr, "Resource//3D//Player//Mesh//Player_Stick.meshinfo");
 
 	CCubeMesh *pBoundingBoxMesh = new CCubeMesh(pCreateMgr,
@@ -388,7 +86,7 @@ void CPlayerShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pConte
 	m_pStaff = new CSkinnedMesh*[m_nStaff];
 	m_pStaff[0] = new CSkinnedMesh(pCreateMgr, "Resource//3D//Player//Mesh//Staff//Player_Staff_Basic.meshinfo");
 	m_pStaff[1] = new CSkinnedMesh(pCreateMgr, "Resource//3D//Player//Mesh//Staff//Player_Staff_Lolipop.meshinfo");
-	m_pStaff[2] = new CSkinnedMesh(pCreateMgr, "Resource//3D//Player//Mesh//Staff//Player_Staff_Watch.meshinfo");
+	m_pStaff[2] = new CSkinnedMesh(pCreateMgr, "Resource//3D//Player//Mesh//Staff//Player_Staff_Watch.meshinfo");*/
 
 	CSkeleton *pWin = new CSkeleton("Resource//3D//Player//Animation//Player_Win.aniinfo");
 	CSkeleton *pDefeat = new CSkeleton("Resource//3D//Player//Animation//Player_Defeat.aniinfo");
@@ -559,15 +257,4 @@ void CPlayerShader::ReleaseObjects()
 	}
 	Safe_Delete_Array(m_pArmor);
 
-	///////////////////////////////////////
-#if USE_BATCH_MATERIAL
-	if (m_ppMaterials)
-	{
-		for (int i = 0; i < m_nMaterials; ++i)
-		{
-			Safe_Delete(m_ppMaterials[i]);
-		}
-		Safe_Delete_Array(m_ppMaterials);
-	}
-#endif
 }

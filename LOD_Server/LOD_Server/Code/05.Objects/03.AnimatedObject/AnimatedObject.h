@@ -17,13 +17,12 @@ struct CB_ANIOBJECT_INFO
 class CAnimatedObject : public CCollisionObject
 {
 public:	// 생성자, 소멸자
-	CAnimatedObject(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes = 1);
+	CAnimatedObject(int nMeshes = 1);
 	virtual ~CAnimatedObject();
 
 public: // 공개 함수
 	virtual void Animate(float timeElapsed);
-	virtual void Render(CCamera *pCamera, UINT instanceCnt = 1);
-
+	
 	void SetSkeleton(CSkeleton *skeleton);
 
 	virtual void MoveUp(float fDistance = 1.0f);

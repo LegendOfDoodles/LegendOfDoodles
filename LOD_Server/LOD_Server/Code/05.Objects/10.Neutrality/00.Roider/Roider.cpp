@@ -11,7 +11,7 @@
 
 ////////////////////////////////////////////////////////////////////////
 // 持失切, 社瑚切
-CRoider::CRoider(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes) : CAnimatedObject(pCreateMgr, nMeshes)
+CRoider::CRoider(int nMeshes) : CAnimatedObject(nMeshes)
 {
 	m_ObjectType = ObjectType::Roider;
 
@@ -52,29 +52,6 @@ void CRoider::Animate(float timeElapsed)
 	}
 
 	CAnimatedObject::Animate(timeElapsed);
-}
-
-void CRoider::Render(CCamera * pCamera, UINT instanceCnt)
-{
-	OnPrepareRender();
-
-	if (!IsVisible(pCamera) || !m_Detected) return;
-
-	if (m_pMaterial)
-	{
-		m_pMaterial->UpdateShaderVariables();
-	}
-
-	if (m_cbvGPUDescriptorHandle.ptr)
-		m_pCommandList->SetGraphicsRootDescriptorTable(6, m_cbvGPUDescriptorHandle);
-
-	if (m_ppMeshes)
-	{
-		for (int i = 0; i < m_nMeshes; i++)
-		{
-			if (m_ppMeshes[i]) m_ppMeshes[i]->Render(instanceCnt);
-		}
-	}
 }
 
 void CRoider::SetState(StatesType newState)
@@ -361,7 +338,7 @@ void CRoider::ReadyToAtk(shared_ptr<CWayFinder> pWayFinder)
 			distSqr = curDistSqr;
 		}
 	}
-
+	//CHECK!
 	Path *newPath{ NULL };
 	if (m_TeamType == TeamType::Blue)
 	{

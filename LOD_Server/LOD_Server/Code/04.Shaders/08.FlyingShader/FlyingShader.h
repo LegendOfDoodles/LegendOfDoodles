@@ -15,17 +15,12 @@ struct FlyingObjectIndices
 class CFlyingShader : public CShader
 {
 public: // 생성자, 소멸자
-	CFlyingShader(shared_ptr<CCreateMgr> pCreateMgr);
+	CFlyingShader();
 	virtual ~CFlyingShader();
 
 public: // 공개 함수
-	virtual void ReleaseUploadBuffers();
-
-	virtual void UpdateShaderVariables(int opt = 0);
 
 	virtual void AnimateObjects(float timeElapsed);
-
-	virtual void Render(CCamera *pCamera);
 
 	void SpawnFlyingObject(const XMFLOAT3& position, const XMFLOAT3& direction, TeamType teamType, FlyingObjectType objectType);
 
@@ -35,16 +30,8 @@ public: // 공개 함수
 	void Resume() { m_Paused = false; };
 
 protected: // 내부 함수
-	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
 
-	virtual D3D12_SHADER_BYTECODE CreateVertexShader(ComPtr<ID3DBlob>& pShaderBlob);
-	virtual D3D12_SHADER_BYTECODE CreatePixelShader(ComPtr<ID3DBlob>& pShaderBlob);
-
-	D3D12_SHADER_BYTECODE CreateNonEmissivePixelShader(ComPtr<ID3DBlob>& pShaderBlob);
-
-	virtual void CreateShader(shared_ptr<CCreateMgr> pCreateMgr, UINT nRenderTargets = 1, bool isRenderBB = false, bool isRenderShadow = false);
-
-	virtual void BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pContext = NULL);
+	virtual void BuildObjects(void *pContext = NULL);
 
 	virtual void ReleaseObjects();
 
@@ -53,7 +40,7 @@ protected: // 내부 함수
 
 protected: // 변수
 	static const int m_nMesh{ 3 };
-	CStaticMesh * m_pMeshes[m_nMesh];
+	//CStaticMesh * m_pMeshes[m_nMesh];
 
 	UINT m_srvIncrementSize{ 0 };
 

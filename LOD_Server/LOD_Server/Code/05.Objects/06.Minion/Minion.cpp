@@ -10,7 +10,7 @@
 
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
-CMinion::CMinion(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes) : CAnimatedObject(pCreateMgr, nMeshes)
+CMinion::CMinion(int nMeshes) : CAnimatedObject(nMeshes)
 {
 	m_sightRange = CONVERT_PaperUnit_to_InG(80.0f);
 	m_detectRange = CONVERT_PaperUnit_to_InG(40.0f);
@@ -36,30 +36,6 @@ void CMinion::Animate(float timeElapsed)
 	}
 
 	CAnimatedObject::Animate(timeElapsed);
-}
-
-void CMinion::Render(CCamera * pCamera, UINT instanceCnt)
-{
-	OnPrepareRender();
-
-	if (!IsVisible(pCamera) || !m_Detected) return;
-
-	if (m_pMaterial)
-	{
-		m_pMaterial->Render(pCamera);
-		m_pMaterial->UpdateShaderVariables();
-	}
-
-	if (m_cbvGPUDescriptorHandle.ptr)
-		m_pCommandList->SetGraphicsRootDescriptorTable(6, m_cbvGPUDescriptorHandle);
-
-	if (m_ppMeshes)
-	{
-		for (int i = 0; i < m_nMeshes; i++)
-		{
-			if (m_ppMeshes[i]) m_ppMeshes[i]->Render(instanceCnt);
-		}
-	}
 }
 
 void CMinion::SetState(StatesType newState)
@@ -189,7 +165,7 @@ void CMinion::AdjustAnimationIndex()
 //////////////////////////////////////////////////////////////////////////
 //근접 미니언
 // 생성자, 소멸자
-CSwordMinion::CSwordMinion(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes) : CMinion(pCreateMgr, nMeshes)
+CSwordMinion::CSwordMinion(int nMeshes) : CMinion(nMeshes)
 {
 	SetType(ObjectType::SwordMinion);
 	m_StatusInfo.maxHP = 445;
@@ -280,7 +256,7 @@ void CSwordMinion::Animate(float timeElapsed)
 //////////////////////////////////////////////////////////////////////////
 //마법 미니언
 // 생성자, 소멸자
-CMagicMinion::CMagicMinion(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes) : CMinion(pCreateMgr, nMeshes)
+CMagicMinion::CMagicMinion(int nMeshes) : CMinion(nMeshes)
 {
 	SetType(ObjectType::StaffMinion);
 	m_StatusInfo.maxHP = 280;
@@ -369,7 +345,7 @@ void CMagicMinion::Animate(float timeElapsed)
 //////////////////////////////////////////////////////////////////////////
 //활 미니언
 // 생성자, 소멸자
-CBowMinion::CBowMinion(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes) : CMinion(pCreateMgr, nMeshes)
+CBowMinion::CBowMinion(int nMeshes) : CMinion(nMeshes)
 {
 	SetType(ObjectType::BowMinion);
 	m_StatusInfo.maxHP = 300;

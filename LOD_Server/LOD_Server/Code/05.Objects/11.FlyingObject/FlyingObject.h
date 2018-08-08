@@ -6,7 +6,7 @@ class CCollisionManager;
 class CFlyingObject : public CCollisionObject
 {
 public:
-	CFlyingObject(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes = 1);
+	CFlyingObject(int nMeshes = 1);
 	virtual ~CFlyingObject();
 
 public:	// 외부 함수

@@ -8,12 +8,11 @@ typedef std::list<CPathEdge> Path;
 class CRoider : public CAnimatedObject
 {
 public: // 생성자, 소멸자
-	CRoider(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes = 1);
+	CRoider(int nMeshes = 1);
 	virtual ~CRoider();
 
 public:	// 외부 함수
 	virtual void Animate(float timeElapsed);
-	virtual void Render(CCamera *pCamera, UINT instanceCnt = 1);
 
 	virtual 	void SetState(StatesType newState);
 
