@@ -12,7 +12,7 @@ public:	// 생성자, 소멸자
 
 public: // 공개 함수
 		// Initialize and Release
-	bool Initialize(HINSTANCE hInstance, HWND hWnd, CNetwork* pNetwork);
+	bool Initialize(HINSTANCE hInstance, HWND hWnd, shared_ptr<CNetwork> pNetwork);
 	void Finalize();
 	void FrameAdvance(float timeElapsed);
 
