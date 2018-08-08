@@ -2,6 +2,7 @@
 #include "02.Framework/01.CreateMgr/CreateMgr.h"
 #include "03.Scenes/00.BaseScene/Scene.h"
 #include "05.Objects/01.Camera/00.BaseCamera/Camera.h"
+#include "07.Network/Network.h"
 
 class CFramework
 {
@@ -11,7 +12,7 @@ public:	// 생성자, 소멸자
 
 public: // 공개 함수
 		// Initialize and Release
-	bool Initialize(HINSTANCE hInstance, HWND hWnd);
+	bool Initialize(HINSTANCE hInstance, HWND hWnd, CNetwork* pNetwork);
 	void Finalize();
 	void FrameAdvance(float timeElapsed);
 
@@ -32,6 +33,8 @@ private: // 변수
 	shared_ptr<CRenderMgr> m_pRenderMgr;
 
 	shared_ptr<CScene> m_pScene;
+
+	shared_ptr<CNetwork> m_pNetwork;
 
 	bool m_running{ true };
 };

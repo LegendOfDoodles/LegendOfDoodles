@@ -107,6 +107,13 @@ struct SC_Msg_Pos_Character : public Packet
 	XMFLOAT3 vLook;
 };
 
+struct CS_Msg_Demand_Pos_Character : public Packet
+{
+	BYTE Character_id;
+	short x;
+	short y;
+};
+
 struct CS_Msg_Demand_Use_Skill : public Packet
 {
 	BYTE Character_id;

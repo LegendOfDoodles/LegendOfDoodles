@@ -3,6 +3,7 @@
 #include "04.Shaders/00.BaseShader/Shader.h"
 #include "05.Objects/01.Camera/00.BaseCamera/Camera.h"
 #include "05.Objects/03.AnimatedObject/AnimatedObject.h"
+#include "07.Network/Network.h"
 
 class CCreateMgr;
 class CWayFinder;
@@ -11,6 +12,7 @@ class CUIObjectManager;
 class CThrowingMgr;
 class CEffectMgr;
 class CFSMMgr;
+class CNetwork;
 
 struct LIGHT
 {
@@ -46,7 +48,7 @@ public:	// 생성자, 소멸자
 	virtual ~CScene();
 
 public: // 공개 함수
-	virtual void Initialize(shared_ptr<CCreateMgr> pCreateMgr);
+	virtual void Initialize(shared_ptr<CCreateMgr> pCreateMgr, shared_ptr<CNetwork> pNetwork);
 	virtual void Finalize();
 
 	void ReleaseUploadBuffers();
@@ -93,6 +95,8 @@ protected: // 변수
 
 	CCamera *m_pCamera{ NULL };
 	CCamera *m_pLightCamera{ NULL };
+
+	shared_ptr<CNetwork> m_pNetwork;
 
 	CShader **m_ppShaders{ NULL };
 	int m_nShaders{ 0 };

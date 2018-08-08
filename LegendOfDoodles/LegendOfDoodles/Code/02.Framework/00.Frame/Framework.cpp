@@ -20,14 +20,18 @@ CFramework::~CFramework()
 
 ////////////////////////////////////////////////////////////////////////
 // 공개 함수
-bool CFramework::Initialize(HINSTANCE hInstance, HWND hWnd)
+bool CFramework::Initialize(HINSTANCE hInstance, HWND hWnd, CNetwork* pNetwork)
 {
 	m_hWnd = hWnd;
-
+	
 	m_pCreateMgr = shared_ptr<CCreateMgr>(new CCreateMgr);
 
 	m_pCreateMgr->Initialize(hInstance, hWnd);
 	m_pRenderMgr = m_pCreateMgr->GetRenderMgr();
+
+	m_pNetwork = (shared_ptr<CNetwork>)pNetwork;
+	
+
 
 	BuildObjects();
 
@@ -83,7 +87,7 @@ void CFramework::BuildObjects()
 	m_pRenderMgr->ResetCommandList();
 
 	m_pScene = shared_ptr<CScene>(new CScene());
-	m_pScene->Initialize(m_pCreateMgr);
+	m_pScene->Initialize(m_pCreateMgr, m_pNetwork);
 
 	m_pRenderMgr->ExecuteCommandList();
 
@@ -96,4 +100,5 @@ void CFramework::ReleaseObjects()
 	{
 		m_pScene->Finalize();
 	}
+	m_pNetwork->Finalize();
 }

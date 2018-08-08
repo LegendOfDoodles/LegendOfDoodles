@@ -65,14 +65,16 @@ CScene::~CScene()
 
 ////////////////////////////////////////////////////////////////////////
 // 공개 함수
-void CScene::Initialize(shared_ptr<CCreateMgr> pCreateMgr)
+void CScene::Initialize(shared_ptr<CCreateMgr> pCreateMgr, shared_ptr<CNetwork> pNetwork)
 {
+	m_pNetwork = pNetwork;
 	BuildObjects(pCreateMgr);
 	CreateShaderVariables(pCreateMgr);
 }
 
 void CScene::Finalize()
 {
+	
 	ReleaseObjects();
 	ReleaseShaderVariables();
 }
@@ -129,6 +131,8 @@ void CScene::ProcessInput()
 void CScene::AnimateObjects(float timeElapsed)
 {
 	m_pCamera->Update(timeElapsed);
+
+	m_pNetwork->ReadPacket(m_pNetwork->m_mysocket);
 
 	UpdateShaderVariables();
 
@@ -569,6 +573,8 @@ void CScene::PickObjectPointedByCursor(WPARAM wParam, LPARAM lParam)
 	pickPosition.y = -(((2.0f * yClient) / viewport.Height) - 1) / xmf4x4Projection._22;
 	pickPosition.z = 1.0f;
 
+	
+
 	float hitDistance{ FLT_MAX }, nearestHitDistance{ FLT_MAX };
 	CBaseObject *pIntersectedObject{ NULL };
 	//m_pSelectedObject = NULL;
@@ -616,8 +622,16 @@ void CScene::GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, XMFLOAT4X4&	 xm
 	}
 	else {
 		// 미 선택시 Player 0번
-		m_pSelectedObject = (CAnimatedObject*)m_ppObjects[0];
+		m_pSelectedObject = (CAnimatedObject*)m_ppObjects[m_pNetwork->m_myid];
 	}
+
+	CS_Msg_Demand_Pos_Character p;
+	p.Character_id = m_pNetwork->m_myid;
+	p.size = sizeof(p);
+	p.type = CS_MOVE_PLAYER;
+	p.x = pickPosition.x;
+	p.y = pickPosition.y;
+	m_pNetwork->SendPacket(m_pNetwork->m_myid, &p);
 }
 
 // Process Keyboard Input

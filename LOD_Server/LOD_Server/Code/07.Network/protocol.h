@@ -22,6 +22,18 @@ struct SC_Msg_Put_Character : public Packet
 	short x;
 	short y;
 };
+
+struct SC_Msg_Pos_Character : public Packet
+{
+	BYTE Character_id;
+	short maxhp;
+	short curhp;
+	short x;
+	short y;
+	short state;
+	short frameTime;
+	short weapon;
+};
 struct SC_MsgMoCreate : public Packet
 {
 	BYTE Monster_id;
