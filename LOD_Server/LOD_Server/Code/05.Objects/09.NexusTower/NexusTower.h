@@ -6,7 +6,7 @@ class CCollisionManager;
 class CNexusTower : public CCollisionObject
 {
 public:
-	CNexusTower(int nMeshes = 1);
+	CNexusTower();
 	virtual ~CNexusTower();
 
 public:	// 외부 함수

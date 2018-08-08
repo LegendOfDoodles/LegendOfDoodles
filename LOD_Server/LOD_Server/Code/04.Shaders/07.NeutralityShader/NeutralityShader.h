@@ -1,4 +1,5 @@
 #pragma once
+#include "04.Shaders/00.BaseShader/Shader.h"
 #include "00.Global/01.Utility/04.WayFinder/01.Edge/Edge.h"
 #include "05.Objects/02.CollisionObject/CollisionObject.h"
 
@@ -18,7 +19,7 @@ struct NeutralObjectIndices
 	NeutralObjectIndices() {}
 	NeutralObjectIndices(int a, int b):m_begIndex(a), m_endIndex(b){}
 };
-//CHECK!
+
 class CNeutralityShader : public CShader
 {
 public: // 생성자, 소멸자
@@ -28,9 +29,7 @@ public: // 생성자, 소멸자
 public: // 공개 함수
 	virtual void Initialize(void *pContext = NULL);
 
-
 	virtual void AnimateObjects(float timeElapsed);
-
 
 	void SetColManagerToObject(shared_ptr<CCollisionManager> manager);
 	void SetThrowingManagerToObject(shared_ptr<CThrowingMgr> manager);

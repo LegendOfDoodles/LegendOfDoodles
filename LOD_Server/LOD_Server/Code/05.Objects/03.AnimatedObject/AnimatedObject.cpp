@@ -11,7 +11,7 @@
 
 ////////////////////////////////////////////////////////////////////////
 // 持失切, 社瑚切
-CAnimatedObject::CAnimatedObject(int nMeshes) : CCollisionObject(nMeshes)
+CAnimatedObject::CAnimatedObject() : CCollisionObject()
 {
 }
 

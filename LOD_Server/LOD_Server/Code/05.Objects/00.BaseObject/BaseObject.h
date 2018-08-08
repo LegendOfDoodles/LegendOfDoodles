@@ -13,17 +13,13 @@ struct CB_GAMEOBJECT_INFO
 class CBaseObject
 {
 public:	// 생성자, 소멸자
-	CBaseObject(int nMeshes = 1);
+	CBaseObject();
 	virtual ~CBaseObject();
 
 public: // 공개 함수
 	virtual void Initialize();
 	virtual void Finalize();
 
-	void ReleaseUploadBuffers();
-
-	void SetMesh(int nIndex, CMesh *pMesh);
-	void SetBoundingMesh(CMesh *pMesh);
 	void SetShader(CShader *pShader);
 
 	virtual void Animate(float timeElapsed);
@@ -57,14 +53,6 @@ public: // 공개 함수
 	XMFLOAT4X4* GetWorldMatrix() { return &m_xmf4x4World; }
 	XMFLOAT4X4* GetFrameMatrix() { return m_xmf4x4Frame; }
 
-	void SetCbvGPUDescriptorHandle(D3D12_GPU_DESCRIPTOR_HANDLE cbvGPUDescriptorHandle) { m_cbvGPUDescriptorHandle = cbvGPUDescriptorHandle; }
-	void SetCbvGPUDescriptorHandlePtr(UINT64 cbvGPUDescriptorHandlePtr) { m_cbvGPUDescriptorHandle.ptr = cbvGPUDescriptorHandlePtr; }
-
-	void SetCbvGPUDescriptorHandleForBB(D3D12_GPU_DESCRIPTOR_HANDLE cbvGPUDescriptorHandle) { m_cbvGPUDescriptorHandleForBB = cbvGPUDescriptorHandle; }
-	void SetCbvGPUDescriptorHandlePtrForBB(UINT64 cbvGPUDescriptorHandlePtr) { m_cbvGPUDescriptorHandleForBB.ptr = cbvGPUDescriptorHandlePtr; }
-
-	D3D12_GPU_DESCRIPTOR_HANDLE GetCbvGPUDescriptorHandle() { return(m_cbvGPUDescriptorHandle); }
-
 	void SaveIndex(int idx) { m_index = idx; }
 	int GetIndex() { return m_index; }
 
@@ -81,7 +69,6 @@ public: // 공개 함수
 protected: // 내부 함수
 	virtual void OnPrepareRender();
 
-	//CHECK!
 protected: // 변수
 	int m_nReferences{ 0 };
 
@@ -89,11 +76,6 @@ protected: // 변수
 
 	XMFLOAT4X4 m_xmf4x4World;
 	XMFLOAT4X4 m_xmf4x4Frame[128];
-
-	CMesh	**m_ppMeshes{ NULL };
-	int m_nMeshes{ 0 };
-
-	CMesh *m_pBoundingMesh{ NULL };
 
 	CShader *m_pShader{ NULL };
 

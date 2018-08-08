@@ -10,7 +10,7 @@
 
 ////////////////////////////////////////////////////////////////////////
 // 持失切, 社瑚切
-CPlayer::CPlayer( int nMeshes) : CAnimatedObject( nMeshes)
+CPlayer::CPlayer() : CAnimatedObject()
 {
 	m_detectRange = CONVERT_PaperUnit_to_InG(80.0f);
 	m_sightRange = CONVERT_PaperUnit_to_InG(80.0f);

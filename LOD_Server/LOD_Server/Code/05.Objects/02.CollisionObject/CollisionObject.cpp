@@ -10,7 +10,7 @@
 
 ////////////////////////////////////////////////////////////////////////
 // 持失切, 社瑚切
-CCollisionObject::CCollisionObject(int nMeshes) : CBaseObject(nMeshes)
+CCollisionObject::CCollisionObject() : CBaseObject()
 {
 	ResetCollisionLevel();
 }

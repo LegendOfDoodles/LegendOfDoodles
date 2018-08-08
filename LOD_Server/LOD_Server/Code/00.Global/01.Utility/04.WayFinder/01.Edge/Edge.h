@@ -44,8 +44,8 @@ public: // 생성자, 소멸자
 	~CPathEdge();
 
 public: // 공개 함수
-	XMFLOAT2 From() { return m_from; }
-	XMFLOAT2 To() { return m_to; }
+	XMFLOAT2 From() const { return m_from; }
+	XMFLOAT2 To() const { return m_to; }
 
 	void SetDestination(XMFLOAT2 newDest) { m_to = newDest; }
 

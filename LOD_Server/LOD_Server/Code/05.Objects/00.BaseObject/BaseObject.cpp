@@ -1,47 +1,24 @@
 #include "stdafx.h"
 #include "BaseObject.h"
-#include "02.Framework/01.CreateMgr/CreateMgr.h"
 #include "04.Shaders/00.BaseShader/Shader.h"
-#include "05.Objects/01.Camera/00.BaseCamera/Camera.h"
-#include "05.Objects/99.Material/Material.h"
 
 /// <summary>
 /// 목적: 기본 오브젝트 클래스, 인터페이스 용
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-08-01
+/// 최종 수정 날짜: 2018-08-08
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
-CBaseObject::CBaseObject(int nMeshes)
+CBaseObject::CBaseObject()
 {
-	//m_pCommandList = pCreateMgr->GetCommandList();
-
 	XMStoreFloat4x4(&m_xmf4x4World, XMMatrixIdentity());
-
-	m_nMeshes = nMeshes;
-	if (m_nMeshes > 0)
-	{
-		m_ppMeshes = new CMesh*[m_nMeshes];
-		for (int i = 0; i < m_nMeshes; i++)	m_ppMeshes[i] = NULL;
-	}
 }
 
 CBaseObject::~CBaseObject()
 {
-	if (m_ppMeshes)
-	{
-		for (int i = 0; i < m_nMeshes; i++)
-		{
-			if (m_ppMeshes[i]) Safe_Release(m_ppMeshes[i]);
-		}
-		Safe_Delete_Array(m_ppMeshes);
-	}
-	if (m_pBoundingMesh) Safe_Release(m_pBoundingMesh);
-
 	if (m_pShader) { m_pShader->Finalize(); }
-	if (m_pMaterial) m_pMaterial->Finalize();
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -55,47 +32,12 @@ void CBaseObject::Finalize()
 {
 }
 
-
-void CBaseObject::SetMesh(int nIndex, CMesh *pMesh)
-{
-
-	if (!m_ppMeshes) return;
-	if (nIndex >= m_nMeshes) return;
-
-
-	if (m_ppMeshes[nIndex]) m_ppMeshes[nIndex]->Release();
-	m_ppMeshes[nIndex] = pMesh;
-
-	if (pMesh) pMesh->AddRef();
-
-}
-
-void CBaseObject::SetBoundingMesh(CMesh *pMesh)
-{
-	if (m_pBoundingMesh) m_pBoundingMesh->Release();
-	m_pBoundingMesh = pMesh;
-	if (pMesh) pMesh->AddRef();
-}
-
 void CBaseObject::SetShader(CShader *pShader)
 {
 	if (m_pShader) m_pShader->Release();
 	m_pShader = pShader;
 	if (m_pShader) m_pShader->AddRef();
-	//if (!m_pMaterial)
-	//{
-	//	CMaterial *pMaterial = new CMaterial();
-	//	SetMaterial(pMaterial);
-	//}
-	//if (m_pMaterial) m_pMaterial->SetShader(pShader);
 }
-//
-//void CBaseObject::SetMaterial(CMaterial *pMaterial)
-//{
-//	if (m_pMaterial) m_pMaterial->Release();
-//	m_pMaterial = pMaterial;
-//	if (m_pMaterial) m_pMaterial->AddRef();
-//}
 
 void CBaseObject::Animate(float timeElapsed)
 {

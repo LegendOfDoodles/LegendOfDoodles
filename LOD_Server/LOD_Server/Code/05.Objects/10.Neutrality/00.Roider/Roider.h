@@ -8,7 +8,7 @@ typedef std::list<CPathEdge> Path;
 class CRoider : public CAnimatedObject
 {
 public: // 생성자, 소멸자
-	CRoider(int nMeshes = 1);
+	CRoider();
 	virtual ~CRoider();
 
 public:	// 외부 함수

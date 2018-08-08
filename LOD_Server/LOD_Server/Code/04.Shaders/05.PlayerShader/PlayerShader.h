@@ -4,6 +4,7 @@
 class CHeightMapTerrain;
 class CCollisionManager;
 class CSkeleton;
+
 class CPlayerShader : public CShader
 {
 public:
@@ -34,17 +35,7 @@ protected: // 변수
 	//애니메이션 정보
 	CSkeleton** m_ppSwordAni{ NULL };
 	CSkeleton** m_ppStaffAni{ NULL };
-
 	CSkeleton** m_ppBowAni{ NULL };
-
-	//메쉬정보
-	//CHECK!
-	CSkinnedMesh* m_pStick{ NULL };
-	CSkinnedMesh** m_pSword{ NULL };
-	CSkinnedMesh** m_pStaff{ NULL };
-	CSkinnedMesh** m_pBow{ NULL };
-	CSkinnedMesh** m_pArmor{ NULL };
-	int m_nWeaponState{ 0 };
 
 	CHeightMapTerrain * m_pTerrain{ NULL };
 

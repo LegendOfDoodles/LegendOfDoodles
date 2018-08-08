@@ -184,19 +184,10 @@ int CMinionShader::GetPossibleIndex()
 	}
 	return NONE;
 }
-//CHECK!
+
 void CMinionShader::SpawnMinion()
 {
 	static bool dataPrepared{ false };
-	//
-	static CSkinnedMesh swordMinionMesh("Resource//3D//Minion//Mesh//Sword Minion.meshinfo");
-	static CSkinnedMesh bowMinionMesh(m_pCreateMgr, "Resource//3D//Minion//Mesh//Bow Minion.meshinfo");
-	static CSkinnedMesh staffMinionMesh(m_pCreateMgr, "Resource//3D//Minion//Mesh//Magic Minion.meshinfo");
-	//*static UINT incrementSize{ m_pCreateMgr->GetCbvSrvDescriptorIncrementSize() };
-	//*static CCubeMesh boundingBoxMesh(m_pCreateMgr,
-		//*CONVERT_PaperUnit_to_InG(3.0f), CONVERT_PaperUnit_to_InG(1.5f), CONVERT_PaperUnit_to_InG(7.0f),
-		//*0, 0, -CONVERT_PaperUnit_to_InG(4.0f));
-	//*boundingBoxMesh.AddRef();
 
 	static CSkeleton SIdle("Resource//3D//Minion//Animation//Sword//Minion_S_Idle.aniinfo");
 	static CSkeleton SAtk1("Resource//3D//Minion//Animation//Sword//Minion_S_Attack1.aniinfo");
@@ -222,23 +213,9 @@ void CMinionShader::SpawnMinion()
 
 	if (!dataPrepared)
 	{
-		swordMinionMesh.SetBoundingBox(
-			XMFLOAT3(0.0f, 0.0f, -CONVERT_PaperUnit_to_InG(4.0f)),
-			XMFLOAT3(CONVERT_PaperUnit_to_InG(1.5f), CONVERT_PaperUnit_to_InG(1.5f), CONVERT_PaperUnit_to_InG(3.5f)));
-		swordMinionMesh.AddRef();
-		bowMinionMesh.SetBoundingBox(
-			XMFLOAT3(0.0f, 0.0f, -CONVERT_PaperUnit_to_InG(4.0f)),
-			XMFLOAT3(CONVERT_PaperUnit_to_InG(1.5f), CONVERT_PaperUnit_to_InG(1.5f), CONVERT_PaperUnit_to_InG(3.5f)));
-		bowMinionMesh.AddRef();
-		staffMinionMesh.SetBoundingBox(
-			XMFLOAT3(0.0f, 0.0f, -CONVERT_PaperUnit_to_InG(4.0f)),
-			XMFLOAT3(CONVERT_PaperUnit_to_InG(1.5f), CONVERT_PaperUnit_to_InG(1.5f), CONVERT_PaperUnit_to_InG(3.5f)));
-		staffMinionMesh.AddRef();
 		dataPrepared = true;
 		return;
 	}
-
-	m_pCreateMgr->ResetCommandList();
 
 	int wayKind{ 0 };
 
@@ -270,22 +247,18 @@ void CMinionShader::SpawnMinion()
 		switch (m_kind)
 		{
 		case ObjectType::SwordMinion:
-			pMinionObject = new CSwordMinion(m_pCreateMgr);
-			pMinionObject->SetMesh(0, &swordMinionMesh);
+			pMinionObject = new CSwordMinion();
 			break;
 		case ObjectType::StaffMinion:
-			pMinionObject = new CMagicMinion(m_pCreateMgr);
-			pMinionObject->SetMesh(0, &staffMinionMesh);
+			pMinionObject = new CMagicMinion();
 			pMinionObject->SetThrowingManager(m_pThrowingMgr);
 			break;
 		case ObjectType::BowMinion:
-			pMinionObject = new CBowMinion(m_pCreateMgr);
-			pMinionObject->SetMesh(0, &bowMinionMesh);
+			pMinionObject = new CBowMinion();
 			pMinionObject->SetThrowingManager(m_pThrowingMgr);
 			break;
 		}
 
-		pMinionObject->SetBoundingMesh(&boundingBoxMesh);
 		pMinionObject->SetCollisionSize(CONVERT_PaperUnit_to_InG(2));
 
 		switch (m_kind)
@@ -329,9 +302,6 @@ void CMinionShader::SpawnMinion()
 
 		pMinionObject->SetCollisionManager(m_pColManager);
 
-		pMinionObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * index));
-		pMinionObject->SetCbvGPUDescriptorHandlePtrForBB(m_pcbvGPUDescriptorStartHandle[1].ptr + (incrementSize * index));
-
 		if (wayKind == Minion_Species::Blue_Up || wayKind == Minion_Species::Blue_Down)
 		{
 			pMinionObject->SetTeam(TeamType::Blue);
@@ -366,13 +336,10 @@ void CMinionShader::SpawnMinion()
 		}
 		objectAdder.emplace_back(pMinionObject);
 	}
-	m_pCreateMgr->ExecuteCommandList();
 
 	for (auto& d : objectAdder)
 	{
-		d->ReleaseUploadBuffers();
 		m_pColManager->AddCollider(d);
-		m_pGaugeManger->AddMinionObject(d);
 	}
 
 	// 현재 웨이브에서 미니언이 생성된 개수

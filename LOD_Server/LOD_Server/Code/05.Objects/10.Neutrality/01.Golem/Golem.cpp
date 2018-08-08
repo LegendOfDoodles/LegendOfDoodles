@@ -11,7 +11,7 @@
 
 ////////////////////////////////////////////////////////////////////////
 // 持失切, 社瑚切
-CGolem::CGolem(int nMeshes) : CAnimatedObject(nMeshes)
+CGolem::CGolem() : CAnimatedObject()
 {
 	srand((unsigned)time(NULL));
 
@@ -255,15 +255,9 @@ void CGolem::ReceiveDamage(float damage)
 		}
 	}
 }
-//CHECK!
+
 void CGolem::BuildSelf()
 {
-	CSkinnedMesh *pGolemMesh = new CSkinnedMesh(pCreateMgr, "Resource//3D//Golem//Mesh//GuardGolem.meshinfo");
-
-	CCubeMesh *pBoundingBoxMesh = new CCubeMesh(pCreateMgr,
-		CONVERT_PaperUnit_to_InG(28.0f), CONVERT_PaperUnit_to_InG(7.0f), CONVERT_PaperUnit_to_InG(20.0f),
-		0, 0, -CONVERT_PaperUnit_to_InG(11.0f));
-
 	CSkeleton *pSIdle = new CSkeleton("Resource//3D//Golem//Animation//Golem_Idle.aniinfo");
 	CSkeleton *pSIdleToSit = new CSkeleton("Resource//3D//Golem//Animation//Golem_Idle_To_Sit.aniinfo");
 	CSkeleton *pSSitToIdle = new CSkeleton("Resource//3D//Golem//Animation//Golem_Sit_To_Idle.aniinfo");
@@ -275,12 +269,6 @@ void CGolem::BuildSelf()
 	CSkeleton *pSpAttack2 = new CSkeleton("Resource//3D//Golem//Animation//Golem_Special_Attack2.aniinfo");
 	CSkeleton *pSDie = new CSkeleton("Resource//3D//Golem//Animation//Golem_Die.aniinfo");
 
-	pGolemMesh->SetBoundingBox(
-		XMFLOAT3(0.0f, 0.0f, -CONVERT_PaperUnit_to_InG(11.0f)),
-		XMFLOAT3(CONVERT_PaperUnit_to_InG(14.0f), CONVERT_PaperUnit_to_InG(7.0f), CONVERT_PaperUnit_to_InG(10.0f)));
-
-	SetMesh(0, pGolemMesh);
-	SetBoundingMesh(pBoundingBoxMesh);
 	SetCollisionSize(CONVERT_PaperUnit_to_InG(14));
 
 	SetSkeleton(pSIdle);
@@ -414,7 +402,7 @@ void CGolem::AnimateByCurState()
 		break;
 	}
 }
-//CHECK
+
 void CGolem::ReadyToAtk(shared_ptr<CWayFinder> pWayFinder)
 {
 	if (m_lastDamageTeam == TeamType::Red)

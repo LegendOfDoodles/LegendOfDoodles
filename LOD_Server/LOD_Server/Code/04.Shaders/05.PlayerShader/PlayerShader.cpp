@@ -47,46 +47,12 @@ void CPlayerShader::SetColManagerToObject(shared_ptr<CCollisionManager> manager)
 
 ////////////////////////////////////////////////////////////////////////
 // 내부 함수
-//CHECK!
 void CPlayerShader::BuildObjects(void *pContext)
 {
 	if (pContext) m_pTerrain = (CHeightMapTerrain*)pContext;
 
 	m_nObjects = 4;
 	m_ppObjects = new CCollisionObject*[m_nObjects];
-
-	/*CSkinnedMesh *pPlayerMesh = new CSkinnedMesh(pCreateMgr, "Resource//3D//Player//Mesh//Player.meshinfo");
-	m_pStick = new CSkinnedMesh(pCreateMgr, "Resource//3D//Player//Mesh//Player_Stick.meshinfo");
-
-	CCubeMesh *pBoundingBoxMesh = new CCubeMesh(pCreateMgr,
-		CONVERT_PaperUnit_to_InG(2.0f), CONVERT_PaperUnit_to_InG(1.0f), CONVERT_PaperUnit_to_InG(10.0f),
-		0, 0, -CONVERT_PaperUnit_to_InG(6.5f));
-	m_nArmor = 1;
-	m_pArmor = new CSkinnedMesh*[m_nArmor];
-	m_pArmor[0] = new CSkinnedMesh(pCreateMgr, "Resource//3D//Player//Mesh//Armor//extra//Muffler.meshinfo");
-
-
-	m_nSword = 3;
-
-	m_pSword = new CSkinnedMesh*[m_nSword];
-	m_pSword[0] = new CSkinnedMesh(pCreateMgr, "Resource//3D//Player//Mesh//Sword//Player_Sword_Basic.meshinfo");
-	m_pSword[1] = new CSkinnedMesh(pCreateMgr, "Resource//3D//Player//Mesh//Sword//Player_Sword2.meshinfo");
-	m_pSword[2] = new CSkinnedMesh(pCreateMgr, "Resource//3D//Player//Mesh//Sword//Player_Sword3.meshinfo");
-
-
-	m_nBow = 3;
-
-	m_pBow = new CSkinnedMesh*[m_nBow];
-	m_pBow[0] = new CSkinnedMesh(pCreateMgr, "Resource//3D//Player//Mesh//Bow//Player_Bow_Basic.meshinfo");
-	m_pBow[1] = new CSkinnedMesh(pCreateMgr, "Resource//3D//Player//Mesh//Bow//Player_Bow_Flight.meshinfo");
-	m_pBow[2] = new CSkinnedMesh(pCreateMgr, "Resource//3D//Player//Mesh//Bow//Player_Bow_Battle.meshinfo");
-
-	m_nStaff = 3;
-
-	m_pStaff = new CSkinnedMesh*[m_nStaff];
-	m_pStaff[0] = new CSkinnedMesh(pCreateMgr, "Resource//3D//Player//Mesh//Staff//Player_Staff_Basic.meshinfo");
-	m_pStaff[1] = new CSkinnedMesh(pCreateMgr, "Resource//3D//Player//Mesh//Staff//Player_Staff_Lolipop.meshinfo");
-	m_pStaff[2] = new CSkinnedMesh(pCreateMgr, "Resource//3D//Player//Mesh//Staff//Player_Staff_Watch.meshinfo");*/
 
 	CSkeleton *pWin = new CSkeleton("Resource//3D//Player//Animation//Player_Win.aniinfo");
 	CSkeleton *pDefeat = new CSkeleton("Resource//3D//Player//Animation//Player_Defeat.aniinfo");
@@ -126,41 +92,18 @@ void CPlayerShader::BuildObjects(void *pContext)
 		m_ppBowAni[j] = m_ppBowAni[3];
 	}
 
-	pPlayerMesh->SetBoundingBox(
-		XMFLOAT3(0.0f, 0.0f, -CONVERT_PaperUnit_to_InG(6.5f)),
-		XMFLOAT3(CONVERT_PaperUnit_to_InG(1.0f), CONVERT_PaperUnit_to_InG(1.0f), CONVERT_PaperUnit_to_InG(5.0f)));
-
 	int i = 0;
-	UINT incrementSize{ pCreateMgr->GetCbvSrvDescriptorIncrementSize() };
-	CPlayer *pPlayer = NULL;
-
-
-	m_pStick->AddRef();
-	for (UINT j = 0; j < m_nSword; ++j) {
-		m_pSword[j]->AddRef();
-	}
-	for (UINT j = 0; j < m_nStaff; ++j) {
-		m_pStaff[j]->AddRef();
-	}
-	for (UINT j = 0; j < m_nBow; ++j) {
-		m_pBow[j]->AddRef();
-	}
-	m_pArmor[0]->AddRef();
+	CPlayer *pPlayer{ NULL };
 
 	for (int x = 0; x < m_nObjects / 2; ++x) {
 		for (int z = 0; z < m_nObjects / 2; ++z) {
 
-			pPlayer = new CPlayer(pCreateMgr, 3);
+			pPlayer = new CPlayer();
 
-			pPlayer->SetMesh(0, pPlayerMesh);
-
-			pPlayer->SetMesh(1, m_pStick);
-			pPlayer->SetMesh(2, m_pArmor[0]);
 			pPlayer->SetType(ObjectType::StickPlayer);
 #if !USE_BATCH_MATERIAL
 			pRotatingObject->SetMaterial(pCubeMaterial);
 #endif
-			pPlayer->SetBoundingMesh(pBoundingBoxMesh);
 			pPlayer->SetCollisionSize(CONVERT_PaperUnit_to_InG(3));
 			if (x == 0 && z == 0) {
 				pPlayer->tag = 1;
@@ -191,8 +134,6 @@ void CPlayerShader::BuildObjects(void *pContext)
 
 			pPlayer->Rotate(90, 0, 0);
 
-			pPlayer->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * i));
-			pPlayer->SetCbvGPUDescriptorHandlePtrForBB(m_pcbvGPUDescriptorStartHandle[1].ptr + (incrementSize * i));
 			m_ppObjects[i++] = pPlayer;
 		}
 	}
@@ -227,34 +168,4 @@ void CPlayerShader::ReleaseObjects()
 		delete m_ppBowAni[j];
 	}
 	Safe_Delete_Array(m_ppBowAni);
-	//////////////////////////////////////
-	//메쉬
-
-	for (UINT j = 0; j < m_nSword; j++)
-	{
-		delete m_pSword[j];
-	}
-	Safe_Delete_Array(m_pSword);
-
-
-	for (UINT j = 0; j < m_nStaff; j++)
-	{
-		delete m_pStaff[j];
-	}
-	Safe_Delete_Array(m_pStaff);
-
-
-	for (UINT j = 0; j < m_nBow; j++)
-	{
-		delete m_pBow[j];
-	}
-	Safe_Delete_Array(m_pBow);
-
-
-	for (UINT j = 0; j < m_nArmor; j++)
-	{
-		delete m_pArmor[j];
-	}
-	Safe_Delete_Array(m_pArmor);
-
 }

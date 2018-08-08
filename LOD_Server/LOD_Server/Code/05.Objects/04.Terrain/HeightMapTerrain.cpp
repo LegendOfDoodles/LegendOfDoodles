@@ -6,7 +6,7 @@
 /// 목적: 지형 출력용 오브젝트
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-06-01
+/// 최종 수정 날짜: 2018-08-08
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -23,19 +23,6 @@ CHeightMapTerrain::CHeightMapTerrain(LPCTSTR pFileName,
 
 	//지형에 사용할 높이 맵을 생성한다.
 	m_pHeightMapImage = new CHeightMapImage(pFileName, m_nWidth, m_nLength, xmf3Scale);
-	//CHECK!
-	////지형 전체를 표현하기 위한 격자 메쉬의 개수이다.
-	//m_nMeshes = 1;
-
-	////지형 전체를 표현하기 위한 격자 메쉬에 대한 포인터 배열을 생성한다.
-	//m_ppMeshes = new CMesh*[m_nMeshes];
-	//for (int i = 0; i < m_nMeshes; i++) m_ppMeshes[i] = NULL;
-
-	/*CHeightMapGridMesh *pHeightMapGridMesh = new CHeightMapGridMesh(
-		
-		static_cast<int>(TERRAIN_IMAGE_CELL_WIDTH),
-		static_cast<int>(TERRAIN_IMAGE_CELL_HEIGHT));*/
-	//SetMesh(0, pHeightMapGridMesh);
 }
 
 CHeightMapTerrain::~CHeightMapTerrain(void)

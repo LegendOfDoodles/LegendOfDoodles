@@ -15,9 +15,7 @@ public: // 생성자, 소멸자
 public: // 공개 함수
 	virtual void Initialize(void *pContext = NULL);
 
-
 	virtual void AnimateObjects(float timeElapsed);
-
 
 	void SetColManagerToObject(shared_ptr<CCollisionManager> manager);
 	void SetThrowingManagerToObject(shared_ptr<CThrowingMgr> manager);
@@ -28,10 +26,7 @@ public: // 공개 함수
 	void SetFSMManager(shared_ptr<CFSMMgr> pManger) { m_pFSMMgr = pManger; }
 
 protected: // 내부 함수
-
 	virtual void BuildObjects(void *pContext = NULL);
-
-	void SetBoundingBoxMeshByIndex(CBaseObject* target, int index);
 
 protected: // 변수
 	int m_nNexus{ 0 };

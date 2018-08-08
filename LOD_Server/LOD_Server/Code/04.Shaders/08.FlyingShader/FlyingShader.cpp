@@ -96,7 +96,6 @@ void CFlyingShader::SetColManagerToObject(shared_ptr<CCollisionManager> manager)
 
 ////////////////////////////////////////////////////////////////////////
 // 내부 함수
-//CHECK!
 void CFlyingShader::BuildObjects(void *pContext)
 {
 	UNREFERENCED_PARAMETER(pContext);
@@ -127,28 +126,13 @@ void CFlyingShader::BuildObjects(void *pContext)
 	UINT ncbElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
 	int accCnt{ 0 };
 
-	//CreateShaderVariables(pCreateMgr, ncbElementBytes, m_nObjects);
-	for (int i = 0; i < m_nHeaps; ++i)
+	for (int i = 0; i < m_nMesh; ++i)
 	{
 		m_objectsIndices[objectOrder[i]] = FlyingObjectIndices();
 		m_objectsIndices[objectOrder[i]].m_begIndex = accCnt;
-		//CreateCbvAndSrvDescriptorHeaps(pCreateMgr, m_objectsMaxCount[objectOrder[i]], 1, i);
-		//CreateConstantBufferViews(pCreateMgr, m_objectsMaxCount[objectOrder[i]], m_pConstBuffer.Get(), ncbElementBytes, accCnt, i);
 		accCnt += m_objectsMaxCount[objectOrder[i]];
 		m_objectsIndices[objectOrder[i]].m_endIndex = accCnt;
 	}
-	
-	//m_srvIncrementSize = pCreateMgr->GetCbvSrvDescriptorIncrementSize();
-
-	// 필요한 메쉬 저장
-	//m_pMeshes[0] = new CStaticMesh(pCreateMgr, "Resource//3D//Monster//Mesh//Dumbbell//Dumbbell.meshinfo");
-	//m_pMeshes[1] = new CStaticMesh(pCreateMgr, "Resource//3D//Common//Arrow.meshinfo");
-	//m_pMeshes[2] = new CStaticMesh(pCreateMgr, "Resource//3D//Common//MagicBall.meshinfo");
-
-	/*for (int j = 0; j < m_nMesh; j++)
-	{
-		m_pMeshes[j]->AddRef();
-	}*/
 
 	// 오브젝트 생성
 	CFlyingObject *pObject{ NULL };
@@ -176,12 +160,6 @@ void CFlyingShader::ReleaseObjects()
 			delete m_ppObjects[j];
 		}
 		Safe_Delete_Array(m_ppObjects);
-	}
-
-
-	for (int j = 0; j < m_nMesh; j++)
-	{
-		m_pMeshes[j]->Release();
 	}
 }
 

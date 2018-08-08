@@ -11,7 +11,7 @@
 
 ////////////////////////////////////////////////////////////////////////
 // 持失切, 社瑚切
-CNexusTower::CNexusTower(int nMeshes) : CCollisionObject(nMeshes)
+CNexusTower::CNexusTower() : CCollisionObject()
 {
 	m_StatusInfo.maxHP = 1000;
 	m_StatusInfo.HP = 1000;

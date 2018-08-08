@@ -6,7 +6,7 @@
 class CMinion : public CAnimatedObject
 {
 public: // 생성자, 소멸자
-	CMinion(int nMeshes = 1);
+	CMinion();
 	virtual ~CMinion();
 
 public:	// 외부 함수
@@ -57,7 +57,7 @@ protected:	// 변수
 class CSwordMinion : public CMinion
 {
 public: // 생성자, 소멸자
-	CSwordMinion(int nMeshes = 1);
+	CSwordMinion();
 	virtual ~CSwordMinion();
 
 public:	// 외부 함수
@@ -71,7 +71,7 @@ public:	// 외부 함수
 class CMagicMinion : public CMinion
 {
 public: // 생성자, 소멸자
-	CMagicMinion(int nMeshes = 1);
+	CMagicMinion();
 	virtual ~CMagicMinion();
 
 public:	// 외부 함수
@@ -85,7 +85,7 @@ public:	// 외부 함수
 class CBowMinion : public CMinion
 {
 public: // 생성자, 소멸자
-	CBowMinion(int nMeshes = 1);
+	CBowMinion();
 	virtual ~CBowMinion();
 
 public:	// 외부 함수

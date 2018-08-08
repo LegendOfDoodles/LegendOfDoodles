@@ -11,7 +11,7 @@
 
 ////////////////////////////////////////////////////////////////////////
 // 持失切, 社瑚切
-CRoider::CRoider(int nMeshes) : CAnimatedObject(nMeshes)
+CRoider::CRoider() : CAnimatedObject()
 {
 	m_ObjectType = ObjectType::Roider;
 
@@ -338,7 +338,7 @@ void CRoider::ReadyToAtk(shared_ptr<CWayFinder> pWayFinder)
 			distSqr = curDistSqr;
 		}
 	}
-	//CHECK!
+
 	Path *newPath{ NULL };
 	if (m_TeamType == TeamType::Blue)
 	{

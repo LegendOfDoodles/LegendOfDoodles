@@ -1,6 +1,6 @@
 #pragma once
+#include "04.Shaders/00.BaseShader/Shader.h"
 #include "00.Global/01.Utility/04.WayFinder/01.Edge/Edge.h"
-//#include "02.Framework/01.CreateMgr/CreateMgr.h"
 #include "05.Objects/02.CollisionObject/CollisionObject.h"
 
 typedef std::list<CPathEdge> Path;
@@ -12,7 +12,7 @@ class CCollisionManager;
 class CThrowingMgr;
 class CUIObjectManager;
 class CFSMMgr;
-//CHECK!
+
 class CMinionShader : public CShader
 {
 public: // 생성자, 소멸자
@@ -22,8 +22,6 @@ public: // 생성자, 소멸자
 public: // 공개 함수
 	virtual void Initialize(void *pContext = NULL);
 
-
-
 	virtual void AnimateObjects(float timeElapsed);
 
 	void SetCollisionManager(shared_ptr<CCollisionManager> pManger) { m_pColManager = pManger; }
@@ -31,9 +29,6 @@ public: // 공개 함수
 	void SetFSMManager(shared_ptr<CFSMMgr> pManger) { m_pFSMMgr = pManger; }
 
 protected: // 내부 함수
-
-	//virtual void CreateShader(shared_ptr<CCreateMgr> pCreateMgr, UINT nRenderTargets = 1, bool isRenderBB = false, bool isRenderShadow = false);
-
 	virtual void BuildObjects(void *pContext = NULL);
 
 	virtual void ReleaseObjects();

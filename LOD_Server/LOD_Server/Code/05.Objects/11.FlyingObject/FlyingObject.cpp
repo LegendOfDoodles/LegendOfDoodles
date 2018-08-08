@@ -11,7 +11,7 @@
 
 ////////////////////////////////////////////////////////////////////////
 // 持失切, 社瑚切
-CFlyingObject::CFlyingObject(int nMeshes) : CCollisionObject(nMeshes)
+CFlyingObject::CFlyingObject() : CCollisionObject()
 {
 	m_ObjectType = ObjectType::FlyingObject;
 }

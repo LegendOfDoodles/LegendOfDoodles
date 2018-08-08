@@ -40,9 +40,6 @@ protected: // 내부 함수
 
 protected: // 변수
 	static const int m_nMesh{ 3 };
-	//CStaticMesh * m_pMeshes[m_nMesh];
-
-	UINT m_srvIncrementSize{ 0 };
 
 	std::unordered_map<FlyingObjectType, UINT> m_objectsMaxCount;
 	std::unordered_map<FlyingObjectType, FlyingObjectIndices> m_objectsIndices;

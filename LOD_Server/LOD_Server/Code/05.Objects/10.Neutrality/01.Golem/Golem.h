@@ -6,7 +6,7 @@
 class CGolem : public CAnimatedObject
 {
 public: // 생성자, 소멸자
-	CGolem(int nMeshes = 1);
+	CGolem();
 	virtual ~CGolem();
 
 public:	// 외부 함수

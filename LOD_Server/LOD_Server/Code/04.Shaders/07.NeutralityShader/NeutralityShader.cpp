@@ -68,7 +68,6 @@ void CNeutralityShader::SetThrowingManagerToObject(shared_ptr<CThrowingMgr> mana
 
 ////////////////////////////////////////////////////////////////////////
 // 내부 함수
-//CHECK!
 void CNeutralityShader::BuildObjects(void *pContext)
 {
 	if (pContext) m_pTerrain = (CHeightMapTerrain*)pContext;
@@ -85,12 +84,6 @@ void CNeutralityShader::BuildObjects(void *pContext)
 	m_nObjects = transformInporter.m_iKindMeshCnt[0] + 1;
 	m_ppObjects = new CCollisionObject*[m_nObjects];
 
-	CSkinnedMesh *pRoiderMesh = new CSkinnedMesh(pCreateMgr, "Resource//3D//Monster//Mesh//Royde.meshinfo");
-
-	CCubeMesh *pBoundingBoxMesh = new CCubeMesh(pCreateMgr,
-		CONVERT_PaperUnit_to_InG(4.0f), CONVERT_PaperUnit_to_InG(1.0f), CONVERT_PaperUnit_to_InG(11.0f),
-		0, 0, -CONVERT_PaperUnit_to_InG(7.0f));
-
 	CSkeleton *pSIdle = new CSkeleton("Resource//3D//Monster//Animation//Royde_Idle.aniinfo");
 	CSkeleton *pSStartWalk = new CSkeleton("Resource//3D//Monster//Animation//Royde_Start_Walk.aniinfo");
 	CSkeleton *pSWalk = new CSkeleton("Resource//3D//Monster//Animation//Royde_Walk.aniinfo");
@@ -98,11 +91,6 @@ void CNeutralityShader::BuildObjects(void *pContext)
 	CSkeleton *pSThrow = new CSkeleton("Resource//3D//Monster//Animation//Royde_Attack2.aniinfo");
 	CSkeleton *pSDie = new CSkeleton("Resource//3D//Monster//Animation//Royde_Die.aniinfo");
 
-	pRoiderMesh->SetBoundingBox(
-		XMFLOAT3(0.0f, 0.0f, -CONVERT_PaperUnit_to_InG(7.0f)),
-		XMFLOAT3(CONVERT_PaperUnit_to_InG(2.0f), CONVERT_PaperUnit_to_InG(1.0f), CONVERT_PaperUnit_to_InG(5.5f)));
-
-	UINT incrementSize{ pCreateMgr->GetCbvSrvDescriptorIncrementSize() };
 	CRoider *pRoider{ NULL };
 
 	CTransformImporter nexusTransformInporter;
@@ -127,15 +115,12 @@ void CNeutralityShader::BuildObjects(void *pContext)
 		XMFLOAT3 pos{ transformInporter.m_Transform[cnt].pos };
 		XMFLOAT3 rot{ transformInporter.m_Transform[cnt].rotation };
 
-		pRoider = new CRoider(pCreateMgr, 1);
-
-		pRoider->SetMesh(0, pRoiderMesh);
+		pRoider = new CRoider();
 
 		pRoider->SetType(ObjectType::Roider);
 #if !USE_BATCH_MATERIAL
 		pRotatingObject->SetMaterial(pCubeMaterial);
 #endif
-		pRoider->SetBoundingMesh(pBoundingBoxMesh);
 		pRoider->SetCollisionSize(CONVERT_PaperUnit_to_InG(4));
 
 		pRoider->CBaseObject::SetPosition(CONVERT_Unit_to_InG(pos.x), CONVERT_Unit_to_InG(pos.y), CONVERT_Unit_to_InG(pos.z));
@@ -153,9 +138,6 @@ void CNeutralityShader::BuildObjects(void *pContext)
 
 		pRoider->Rotate(0, 180, 0);
 		pRoider->Rotate(-rot.x, rot.y, -rot.z);
-
-		pRoider->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * cnt));
-		pRoider->SetCbvGPUDescriptorHandlePtrForBB(m_pcbvGPUDescriptorStartHandle[2].ptr + (incrementSize * cnt));
 		
 		pRoider->SetPathes(m_pathes);
 
@@ -171,7 +153,7 @@ void CNeutralityShader::BuildObjects(void *pContext)
 		XMFLOAT3 pos{ transformInporter.m_Transform[cnt].pos };
 		XMFLOAT3 rot{ transformInporter.m_Transform[cnt].rotation };
 
-		pGolem = new CGolem(pCreateMgr, 1);
+		pGolem = new CGolem();
 
 		pGolem->SetType(ObjectType::GOLEM);
 #if !USE_BATCH_MATERIAL
@@ -181,15 +163,13 @@ void CNeutralityShader::BuildObjects(void *pContext)
 			CONVERT_Unit_to_InG(pos.x), 
 			m_pTerrain->GetHeight(CONVERT_Unit_to_InG(pos.x),CONVERT_Unit_to_InG(pos.z)), 
 			CONVERT_Unit_to_InG(pos.z));
+
 		pGolem->SetTeam(TeamType::Neutral);
 
 		pGolem->SetTerrain(m_pTerrain);
 
 		pGolem->Rotate(0, 180, 0);
 		pGolem->Rotate(-rot.x, rot.y, -rot.z);
-
-		pGolem->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[1].ptr);
-		pGolem->SetCbvGPUDescriptorHandlePtrForBB(m_pcbvGPUDescriptorStartHandle[2].ptr + (incrementSize * cnt));
 
 		pGolem->SetPathes(m_pathes);
 

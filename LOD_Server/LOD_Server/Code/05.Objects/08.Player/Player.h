@@ -6,7 +6,7 @@
 class CPlayer : public CAnimatedObject
 {
 public:
-	CPlayer(int nMeshes = 1);
+	CPlayer();
 	virtual ~CPlayer();
 
 public:	// 외부 함수

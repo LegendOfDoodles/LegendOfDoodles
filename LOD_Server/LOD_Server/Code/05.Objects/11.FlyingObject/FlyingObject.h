@@ -6,7 +6,7 @@ class CCollisionManager;
 class CFlyingObject : public CCollisionObject
 {
 public:
-	CFlyingObject(int nMeshes = 1);
+	CFlyingObject();
 	virtual ~CFlyingObject();
 
 public:	// 외부 함수

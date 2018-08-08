@@ -10,7 +10,7 @@
 
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
-CMinion::CMinion(int nMeshes) : CAnimatedObject(nMeshes)
+CMinion::CMinion() : CAnimatedObject()
 {
 	m_sightRange = CONVERT_PaperUnit_to_InG(80.0f);
 	m_detectRange = CONVERT_PaperUnit_to_InG(40.0f);
@@ -165,7 +165,7 @@ void CMinion::AdjustAnimationIndex()
 //////////////////////////////////////////////////////////////////////////
 //근접 미니언
 // 생성자, 소멸자
-CSwordMinion::CSwordMinion(int nMeshes) : CMinion(nMeshes)
+CSwordMinion::CSwordMinion() : CMinion()
 {
 	SetType(ObjectType::SwordMinion);
 	m_StatusInfo.maxHP = 445;
@@ -256,7 +256,7 @@ void CSwordMinion::Animate(float timeElapsed)
 //////////////////////////////////////////////////////////////////////////
 //마법 미니언
 // 생성자, 소멸자
-CMagicMinion::CMagicMinion(int nMeshes) : CMinion(nMeshes)
+CMagicMinion::CMagicMinion() : CMinion()
 {
 	SetType(ObjectType::StaffMinion);
 	m_StatusInfo.maxHP = 280;
@@ -345,7 +345,7 @@ void CMagicMinion::Animate(float timeElapsed)
 //////////////////////////////////////////////////////////////////////////
 //활 미니언
 // 생성자, 소멸자
-CBowMinion::CBowMinion(int nMeshes) : CMinion(nMeshes)
+CBowMinion::CBowMinion() : CMinion()
 {
 	SetType(ObjectType::BowMinion);
 	m_StatusInfo.maxHP = 300;
