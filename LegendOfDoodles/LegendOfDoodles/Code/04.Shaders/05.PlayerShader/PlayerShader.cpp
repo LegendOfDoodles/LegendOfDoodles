@@ -201,8 +201,12 @@ bool CPlayerShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 			m_ChangeWeapon = true;
 		}
 	}
+	// Warning! 스킬 사용 네트워크에 요청
+	// 공격 추가 필요
 	else if (GetAsyncKeyState('Q') & 0x0001)
 	{
+		// 스킬 사용 시 자기 플레이어 인식 돼야 함
+		// 스킬 사용 직후 애니메이션 변경 vs 서버에서 처리 된 이후 변경
 		dynamic_cast<CPlayer*>(m_ppObjects[0])->ActiveSkill(AnimationsType::SkillQ);
 	}
 	else if (GetAsyncKeyState('W') & 0x0001)
