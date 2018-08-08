@@ -33,9 +33,6 @@ public: // 공개 함수
 	virtual void RenderBoundingBox(CCamera *pCamera);
 	virtual void RenderShadow(CCamera *pCamera);
 
-	virtual CBaseObject *PickObjectByRayIntersection(
-		XMFLOAT3& pickPosition, XMFLOAT4X4& xmf4x4View, float &nearHitDistance);
-
 	virtual bool OnProcessKeyInput(UCHAR* pKeyBuffer);
 
 	void SetCollisionManager(shared_ptr<CCollisionManager> pManger) { m_pColManager = pManger; }

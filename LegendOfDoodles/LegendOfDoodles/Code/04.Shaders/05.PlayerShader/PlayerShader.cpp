@@ -7,6 +7,7 @@
 #include "05.Objects/99.Material/Material.h"
 #include "05.Objects/04.Terrain/HeightMapTerrain.h"
 #include "06.Meshes/01.Mesh/MeshImporter.h"
+#include "07.Network/Network.h"
 
 /// <summary>
 /// 목적: 플레이어 관리 및 렌더링 용도
@@ -103,128 +104,31 @@ void CPlayerShader::RenderShadow(CCamera * pCamera)
 	}
 }
 
-CBaseObject *CPlayerShader::PickObjectByRayIntersection(
-	XMFLOAT3& pickPosition, XMFLOAT4X4& xmf4x4View, float &nearHitDistance)
-{
-	bool intersected = 0;
-
-	nearHitDistance = FLT_MAX;
-	float hitDistance = FLT_MAX;
-	CBaseObject *pSelectedObject{ NULL };
-
-	for (int j = 0; j < m_nObjects; j++)
-	{
-		intersected = m_ppObjects[j]->PickObjectByRayIntersection(pickPosition, xmf4x4View, hitDistance);
-		if (intersected && (hitDistance < nearHitDistance))
-		{
-			nearHitDistance = hitDistance;
-			pSelectedObject = m_ppObjects[j];
-		}
-	}
-
-	return(pSelectedObject);
-}
-
 bool CPlayerShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 {
 	UNREFERENCED_PARAMETER(pKeyBuffer);
 
-	static float R = 0.0f;
-	static float M = 0.0f;
-
-	if (GetAsyncKeyState('L') & 0x0001)
-	{
-		UINT type = dynamic_cast<CPlayer*>(m_ppObjects[0])->GetWeaponType();
-		UINT num = dynamic_cast<CPlayer*>(m_ppObjects[0])->GetWeaponNum();
-		num++;
-		switch (type)
-		{
-		case 1:
-			if (num >= m_nSword) num = 0;
-			m_ppObjects[0]->SetMesh(1, m_pSword[num]);
-			break;
-		case 2:
-			if (num >= m_nStaff) num = 0;
-			m_ppObjects[0]->SetMesh(1, m_pStaff[num]);
-
-			break;
-		case 3:
-			if (num >= m_nBow) num = 0;
-			m_ppObjects[0]->SetMesh(1, m_pBow[num]);
-
-			break;
-		default:
-			break;
-		}
-		dynamic_cast<CPlayer*>(m_ppObjects[0])->SetWeaponData(type, num);
-
-		m_ppObjects[0]->SetType((ObjectType)m_nWeaponState);
-		// 무기에 따라 수정필요
-	}
-	else if (GetAsyncKeyState('1') & 0x0001)
-	{
-		UINT type = dynamic_cast<CPlayer*>(m_ppObjects[0])->GetWeaponType();
-		if (type != 1)
-		{
-			m_ppObjects[0]->SetType((ObjectType)m_nWeaponState);
-			m_ppObjects[0]->SetMesh(1, m_pSword[0]);
-			m_ppObjects[0]->SetType(ObjectType::SwordPlayer);
-			dynamic_cast<CPlayer*>(m_ppObjects[0])->ChangeSkillSet(m_ppSwordAni);
-			dynamic_cast<CPlayer*>(m_ppObjects[0])->SetWeaponData(ObjectType::SwordPlayer, 0);
-
-			m_ChangeWeapon = true;
-		}
-	}
-	else if (GetAsyncKeyState('2') & 0x0001)
-	{
-		if (UINT type = dynamic_cast<CPlayer*>(m_ppObjects[0])->GetWeaponType() != 2)
-		{
-			m_ppObjects[0]->SetType((ObjectType)m_nWeaponState);
-			m_ppObjects[0]->SetMesh(1, m_pStaff[0]);
-			m_ppObjects[0]->SetType(ObjectType::StaffPlayer);
-			dynamic_cast<CPlayer*>(m_ppObjects[0])->ChangeSkillSet(m_ppStaffAni);
-			dynamic_cast<CPlayer*>(m_ppObjects[0])->SetWeaponData(ObjectType::StaffPlayer, 0);
-
-			m_ChangeWeapon = true;
-		}
-	}
-	else if (GetAsyncKeyState('3') & 0x0001)
-	{
-		if (UINT type = dynamic_cast<CPlayer*>(m_ppObjects[0])->GetWeaponType() != 3)
-		{
-			m_ppObjects[0]->SetType((ObjectType)m_nWeaponState);
-			m_ppObjects[0]->SetMesh(1, m_pBow[0]);
-			m_ppObjects[0]->SetType(ObjectType::BowPlayer);
-			dynamic_cast<CPlayer*>(m_ppObjects[0])->ChangeSkillSet(m_ppBowAni);
-			dynamic_cast<CPlayer*>(m_ppObjects[0])->SetWeaponData(ObjectType::BowPlayer, 0);
-
-			m_ChangeWeapon = true;
-		}
-	}
 	// Warning! 스킬 사용 네트워크에 요청
 	// 공격 추가 필요
-	else if (GetAsyncKeyState('Q') & 0x0001)
+	if (GetAsyncKeyState('Q') & 0x0001)
 	{
 		// 스킬 사용 시 자기 플레이어 인식 돼야 함
 		// 스킬 사용 직후 애니메이션 변경 vs 서버에서 처리 된 이후 변경
-		dynamic_cast<CPlayer*>(m_ppObjects[0])->ActiveSkill(AnimationsType::SkillQ);
+		m_ppObjects[0]->ActiveSkill(AnimationsType::SkillQ);
 	}
 	else if (GetAsyncKeyState('W') & 0x0001)
 	{
-		dynamic_cast<CPlayer*>(m_ppObjects[0])->ActiveSkill(AnimationsType::SkillW);
+		m_ppObjects[0]->ActiveSkill(AnimationsType::SkillW);
 	}
 	else if (GetAsyncKeyState('E') & 0x0001)
 	{
-		dynamic_cast<CPlayer*>(m_ppObjects[0])->ActiveSkill(AnimationsType::SkillE);
+		m_ppObjects[0]->ActiveSkill(AnimationsType::SkillE);
 	}
 	else if (GetAsyncKeyState('R') & 0x0001)
 	{
-		dynamic_cast<CPlayer*>(m_ppObjects[0])->ActiveSkill(AnimationsType::SkillR);
+		m_ppObjects[0]->ActiveSkill(AnimationsType::SkillR);
 	}
-	if (GetAsyncKeyState('Q') & 0xFF00)
-	{
-		m_ppObjects[0]->ActiveSkill(AnimationsType::SkillQ);
-	}
+
 	return true;
 }
 
@@ -492,7 +396,6 @@ void CPlayerShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pConte
 			pPlayer->SetSkeleton(m_ppSwordAni[5]);
 			pPlayer->SetSkeleton(m_ppSwordAni[6]);
 
-
 			pPlayer->SetTerrain(m_pTerrain);
 
 			pPlayer->Rotate(90, 0, 0);
@@ -503,6 +406,7 @@ void CPlayerShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pConte
 		}
 	}
 
+	m_pNetwork->SetPlayers(m_ppObjects);
 }
 
 void CPlayerShader::ReleaseObjects()

@@ -6,6 +6,7 @@
 class CCreateMgr;
 class CCamera;
 class CTexture;
+class CNetwork;
 
 class CShader
 {
@@ -32,9 +33,6 @@ public: // 공개 함수
 	virtual void RenderBoundingBox(CCamera *pCamera);
 	virtual void RenderShadow(CCamera *pCamera);
 
-	virtual CBaseObject *PickObjectByRayIntersection(
-		XMFLOAT3& pickPosition, XMFLOAT4X4& xmf4x4View, float &nearHitDistance);
-
 	virtual bool OnProcessKeyInput(UCHAR* pKeyBuffer);
 	virtual bool OnProcessMouseInput(WPARAM pKeyBuffer);
 
@@ -52,6 +50,8 @@ public: // 공개 함수
 
 	CCollisionObject **GetCollisionObjects() { return m_ppObjects; }
 	int GetObjectCount() { return m_nObjects; }
+
+	void SetNetwork(shared_ptr<CNetwork> pNetwork) { m_pNetwork = pNetwork; }
 
 	void AddRef() { m_nReferences++; }
 	void Release() { if (--m_nReferences <= 0) delete this; }
@@ -122,7 +122,6 @@ protected: // 변수
 	CCollisionObject **m_ppObjects{ NULL };
 	int m_nObjects{ 0 };
 
-
 	UINT8 *m_pMappedObjects{ NULL };
 	UINT8 *m_pMappedBoundingBoxes{ NULL };
 
@@ -138,5 +137,7 @@ protected: // 변수
 	ComPtr<ID3D12GraphicsCommandList> m_pCommandList;
 
 	ComPtr<ID3D12RootSignature>		m_pGraphicsRootSignature;
+
+	shared_ptr<CNetwork> m_pNetwork;
 };
 

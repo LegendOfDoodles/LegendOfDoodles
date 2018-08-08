@@ -1,6 +1,7 @@
 #include "protocol.h"
 #include "Winsock2.h"
 
+class CCollisionObject;
 
 #pragma once
 
@@ -31,7 +32,7 @@ public:
 
 	CBaseObject * m_pSelectedObject{ NULL };
 protected:
-	CBaseObject** m_ppPlayer{ NULL };
+	CCollisionObject ** m_ppPlayer{ NULL };
 	CBaseObject** m_ppBlueMinions{ NULL };
 	CBaseObject** m_ppRedMinions{ NULL };
 	int*		  m_pnBlue{ 0 };
@@ -48,7 +49,7 @@ public:
 	void ReadPacket(SOCKET sock);
 	void SendPacket(int id, void *ptr);
 
-	void SetPlayers(CBaseObject** player) { m_ppPlayer = player; }
+	void SetPlayers(CCollisionObject** player) { m_ppPlayer = player; }
 	void SetBlueMinions(CBaseObject** blue) { m_ppBlueMinions = blue; }
 	void SetRedMinions(CBaseObject** red) { m_ppRedMinions = red; }
 	void SetBlueCount(int* cnt) { m_pnBlue = cnt; }

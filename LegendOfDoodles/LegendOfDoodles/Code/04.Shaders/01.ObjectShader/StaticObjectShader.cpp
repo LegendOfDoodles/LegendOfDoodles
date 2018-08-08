@@ -71,13 +71,10 @@ void CStaticObjectShader::Render(CCamera *pCamera)
 	int cnt{ 0 };
 	for (int i = 0; i < m_nMaterials; ++i)
 	{
+		CShader::Render(pCamera, i);
+		m_ppMaterials[i]->UpdateShaderVariables();
 		for (int j = 0; j < m_meshCounts[i]; ++j, ++cnt)
 		{
-			if (j == 0)
-			{
-				CShader::Render(pCamera, i);
-				m_ppMaterials[i]->UpdateShaderVariables();
-			}
 			if (m_ppObjects[cnt]) m_ppObjects[cnt]->Render(pCamera);
 		}
 	}

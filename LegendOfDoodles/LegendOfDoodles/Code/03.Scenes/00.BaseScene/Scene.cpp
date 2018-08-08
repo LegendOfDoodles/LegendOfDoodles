@@ -70,11 +70,11 @@ void CScene::Initialize(shared_ptr<CCreateMgr> pCreateMgr, shared_ptr<CNetwork> 
 	m_pNetwork = pNetwork;
 	BuildObjects(pCreateMgr);
 	CreateShaderVariables(pCreateMgr);
+	
 }
 
 void CScene::Finalize()
 {
-	
 	ReleaseObjects();
 	ReleaseShaderVariables();
 }
@@ -107,24 +107,14 @@ void CScene::ProcessInput()
 		if (continual)
 			continual = m_ppShaders[i]->OnProcessKeyInput(pKeyBuffer);
 	}
-
-	if (m_pSelectedObject && GetAsyncKeyState('K') & 0x0001)
+	// Warning! 미니언 공격 테스트 용
+	if (m_pMyPlayer && GetAsyncKeyState('K') & 0x0001)
 	{
 		m_pThrowingMgr->RequestSpawn(
-			m_pSelectedObject->GetPosition(),
-			m_pSelectedObject->GetLook(),
-			m_pSelectedObject->GetTeam(),
+			m_pMyPlayer->GetPosition(),
+			m_pMyPlayer->GetLook(),
+			m_pMyPlayer->GetTeam(),
 			FlyingObjectType::Minion_Magic);
-	}
-
-	if (m_pSelectedObject && GetAsyncKeyState('M') & 0x0001)
-	{
-		m_pEffectMgr->RequestSpawn(
-			m_pSelectedObject->GetPosition(),
-			m_pSelectedObject->GetCollisionSize() * 2,
-			m_pSelectedObject->GetLook(),
-			m_pSelectedObject->GetTeam(),
-			EffectObjectType::Player_SwordSkill_Q);
 	}
 }
 
@@ -132,7 +122,7 @@ void CScene::AnimateObjects(float timeElapsed)
 {
 	m_pCamera->Update(timeElapsed);
 
-	//m_pNetwork->ReadPacket(m_pNetwork->m_mysocket);
+	
 
 	UpdateShaderVariables();
 
@@ -360,9 +350,14 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	m_ppShaders[2] = new CMinionShader(pCreateMgr);
 	m_ppShaders[3] = new CPlayerShader(pCreateMgr);
 	m_ppShaders[4] = new CNeutralityShader(pCreateMgr);
-	m_ppShaders[5] = new CStaticObjectShader(pCreateMgr);
-	m_ppShaders[6] = new CNexusTowerShader(pCreateMgr);
+	m_ppShaders[5] = new CNexusTowerShader(pCreateMgr);
+	m_ppShaders[6] = new CStaticObjectShader(pCreateMgr);
 	m_ppShaders[7] = new CFlyingShader(pCreateMgr);
+
+	for (int i = 2; i <= 5; ++i)
+	{
+		m_ppShaders[i]->SetNetwork(m_pNetwork);
+	}
 
 	//UI Shader
 	UI_Shader = new CUIObjectShader(pCreateMgr);
@@ -393,8 +388,8 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	((CPlayerHPGaugeShader*)PlayerHP_Shader)->SetPlayerCnt(((CPlayerShader *)m_ppShaders[3])->GetObjectCount());
 	((CPlayerHPGaugeShader*)PlayerHP_Shader)->SetPlayer(((CPlayerShader *)m_ppShaders[3])->GetCollisionObjects());
 
-	((CNexusAndTowerHPGaugeShader*)NexusTowerHP_Shader)->SetNexusAndTowerCnt(((CNexusTowerShader *)m_ppShaders[6])->GetObjectCount());
-	((CNexusAndTowerHPGaugeShader*)NexusTowerHP_Shader)->SetNexusAndTower(((CNexusTowerShader *)m_ppShaders[6])->GetCollisionObjects());
+	((CNexusAndTowerHPGaugeShader*)NexusTowerHP_Shader)->SetNexusAndTowerCnt(((CNexusTowerShader *)m_ppShaders[5])->GetObjectCount());
+	((CNexusAndTowerHPGaugeShader*)NexusTowerHP_Shader)->SetNexusAndTower(((CNexusTowerShader *)m_ppShaders[5])->GetCollisionObjects());
 
 	((CMinimapIconShader*)MinimapIco_Shader)->SetPlayerCnt(((CPlayerShader *)m_ppShaders[3])->GetObjectCount());
 	((CMinimapIconShader*)MinimapIco_Shader)->SetPlayer(((CPlayerShader *)m_ppShaders[3])->GetCollisionObjects());
@@ -402,12 +397,13 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	((CMinimapIconShader*)MinimapIco_Shader)->SetRoider(((CNeutralityShader *)m_ppShaders[4])->GetCollisionObjects());
 
 	((CBuildingMinimapIconShader*)BuildingMapIco_Shader)->SetNexusAndTowerCnt(
-		((CNexusTowerShader *)m_ppShaders[6])->GetNexusCount(),
-		((CNexusTowerShader *)m_ppShaders[6])->GetTowerCount()
+		((CNexusTowerShader *)m_ppShaders[5])->GetNexusCount(),
+		((CNexusTowerShader *)m_ppShaders[5])->GetTowerCount()
 	);
-	((CBuildingMinimapIconShader*)BuildingMapIco_Shader)->SetNexusAndTower(((CNexusTowerShader *)m_ppShaders[6])->GetCollisionObjects());
+	((CBuildingMinimapIconShader*)BuildingMapIco_Shader)->SetNexusAndTower(((CNexusTowerShader *)m_ppShaders[5])->GetCollisionObjects());
 
 	m_ppObjects = ((CPlayerShader *)m_ppShaders[3])->GetCollisionObjects();
+	m_pMyPlayer = (CAnimatedObject*)m_ppObjects[m_pNetwork->m_myid];
 
 	((CMinimapShader*)UI_Shader)->SetPlayer(m_ppObjects[0]);
 	((CSkillShader*)Skill_Shader)->SetPlayer(m_ppObjects[0]);
@@ -479,7 +475,7 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	pNetral->SetFSMManager(m_pFSMMgr);
 	pNetral->SetThrowingManagerToObject(m_pThrowingMgr);
 
-	CNexusTowerShader* pNTS = (CNexusTowerShader *)m_ppShaders[6];
+	CNexusTowerShader* pNTS = (CNexusTowerShader *)m_ppShaders[5];
 	nColliderObject = pNTS->GetObjectCount();
 	for (int i = 0; i < nColliderObject; ++i)
 	{
@@ -493,6 +489,8 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	pFS->SetColManagerToObject(m_pCollisionManager);
 
 	BuildLights();
+
+	m_pNetwork->ReadPacket(m_pNetwork->m_mysocket);
 }
 
 void CScene::ReleaseObjects()
@@ -589,16 +587,12 @@ void CScene::GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, XMFLOAT4X4&	 xm
 
 	m_pickWorldPosition = Vector3::Add(camPosition, Vector3::ScalarProduct(layDirection, yDiff, false));
 
-	if (m_pSelectedObject)
+	if (m_pMyPlayer)
 	{
-		m_pSelectedObject->LookAt(m_pickWorldPosition);
-		m_pSelectedObject->SetPathToGo(m_pWayFinder->GetPathToPosition(
-			XMFLOAT2(m_pSelectedObject->GetPosition().x, m_pSelectedObject->GetPosition().z),
+		m_pMyPlayer->LookAt(m_pickWorldPosition);
+		m_pMyPlayer->SetPathToGo(m_pWayFinder->GetPathToPosition(
+			XMFLOAT2(m_pMyPlayer->GetPosition().x, m_pMyPlayer->GetPosition().z),
 			XMFLOAT2(m_pickWorldPosition.x, m_pickWorldPosition.z)));
-	}
-	else {
-		// 미 선택시 Player 0번
-		m_pSelectedObject = (CAnimatedObject*)m_ppObjects[m_pNetwork->m_myid];
 	}
 
 	CS_Msg_Demand_Pos_Character p;

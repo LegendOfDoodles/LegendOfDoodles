@@ -8,6 +8,7 @@
 #include "00.Global/01.Utility/06.HPGaugeManager/HPGaugeManager.h"
 #include "06.Meshes/01.Mesh/MeshImporter.h"
 #include "00.Global/02.AI/00.FSMMgr/FSMMgr.h"
+#include "07.Network/Network.h"
 
 /// <summary>
 /// 목적: 중립 몬스터 관리 및 렌더링용 쉐이더
@@ -182,27 +183,6 @@ void CNeutralityShader::RenderShadow(CCamera * pCamera)
 	beg = m_objectsIndices[ObjectType::GOLEM].m_begIndex;
 	end = m_objectsIndices[ObjectType::GOLEM].m_endIndex;
 	m_ppObjects[beg]->Render(pCamera);
-}
-
-CBaseObject * CNeutralityShader::PickObjectByRayIntersection(XMFLOAT3 & pickPosition, XMFLOAT4X4 & xmf4x4View, float & nearHitDistance)
-{
-	bool intersected = 0;
-
-	nearHitDistance = FLT_MAX;
-	float hitDistance = FLT_MAX;
-	CBaseObject *pSelectedObject{ NULL };
-
-	for (int j = 0; j < m_nObjects; j++)
-	{
-		intersected = m_ppObjects[j]->PickObjectByRayIntersection(pickPosition, xmf4x4View, hitDistance);
-		if (intersected && (hitDistance < nearHitDistance))
-		{
-			nearHitDistance = hitDistance;
-			pSelectedObject = m_ppObjects[j];
-		}
-	}
-
-	return(pSelectedObject);
 }
 
 bool CNeutralityShader::OnProcessKeyInput(UCHAR* pKeyBuffer)

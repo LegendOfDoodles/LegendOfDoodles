@@ -8,6 +8,7 @@
 #include "00.Global/01.Utility/06.HPGaugeManager/HPGaugeManager.h"
 #include "06.Meshes/01.Mesh/MeshImporter.h"
 #include "00.Global/02.AI/00.FSMMgr/FSMMgr.h"
+#include "07.Network/Network.h"
 
 /// <summary>
 /// 목적: 미니언 관리 및 그리기 용도
@@ -301,54 +302,6 @@ void CMinionShader::RenderShadow(CCamera * pCamera)
 			(*iter)->Render(pCamera);
 		}
 	}
-}
-
-CBaseObject *CMinionShader::PickObjectByRayIntersection(
-	XMFLOAT3& pickPosition, XMFLOAT4X4& xmf4x4View, float &nearHitDistance)
-{
-	bool intersected = 0;
-
-	nearHitDistance = FLT_MAX;
-	float hitDistance = FLT_MAX;
-	CCollisionObject *pSelectedObject{ NULL };
-
-	CollisionObjectList* curObjectList{ NULL };
-	for (int i = 0; i < 6; ++i)
-	{
-		switch (i)
-		{
-		case 0: // Blue Sword
-			curObjectList = &m_blueSwordMinions;
-			break;
-		case 1: // Blue Staff
-			curObjectList = &m_blueStaffMinions;
-			break;
-		case 2: // Blue Bow
-			curObjectList = &m_blueBowMinions;
-			break;
-		case 3: // Red Sword
-			curObjectList = &m_redSwordMinions;
-			break;
-		case 4: // Red Staff
-			curObjectList = &m_redStaffMinions;
-			break;
-		case 5: // Red Bow
-			curObjectList = &m_redBowMinions;
-			break;
-		}
-
-		for (auto iter = curObjectList->begin(); iter != curObjectList->end(); ++iter)
-		{
-			intersected = (*iter)->PickObjectByRayIntersection(pickPosition, xmf4x4View, hitDistance);
-			if (intersected && (hitDistance < nearHitDistance))
-			{
-				nearHitDistance = hitDistance;
-				pSelectedObject = (*iter);
-			}
-		}
-	}
-
-	return(pSelectedObject);
 }
 
 bool CMinionShader::OnProcessKeyInput(UCHAR* pKeyBuffer)

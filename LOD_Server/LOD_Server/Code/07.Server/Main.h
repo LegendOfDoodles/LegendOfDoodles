@@ -70,8 +70,8 @@ public:
 	Client()
 	{
 		m_isconnected = false;
-		m_x = 500;
-		m_y = 2500;
+		m_x = 0;
+		m_y = 0;
 		m_login = {};
 		ZeroMemory(&m_rxover.m_over, sizeof(WSAOVERLAPPED));
 		m_rxover.m_wsabuf.buf = m_rxover.m_iobuf;
@@ -134,6 +134,8 @@ CNexusTower** g_ppNexusTower{ NULL };
 shared_ptr<CScene> g_pScene;
 CAnimatedObject** g_ppPlayer{ NULL };
 
+bool AcceptFinish = false;
+
 int g_MinionCounts = 0;
 int g_ReuseMinion = -1;
 void error_display(const char *msg, int err_no)
@@ -174,7 +176,8 @@ void initialize(shared_ptr<CScene> pScene)
 {
 	g_pScene = pScene;
 
-	//g_ppPlayer = g_pScene->GetPlayerObject();
+	g_ppPlayer = g_pScene->GetPlayerObject();
+	
 	//g_pBlueMinions = g_pScene->GetBlueObjects();
 	//g_pRedMinions = g_pScene->GetRedObjects();
 	//g_ppNexusTower = g_pScene->GetNexusTower();
@@ -449,8 +452,8 @@ void accept_thread()	//새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 		p.Character_id = id;
 		p.size = sizeof(p);
 		p.type = SC_PUT_PLAYER;
-		p.x = g_clients[id].m_x;
-		p.y = g_clients[id].m_y;
+		p.x = g_ppPlayer[id]->GetPosition().x;
+		p.y = g_ppPlayer[id]->GetPosition().z;
 		SendPacket(id, &p);
 		//for (int i = 0; i < MAX_USER; ++i)
 		//{
@@ -465,11 +468,11 @@ void accept_thread()	//새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 		{
 			if (i == id) continue;
 			p.Character_id = i;
-			p.x = g_clients[i].m_x;
-			p.y = g_clients[i].m_y;
+			p.x = g_ppPlayer[i]->GetPosition().x;
+			p.y = g_ppPlayer[i]->GetPosition().z;
 
 			SendPacket(id, &p);
-
+			
 		}
 	}
 }
@@ -480,11 +483,11 @@ void timer_thread()
 	while (1)
 	{
 		//wait for 0.3second
-		Sleep(1);
+		Sleep(30);
 		system_clock::time_point duration = system_clock::now();
 		for (int i = 0; i < MAX_USER; ++i) {
-			//g_clients[i].m_x = g_ppPlayer[i]->GetPosition().x;
-			//g_clients[i].m_y = g_ppPlayer[i]->GetPosition().z;
+			g_clients[i].m_x = g_ppPlayer[i]->GetPosition().x;
+			g_clients[i].m_y = g_ppPlayer[i]->GetPosition().z;
 			//g_clients[i].m_anistate = g_ppPlayer[i]->GetAnimState();
 			//g_clients[i].m_frameTime = g_ppPlayer[i]->GetFrameTime();
 			//g_clients[i].m_vLook = g_ppPlayer[i]->GetLook();
@@ -500,6 +503,7 @@ void timer_thread()
 		}
 
 		//Send Every User's Position Packet
+
 		for (int i = 0; i < MAX_USER; ++i) {
 			if (g_clients[i].m_isconnected == true) {
 				SC_Msg_Pos_Character p;

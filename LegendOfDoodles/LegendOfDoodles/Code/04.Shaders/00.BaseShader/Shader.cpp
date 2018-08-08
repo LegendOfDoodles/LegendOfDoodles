@@ -108,14 +108,6 @@ void CShader::RenderShadow(CCamera * pCamera)
 	UNREFERENCED_PARAMETER(pCamera);
 }
 
-CBaseObject * CShader::PickObjectByRayIntersection(XMFLOAT3 & pickPosition, XMFLOAT4X4 & xmf4x4View, float &nearHitDistance)
-{
-	UNREFERENCED_PARAMETER(pickPosition);
-	UNREFERENCED_PARAMETER(xmf4x4View);
-	UNREFERENCED_PARAMETER(nearHitDistance);
-	return nullptr;
-}
-
 bool CShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 {
 	UNREFERENCED_PARAMETER(pKeyBuffer);

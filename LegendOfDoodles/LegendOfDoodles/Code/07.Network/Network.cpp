@@ -1,9 +1,10 @@
 #include "stdafx.h"
 #include "Network.h"
-#include "..\05.Objects\03.AnimatedObject\AnimatedObject.h"
-#include "..\05.Objects\08.Player\Player.h"
-#include "..\05.Objects\06.Minion\Minion.h"
-#include "..\05.Objects\09.NexusTower\NexusTower.h"
+#include "05.Objects\03.AnimatedObject\AnimatedObject.h"
+#include "05.Objects\08.Player\Player.h"
+#include "05.Objects\06.Minion\Minion.h"
+#include "05.Objects\09.NexusTower\NexusTower.h"
+#include "03.Scenes/00.BaseScene/Scene.h"
 
 CNetwork::CNetwork()
 {
@@ -36,15 +37,13 @@ void CNetwork::Initialize()
 	m_send_wsabuf.len = MAX_BUFF_SIZE;
 	m_recv_wsabuf.buf = m_recv_buffer;
 	m_recv_wsabuf.len = MAX_BUFF_SIZE;
-
-	m_ppPlayer = new CBaseObject*[4];
 }
 
 void CNetwork::ProcessPacket(int myid, char *ptr)
 {
 	static bool first_time = true;
-	//printf("%d\n", ptr[1]);
-	if (ptr[1] != 0) {
+
+ 	if (ptr[1] != 0) {
 		switch (ptr[1])
 		{
 		case SC_PUT_PLAYER:
@@ -190,6 +189,7 @@ void CNetwork::ProcessPacket(int myid, char *ptr)
 			break;
 		}
 	}
+	
 }
 
 void CNetwork::Finalize()
@@ -202,7 +202,9 @@ void CNetwork::ReadPacket(SOCKET sock)
 	DWORD ioflag = 0;
 	DWORD iobyte = 0;
 	int errorcount = 0;
+
 	int ret = WSARecv(sock, &m_recv_wsabuf, 1, &iobyte, &ioflag, NULL, NULL);
+	//printf("Recv Error [%d]\n" , WSAGetLastError());
 	if (ret) {
 		int err_code = WSAGetLastError();
 		printf("Recv Error [%d]\n", err_code);
@@ -229,6 +231,7 @@ void CNetwork::ReadPacket(SOCKET sock)
 			m_saved_packet_size += iobyte;
 			iobyte = 0;
 		}
+		//ReadPacket(m_mysocket);
 	}
 	
 	

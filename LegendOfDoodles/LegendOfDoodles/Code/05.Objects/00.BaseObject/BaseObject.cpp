@@ -150,38 +150,6 @@ void CBaseObject::RenderBoundingBox(CCamera * pCamera, UINT istanceCnt)
 	if (m_pBoundingMesh) m_pBoundingMesh->Render(istanceCnt);
 }
 
-void CBaseObject::GenerateRayForPicking(
-	XMFLOAT3& pickPosition, XMFLOAT4X4&	 xmf4x4View,
-	XMFLOAT3 &pickRayOrigin, XMFLOAT3 &pickRayDirection)
-{
-	XMFLOAT4X4 xmf4x4WorldView{ Matrix4x4::Multiply(m_xmf4x4World, xmf4x4View) };
-	XMFLOAT4X4 xmf4x4Inverse{ Matrix4x4::Inverse(xmf4x4WorldView) };
-	XMFLOAT3 xmf3CameraOrigin(0.0f, 0.0f, 0.0f);
-
-	//카메라 좌표계의 원점을 모델 좌표계로 변환한다.
-	pickRayOrigin = Vector3::TransformCoord(xmf3CameraOrigin, xmf4x4Inverse);
-	//카메라 좌표계의 점(마우스 좌표를 역변환하여 구한 점)을 모델 좌표계로 변환한다.
-	pickRayDirection = Vector3::TransformCoord(pickPosition, xmf4x4Inverse);
-	//광선의 방향 벡터를 구한다.
-	pickRayDirection = Vector3::Normalize(Vector3::Subtract(pickRayDirection, pickRayOrigin));
-}
-
-bool CBaseObject::PickObjectByRayIntersection(
-	XMFLOAT3& xmf3PickPosition, XMFLOAT4X4& xmf4x4View, float &hitDistance)
-{
-	if (!m_ppMeshes) return false;
-	if (!m_ppMeshes[0]) return false;
-
-	bool intersected{ false };
-	XMFLOAT3 pickRayOrigin, pickRayDirection;
-
-	GenerateRayForPicking(xmf3PickPosition, xmf4x4View, pickRayOrigin, pickRayDirection);
-
-	intersected = m_ppMeshes[0]->CheckRayIntersection(pickRayOrigin, pickRayDirection, hitDistance);
-
-	return(intersected);
-}
-
 void CBaseObject::MoveStrafe(float fDistance)
 {
 	XMFLOAT3 xmf3Position = GetPosition();

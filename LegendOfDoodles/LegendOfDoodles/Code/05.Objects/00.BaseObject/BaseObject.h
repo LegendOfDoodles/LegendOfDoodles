@@ -34,10 +34,6 @@ public: // 공개 함수
 	virtual void Render(CCamera *pCamera, UINT istanceCnt = 1);
 	virtual void RenderBoundingBox(CCamera *pCamera, UINT istanceCnt = 1);
 
-	void GenerateRayForPicking(XMFLOAT3& pickPosition, XMFLOAT4X4& xmf4x4View,
-		XMFLOAT3 &pickRayOrigin, XMFLOAT3 &pickRayDirection);
-	bool PickObjectByRayIntersection(XMFLOAT3& pickPosition, XMFLOAT4X4& xmf4x4View, float &hitDistance);
-
 	void MoveStrafe(float fDistance = 1.0f);
 	virtual void MoveUp(float fDistance = 1.0f);
 	virtual void MoveForward(float fDistance = 1.0f);

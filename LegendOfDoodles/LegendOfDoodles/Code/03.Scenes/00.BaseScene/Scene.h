@@ -116,7 +116,7 @@ protected: // º¯¼ö
 	CCollisionObject ** m_ppObjects{ NULL };
 	int m_nObjects{ 0 };
 
-	CAnimatedObject * m_pSelectedObject{ NULL };
+	CAnimatedObject * m_pMyPlayer{ NULL };
 
 	bool m_bCurCamIsAOS{ true };
 	bool m_bCamChanged{ false };

@@ -144,16 +144,4 @@ void CScene::GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, int id)
 	pPlayer->SetPathToGo(m_pWayFinder->GetPathToPosition(
 		XMFLOAT2(pPlayer->GetPosition().x, pPlayer->GetPosition().z),
 		XMFLOAT2(m_pickWorldPosition.x, m_pickWorldPosition.z)));
-		//pPlayer->GetCollisionSize()));
 }
-
-//void CScene::GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, XMFLOAT4X4&	 xmf4x4View)
-//{
-//	XMFLOAT3 m_pickWorldPosition = pickPosition;
-//	CAnimatedObject* pPlayer = ((CAnimatedObject * *)m_ppShaders[2]->GetCollisionObjects())[id];
-//	pPlayer->LookAt(m_pickWorldPosition);
-//	pPlayer->SetPathToGo(m_pWayFinder->GetPathToPosition(
-//		XMFLOAT2(pPlayer->GetPosition().x, pPlayer->GetPosition().z),
-//		XMFLOAT2(m_pickWorldPosition.x, m_pickWorldPosition.z),
-//		pPlayer->GetCollisionSize()));
-//}

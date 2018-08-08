@@ -7,7 +7,7 @@
 /// 목적: 길찾기 알고리즘을 위한 클래스 작성
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-08-03
+/// 최종 수정 날짜: 2018-08-08
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -102,6 +102,10 @@ bool CWayFinder::CanGoDirectly(const XMFLOAT2 & source, const XMFLOAT2 & target)
 		if (m_pCollisionMapImage->GetCollision(curPos.x, curPos.y + NODE_SIZE_HALF)) return false;
 		if (m_pCollisionMapImage->GetCollision(curPos.x + NODE_SIZE_HALF, curPos.y)) return false;
 		if (m_pCollisionMapImage->GetCollision(curPos.x, curPos.y - NODE_SIZE_HALF)) return false;
+		//if (m_pCollisionMapImage->GetCollision(curPos.x - NODE_SIZE_HALF, curPos.y - NODE_SIZE_HALF)) return false;
+		//if (m_pCollisionMapImage->GetCollision(curPos.x - NODE_SIZE_HALF, curPos.y + NODE_SIZE_HALF)) return false;
+		//if (m_pCollisionMapImage->GetCollision(curPos.x + NODE_SIZE_HALF, curPos.y - NODE_SIZE_HALF)) return false;
+		//if (m_pCollisionMapImage->GetCollision(curPos.x + NODE_SIZE_HALF, curPos.y + NODE_SIZE_HALF)) return false;
 		curPos = Vector2::Add(curPos, addVal);
 	} while (Vector2::DistanceSquare(curPos, target) > NODE_SIZE_HALF_SQR);
 	return true;
@@ -197,8 +201,12 @@ Path *CWayFinder::GetPathToPosition(const XMFLOAT2 &source, const XMFLOAT2 &targ
 					// 패스에 도착지를 추가로 연결하고 종료한다.
 					path->push_back(CPathEdge(path->back().To(), source));
 					path->reverse();
+					for (Path::iterator i = path->begin(); i != path->end(); ++i)
+					{
+						(*i) = CPathEdge((*i).To(), (*i).From());
+					}
 				}
-				if (!IsInTerrain(path->back().To()))
+				if (!IsInTerrain(path->back().To()) || m_pCollisionMapImage->GetCollision(path->back().To().x, path->back().To().y))
 				{
 					path->pop_back();
 				}
