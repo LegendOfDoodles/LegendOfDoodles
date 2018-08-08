@@ -573,33 +573,9 @@ void CScene::PickObjectPointedByCursor(WPARAM wParam, LPARAM lParam)
 	pickPosition.y = -(((2.0f * yClient) / viewport.Height) - 1) / xmf4x4Projection._22;
 	pickPosition.z = 1.0f;
 
-	
-
-	float hitDistance{ FLT_MAX }, nearestHitDistance{ FLT_MAX };
-	CBaseObject *pIntersectedObject{ NULL };
-	//m_pSelectedObject = NULL;
-
-	for (int i = 0; i < m_nShaders; i++)
-	{
-		pIntersectedObject = m_ppShaders[i]->PickObjectByRayIntersection(pickPosition, xmf4x4View, hitDistance);
-		if (pIntersectedObject && (hitDistance < nearestHitDistance))
-		{
-			nearestHitDistance = hitDistance;
-			m_pSelectedObject = reinterpret_cast<CAnimatedObject*>(pIntersectedObject);
-
-			// Status 창 띄우기 수도 코드
-			// 현재 6번 쉐이더가 UI 이므로 상호작용하는 Object의 타입을 받아와서
-			// 그 해당 오브젝트에 대한 정보를 출력
-			UI_Shader->OnStatus(pIntersectedObject->GetType());
-		}
-	}
-
 	if (wParam == MK_RBUTTON)
 	{
 		GenerateLayEndWorldPosition(pickPosition, xmf4x4View);
-	}
-	else if (wParam == MK_LBUTTON) {
-
 	}
 }
 
@@ -639,7 +615,7 @@ void CScene::OnProcessKeyUp(WPARAM wParam, LPARAM lParam)
 {
 	UNREFERENCED_PARAMETER(lParam);
 
-	if (wParam == VK_F1)
+/*	if (wParam == VK_F1)
 	{
 		if (!m_bCurCamIsAOS)
 		{
@@ -655,7 +631,8 @@ void CScene::OnProcessKeyUp(WPARAM wParam, LPARAM lParam)
 			m_bCamChanged = true;
 		}
 	}
-	else if (wParam == VK_F3)
+	else */
+	if (wParam == VK_F3)
 	{
 		m_bRenderBoundingBox = !m_bRenderBoundingBox;
 	}

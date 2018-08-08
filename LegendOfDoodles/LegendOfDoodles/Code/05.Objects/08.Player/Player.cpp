@@ -36,29 +36,7 @@ void CPlayer::Animate(float timeElapsed)
 		{
 			SetState(States::Idle);
 		}
-		else if (m_nCurrAnimation == Animations::SkillQ) {
-			if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f
-				&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f) {
-				m_pColManager->RequestCollide(CollisionType::SPHERE, this, CONVERT_PaperUnit_to_InG(8), CONVERT_PaperUnit_to_InG(8), 100);
-			}
-		}
-		else if (m_nCurrAnimation == Animations::SkillW) {
-			if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f
-				&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f) {
-				m_pColManager->RequestCollide(CollisionType::SECTERFORM, this, CONVERT_PaperUnit_to_InG(24), 180, 500);
-			}
-		}
-		else if (m_nCurrAnimation == Animations::SkillE) {
-
-		}
-		else if (m_nCurrAnimation == Animations::SkillR) {
-			if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.666f
-				&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.666f) {
-				m_pColManager->RequestCollide(CollisionType::SPHERE, this, 0, CONVERT_PaperUnit_to_InG(12), 500);
-			}
-		}
 		break;
-
 	case States::Walk:
 		if (m_nCurrAnimation != Animations::StartWalk&&
 			m_nCurrAnimation != Animations::Walking)
@@ -79,14 +57,7 @@ void CPlayer::Animate(float timeElapsed)
 			m_curState = States::Remove;
 		}
 		break;
-	case States::Win:
-		if (m_nCurrAnimation != Animations::Win) m_nCurrAnimation = Animations::Win;
-		break;
 	case States::Defeat:
-		if (m_nCurrAnimation != Animations::Defeat&&
-			m_nCurrAnimation != Animations::Defeat2)
-			m_nCurrAnimation = Animations::Defeat;
-
 		if (m_nCurrAnimation == Animations::Defeat) {
 			if (m_fFrameTime >= m_nAniLength[m_nAniIndex] - 1)
 			{
@@ -109,7 +80,7 @@ void CPlayer::Animate(float timeElapsed)
 			m_fFrameTime -= m_nAniLength[m_nAniIndex];
 	}
 
-	if (MoveToDestination(timeElapsed) == States::Done) SetState(States::Idle);
+	MoveToDestination(timeElapsed);
 
 	CAnimatedObject::Animate(timeElapsed);
 }
