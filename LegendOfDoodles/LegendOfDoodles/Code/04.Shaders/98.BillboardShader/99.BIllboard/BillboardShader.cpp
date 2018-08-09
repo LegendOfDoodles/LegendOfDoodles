@@ -41,6 +41,8 @@ void CBillboardShader::ReleaseUploadBuffers()
 			m_ppMaterials[i]->ReleaseUploadBuffers();
 	}
 #endif
+
+	m_bBulidFinished = true;
 }
 
 void CBillboardShader::UpdateShaderVariables(int opt)

@@ -47,6 +47,8 @@ void CFlyingShader::ReleaseUploadBuffers()
 	{
 		m_pMeshes[j]->ReleaseUploadBuffers();
 	}
+
+	m_bBulidFinished = true;
 }
 
 void CFlyingShader::UpdateShaderVariables(int opt)

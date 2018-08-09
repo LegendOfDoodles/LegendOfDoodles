@@ -17,7 +17,6 @@ CNetwork::~CNetwork()
 
 void CNetwork::Initialize()
 {
-	//m_hWnd = hWnd;
 	WSADATA	wsadata;
 	WSAStartup(MAKEWORD(2, 2), &wsadata);
 
@@ -31,7 +30,7 @@ void CNetwork::Initialize()
 
 	int Result = WSAConnect(m_mysocket, (sockaddr *)&ServerAddr, sizeof(ServerAddr), NULL, NULL, NULL, NULL);
 	WSAGetLastError();
-	WSAAsyncSelect(m_mysocket, m_hWnd, WM_SOCKET, FD_CLOSE | FD_READ);
+	//WSAAsyncSelect(m_mysocket, m_hWnd, WM_SOCKET, FD_CLOSE | FD_READ);
 
 	m_send_wsabuf.buf = m_send_buffer;
 	m_send_wsabuf.len = MAX_BUFF_SIZE;
@@ -69,7 +68,15 @@ void CNetwork::ProcessPacket(int myid, char *ptr)
 			//}
 			break;
 		}
-
+		case SC_PACKET:
+		{
+			SC_Msg_What_Is_Packet *my_packet = reinterpret_cast<SC_Msg_What_Is_Packet *>(ptr);
+			if (my_packet->what == 0) break;
+			if (my_packet->what == 1) {
+				ReadPacket();
+				break;
+			}
+		}
 		case SC_POS:
 		{
 			SC_Msg_Pos_Character *my_packet = reinterpret_cast<SC_Msg_Pos_Character *>(ptr);
@@ -80,6 +87,7 @@ void CNetwork::ProcessPacket(int myid, char *ptr)
 			}
 			if (id == m_myid) {
 				//자기 아이디 처리
+				//printf("CHECK");
 				m_ppPlayer[id]->CBaseObject::SetPosition(my_packet->x, my_packet->y);
 				//dynamic_cast<CAnimatedObject*>(m_ppPlayer[id])->SetAnimation((AnimationsType)my_packet->state, (float)my_packet->frameTime);
 				//dynamic_cast<CAnimatedObject*>(m_ppPlayer[id])->RegenerateWorldMatrixWithLook(my_packet->vLook);
@@ -197,13 +205,13 @@ void CNetwork::Finalize()
 	closesocket(m_mysocket);
 }
 //
-void CNetwork::ReadPacket(SOCKET sock)
+void CNetwork::ReadPacket()
 {
 	DWORD ioflag = 0;
 	DWORD iobyte = 0;
 	int errorcount = 0;
 
-	int ret = WSARecv(sock, &m_recv_wsabuf, 1, &iobyte, &ioflag, NULL, NULL);
+	int ret = WSARecv(m_mysocket, &m_recv_wsabuf, 1, &iobyte, &ioflag, NULL, NULL);
 	//printf("Recv Error [%d]\n" , WSAGetLastError());
 	if (ret) {
 		int err_code = WSAGetLastError();
@@ -231,7 +239,7 @@ void CNetwork::ReadPacket(SOCKET sock)
 			m_saved_packet_size += iobyte;
 			iobyte = 0;
 		}
-		//ReadPacket(m_mysocket);
+		
 	}
 	
 	
@@ -281,6 +289,19 @@ void CNetwork::SendPacket(int id, void* ptr)
 		if (WSA_IO_PENDING != err_no) printf("Send Error![%d] ", err_no);
 	}
 }
+//
+//void  CNetwork::err_display(char* msg)
+//{
+//	LPVOID lpMsgBuf;
+//	FormatMessage(
+//		FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+//		NULL, WSAGetLastError(),
+//		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+//		(LPTSTR)&lpMsgBuf, 0, NULL);
+//
+//	DisplayText("[%s] %s\r\n", msg, (LPCTSTR)lpMsgBuf);
+//	LocalFree(lpMsgBuf);
+//}
 //
 //
 //

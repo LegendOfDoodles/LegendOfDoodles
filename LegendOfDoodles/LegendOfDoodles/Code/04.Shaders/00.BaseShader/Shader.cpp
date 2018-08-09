@@ -58,6 +58,8 @@ void CShader::ReleaseUploadBuffers()
 			m_ppMaterials[i]->ReleaseUploadBuffers();
 	}
 #endif
+
+	m_bBulidFinished = true;
 }
 
 void CShader::UpdateShaderVariables(int opt)

@@ -45,6 +45,8 @@ void CMinionShader::ReleaseUploadBuffers()
 			m_ppMaterials[i]->ReleaseUploadBuffers();
 	}
 #endif
+
+	m_bBulidFinished = true;
 }
 
 void CMinionShader::UpdateShaderVariables(int opt)

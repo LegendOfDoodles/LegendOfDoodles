@@ -77,8 +77,8 @@ struct SC_MsgMoHit : public Packet
 struct CS_MsgChMove : public Packet
 {
 	BYTE Character_id;
-	short x;
-	short y;
+	float x;
+	float y;
 };
 
 struct CS_MsgChCollision : public Packet
@@ -106,12 +106,15 @@ struct SC_Msg_Pos_Character : public Packet
 	short weapon;
 	XMFLOAT3 vLook;
 };
-
+struct SC_Msg_What_Is_Packet : public Packet
+{
+	BYTE what;
+};
 struct CS_Msg_Demand_Pos_Character : public Packet
 {
 	BYTE Character_id;
-	short x;
-	short y;
+	float x;
+	float y;
 };
 
 struct CS_Msg_Demand_Use_Skill : public Packet
@@ -176,7 +179,7 @@ struct SC_Msg_Login_Time : public Packet
 #define VIEW_RADIUS 500
 
 #define MY_SERVER_PORT 4000
-#define WM_SOCKET		WM_USER+1
+
 //enum class Type : BYTE { Connect, Create, Delete, Move, Attack, Hit };
 //Server-> Client
 #define SC_CONNECT_PLAYER		  101
@@ -193,6 +196,7 @@ struct SC_Msg_Login_Time : public Packet
 #define SC_POS_MINION			  112
 #define SC_MINION_COUNT			  113
 #define SC_POS_NEXUS			  114
+#define SC_PACKET				  115
 //Client->Server
 #define CS_ACTION				  201
 #define CS_MOVE_PLAYER			  202

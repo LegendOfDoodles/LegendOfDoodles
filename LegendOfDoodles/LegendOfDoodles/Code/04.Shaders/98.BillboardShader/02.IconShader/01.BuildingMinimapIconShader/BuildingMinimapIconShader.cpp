@@ -21,25 +21,6 @@ CBuildingMinimapIconShader::~CBuildingMinimapIconShader()
 {
 }
 
-void CBuildingMinimapIconShader::ReleaseUploadBuffers()
-{
-	if (m_ppObjects)
-	{
-		for (int j = 0; j < m_nObjects; j++)
-		{
-			m_ppObjects[j]->ReleaseUploadBuffers();
-		}
-	}
-
-#if USE_BATCH_MATERIAL
-	if (m_ppMaterials)
-	{
-		for (int i = 0; i<m_nMaterials; ++i)
-			m_ppMaterials[i]->ReleaseUploadBuffers();
-	}
-#endif
-}
-
 void CBuildingMinimapIconShader::UpdateShaderVariables(int opt)
 {
 	static UINT elementBytes = ((sizeof(CB_GAUGE_INFO) + 255) & ~255);

@@ -11,8 +11,6 @@ public:
 	virtual ~CNexusAndTowerHPGaugeShader();
 
 public: // 공개 함수
-	virtual void ReleaseUploadBuffers();
-
 	virtual void UpdateShaderVariables(int opt = 0);
 
 	virtual void AnimateObjects(float timeElapsed);

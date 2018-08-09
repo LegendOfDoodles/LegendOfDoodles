@@ -138,6 +138,7 @@ bool AcceptFinish = false;
 
 int g_MinionCounts = 0;
 int g_ReuseMinion = -1;
+float g_PacketCoolTime = 0;
 void error_display(const char *msg, int err_no)
 {
 	WCHAR *lpMsgBuf;
@@ -263,8 +264,8 @@ void ProcessPacket(int id, char *packet)
 		//g_clients[MovePacket->Character_id].m_y = MovePacket->y;
 		//x = MovePacket->x;
 		//y = MovePacket->y;
-		//cout << "Client[" << id << "] X is " << g_clients[MovePacket->Character_id].m_x << endl;
-		//cout << "Client[" << id << "] Y is " << g_clients[MovePacket->Character_id].m_y << endl;
+		//cout << "Client[" << id << "] X is " << MovePacket->x << endl;
+		//cout << "Client[" << id << "] Y is " << MovePacket->y << endl;
 		break;
 	}
 	/*case CS_COLLISION:
@@ -362,7 +363,7 @@ void worker_thread()
 
 		EXOVER *p_over = reinterpret_cast<EXOVER *>(over);
 		if (true == p_over->is_recv) {
-			cout << "WT:Packet From Client [" << key << "]\n";
+			//cout << "WT:Packet From Client [" << key << "]\n";
 			int work_size = io_size;
 			char *wptr = p_over->m_iobuf;
 			while (0 < work_size) {
@@ -377,7 +378,9 @@ void worker_thread()
 				if (need_size <= work_size) {
 					memcpy(g_clients[key].m_packet
 						+ g_clients[key].m_prev_packet_size, wptr, need_size);
+					
 					ProcessPacket(key, g_clients[key].m_packet);
+
 					g_clients[key].m_prev_packet_size = 0;
 					g_clients[key].m_packet_size = 0;
 					work_size -= need_size;
@@ -482,159 +485,179 @@ void timer_thread()
 
 	while (1)
 	{
-		//wait for 0.3second
-		Sleep(30);
-		system_clock::time_point duration = system_clock::now();
-		for (int i = 0; i < MAX_USER; ++i) {
-			g_clients[i].m_x = g_ppPlayer[i]->GetPosition().x;
-			g_clients[i].m_y = g_ppPlayer[i]->GetPosition().z;
-			//g_clients[i].m_anistate = g_ppPlayer[i]->GetAnimState();
-			//g_clients[i].m_frameTime = g_ppPlayer[i]->GetFrameTime();
-			//g_clients[i].m_vLook = g_ppPlayer[i]->GetLook();
-			/*g_clients[i].m_maxhp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->maxHP;
-			g_clients[i].m_curhp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->HP;
+		Sleep(10);
+		g_PacketCoolTime += 10;
+		if (g_PacketCoolTime >= 1000)
+		{
+			//cout << "위치 동기화 패킷 보냈어요~" << endl;
+			g_PacketCoolTime = 0;
+			//wait for 0.3second
+			//Sleep(10);
+			// cool time += 10
+			// Cool Time >= 1000 -> 작은 패킷 종류 적어서 보내고 원래 전송
+			// 아니면 넘어가는데 작은 패킷 없는거로 보내고
 
-			g_clients[i].m_level = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->Level;
-			g_clients[i].m_maxexp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->MaxExp;
-			g_clients[i].m_exp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->Exp;
+			//system_clock::time_point duration = system_clock::now();
+			for (int i = 0; i < MAX_USER; ++i) {
+				//if (i == 0) cout << "x=" << g_ppPlayer[i]->GetPosition().x << "z =" << g_ppPlayer[i]->GetPosition().z << endl;
+				g_clients[i].m_x = g_ppPlayer[i]->GetPosition().x;
+				g_clients[i].m_y = g_ppPlayer[i]->GetPosition().z;
 
-			g_clients[i].m_weaponstate = ((CPlayer*)g_ppPlayer[i])->GetWeaponState();
-			g_clients[i].m_duration = duration - g_clients[i].m_login;*/
-		}
+				//if(i==0) cout << "x=" << g_clients[i].m_x << "z =" << g_clients[i].m_y << endl;
+				//g_clients[i].m_anistate = g_ppPlayer[i]->GetAnimState();
+				//g_clients[i].m_frameTime = g_ppPlayer[i]->GetFrameTime();
+				//g_clients[i].m_vLook = g_ppPlayer[i]->GetLook();
+				/*g_clients[i].m_maxhp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->maxHP;
+				g_clients[i].m_curhp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->HP;
 
-		//Send Every User's Position Packet
+				g_clients[i].m_level = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->Level;
+				g_clients[i].m_maxexp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->MaxExp;
+				g_clients[i].m_exp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->Exp;
 
-		for (int i = 0; i < MAX_USER; ++i) {
-			if (g_clients[i].m_isconnected == true) {
-				SC_Msg_Pos_Character p;
-				p.Character_id = i;
-				p.size = sizeof(p);
-				p.type = SC_POS;
-				p.maxhp = g_clients[i].m_maxhp;
-				p.curhp = g_clients[i].m_curhp;
-				p.weapon = g_clients[i].m_weaponstate;
-				p.x = g_clients[i].m_x;
-				p.y = g_clients[i].m_y;
-				p.state = g_clients[i].m_anistate;
-				p.frameTime = g_clients[i].m_frameTime;
-				p.vLook = g_clients[i].m_vLook;
-				for (int j = 0; j < MAX_USER; ++j) {
-					if (g_clients[j].m_isconnected == true) {
-						//SendPacket(j, &p);
+				g_clients[i].m_weaponstate = ((CPlayer*)g_ppPlayer[i])->GetWeaponState();
+				g_clients[i].m_duration = duration - g_clients[i].m_login;*/
+			}
+
+			//Send Every User's Position Packet
+
+			for (int i = 0; i < MAX_USER; ++i) {
+				if (g_clients[i].m_isconnected == true) {
+					SC_Msg_Pos_Character p;
+					p.Character_id = i;
+					p.size = sizeof(p);
+					p.type = SC_POS;
+					//p.maxhp = g_clients[i].m_maxhp;
+					//p.curhp = g_clients[i].m_curhp;
+					//p.weapon = g_clients[i].m_weaponstate;
+					p.x = g_clients[i].m_x;
+					p.y = g_clients[i].m_y;
+					//p.state = g_clients[i].m_anistate;
+					//p.frameTime = g_clients[i].m_frameTime;
+					//p.vLook = g_clients[i].m_vLook;
+
+					for (int j = 0; j < MAX_USER; ++j) {
+						if (g_clients[j].m_isconnected == true) {
+							SendPacket(j, &p);
+							
+						}
 					}
 				}
 			}
+
+			//	int idx{ 0 };
+			//	for (auto iter = g_pBlueMinions->begin(); iter != g_pBlueMinions->end(); ++iter, ++idx) {
+			//		g_blueminions[idx].m_x = (*iter)->GetPosition().x;
+			//		g_blueminions[idx].m_y = (*iter)->GetPosition().z;
+			//		g_blueminions[idx].m_anistate = (*iter)->GetAnimState();
+			//		g_blueminions[idx].m_frameTime = (*iter)->GetFrameTime();
+			//		g_blueminions[idx].m_vLook = (*iter)->GetLook();
+			//		g_blueminions[idx].m_maxhp = ((CMinion*)(*iter))->GetCommonStatus()->maxHP;
+			//		g_blueminions[idx].m_curhp = ((CMinion*)(*iter))->GetCommonStatus()->HP;
+
+			//	}
+
+			//	for (int i = 0; i < MAX_USER; ++i) {
+			//		SC_Msg_Minion_Count p;
+			//		p.color = 1;
+			//		p.count = idx;
+			//		p.size = sizeof(p);
+			//		p.type = SC_MINION_COUNT;
+			//		if (g_clients[i].m_isconnected == true) {
+			//			SendPacket(i, &p);
+			//		}
+			//	}
+
+			//	//Send Every User Blue Minion Packet
+			//	for (int i = 0; i < idx; ++i) {
+			//		SC_Msg_Pos_Minion p;
+			//		p.color = 1;
+			//		p.size = sizeof(p);
+			//		p.x = g_blueminions[i].m_x;
+			//		p.y = g_blueminions[i].m_y;
+			//		p.maxhp = g_blueminions[i].m_maxhp;
+			//		p.curhp = g_blueminions[i].m_curhp;
+
+			//		p.state = g_blueminions[i].m_anistate;
+			//		p.type = SC_POS_MINION;
+			//		p.frameTime = g_blueminions[i].m_frameTime;
+			//		p.vLook = g_blueminions[i].m_vLook;
+			//		for (int j = 0; j < MAX_USER; ++j) {
+			//			if (g_clients[j].m_isconnected == true) {
+			//				SendPacket(j, &p);
+			//			}
+			//		}
+			//	}
+
+			//	idx = 0;
+			//	for (auto iter = g_pRedMinions->begin(); iter != g_pRedMinions->end(); ++iter, ++idx) {
+			//		g_redminions[idx].m_x = (*iter)->GetPosition().x;
+			//		g_redminions[idx].m_y = (*iter)->GetPosition().z;
+			//		g_redminions[idx].m_anistate = (*iter)->GetAnimState();
+			//		g_redminions[idx].m_frameTime = (*iter)->GetFrameTime();
+			//		g_redminions[idx].m_vLook = (*iter)->GetLook();
+			//		g_redminions[idx].m_maxhp = ((CMinion*)(*iter))->GetCommonStatus()->maxHP;
+			//		g_redminions[idx].m_curhp = ((CMinion*)(*iter))->GetCommonStatus()->HP;
+			//	}
+
+			//	for (int i = 0; i < MAX_USER; ++i) {
+			//		SC_Msg_Minion_Count p;
+			//		p.color = 0;
+			//		p.count = idx;
+			//		p.size = sizeof(p);
+			//		p.type = SC_MINION_COUNT;
+			//		if (g_clients[i].m_isconnected == true) {
+			//			SendPacket(i, &p);
+			//		}
+			//	}
+
+			//	//Send Every User Red Minion Packet
+			//	for (int i = 0; i < idx; ++i) {
+			//		SC_Msg_Pos_Minion p;
+			//		p.color = 0;
+			//		p.size = sizeof(p);
+			//		p.x = g_redminions[i].m_x;
+			//		p.y = g_redminions[i].m_y;
+			//		p.maxhp = g_redminions[i].m_maxhp;
+			//		p.curhp = g_redminions[i].m_curhp;
+			//		p.type = SC_POS_MINION;
+			//		p.state = g_redminions[i].m_anistate;
+			//		p.frameTime = g_redminions[i].m_frameTime;
+			//		p.vLook = g_redminions[i].m_vLook;
+			//		for (int j = 0; j < MAX_USER; ++j) {
+			//			if (g_clients[j].m_isconnected == true) {
+			//				SendPacket(j, &p);
+			//			}
+			//		}
+			//	}
+
+
+
+			//	for (int i = 0; i < 14; ++i){
+			//		g_nexustowers[i].m_vPos = g_ppNexusTower[i]->GetPosition();
+			//		g_nexustowers[i].m_curhp = g_ppNexusTower[i]->GetStatusInfo()->HP;
+			//		g_nexustowers[i].m_maxhp = g_ppNexusTower[i]->GetStatusInfo()->maxHP;
+			//	}
+
+			//	for (int i = 0; i < 14; ++i) {
+			//		SC_Msg_Pos_Nexus p;
+			//		p.curhp = g_nexustowers[i].m_curhp;
+			//		p.maxhp = g_nexustowers[i].m_maxhp;
+			//		p.size = sizeof(p);
+			//		p.type = SC_POS_NEXUS;
+			//		p.Object_id = i;
+			//		p.vPos = g_nexustowers[i].m_vPos;
+			//		for (int j = 0; j < MAX_USER; ++j) {
+			//			if (g_clients[j].m_isconnected == true) {
+			//				SendPacket(j, &p);
+			//			}
+			//		}
+			//	}
+			//}
 		}
-
-		//	int idx{ 0 };
-		//	for (auto iter = g_pBlueMinions->begin(); iter != g_pBlueMinions->end(); ++iter, ++idx) {
-		//		g_blueminions[idx].m_x = (*iter)->GetPosition().x;
-		//		g_blueminions[idx].m_y = (*iter)->GetPosition().z;
-		//		g_blueminions[idx].m_anistate = (*iter)->GetAnimState();
-		//		g_blueminions[idx].m_frameTime = (*iter)->GetFrameTime();
-		//		g_blueminions[idx].m_vLook = (*iter)->GetLook();
-		//		g_blueminions[idx].m_maxhp = ((CMinion*)(*iter))->GetCommonStatus()->maxHP;
-		//		g_blueminions[idx].m_curhp = ((CMinion*)(*iter))->GetCommonStatus()->HP;
-
-		//	}
-
-		//	for (int i = 0; i < MAX_USER; ++i) {
-		//		SC_Msg_Minion_Count p;
-		//		p.color = 1;
-		//		p.count = idx;
-		//		p.size = sizeof(p);
-		//		p.type = SC_MINION_COUNT;
-		//		if (g_clients[i].m_isconnected == true) {
-		//			SendPacket(i, &p);
-		//		}
-		//	}
-
-		//	//Send Every User Blue Minion Packet
-		//	for (int i = 0; i < idx; ++i) {
-		//		SC_Msg_Pos_Minion p;
-		//		p.color = 1;
-		//		p.size = sizeof(p);
-		//		p.x = g_blueminions[i].m_x;
-		//		p.y = g_blueminions[i].m_y;
-		//		p.maxhp = g_blueminions[i].m_maxhp;
-		//		p.curhp = g_blueminions[i].m_curhp;
-
-		//		p.state = g_blueminions[i].m_anistate;
-		//		p.type = SC_POS_MINION;
-		//		p.frameTime = g_blueminions[i].m_frameTime;
-		//		p.vLook = g_blueminions[i].m_vLook;
-		//		for (int j = 0; j < MAX_USER; ++j) {
-		//			if (g_clients[j].m_isconnected == true) {
-		//				SendPacket(j, &p);
-		//			}
-		//		}
-		//	}
-
-		//	idx = 0;
-		//	for (auto iter = g_pRedMinions->begin(); iter != g_pRedMinions->end(); ++iter, ++idx) {
-		//		g_redminions[idx].m_x = (*iter)->GetPosition().x;
-		//		g_redminions[idx].m_y = (*iter)->GetPosition().z;
-		//		g_redminions[idx].m_anistate = (*iter)->GetAnimState();
-		//		g_redminions[idx].m_frameTime = (*iter)->GetFrameTime();
-		//		g_redminions[idx].m_vLook = (*iter)->GetLook();
-		//		g_redminions[idx].m_maxhp = ((CMinion*)(*iter))->GetCommonStatus()->maxHP;
-		//		g_redminions[idx].m_curhp = ((CMinion*)(*iter))->GetCommonStatus()->HP;
-		//	}
-
-		//	for (int i = 0; i < MAX_USER; ++i) {
-		//		SC_Msg_Minion_Count p;
-		//		p.color = 0;
-		//		p.count = idx;
-		//		p.size = sizeof(p);
-		//		p.type = SC_MINION_COUNT;
-		//		if (g_clients[i].m_isconnected == true) {
-		//			SendPacket(i, &p);
-		//		}
-		//	}
-
-		//	//Send Every User Red Minion Packet
-		//	for (int i = 0; i < idx; ++i) {
-		//		SC_Msg_Pos_Minion p;
-		//		p.color = 0;
-		//		p.size = sizeof(p);
-		//		p.x = g_redminions[i].m_x;
-		//		p.y = g_redminions[i].m_y;
-		//		p.maxhp = g_redminions[i].m_maxhp;
-		//		p.curhp = g_redminions[i].m_curhp;
-		//		p.type = SC_POS_MINION;
-		//		p.state = g_redminions[i].m_anistate;
-		//		p.frameTime = g_redminions[i].m_frameTime;
-		//		p.vLook = g_redminions[i].m_vLook;
-		//		for (int j = 0; j < MAX_USER; ++j) {
-		//			if (g_clients[j].m_isconnected == true) {
-		//				SendPacket(j, &p);
-		//			}
-		//		}
-		//	}
-
-
-
-		//	for (int i = 0; i < 14; ++i){
-		//		g_nexustowers[i].m_vPos = g_ppNexusTower[i]->GetPosition();
-		//		g_nexustowers[i].m_curhp = g_ppNexusTower[i]->GetStatusInfo()->HP;
-		//		g_nexustowers[i].m_maxhp = g_ppNexusTower[i]->GetStatusInfo()->maxHP;
-		//	}
-
-		//	for (int i = 0; i < 14; ++i) {
-		//		SC_Msg_Pos_Nexus p;
-		//		p.curhp = g_nexustowers[i].m_curhp;
-		//		p.maxhp = g_nexustowers[i].m_maxhp;
-		//		p.size = sizeof(p);
-		//		p.type = SC_POS_NEXUS;
-		//		p.Object_id = i;
-		//		p.vPos = g_nexustowers[i].m_vPos;
-		//		for (int j = 0; j < MAX_USER; ++j) {
-		//			if (g_clients[j].m_isconnected == true) {
-		//				SendPacket(j, &p);
-		//			}
-		//		}
-		//	}
-		//}
 	}
 }
 
+void condition_thread()
+{
+
+}

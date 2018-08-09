@@ -139,5 +139,6 @@ protected: // º¯¼ö
 	ComPtr<ID3D12RootSignature>		m_pGraphicsRootSignature;
 
 	shared_ptr<CNetwork> m_pNetwork;
+	bool m_bBulidFinished{ false };
 };
 

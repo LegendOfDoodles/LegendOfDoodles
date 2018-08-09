@@ -16,8 +16,6 @@ struct EXOVER {
 class CNetwork
 {
 public:
-	HWND m_hWnd{ NULL };
-	
 	SOCKET  m_mysocket;
 	WSABUF	m_send_wsabuf;
 	char 	m_send_buffer[MAX_BUFF_SIZE];
@@ -46,8 +44,9 @@ public:
 	void Initialize();
 	void ProcessPacket(int myid, char *ptr);
 	void Finalize();
-	void ReadPacket(SOCKET sock);
+	void ReadPacket();
 	void SendPacket(int id, void *ptr);
+	void err_display(void* msg);
 
 	void SetPlayers(CCollisionObject** player) { m_ppPlayer = player; }
 	void SetBlueMinions(CBaseObject** blue) { m_ppBlueMinions = blue; }

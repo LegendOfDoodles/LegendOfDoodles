@@ -65,4 +65,5 @@ protected: // º¯¼ö
 	CHeightMapTerrain * m_pTerrain{ NULL };
 
 	bool m_ChangeWeapon{ false };
+	float m_fRecvTime{ 0.f };
 };

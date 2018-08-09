@@ -26,23 +26,6 @@ CUIObjectShader::~CUIObjectShader()
 
 ////////////////////////////////////////////////////////////////////////
 //
-void CUIObjectShader::ReleaseUploadBuffers()
-{
-	if (m_ppObjects)
-	{
-		for (int j = 0; j < m_nObjects; j++)
-		{
-			m_ppObjects[j]->ReleaseUploadBuffers();
-		}
-	}
-
-	if (m_ppMaterials)
-	{
-		for (int i = 0; i<m_nMaterials; ++i)
-			m_ppMaterials[i]->ReleaseUploadBuffers();
-	}
-}
-
 void CUIObjectShader::UpdateShaderVariables(int opt)
 {
 	UNREFERENCED_PARAMETER(opt);

@@ -122,8 +122,6 @@ void CScene::AnimateObjects(float timeElapsed)
 {
 	m_pCamera->Update(timeElapsed);
 
-	
-
 	UpdateShaderVariables();
 
 	for (int i = 0; i < m_nShaders; i++)
@@ -490,7 +488,7 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 
 	BuildLights();
 
-	m_pNetwork->ReadPacket(m_pNetwork->m_mysocket);
+	m_pNetwork->ReadPacket();
 }
 
 void CScene::ReleaseObjects()
@@ -599,8 +597,9 @@ void CScene::GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, XMFLOAT4X4&	 xm
 	p.Character_id = m_pNetwork->m_myid;
 	p.size = sizeof(p);
 	p.type = CS_MOVE_PLAYER;
-	p.x = pickPosition.x;
-	p.y = pickPosition.y;
+	p.x = m_pickWorldPosition.x;
+	p.y = m_pickWorldPosition.z;
+	printf("%f, %f\n", p.x, p.y);
 	m_pNetwork->SendPacket(m_pNetwork->m_myid, &p);
 }
 

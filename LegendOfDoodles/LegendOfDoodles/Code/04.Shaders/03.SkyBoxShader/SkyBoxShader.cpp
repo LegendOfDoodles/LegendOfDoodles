@@ -31,6 +31,8 @@ void CSkyBoxShader::ReleaseUploadBuffers()
 		for (int i = 0; i<m_nMaterials; ++i)
 			m_ppMaterials[i]->ReleaseUploadBuffers();
 	}
+
+	m_bBulidFinished = true;
 }
 
 void CSkyBoxShader::UpdateShaderVariables(int opt)
