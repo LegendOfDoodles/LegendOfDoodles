@@ -21,6 +21,10 @@ struct SC_Msg_Put_Character : public Packet
 	short x;
 	short y;
 };
+struct CS_Msg_Demand_Sync : public Packet
+{
+	BYTE Sync_on;
+};
 struct SC_MsgMoCreate : public Packet
 {
 	BYTE Monster_id;
@@ -206,6 +210,7 @@ struct SC_Msg_Login_Time : public Packet
 #define CS_DELETE_MINION		  206
 #define CS_DEMAND_USE_SKILL		  207
 #define CS_DEMAND_CHANGE_WEAPON   208
+#define CS_DEMAND_SYNC			  209
 //In Client Move Object
 #define CS_UP					  1
 #define CS_DOWN					  2

@@ -66,12 +66,12 @@ void CPlayerShader::UpdateBoundingBoxShaderVariables()
 void CPlayerShader::AnimateObjects(float timeElapsed)
 {
 	//printf("패킷 수신 시작\n");
-	m_fRecvTime += timeElapsed;
-	if (m_bBulidFinished)
-		if (m_fRecvTime >= 1.f) {
-			m_pNetwork->ReadPacket();
-			m_fRecvTime = 0.f;
-		}
+	//m_fRecvTime += timeElapsed;
+	//if (m_bBulidFinished)
+	//	if (m_fRecvTime >= 1.f) {
+	//		m_pNetwork->ReadPacket();
+	//		m_fRecvTime -= 1.f;
+	//	}
 	//printf("패킷 수신 완료\n");
 	for (int j = 0; j < m_nObjects; j++)
 	{

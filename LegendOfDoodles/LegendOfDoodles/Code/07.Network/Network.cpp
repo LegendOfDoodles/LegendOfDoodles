@@ -15,8 +15,10 @@ CNetwork::~CNetwork()
 {
 }
 
-void CNetwork::Initialize()
+void CNetwork::Initialize(HWND hWnd)
 {
+	m_hWnd = hWnd;
+
 	WSADATA	wsadata;
 	WSAStartup(MAKEWORD(2, 2), &wsadata);
 
@@ -30,12 +32,17 @@ void CNetwork::Initialize()
 
 	int Result = WSAConnect(m_mysocket, (sockaddr *)&ServerAddr, sizeof(ServerAddr), NULL, NULL, NULL, NULL);
 	WSAGetLastError();
-	//WSAAsyncSelect(m_mysocket, m_hWnd, WM_SOCKET, FD_CLOSE | FD_READ);
+	WSAAsyncSelect(m_mysocket, m_hWnd, WM_SOCKET, FD_READ);
 
 	m_send_wsabuf.buf = m_send_buffer;
 	m_send_wsabuf.len = MAX_BUFF_SIZE;
 	m_recv_wsabuf.buf = m_recv_buffer;
 	m_recv_wsabuf.len = MAX_BUFF_SIZE;
+}
+
+void CNetwork::Finalize()
+{
+	closesocket(m_mysocket);
 }
 
 void CNetwork::ProcessPacket(int myid, char *ptr)
@@ -200,10 +207,7 @@ void CNetwork::ProcessPacket(int myid, char *ptr)
 	
 }
 
-void CNetwork::Finalize()
-{
-	closesocket(m_mysocket);
-}
+
 //
 void CNetwork::ReadPacket()
 {
@@ -273,7 +277,7 @@ void CNetwork::ReadPacket()
 ////	ReadPacket(m_mysocket,object);
 ////}
 //
-void CNetwork::SendPacket(int id, void* ptr)
+void CNetwork::SendPacket(void* ptr)
 {
 	char *packet = reinterpret_cast<char *>(ptr);
 	EXOVER *s_over = new EXOVER;

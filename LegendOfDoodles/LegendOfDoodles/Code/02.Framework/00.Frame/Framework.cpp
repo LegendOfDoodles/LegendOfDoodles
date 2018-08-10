@@ -98,5 +98,4 @@ void CFramework::ReleaseObjects()
 	{
 		m_pScene->Finalize();
 	}
-	m_pNetwork->Finalize();
 }

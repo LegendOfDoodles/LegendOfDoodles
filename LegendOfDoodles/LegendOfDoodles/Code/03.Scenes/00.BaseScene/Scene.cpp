@@ -600,7 +600,7 @@ void CScene::GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, XMFLOAT4X4&	 xm
 	p.x = m_pickWorldPosition.x;
 	p.y = m_pickWorldPosition.z;
 	printf("%f, %f\n", p.x, p.y);
-	m_pNetwork->SendPacket(m_pNetwork->m_myid, &p);
+	m_pNetwork->SendPacket(&p);
 }
 
 // Process Keyboard Input

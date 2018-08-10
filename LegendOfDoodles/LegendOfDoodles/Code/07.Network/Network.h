@@ -30,6 +30,8 @@ public:
 
 	CBaseObject * m_pSelectedObject{ NULL };
 protected:
+	HWND m_hWnd;
+
 	CCollisionObject ** m_ppPlayer{ NULL };
 	CBaseObject** m_ppBlueMinions{ NULL };
 	CBaseObject** m_ppRedMinions{ NULL };
@@ -41,12 +43,12 @@ protected:
 public:
 	CNetwork();
 	~CNetwork();
-	void Initialize();
+	void Initialize(HWND hWnd);
 	void ProcessPacket(int myid, char *ptr);
 	void Finalize();
 	void ReadPacket();
-	void SendPacket(int id, void *ptr);
-	void err_display(void* msg);
+	void SendPacket(void *ptr);
+	//void err_display(void* msg);
 
 	void SetPlayers(CCollisionObject** player) { m_ppPlayer = player; }
 	void SetBlueMinions(CBaseObject** blue) { m_ppBlueMinions = blue; }

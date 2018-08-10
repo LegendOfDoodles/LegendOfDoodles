@@ -553,9 +553,6 @@
     <ClCompile Include="Code\00.Global\01.Utility\06.HPGaugeManager\HPGaugeManager.cpp">
       <Filter>소스 파일\00.Global\01.Utility\06.HPGaugeManager</Filter>
     </ClCompile>
-    <ClCompile Include="Code\01.Main\LegendOfDoodles.cpp">
-      <Filter>소스 파일\01.Main</Filter>
-    </ClCompile>
     <ClCompile Include="Code\02.Framework\00.Frame\Framework.cpp">
       <Filter>소스 파일\02.Framework\00.Frame</Filter>
     </ClCompile>
@@ -762,6 +759,9 @@
     </ClCompile>
     <ClCompile Include="Code\05.Objects\96.Billboard\99.BillboardObject\Billboard.cpp">
       <Filter>소스 파일\05.Objects\96.Billboard\99.BillboardObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\01.Main\LegendOfDoodles.cpp">
+      <Filter>소스 파일\01.Main</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

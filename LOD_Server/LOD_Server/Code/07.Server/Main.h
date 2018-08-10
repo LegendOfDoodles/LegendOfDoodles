@@ -139,6 +139,7 @@ bool AcceptFinish = false;
 int g_MinionCounts = 0;
 int g_ReuseMinion = -1;
 float g_PacketCoolTime = 0;
+bool g_Clientsync = false;
 void error_display(const char *msg, int err_no)
 {
 	WCHAR *lpMsgBuf;
@@ -250,7 +251,7 @@ void ProcessPacket(int id, char *packet)
 	//서버에서 클라로 보내줘야할 패킷들
 	SC_MsgMoCreate p;
 	SC_Msg_Permit_Use_Skill SkillPacket;
-	cout << packet[1] << endl;
+	//cout << packet[1] << endl;
 	switch (MovePacket->type)
 	{
 		//이동하는 부분
@@ -282,7 +283,11 @@ void ProcessPacket(int id, char *packet)
 	}
 	}*/
 
-
+	case CS_DEMAND_SYNC:
+	{
+		g_Clientsync = true;
+		break;
+	}
 	//재사용을 할 필요가 있을까? --> 적용했는데 잘 안될경우 그냥 필요한 수만큼 선언.
 	case CS_PUT_MINION:
 	{
@@ -482,14 +487,14 @@ void accept_thread()	//새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 
 void timer_thread()
 {
-
+	if(g_Clientsync)
 	while (1)
 	{
 		Sleep(10);
 		g_PacketCoolTime += 10;
 		if (g_PacketCoolTime >= 1000)
 		{
-			//cout << "위치 동기화 패킷 보냈어요~" << endl;
+			cout << "위치 동기화 패킷 보냈어요~" << endl;
 			g_PacketCoolTime = 0;
 			//wait for 0.3second
 			//Sleep(10);

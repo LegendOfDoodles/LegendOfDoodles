@@ -9,6 +9,8 @@
 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 
+#define WM_SOCKET		WM_USER+1
+
 // 프로그램에서 계속 사용될 메크로를 정의합니다.
 #define	FRAME_BUFFER_WIDTH		1280
 #define	FRAME_BUFFER_HEIGHT		720
