@@ -265,8 +265,6 @@ void ProcessPacket(int id, char *packet)
 		XMFLOAT3 pickposition{ (float)MovePacket->x, 0 ,(float)MovePacket->y };
 		g_pScene->GenerateLayEndWorldPosition(pickposition, MovePacket->Character_id);
 		
-		printf("%d\n", MovePacket->Character_id);
-		//g_clients[MovePacket->Character_id].m_changetarget = true;
 		g_clients[MovePacket->Character_id].m_targetlocation.x = (float)MovePacket->x;
 		g_clients[MovePacket->Character_id].m_targetlocation.y = (float)MovePacket->y;
 
@@ -327,6 +325,16 @@ void ProcessPacket(int id, char *packet)
 
 	case CS_DEMAND_USE_SKILL:
 	{
+		for (int i = 0; i < MAX_USER; ++i) {
+			if (g_clients[i].m_isconnected) {
+				SC_Msg_Permit_Use_Skill p;
+				p.Character_id = CSkillPacket->Character_id;
+				p.size = sizeof(p);
+				p.skilltype = CSkillPacket->skilltype;
+				p.type = SC_PERMIT_USE_SKILL;
+				SendPacket(i, &p);
+			}
+		}
 		//dynamic_cast<CPlayer*>(g_ppPlayer[CSkillPacket->Character_id])->ActiveSkill((AnimationsType)CSkillPacket->skilltype);
 		break;
 	}
@@ -564,28 +572,28 @@ void timer_thread()
 				}
 			}
 
-			//	int idx{ 0 };
-			//	for (auto iter = g_pBlueMinions->begin(); iter != g_pBlueMinions->end(); ++iter, ++idx) {
-			//		g_blueminions[idx].m_x = (*iter)->GetPosition().x;
-			//		g_blueminions[idx].m_y = (*iter)->GetPosition().z;
-			//		g_blueminions[idx].m_anistate = (*iter)->GetAnimState();
-			//		g_blueminions[idx].m_frameTime = (*iter)->GetFrameTime();
-			//		g_blueminions[idx].m_vLook = (*iter)->GetLook();
-			//		g_blueminions[idx].m_maxhp = ((CMinion*)(*iter))->GetCommonStatus()->maxHP;
-			//		g_blueminions[idx].m_curhp = ((CMinion*)(*iter))->GetCommonStatus()->HP;
+				int idx{ 0 };
+				for (auto iter = g_pBlueMinions->begin(); iter != g_pBlueMinions->end(); ++iter, ++idx) {
+					g_blueminions[idx].m_x = (*iter)->GetPosition().x;
+					g_blueminions[idx].m_y = (*iter)->GetPosition().z;
+					//g_blueminions[idx].m_anistate = (*iter)->GetAnimState();
+					//g_blueminions[idx].m_frameTime = (*iter)->GetFrameTime();
+					g_blueminions[idx].m_vLook = (*iter)->GetLook();
+					g_blueminions[idx].m_maxhp = ((CMinion*)(*iter))->GetCommonStatus()->maxHP;
+					g_blueminions[idx].m_curhp = ((CMinion*)(*iter))->GetCommonStatus()->HP;
 
-			//	}
+				}
 
-			//	for (int i = 0; i < MAX_USER; ++i) {
-			//		SC_Msg_Minion_Count p;
-			//		p.color = 1;
-			//		p.count = idx;
-			//		p.size = sizeof(p);
-			//		p.type = SC_MINION_COUNT;
-			//		if (g_clients[i].m_isconnected == true) {
-			//			SendPacket(i, &p);
-			//		}
-			//	}
+				for (int i = 0; i < MAX_USER; ++i) {
+					SC_Msg_Minion_Count p;
+					p.color = 1;
+					p.count = idx;
+					p.size = sizeof(p);
+					p.type = SC_MINION_COUNT;
+					if (g_clients[i].m_isconnected == true) {
+						SendPacket(i, &p);
+					}
+				}
 
 			//	//Send Every User Blue Minion Packet
 			//	for (int i = 0; i < idx; ++i) {

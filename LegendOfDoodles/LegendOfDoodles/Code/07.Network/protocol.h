@@ -137,7 +137,7 @@ struct CS_Msg_Demand_Use_Skill : public Packet
 struct SC_Msg_Permit_Use_Skill : public Packet
 {
 	BYTE Character_id;
-	short state;
+	BYTE skilltype;
 };
 
 struct SC_Msg_Minion_Count : public Packet

@@ -115,26 +115,42 @@ void CPlayerShader::RenderShadow(CCamera * pCamera)
 bool CPlayerShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 {
 	UNREFERENCED_PARAMETER(pKeyBuffer);
-
-	// Warning! 스킬 사용 네트워크에 요청
-	// 공격 추가 필요
+	
 	if (GetAsyncKeyState('Q') & 0x0001)
 	{
-		// 스킬 사용 시 자기 플레이어 인식 돼야 함
-		// 스킬 사용 직후 애니메이션 변경 vs 서버에서 처리 된 이후 변경
-		m_ppObjects[0]->ActiveSkill(AnimationsType::SkillQ);
+		CS_Msg_Demand_Use_Skill p;
+		p.Character_id = m_pNetwork->m_myid;
+		p.size = sizeof(p);
+		p.type = CS_DEMAND_USE_SKILL;
+		p.skilltype = AnimationsType::SkillQ;
+		m_pNetwork->SendPacket(&p);
 	}
 	else if (GetAsyncKeyState('W') & 0x0001)
 	{
-		m_ppObjects[0]->ActiveSkill(AnimationsType::SkillW);
+		CS_Msg_Demand_Use_Skill p;
+		p.Character_id = m_pNetwork->m_myid;
+		p.size = sizeof(p);
+		p.type = CS_DEMAND_USE_SKILL;
+		p.skilltype = AnimationsType::SkillW;
+		m_pNetwork->SendPacket(&p);
 	}
 	else if (GetAsyncKeyState('E') & 0x0001)
 	{
-		m_ppObjects[0]->ActiveSkill(AnimationsType::SkillE);
+		CS_Msg_Demand_Use_Skill p;
+		p.Character_id = m_pNetwork->m_myid;
+		p.size = sizeof(p);
+		p.type = CS_DEMAND_USE_SKILL;
+		p.skilltype = AnimationsType::SkillE;
+		m_pNetwork->SendPacket(&p);
 	}
 	else if (GetAsyncKeyState('R') & 0x0001)
 	{
-		m_ppObjects[0]->ActiveSkill(AnimationsType::SkillR);
+		CS_Msg_Demand_Use_Skill p;
+		p.Character_id = m_pNetwork->m_myid;
+		p.size = sizeof(p);
+		p.type = CS_DEMAND_USE_SKILL;
+		p.skilltype = AnimationsType::SkillR;
+		m_pNetwork->SendPacket(&p);
 	}
 
 	return true;

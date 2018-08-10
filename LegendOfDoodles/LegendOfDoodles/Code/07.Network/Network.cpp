@@ -114,6 +114,12 @@ void CNetwork::ProcessPacket(int myid, char *ptr)
 			}
 			break;
 		}
+		case SC_PERMIT_USE_SKILL:
+		{
+			SC_Msg_Permit_Use_Skill *my_packet = reinterpret_cast<SC_Msg_Permit_Use_Skill *>(ptr);
+			m_ppPlayer[my_packet->Character_id]->ActiveSkill((AnimationsType)my_packet->skilltype);
+			break;
+		}
 		case SC_CHANGE_TARGET:
 		{
 			
