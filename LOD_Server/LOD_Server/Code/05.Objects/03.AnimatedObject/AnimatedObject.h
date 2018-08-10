@@ -55,6 +55,7 @@ public: // 공개 함수
 
 	void  SetSpeed(float speed) { m_speed = speed; }
 
+	AnimationsType GetAnimState() { return m_nCurrAnimation; }
 	int GetAnimTimeRemain() { return static_cast<int>(m_nAniLength[m_nAniIndex] - m_fFrameTime); }
 	float GetAnimTimeRemainRatio() { return (m_nAniLength[m_nAniIndex] - m_fFrameTime) / (float)m_nAniLength[m_nAniIndex]; }
 

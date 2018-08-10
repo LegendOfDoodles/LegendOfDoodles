@@ -68,9 +68,9 @@ CScene::~CScene()
 void CScene::Initialize(shared_ptr<CCreateMgr> pCreateMgr, shared_ptr<CNetwork> pNetwork)
 {
 	m_pNetwork = pNetwork;
+	m_pNetwork->SetScene(shared_from_this());
 	BuildObjects(pCreateMgr);
 	CreateShaderVariables(pCreateMgr);
-	
 }
 
 void CScene::Finalize()
@@ -401,15 +401,9 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	((CBuildingMinimapIconShader*)BuildingMapIco_Shader)->SetNexusAndTower(((CNexusTowerShader *)m_ppShaders[5])->GetCollisionObjects());
 
 	m_ppObjects = ((CPlayerShader *)m_ppShaders[3])->GetCollisionObjects();
-	m_pMyPlayer = (CAnimatedObject*)m_ppObjects[m_pNetwork->m_myid];
-
-	((CMinimapShader*)UI_Shader)->SetPlayer(m_ppObjects[0]);
-	((CSkillShader*)Skill_Shader)->SetPlayer(m_ppObjects[0]);
+	
+	SetPlayer();
 	((CSkillShader*)Skill_Shader)->SetChangeWeapon(((CPlayerShader*)m_ppShaders[3])->GetChangeWeapon());
-	((CMinimapShader*)Minimap_Shader)->SetPlayer(m_ppObjects[0]);
-	((CharacterFrameGaugeShader*)CharFrame_Shader)->SetPlayer(m_ppObjects[0]);
-	((CSelectedSpecialShader*)SelectedSpecial_Shader)->SetPlayer(m_ppObjects[0]);
-
 	((CPlayerHPGaugeShader*)Number_Shader)->SetPlayerCnt(((CPlayerShader *)m_ppShaders[3])->GetObjectCount());
 	((CPlayerHPGaugeShader*)Number_Shader)->SetPlayer(((CPlayerShader *)m_ppShaders[3])->GetCollisionObjects());
 
@@ -488,7 +482,17 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 
 	BuildLights();
 
-	m_pNetwork->ReadPacket();
+	m_pNetwork->SetWayfinder(m_pWayFinder);
+}
+
+void CScene::SetPlayer()
+{
+	m_pMyPlayer = (CAnimatedObject*)m_ppObjects[m_pNetwork->m_myid];
+	((CMinimapShader*)UI_Shader)->SetPlayer(m_ppObjects[m_pNetwork->m_myid]);
+	((CSkillShader*)Skill_Shader)->SetPlayer(m_ppObjects[m_pNetwork->m_myid]);
+	((CMinimapShader*)Minimap_Shader)->SetPlayer(m_ppObjects[m_pNetwork->m_myid]);
+	((CharacterFrameGaugeShader*)CharFrame_Shader)->SetPlayer(m_ppObjects[m_pNetwork->m_myid]);
+	((CSelectedSpecialShader*)SelectedSpecial_Shader)->SetPlayer(m_ppObjects[m_pNetwork->m_myid]);
 }
 
 void CScene::ReleaseObjects()
@@ -587,10 +591,9 @@ void CScene::GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, XMFLOAT4X4&	 xm
 
 	if (m_pMyPlayer)
 	{
-		m_pMyPlayer->LookAt(m_pickWorldPosition);
 		m_pMyPlayer->SetPathToGo(m_pWayFinder->GetPathToPosition(
-			XMFLOAT2(m_pMyPlayer->GetPosition().x, m_pMyPlayer->GetPosition().z),
-			XMFLOAT2(m_pickWorldPosition.x, m_pickWorldPosition.z)));
+			m_pMyPlayer->GetPosition(),
+			m_pickWorldPosition));
 	}
 
 	CS_Msg_Demand_Pos_Character p;

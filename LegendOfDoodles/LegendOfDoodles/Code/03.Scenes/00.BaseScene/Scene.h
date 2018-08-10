@@ -41,7 +41,7 @@ struct FOW
 	int m_bFoW[256];
 };
 
-class CScene	// Warning! 인 게임 씬이랑 공백 씬이랑 분리할 필요 있음
+class CScene : public std::enable_shared_from_this<CScene>
 {
 public:	// 생성자, 소멸자
 	CScene();
@@ -63,6 +63,8 @@ public: // 공개 함수
 	void SetShadowViewportsAndScissorRects();
 	void UpdateCamera();
 	void UpdateShadowCamera(int renderStage = 0);
+
+	void SetPlayer();
 
 	// Message Process
 	void OnProcessingMouseMessage(HWND hWnd, UINT messageID,

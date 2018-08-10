@@ -26,6 +26,9 @@ public: // 공개 함수
 
 	virtual void RegenerateLookAt() {}
 
+	virtual void SetHP(float maxHP, float curHP) { maxHP; curHP; }
+	virtual void SetLevel(int level, int maxexp, int exp) { level; maxexp; exp; }
+
 	virtual void SetCollisionSize(float size) { m_fCollisionSize = size; }
 	virtual float GetCollisionSize() const { return m_fCollisionSize; }
 	virtual XMFLOAT2 GetCollisionLevel() { return m_xmf2CollisionLevel; }

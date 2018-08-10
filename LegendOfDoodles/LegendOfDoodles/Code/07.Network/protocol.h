@@ -21,6 +21,11 @@ struct SC_Msg_Put_Character : public Packet
 	short x;
 	short y;
 };
+struct SC_Msg_Target_Location : public Packet
+{
+	BYTE Character_id;
+	XMFLOAT2 location;
+};
 struct CS_Msg_Demand_Sync : public Packet
 {
 	BYTE Sync_on;
@@ -108,6 +113,9 @@ struct SC_Msg_Pos_Character : public Packet
 	short state;
 	short frameTime;
 	short weapon;
+	short level;
+	short maxexp;
+	short exp;
 	XMFLOAT3 vLook;
 };
 struct SC_Msg_What_Is_Packet : public Packet
@@ -201,6 +209,7 @@ struct SC_Msg_Login_Time : public Packet
 #define SC_MINION_COUNT			  113
 #define SC_POS_NEXUS			  114
 #define SC_PACKET				  115
+#define SC_CHANGE_TARGET		  116
 //Client->Server
 #define CS_ACTION				  201
 #define CS_MOVE_PLAYER			  202

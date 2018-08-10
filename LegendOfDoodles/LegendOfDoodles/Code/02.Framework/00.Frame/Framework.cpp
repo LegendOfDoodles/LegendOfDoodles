@@ -33,6 +33,8 @@ bool CFramework::Initialize(HINSTANCE hInstance, HWND hWnd, shared_ptr<CNetwork>
 
 	BuildObjects();
 
+
+
 	return(true);
 }
 

@@ -1,7 +1,9 @@
 #include "protocol.h"
 #include "Winsock2.h"
 
-class CCollisionObject;
+class CAnimatedObject;
+class CScene;
+class CPlayer;
 
 #pragma once
 
@@ -32,13 +34,17 @@ public:
 protected:
 	HWND m_hWnd;
 
-	CCollisionObject ** m_ppPlayer{ NULL };
+	shared_ptr<CWayFinder> m_pWayFinder;
+	shared_ptr<CScene> m_pScene;
+
+	CAnimatedObject ** m_ppPlayer{ NULL };
+	
+	
 	CBaseObject** m_ppBlueMinions{ NULL };
 	CBaseObject** m_ppRedMinions{ NULL };
 	int*		  m_pnBlue{ 0 };
 	int*		  m_pnRed{ 0 };
 	CBaseObject** m_ppNexusTower{ NULL };
-	
 
 public:
 	CNetwork();
@@ -50,7 +56,9 @@ public:
 	void SendPacket(void *ptr);
 	//void err_display(void* msg);
 
-	void SetPlayers(CCollisionObject** player) { m_ppPlayer = player; }
+	void SetScene(shared_ptr<CScene> pScene) { m_pScene = pScene; }
+	void SetWayfinder(shared_ptr<CWayFinder> pWayFinder) { m_pWayFinder = pWayFinder; }
+	void SetPlayers(CCollisionObject** player) { m_ppPlayer = (CAnimatedObject**)player; }
 	void SetBlueMinions(CBaseObject** blue) { m_ppBlueMinions = blue; }
 	void SetRedMinions(CBaseObject** red) { m_ppRedMinions = red; }
 	void SetBlueCount(int* cnt) { m_pnBlue = cnt; }

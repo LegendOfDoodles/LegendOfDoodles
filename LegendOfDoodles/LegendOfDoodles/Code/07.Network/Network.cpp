@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Network.h"
+#include "00.Global/01.Utility/04.WayFinder/WayFinder.h"
 #include "05.Objects\03.AnimatedObject\AnimatedObject.h"
 #include "05.Objects\08.Player\Player.h"
 #include "05.Objects\06.Minion\Minion.h"
@@ -59,6 +60,7 @@ void CNetwork::ProcessPacket(int myid, char *ptr)
 			if (first_time) {
 				first_time = false;
 				m_myid = id;
+				m_pScene->SetPlayer();
 			}
 			if (id == m_myid) {
 				//자기 아이디 처리
@@ -68,6 +70,7 @@ void CNetwork::ProcessPacket(int myid, char *ptr)
 				//딴 아이디 처리
 				m_ppPlayer[id]->CBaseObject::SetPosition(my_packet->x, my_packet->y);
 			}
+			
 			//else { //미니언, 몬스터 관리할때 쓰는거
 			//npc[id - NPC_START].x = my_packet->x;
 			//npc[id - NPC_START].y = my_packet->y;
@@ -87,6 +90,7 @@ void CNetwork::ProcessPacket(int myid, char *ptr)
 		case SC_POS:
 		{
 			SC_Msg_Pos_Character *my_packet = reinterpret_cast<SC_Msg_Pos_Character *>(ptr);
+			printf("%d\n", my_packet->Character_id);
 			int id = my_packet->Character_id;
 			if (first_time) {
 				first_time = false;
@@ -96,19 +100,29 @@ void CNetwork::ProcessPacket(int myid, char *ptr)
 				//자기 아이디 처리
 				//printf("CHECK");
 				m_ppPlayer[id]->CBaseObject::SetPosition(my_packet->x, my_packet->y);
-				//dynamic_cast<CAnimatedObject*>(m_ppPlayer[id])->SetAnimation((AnimationsType)my_packet->state, (float)my_packet->frameTime);
-				//dynamic_cast<CAnimatedObject*>(m_ppPlayer[id])->RegenerateWorldMatrixWithLook(my_packet->vLook);
-				//dynamic_cast<CPlayer*>(m_ppPlayer[id])->SetMaxHP(my_packet->maxhp, my_packet->curhp);
+				m_ppPlayer[id]->SyncAnimation((AnimationsType)my_packet->state, my_packet->frameTime);
+				m_ppPlayer[id]->SetHP(my_packet->maxhp, my_packet->curhp);
+				m_ppPlayer[id]->SetLevel(my_packet->level, my_packet->maxexp, my_packet->exp);
 				//dynamic_cast<CPlayer*>(m_ppPlayer[id])->SetWeapon(my_packet->weapon);
 			}
 			else if (id < NPC_START) { 
 				m_ppPlayer[id]->CBaseObject::SetPosition(my_packet->x, my_packet->y);
-				//dynamic_cast<CAnimatedObject*>(m_ppPlayer[id])->SetAnimation((AnimationsType)my_packet->state, (float)my_packet->frameTime);
-				//dynamic_cast<CAnimatedObject*>(m_ppPlayer[id])->RegenerateWorldMatrixWithLook(my_packet->vLook);
-				//dynamic_cast<CPlayer*>(m_ppPlayer[id])->SetMaxHP(my_packet->maxhp, my_packet->curhp);
+				m_ppPlayer[id]->SyncAnimation((AnimationsType)my_packet->state, my_packet->frameTime);
+				m_ppPlayer[id]->SetHP(my_packet->maxhp, my_packet->curhp);
+				m_ppPlayer[id]->SetLevel(my_packet->level, my_packet->maxexp, my_packet->exp);
 				//dynamic_cast<CPlayer*>(m_ppPlayer[id])->SetWeapon(my_packet->weapon);
 			}
 			break;
+		}
+		case SC_CHANGE_TARGET:
+		{
+			
+			SC_Msg_Target_Location *my_packet = reinterpret_cast<SC_Msg_Target_Location *>(ptr);
+			printf("%d\n", my_packet->Character_id);
+			int id = my_packet->Character_id;
+			m_ppPlayer[id]->SetPathToGo(m_pWayFinder->GetPathToPosition(
+				m_ppPlayer[id]->GetPosition(),
+				my_packet->location));
 		}
 		case SC_PUT_MINION:
 		{
@@ -180,7 +194,7 @@ void CNetwork::ProcessPacket(int myid, char *ptr)
 			}
 			break;
 		}*/
-		/*case SC_MINION_COUNT:
+		case SC_MINION_COUNT:
 		{
 			m_minon_index = 0;
 			SC_Msg_Minion_Count* my_packet = reinterpret_cast<SC_Msg_Minion_Count*>(ptr);
@@ -191,7 +205,7 @@ void CNetwork::ProcessPacket(int myid, char *ptr)
 				*m_pnRed = my_packet->count;
 			}
 			break;
-		}*/
+		}
 		case SC_POS_NEXUS:
 		{
 			SC_Msg_Pos_Nexus* my_packet = reinterpret_cast<SC_Msg_Pos_Nexus*>(ptr);

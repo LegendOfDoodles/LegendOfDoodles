@@ -56,7 +56,8 @@ public:
 	system_clock::time_point m_login;
 	std::chrono::duration<double> m_duration;
 
-
+	XMFLOAT2 m_targetlocation;
+	bool m_changetarget;
 
 	float m_frameTime;
 	XMFLOAT3 m_vLook;
@@ -73,6 +74,7 @@ public:
 		m_x = 0;
 		m_y = 0;
 		m_login = {};
+		m_changetarget = false;
 		ZeroMemory(&m_rxover.m_over, sizeof(WSAOVERLAPPED));
 		m_rxover.m_wsabuf.buf = m_rxover.m_iobuf;
 		m_rxover.m_wsabuf.len = sizeof(m_rxover.m_wsabuf.buf);
@@ -139,7 +141,10 @@ bool AcceptFinish = false;
 int g_MinionCounts = 0;
 int g_ReuseMinion = -1;
 float g_PacketCoolTime = 0;
+
 bool g_Clientsync = false;
+
+
 void error_display(const char *msg, int err_no)
 {
 	WCHAR *lpMsgBuf;
@@ -260,6 +265,23 @@ void ProcessPacket(int id, char *packet)
 		XMFLOAT3 pickposition{ (float)MovePacket->x, 0 ,(float)MovePacket->y };
 		g_pScene->GenerateLayEndWorldPosition(pickposition, MovePacket->Character_id);
 		
+		printf("%d\n", MovePacket->Character_id);
+		//g_clients[MovePacket->Character_id].m_changetarget = true;
+		g_clients[MovePacket->Character_id].m_targetlocation.x = (float)MovePacket->x;
+		g_clients[MovePacket->Character_id].m_targetlocation.y = (float)MovePacket->y;
+
+		for (int i = 0; i < MAX_USER; ++i)
+		{
+			if (g_clients[i].m_isconnected) {
+				if (i == MovePacket->Character_id) continue;
+				SC_Msg_Target_Location p;
+				p.Character_id = MovePacket->Character_id;
+				p.location = g_clients[MovePacket->Character_id].m_targetlocation;
+				p.size = sizeof(p);
+				p.type = SC_CHANGE_TARGET;
+				SendPacket(i, &p);
+			}
+		}
 		
 		//g_clients[MovePacket->Character_id].m_x = MovePacket->x;
 		//g_clients[MovePacket->Character_id].m_y = MovePacket->y;
@@ -496,31 +518,21 @@ void timer_thread()
 		{
 			cout << "위치 동기화 패킷 보냈어요~" << endl;
 			g_PacketCoolTime = 0;
-			//wait for 0.3second
-			//Sleep(10);
-			// cool time += 10
-			// Cool Time >= 1000 -> 작은 패킷 종류 적어서 보내고 원래 전송
-			// 아니면 넘어가는데 작은 패킷 없는거로 보내고
-
 			//system_clock::time_point duration = system_clock::now();
 			for (int i = 0; i < MAX_USER; ++i) {
-				//if (i == 0) cout << "x=" << g_ppPlayer[i]->GetPosition().x << "z =" << g_ppPlayer[i]->GetPosition().z << endl;
 				g_clients[i].m_x = g_ppPlayer[i]->GetPosition().x;
 				g_clients[i].m_y = g_ppPlayer[i]->GetPosition().z;
-
-				//if(i==0) cout << "x=" << g_clients[i].m_x << "z =" << g_clients[i].m_y << endl;
-				//g_clients[i].m_anistate = g_ppPlayer[i]->GetAnimState();
-				//g_clients[i].m_frameTime = g_ppPlayer[i]->GetFrameTime();
-				//g_clients[i].m_vLook = g_ppPlayer[i]->GetLook();
-				/*g_clients[i].m_maxhp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->maxHP;
+				g_clients[i].m_anistate = g_ppPlayer[i]->GetAnimState();
+				g_clients[i].m_frameTime = g_ppPlayer[i]->GetAnimTimeRemain();
+				g_clients[i].m_maxhp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->maxHP;
 				g_clients[i].m_curhp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->HP;
 
 				g_clients[i].m_level = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->Level;
 				g_clients[i].m_maxexp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->MaxExp;
 				g_clients[i].m_exp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->Exp;
 
-				g_clients[i].m_weaponstate = ((CPlayer*)g_ppPlayer[i])->GetWeaponState();
-				g_clients[i].m_duration = duration - g_clients[i].m_login;*/
+				//g_clients[i].m_weaponstate = ((CPlayer*)g_ppPlayer[i])->GetWeaponState();
+				//g_clients[i].m_duration = duration - g_clients[i].m_login;
 			}
 
 			//Send Every User's Position Packet
@@ -531,14 +543,17 @@ void timer_thread()
 					p.Character_id = i;
 					p.size = sizeof(p);
 					p.type = SC_POS;
-					//p.maxhp = g_clients[i].m_maxhp;
-					//p.curhp = g_clients[i].m_curhp;
+					p.maxhp = g_clients[i].m_maxhp;
+					p.curhp = g_clients[i].m_curhp;
+					p.level = g_clients[i].m_level;
+					p.maxexp = g_clients[i].m_maxexp;
+					p.exp = g_clients[i].m_exp;
+
 					//p.weapon = g_clients[i].m_weaponstate;
 					p.x = g_clients[i].m_x;
 					p.y = g_clients[i].m_y;
-					//p.state = g_clients[i].m_anistate;
-					//p.frameTime = g_clients[i].m_frameTime;
-					//p.vLook = g_clients[i].m_vLook;
+					p.state = g_clients[i].m_anistate;
+					p.frameTime = g_clients[i].m_frameTime;
 
 					for (int j = 0; j < MAX_USER; ++j) {
 						if (g_clients[j].m_isconnected == true) {
@@ -664,5 +679,5 @@ void timer_thread()
 
 void condition_thread()
 {
-
+	
 }
