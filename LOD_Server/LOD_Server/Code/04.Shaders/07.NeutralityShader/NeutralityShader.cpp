@@ -143,6 +143,7 @@ void CNeutralityShader::BuildObjects(void *pContext)
 
 		pRoider->SetNexusPoses(blueNexusPos, redNexusPos);
 		pRoider->SaveCurrentState();
+		pRoider->SetTag(20000 + cnt);
 
 		m_ppObjects[cnt] = pRoider;
 	}
@@ -175,6 +176,7 @@ void CNeutralityShader::BuildObjects(void *pContext)
 
 		pGolem->SetNexusPoses(blueNexusPos, redNexusPos);
 		pGolem->SaveCurrentState();
+		pGolem->SetTag(20000 + cnt);
 
 		m_ppObjects[cnt] = pGolem;
 		cnt++;

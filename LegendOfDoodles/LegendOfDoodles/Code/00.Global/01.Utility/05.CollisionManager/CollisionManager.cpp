@@ -277,6 +277,20 @@ CCollisionObject* CCollisionManager::RequestNearObject(CCollisionObject * pCol, 
 	return nearObject;
 }
 
+CCollisionObject * CCollisionManager::RequestObjectByTag(short tag)
+{
+	if (m_Winner != TeamType::None) return NULL;
+
+	for (auto i = m_lstColliders.begin(); i != m_lstColliders.end(); ++i)
+	{
+		if ((*i)->GetTag() == tag)
+		{
+			return (*i);
+		}
+	}
+	return nullptr;
+}
+
 /*
 	1 0  7
 	2 ¤± 6

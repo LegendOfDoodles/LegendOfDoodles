@@ -62,8 +62,14 @@ void CMinion::Render(CCamera * pCamera, UINT instanceCnt)
 	}
 }
 
-void CMinion::SetState(StatesType newState)
+void CMinion::SetState(StatesType newState, shared_ptr<CWayFinder> pWayFinder)
 {
+	if ((m_curState == States::Chase || m_curState == States::Attack) && newState == States::Walk)
+	{
+		SetEnemy(NULL);
+		GenerateSubPathToMainPath(pWayFinder);
+	}
+
 	m_nextState = m_curState = newState;
 
 	switch (newState)
@@ -99,21 +105,6 @@ void CMinion::SetState(StatesType newState)
 	}
 }
 
-void CMinion::PlayIdle(float timeElapsed)
-{
-	UNREFERENCED_PARAMETER(timeElapsed);
-
-	//CCollisionObject* enemy{ m_pColManager->RequestNearObject(this, m_detectRange) };
-
-	//if (!enemy) return;
-	//if (!Chaseable(enemy)) return;
-
-	//SetEnemy(enemy);
-
-	//if (Attackable(enemy)) SetState(States::Attack);
-	//else SetState(States::Chase);
-}
-
 void CMinion::PlayWalk(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)
 {
 	if (NoneDestination(PathType::Sub))
@@ -124,39 +115,14 @@ void CMinion::PlayWalk(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)
 	{
 		MoveToSubDestination(timeElapsed);
 	}
-	PlayIdle(timeElapsed);
 }
 
 void CMinion::PlayChase(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)
 {
-	//if (!Chaseable(m_pEnemy))
-	//{
-	//	SetEnemy(NULL);
-	//	GenerateSubPathToMainPath(pWayFinder);
-	//	SetState(States::Walk);
-	//}
-	//else
-	//{
-	//	MoveToSubDestination(timeElapsed, pWayFinder);
-	//}
-
-	//if (Attackable(m_pEnemy)) SetState(States::Attack);
-}
-
-void CMinion::PlayAttack(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)
-{
-	UNREFERENCED_PARAMETER(timeElapsed);
-
-	//if (!CheckEnemyState(m_pEnemy))
-	//{
-	//	SetEnemy(NULL);
-	//	GenerateSubPathToMainPath(pWayFinder);
-	//	SetState(States::Walk);
-	//}
-	//else if (!Attackable(m_pEnemy))
-	//{
-	//	SetNextState(States::Chase);
-	//}
+	if (Chaseable(m_pEnemy))
+	{
+		MoveToSubDestination(timeElapsed, pWayFinder);
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -216,7 +182,7 @@ void CSwordMinion::Animate(float timeElapsed)
 	case States::Attack:
 		if (GetAnimTimeRemainRatio() <= 0.05f)
 		{
-			//LookAt(m_pEnemy->GetPosition());
+			if (!m_pEnemy) LookAt(m_pEnemy->GetPosition());
 		}
 		if (m_nCurrAnimation == Animations::Attack1) {
 			if (m_curState == m_nextState)
@@ -224,11 +190,6 @@ void CSwordMinion::Animate(float timeElapsed)
 				if (m_fFrameTime < m_nAniLength[m_nAniIndex] / 2) break;
 				m_nCurrAnimation = Animations::Attack2;
 				m_fFrameTime = 0;
-			}
-			else
-			{
-				if (GetAnimTimeRemainRatio() > 0.05) break;
-				SetState(m_nextState);
 			}
 		}
 		else if (m_nCurrAnimation == Animations::Attack2)
@@ -238,11 +199,6 @@ void CSwordMinion::Animate(float timeElapsed)
 				if (m_fFrameTime < m_nAniLength[m_nAniIndex]) break;
 				m_nCurrAnimation = Animations::Attack1;
 				m_fFrameTime = 0;
-			}
-			else
-			{
-				if (GetAnimTimeRemainRatio() > 0.05) break;
-				SetState(m_nextState);
 			}
 		}
 		break;
@@ -303,7 +259,7 @@ void CMagicMinion::Animate(float timeElapsed)
 	case States::Attack:
 		if (GetAnimTimeRemainRatio() <= 0.05f)
 		{
-			//LookAt(m_pEnemy->GetPosition());
+			if(!m_pEnemy) LookAt(m_pEnemy->GetPosition());
 		}
 		if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f
 			&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f) {
@@ -316,11 +272,6 @@ void CMagicMinion::Animate(float timeElapsed)
 				m_nCurrAnimation = Animations::Attack2;
 				m_fFrameTime = 0;
 			}
-			else
-			{
-				if (GetAnimTimeRemainRatio() > 0.05) break;
-				SetState(m_nextState);
-			}
 		}
 		else if (m_nCurrAnimation == Animations::Attack2)
 		{
@@ -329,11 +280,6 @@ void CMagicMinion::Animate(float timeElapsed)
 				if (m_fFrameTime < m_nAniLength[m_nAniIndex]) break;
 				m_nCurrAnimation = Animations::Attack1;
 				m_fFrameTime = 0;
-			}
-			else
-			{
-				if (GetAnimTimeRemainRatio() > 0.05) break;
-				SetState(m_nextState);
 			}
 		}
 		break;
@@ -385,6 +331,20 @@ CBowMinion::~CBowMinion()
 // 공개 함수
 void CBowMinion::Animate(float timeElapsed)
 {
+	if (m_TeamType == TeamType::Red)
+	{
+		if (GetPosition().z < TERRAIN_SIZE_HEIGHT * 0.5f)
+		{
+			if (!m_pEnemy)
+			{
+				printf("적 없음\n");
+			}
+			else
+			{
+				printf("적 있음\n");
+			}
+		}
+	}
 	switch (m_curState) {
 	case States::Idle:
 		if (m_nCurrAnimation != Animations::Idle) m_nCurrAnimation = Animations::Idle;
@@ -392,7 +352,7 @@ void CBowMinion::Animate(float timeElapsed)
 	case States::Attack:
 		if (GetAnimTimeRemainRatio() <= 0.05f)
 		{
-			//LookAt(m_pEnemy->GetPosition());
+			if (!m_pEnemy) LookAt(m_pEnemy->GetPosition());
 		}
 		if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f
 			&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f) {
@@ -404,11 +364,6 @@ void CBowMinion::Animate(float timeElapsed)
 			{
 				if (m_fFrameTime < m_nAniLength[m_nAniIndex]) break;
 				m_fFrameTime = 0;
-			}
-			else
-			{
-				if (GetAnimTimeRemainRatio() > 0.05) break;
-				SetState(m_nextState);
 			}
 		}
 		break;

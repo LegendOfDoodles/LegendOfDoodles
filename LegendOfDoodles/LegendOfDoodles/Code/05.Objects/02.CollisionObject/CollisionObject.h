@@ -36,10 +36,11 @@ public: // 공개 함수
 	virtual void NotifyDamageTeam(TeamType type) { type; }
 
 	StatesType GetState() { return m_curState; }
-	virtual void SetState(StatesType newState) { m_curState = newState; }
+	virtual void SetState(StatesType newState, shared_ptr<CWayFinder> pWayFinder = nullptr) { m_curState = newState; }
 
 	void SetNextState(StatesType newState) { m_nextState = newState; }
 	void SetEnemy(CCollisionObject* enemy) { m_pEnemy = enemy; }
+	void SetEnemyByTag(short tag) { m_pEnemy = m_pColManager->RequestObjectByTag(tag); }
 
 	virtual void SetCollisionManager(shared_ptr<CCollisionManager> manager) { m_pColManager = manager; }
 	void ResetCollisionLevel() {
@@ -70,13 +71,13 @@ public: // 공개 함수
 	void Activate() { m_Activated = true; }
 	void Deactivate() { m_Activated = false; }
 
-	void SetTag(int id) { m_tag = id; }
-	int GetTag() { return m_tag; }
+	void SetTag(short id) { m_tag = id; }
+	short GetTag() { return m_tag; }
 
 protected: // 내부 함수
 
 protected: // 변수
-	int m_tag{ 0 };
+	short m_tag{ 0 };
 
 	float m_fCollisionSize{ 1 };
 	XMFLOAT2 m_xmf2CollisionLevel{ 0,0 };

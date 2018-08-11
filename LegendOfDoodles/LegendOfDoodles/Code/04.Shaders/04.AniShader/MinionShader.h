@@ -35,8 +35,7 @@ public: // 공개 함수
 
 	virtual bool OnProcessKeyInput(UCHAR* pKeyBuffer);
 
-	void SpawnMinion(ObjectType minionKind = ObjectType::SwordMinion, int tag = 0);
-	CollisionObjectList* GetMinionList(TeamType teamType, ObjectType objectType);
+	void SpawnMinion(ObjectType minionKind = ObjectType::SwordMinion, short tag = 0);
 
 	void SetCollisionManager(shared_ptr<CCollisionManager> pManger) { m_pColManager = pManger; }
 	void SetThrowingManager(shared_ptr<CThrowingMgr> pManger) { m_pThrowingMgr = pManger; }

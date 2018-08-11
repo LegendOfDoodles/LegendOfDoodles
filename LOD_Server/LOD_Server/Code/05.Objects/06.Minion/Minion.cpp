@@ -45,11 +45,9 @@ void CMinion::SetState(StatesType newState)
 	{
 		if (g_clients[i].m_isconnected) {
 			SC_Msg_Set_Minion_State p;
-			p.Minion_Species = m_ObjectType;
 			p.Minion_State = newState;
 			p.Minion_Tag = m_tag;
 			p.size = sizeof(p);
-			p.Team_Type = m_TeamType;
 			p.type = SC_MINION_STATE;
 			SendPacket(i, &p);
 		}
@@ -97,9 +95,22 @@ void CMinion::PlayIdle(float timeElapsed)
 	if (enemy)
 	{
 		if (!Chaseable(enemy)) return;
-
+		
 		SetEnemy(enemy);
 
+		// 적 태그 정보 보내기
+		for (int i = 0; i < MAX_USER; ++i)
+		{
+			if (g_clients[i].m_isconnected)
+			{
+				SC_Msg_Enemy_Tag p;
+				p.Minion_Tag = m_tag;
+				p.Enemy_Tag = enemy->GetTag();
+				p.size = sizeof(p);
+				p.type = SC_SET_ENEMY;
+				SendPacket(i, &p);
+			}
+		}
 		if (Attackable(enemy)) SetState(States::Attack);
 		else SetState(States::Chase);
 	}

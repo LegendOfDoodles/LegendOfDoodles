@@ -77,8 +77,9 @@ void CRoider::Render(CCamera * pCamera, UINT instanceCnt)
 	}
 }
 
-void CRoider::SetState(StatesType newState)
+void CRoider::SetState(StatesType newState, shared_ptr<CWayFinder> pWayFinder)
 {
+	UNREFERENCED_PARAMETER(pWayFinder);
 	m_nextState = m_curState = newState;
 
 	switch (newState)

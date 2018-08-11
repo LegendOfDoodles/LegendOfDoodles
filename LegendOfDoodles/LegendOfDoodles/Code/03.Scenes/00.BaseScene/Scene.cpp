@@ -484,6 +484,7 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	BuildLights();
 
 	m_pNetwork->SetWayfinder(m_pWayFinder);
+	m_pNetwork->SetCollisionManager(m_pCollisionManager);
 }
 
 void CScene::SetPlayer()

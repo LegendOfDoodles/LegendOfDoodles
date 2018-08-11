@@ -105,6 +105,7 @@ void CNexusTowerShader::BuildObjects(void *pContext)
 
 			pBuild->ResetCollisionLevel();
 			pBuild->SetStatic(StaticType::Static);
+			pBuild->SetTag(30000 + cnt);
 
 			m_ppObjects[cnt++] = pBuild;
 		}

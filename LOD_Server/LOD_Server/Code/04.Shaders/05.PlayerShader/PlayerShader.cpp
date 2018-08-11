@@ -131,6 +131,7 @@ void CPlayerShader::BuildObjects(void *pContext)
 			pPlayer->SetTerrain(m_pTerrain);
 
 			pPlayer->Rotate(90, 0, 0);
+			pPlayer->SetTag(10000 + i);
 
 			m_ppObjects[i++] = pPlayer;
 		}

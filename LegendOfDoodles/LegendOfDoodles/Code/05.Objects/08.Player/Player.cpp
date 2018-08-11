@@ -130,8 +130,9 @@ void CPlayer::ActiveSkill(AnimationsType act)
 	}
 }
 
-void CPlayer::SetState(StatesType newState)
+void CPlayer::SetState(StatesType newState, shared_ptr<CWayFinder> pWayFinder)
 {
+	UNREFERENCED_PARAMETER(pWayFinder);
 	m_curState = newState;
 
 	switch (newState)

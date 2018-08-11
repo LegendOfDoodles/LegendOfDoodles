@@ -312,6 +312,7 @@ void CNexusTowerShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pC
 
 			pBuild->ResetCollisionLevel();
 			pBuild->SetStatic(StaticType::Static);
+			pBuild->SetTag(static_cast<short>(30000 + cnt));
 
 			pBuild->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[i].ptr + (incrementSize * j));
 			pBuild->SetCbvGPUDescriptorHandlePtrForBB(m_pcbvGPUDescriptorStartHandle[m_nHeaps - 1].ptr + (incrementSize * cnt));

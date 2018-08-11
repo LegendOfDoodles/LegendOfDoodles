@@ -18,7 +18,7 @@ public:	// 외부 함수
 
 	virtual void ActiveSkill(AnimationsType act);
 
-	virtual void SetState(StatesType newState);
+	virtual void SetState(StatesType newState, shared_ptr<CWayFinder> pWayFinder = nullptr);
 	virtual void SetHP(float maxHP, float curHP) { m_StatusInfo.maxHP = maxHP; m_StatusInfo.HP = curHP; }
 	virtual void SetLevel(int level, int maxexp, int exp) { m_StatusInfo.Level = level; m_StatusInfo.MaxExp = maxexp; m_StatusInfo.Exp = exp;}
 	virtual void ChangeSkillSet(CSkeleton** ppskill);

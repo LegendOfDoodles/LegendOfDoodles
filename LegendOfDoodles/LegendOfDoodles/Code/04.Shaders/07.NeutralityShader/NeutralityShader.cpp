@@ -437,6 +437,7 @@ void CNeutralityShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pC
 
 		pRoider->SetNexusPoses(blueNexusPos, redNexusPos);
 		pRoider->SaveCurrentState();
+		pRoider->SetTag(static_cast<short>(20000 + cnt));
 
 		m_ppObjects[cnt] = pRoider;
 	}
@@ -471,6 +472,7 @@ void CNeutralityShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pC
 
 		pGolem->SetNexusPoses(blueNexusPos, redNexusPos);
 		pGolem->SaveCurrentState();
+		pGolem->SetTag(static_cast<short>(20000 + cnt));
 
 		m_ppObjects[cnt] = pGolem;
 		cnt++;

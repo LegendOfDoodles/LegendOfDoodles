@@ -62,6 +62,7 @@ protected: // º¯¼ö
 	shared_ptr<CFSMMgr> m_pFSMMgr;
 
 	bool m_bSpawning{ false };
+	bool m_neverSpawn{ false };
 
 	float m_readyTime{ 0.0f };
 	float m_spawnTime{ 0.0f };

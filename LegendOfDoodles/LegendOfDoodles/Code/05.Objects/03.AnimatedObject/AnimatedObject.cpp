@@ -282,27 +282,38 @@ bool CAnimatedObject::Chaseable(CCollisionObject * other)
 bool CAnimatedObject::IsArrive(float dst, PathType type)
 {
 	XMFLOAT2 curPos{ GetPosition().x, GetPosition().z };
-	Path* curPath{ NULL };
-	XMFLOAT2 curDestination;
 	if (type == PathType::Main)
 	{
-		curPath = m_mainPath;
-		curDestination = m_destination;
+		int distanceSqr = static_cast<int>(Vector2::DistanceSquare(curPos, m_destination));
+		// 정확히 도착 하는 경우
+		if (distanceSqr < dst * dst) return true;
+		if (!m_mainPath->empty())
+		{
+			XMFLOAT2 next = m_mainPath->front().To();
+			XMFLOAT2 dstToNext = Vector2::Subtract(next, m_destination, true);
+			float dstToNextLengthSqr = Vector2::DistanceSquare(next, m_destination);
+			float curPosToNextLength = Vector2::DotProduct(Vector2::Subtract(next, curPos), dstToNext);
+
+			return dstToNextLengthSqr > curPosToNextLength * curPosToNextLength;
+		}
 	}
 	else if (type == PathType::Sub)
 	{
-		curPath = m_subPath;
-		curDestination = m_subDestination;
-	}
+		int distanceSqr = static_cast<int>(Vector2::DistanceSquare(curPos, m_subDestination));
+		// 정확히 도착 하는 경우
+		if (distanceSqr < dst * dst) return true;
 
-	int distanceSqr = static_cast<int>(Vector2::DistanceSquare(curPos, curDestination));
-	// 정확히 도착 하는 경우
-	if (distanceSqr < dst * dst) return true;
-	if (!curPath->empty())
-	{
-		XMFLOAT2 next = curPath->front().To();
-		XMFLOAT2 dstToNext = Vector2::Subtract(next, curDestination, true);
-		float dstToNextLengthSqr = Vector2::DistanceSquare(next, curDestination);
+		XMFLOAT2 next;
+		if (!m_subPath->empty())
+		{
+			next = m_subPath->front().To();
+		}
+		else
+		{
+			next = m_mainPath->front().To();
+		}
+		XMFLOAT2 dstToNext = Vector2::Subtract(next, m_subDestination, true);
+		float dstToNextLengthSqr = Vector2::DistanceSquare(next, m_subDestination);
 		float curPosToNextLength = Vector2::DotProduct(Vector2::Subtract(next, curPos), dstToNext);
 
 		return dstToNextLengthSqr > curPosToNextLength * curPosToNextLength;

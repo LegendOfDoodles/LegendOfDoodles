@@ -22,6 +22,7 @@ public:
 	void Update(shared_ptr<CWayFinder> pWayFinder);
 	void RequestCollide(CollisionType type, CCollisionObject* pCol, float data1 = 0, float data2 = 0,float damage=0);
 	CCollisionObject* RequestNearObject(CCollisionObject* pCol,float lengh);
+	CCollisionObject* RequestObjectByTag(short tag);
 	~CCollisionManager();
 	int(*GetFoW(void))[NODE_HEIGHT];
 

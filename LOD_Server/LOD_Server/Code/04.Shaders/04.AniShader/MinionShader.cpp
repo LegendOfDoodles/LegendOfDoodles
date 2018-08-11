@@ -51,7 +51,7 @@ void CMinionShader::AnimateObjects(float timeElapsed)
 
 	m_spawnTime += timeElapsed;
 
-	if (m_bSpawning)
+	if (!m_neverSpawn && m_bSpawning)
 	{
 		if ((m_spawnTime - m_preSpawnTime) >= 0.25f)
 		{
@@ -73,9 +73,10 @@ void CMinionShader::AnimateObjects(float timeElapsed)
 			}
 			m_preSpawnTime = m_spawnTime;
 		}
-		if (m_curSpawnCount >= 20)
+		if (m_curSpawnCount >= 1)
 		{
 			m_bSpawning = false;
+			m_neverSpawn = true;
 		}
 	}
 
@@ -122,6 +123,7 @@ void CMinionShader::AnimateObjects(float timeElapsed)
 		curObjectList->remove_if(removeFunc);
 	}
 }
+
 ////////////////////////////////////////////////////////////////////////
 // 내부 함수
 

@@ -214,21 +214,18 @@ void CNetwork::ProcessPacket(char *ptr)
 		case SC_MINION_STATE:
 		{
 			SC_Msg_Set_Minion_State* my_packet = reinterpret_cast<SC_Msg_Set_Minion_State*>(ptr);
-			//printf("my_packet->Team_Type:    %d     my_packet->Minion_Species:    %d    my_packet->Minion_State:     %d\n",
-			//	my_packet->Team_Type, my_packet->Minion_Species, my_packet->Minion_State);
-			CollisionObjectList* minionList{ m_pMinionShader->GetMinionList((TeamType)my_packet->Team_Type, (ObjectType)my_packet->Minion_Species) };
 			
-
-			if (!minionList) break;
-
-			for (auto i = minionList->begin(); i != minionList->end(); ++i)
-			{
-				if ((*i)->GetTag() == my_packet->Minion_Tag)
-				{
-					(*i)->SetState((StatesType)my_packet->Minion_State);
-					break;
-				}
-			}
+			CCollisionObject* target{ m_pColManager->RequestObjectByTag(my_packet->Minion_Tag) };
+			target->SetState((StatesType)my_packet->Minion_State, m_pWayFinder);
+			break;
+		}
+		case SC_SET_ENEMY:
+		{
+			SC_Msg_Enemy_Tag* my_packet = reinterpret_cast<SC_Msg_Enemy_Tag*>(ptr);
+			
+			CCollisionObject* target{ m_pColManager->RequestObjectByTag(my_packet->Minion_Tag) };
+			target->SetEnemyByTag(my_packet->Enemy_Tag);
+			printf("------------------적 설정 완료-------------------\n");
 			break;
 		}
 		case SC_POS_NEXUS:

@@ -290,14 +290,10 @@ bool CMinionShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 {
 	UNREFERENCED_PARAMETER(pKeyBuffer);
 
-	if (GetAsyncKeyState('N') & 0x0001)
-	{
-		SpawnMinion(ObjectType::SwordMinion, 0);
-	}
 	return true;
 }
 
-void CMinionShader::SpawnMinion(ObjectType minionKind, int tag)
+void CMinionShader::SpawnMinion(ObjectType minionKind, short tag)
 {
 	static bool dataPrepared{ false };
 	static CSkinnedMesh swordMinionMesh(m_pCreateMgr, "Resource//3D//Minion//Mesh//Sword Minion.meshinfo");
@@ -470,42 +466,6 @@ void CMinionShader::SpawnMinion(ObjectType minionKind, int tag)
 		m_pGaugeManger->AddMinionObject(d);
 	}
 }
-
-CollisionObjectList * CMinionShader::GetMinionList(TeamType teamType, ObjectType objectType)
-{
-	if (teamType == TeamType::Blue)
-	{
-		if (objectType == ObjectType::SwordMinion)
-		{
-			return &m_blueSwordMinions;
-		}
-		else if (objectType == ObjectType::BowMinion)
-		{
-			return &m_blueBowMinions;
-		}
-		else if (objectType == ObjectType::StaffMinion)
-		{
-			return &m_blueStaffMinions;
-		}
-	}
-	else if (teamType == TeamType::Red)
-	{
-		if (objectType == ObjectType::SwordMinion)
-		{
-			return &m_redSwordMinions;
-		}
-		else if (objectType == ObjectType::BowMinion)
-		{
-			return &m_redBowMinions;
-		}
-		else if (objectType == ObjectType::StaffMinion)
-		{
-			return &m_redStaffMinions;
-		}
-	}
-	return nullptr;
-}
-
 
 ////////////////////////////////////////////////////////////////////////
 // 내부 함수

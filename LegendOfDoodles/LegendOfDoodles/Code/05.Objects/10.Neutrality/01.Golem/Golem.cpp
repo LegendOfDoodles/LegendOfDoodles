@@ -87,8 +87,9 @@ void CGolem::Render(CCamera * pCamera, UINT instanceCnt)
 	}
 }
 
-void CGolem::SetState(StatesType newState)
+void CGolem::SetState(StatesType newState, shared_ptr<CWayFinder> pWayFinder)
 {
+	UNREFERENCED_PARAMETER(pWayFinder);
 	m_nextState = m_curState = newState;
 
 	switch (newState)

@@ -164,10 +164,13 @@ struct SC_Msg_Spawn_Minion : public Packet
 };
 struct SC_Msg_Set_Minion_State : public Packet
 {
-	BYTE Team_Type;
-	int Minion_Species;
-	int Minion_Tag;
+	short Minion_Tag;
 	BYTE Minion_State;
+};
+struct SC_Msg_Enemy_Tag : public Packet
+{
+	short Minion_Tag;
+	short Enemy_Tag;
 };
 struct SC_Msg_Pos_Nexus : public Packet
 {
@@ -223,6 +226,7 @@ struct SC_Msg_Login_Time : public Packet
 #define SC_CHANGE_TARGET		  116
 #define SC_MINION_SPAWN			  117
 #define SC_MINION_STATE			  118
+#define SC_SET_ENEMY			  119
 //Client->Server
 #define CS_ACTION				  201
 #define CS_MOVE_PLAYER			  202
