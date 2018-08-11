@@ -144,26 +144,6 @@ void CMinionShader::AnimateObjects(float timeElapsed)
 		return false;
 	};
 
-	//m_spawnTime += timeElapsed;
-
-	//if (m_spawnTime >= 0.0f && m_spawnTime <= 5.0f)
-	//{
-	//	bool spawned{ false };
-	//	for (float time = m_spawnTime - m_preSpawnTime; time >= 0.25; time -= 0.25)
-	//	{
-	//		spawned = true;
-	//		SpawnMinion();
-	//	}
-	//	if(spawned) m_preSpawnTime = m_spawnTime;
-	//}
-
-	//if (m_spawnTime >= 30.0f)
-	//{
-	//	m_spawnTime -= 30.0f;
-	//	m_preSpawnTime = -0.25f;
-	//	m_curSpawnCount = 0;
-	//}
-
 	CollisionObjectList* curObjectList{ NULL };
 	for (int i = 0; i < 6; ++i)
 	{
@@ -310,16 +290,222 @@ bool CMinionShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 {
 	UNREFERENCED_PARAMETER(pKeyBuffer);
 
-	static float R = 0.0f;
-	static float M = 0.0f;
-
 	if (GetAsyncKeyState('N') & 0x0001)
 	{
-		SpawnMinion();
+		SpawnMinion(ObjectType::SwordMinion, 0);
 	}
-
 	return true;
 }
+
+void CMinionShader::SpawnMinion(ObjectType minionKind, int tag)
+{
+	static bool dataPrepared{ false };
+	static CSkinnedMesh swordMinionMesh(m_pCreateMgr, "Resource//3D//Minion//Mesh//Sword Minion.meshinfo");
+	static CSkinnedMesh bowMinionMesh(m_pCreateMgr, "Resource//3D//Minion//Mesh//Bow Minion.meshinfo");
+	static CSkinnedMesh staffMinionMesh(m_pCreateMgr, "Resource//3D//Minion//Mesh//Magic Minion.meshinfo");
+	static UINT incrementSize{ m_pCreateMgr->GetCbvSrvDescriptorIncrementSize() };
+	static CCubeMesh boundingBoxMesh(m_pCreateMgr,
+		CONVERT_PaperUnit_to_InG(3.0f), CONVERT_PaperUnit_to_InG(1.5f), CONVERT_PaperUnit_to_InG(7.0f),
+		0, 0, -CONVERT_PaperUnit_to_InG(4.0f));
+	boundingBoxMesh.AddRef();
+
+	static CSkeleton SIdle("Resource//3D//Minion//Animation//Sword//Minion_S_Idle.aniinfo");
+	static CSkeleton SAtk1("Resource//3D//Minion//Animation//Sword//Minion_S_Attack1.aniinfo");
+	static CSkeleton SAtk2("Resource//3D//Minion//Animation//Sword//Minion_S_Attack2.aniinfo");
+	static CSkeleton SWalkStart("Resource//3D//Minion//Animation//Sword//Minion_S_WalkStart.aniinfo");
+	static CSkeleton SWalk("Resource//3D//Minion//Animation//Sword//Minion_S_Walk.aniinfo");
+	static CSkeleton SDie("Resource//3D//Minion//Animation//Sword//Minion_S_Die.aniinfo");
+
+	static CSkeleton BIdle("Resource//3D//Minion//Animation//Bow//Minion_B_Idle.aniinfo");
+	static CSkeleton BAtk("Resource//3D//Minion//Animation//Bow//Minion_B_Attack.aniinfo");
+	static CSkeleton BWalkStart("Resource//3D//Minion//Animation//Bow//Minion_B_WalkStart.aniinfo");
+	static CSkeleton BWalk("Resource//3D//Minion//Animation//Bow//Minion_B_Walk.aniinfo");
+	static CSkeleton BDie("Resource//3D//Minion//Animation//Bow//Minion_B_Die.aniinfo");
+
+	static CSkeleton MIdle("Resource//3D//Minion//Animation//Magic//Minion_M_Idle.aniinfo");
+	static CSkeleton MAtk1("Resource//3D//Minion//Animation//Magic//Minion_M_Attack1.aniinfo");
+	static CSkeleton MAtk2("Resource//3D//Minion//Animation//Magic//Minion_M_Attack2.aniinfo");
+	static CSkeleton MWalkStart("Resource//3D//Minion//Animation//Magic//Minion_M_WalkStart.aniinfo");
+	static CSkeleton MWalk("Resource//3D//Minion//Animation//Magic//Minion_M_Walk.aniinfo");
+	static CSkeleton MDie("Resource//3D//Minion//Animation//Magic//Minion_M_Die.aniinfo");
+
+	static CSkeleton Die("Resource//3D//Minion//Animation//Minion_Die.aniinfo");
+
+	if (!dataPrepared)
+	{
+		swordMinionMesh.SetBoundingBox(
+			XMFLOAT3(0.0f, 0.0f, -CONVERT_PaperUnit_to_InG(4.0f)),
+			XMFLOAT3(CONVERT_PaperUnit_to_InG(1.5f), CONVERT_PaperUnit_to_InG(1.5f), CONVERT_PaperUnit_to_InG(3.5f)));
+		swordMinionMesh.AddRef();
+		bowMinionMesh.SetBoundingBox(
+			XMFLOAT3(0.0f, 0.0f, -CONVERT_PaperUnit_to_InG(4.0f)),
+			XMFLOAT3(CONVERT_PaperUnit_to_InG(1.5f), CONVERT_PaperUnit_to_InG(1.5f), CONVERT_PaperUnit_to_InG(3.5f)));
+		bowMinionMesh.AddRef();
+		staffMinionMesh.SetBoundingBox(
+			XMFLOAT3(0.0f, 0.0f, -CONVERT_PaperUnit_to_InG(4.0f)),
+			XMFLOAT3(CONVERT_PaperUnit_to_InG(1.5f), CONVERT_PaperUnit_to_InG(1.5f), CONVERT_PaperUnit_to_InG(3.5f)));
+		staffMinionMesh.AddRef();
+		dataPrepared = true;
+		return;
+	}
+
+	m_pCreateMgr->ResetCommandList();
+
+	int wayKind{ 0 };
+
+	CollisionObjectList objectAdder;
+	for (; wayKind < 4; ++wayKind)
+	{
+		int index{ GetPossibleIndex() };
+
+		if (index == NONE) break;
+		CMinion *pMinionObject{ NULL };
+
+		switch (minionKind)
+		{
+		case ObjectType::SwordMinion:
+			pMinionObject = new CSwordMinion(m_pCreateMgr);
+			pMinionObject->SetMesh(0, &swordMinionMesh);
+			break;
+		case ObjectType::StaffMinion:
+			pMinionObject = new CMagicMinion(m_pCreateMgr);
+			pMinionObject->SetMesh(0, &staffMinionMesh);
+			pMinionObject->SetThrowingManager(m_pThrowingMgr);
+			break;
+		case ObjectType::BowMinion:
+			pMinionObject = new CBowMinion(m_pCreateMgr);
+			pMinionObject->SetMesh(0, &bowMinionMesh);
+			pMinionObject->SetThrowingManager(m_pThrowingMgr);
+			break;
+		}
+
+		pMinionObject->SetTag(tag++);
+		pMinionObject->SetBoundingMesh(&boundingBoxMesh);
+		pMinionObject->SetCollisionSize(CONVERT_PaperUnit_to_InG(2));
+
+		switch (minionKind)
+		{
+		case ObjectType::SwordMinion:
+			pMinionObject->SetSkeleton(&SIdle);
+			pMinionObject->SetSkeleton(&SAtk1);
+			pMinionObject->SetSkeleton(&SAtk2);
+			pMinionObject->SetSkeleton(&SWalkStart);
+			pMinionObject->SetSkeleton(&SWalk);
+			pMinionObject->SetSkeleton(&SDie);
+			break;
+		case ObjectType::StaffMinion:
+			pMinionObject->SetSkeleton(&MIdle);
+			pMinionObject->SetSkeleton(&MAtk1);
+			pMinionObject->SetSkeleton(&MAtk2);
+			pMinionObject->SetSkeleton(&MWalkStart);
+			pMinionObject->SetSkeleton(&MWalk);
+			pMinionObject->SetSkeleton(&MDie);
+			break;
+		case ObjectType::BowMinion:
+			pMinionObject->SetSkeleton(&BIdle);
+			pMinionObject->SetSkeleton(&BAtk);
+			pMinionObject->SetSkeleton(&BAtk);
+			pMinionObject->SetSkeleton(&BWalkStart);
+			pMinionObject->SetSkeleton(&BWalk);
+			pMinionObject->SetSkeleton(&BDie);
+			break;
+		}
+
+		pMinionObject->SetTerrain(m_pTerrain);
+
+		pMinionObject->Rotate(90, 0, 0);
+
+		pMinionObject->SaveIndex(index);
+
+		XMFLOAT2 firstPos{ m_pathes[wayKind].front().From() };
+		pMinionObject->CBaseObject::SetPosition(XMFLOAT3(firstPos.x, 0, firstPos.y));
+
+		pMinionObject->SetCollisionManager(m_pColManager);
+
+		pMinionObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * index));
+		pMinionObject->SetCbvGPUDescriptorHandlePtrForBB(m_pcbvGPUDescriptorStartHandle[1].ptr + (incrementSize * index));
+
+		if (wayKind == Minion_Species::Blue_Up || wayKind == Minion_Species::Blue_Down)
+		{
+			pMinionObject->SetTeam(TeamType::Blue);
+			switch (minionKind)
+			{
+			case ObjectType::SwordMinion:
+				m_blueSwordMinions.emplace_back(pMinionObject);
+				break;
+			case ObjectType::StaffMinion:
+				m_blueStaffMinions.emplace_back(pMinionObject);
+				break;
+			case ObjectType::BowMinion:
+				m_blueBowMinions.emplace_back(pMinionObject);
+				break;
+			}
+		}
+		else if (wayKind == Minion_Species::Red_Up || wayKind == Minion_Species::Red_Down)
+		{
+			pMinionObject->SetTeam(TeamType::Red);
+			switch (minionKind)
+			{
+			case ObjectType::SwordMinion:
+				m_redSwordMinions.emplace_back(pMinionObject);
+				break;
+			case ObjectType::StaffMinion:
+				m_redStaffMinions.emplace_back(pMinionObject);
+				break;
+			case ObjectType::BowMinion:
+				m_redBowMinions.emplace_back(pMinionObject);
+				break;
+			}
+		}
+		pMinionObject->SetPathToGo(new Path(m_pathes[wayKind]));
+
+		objectAdder.emplace_back(pMinionObject);
+	}
+	m_pCreateMgr->ExecuteCommandList();
+
+	for (auto& d : objectAdder)
+	{
+		d->ReleaseUploadBuffers();
+		m_pColManager->AddCollider(d);
+		m_pGaugeManger->AddMinionObject(d);
+	}
+}
+
+CollisionObjectList * CMinionShader::GetMinionList(TeamType teamType, ObjectType objectType)
+{
+	if (teamType == TeamType::Blue)
+	{
+		if (objectType == ObjectType::SwordMinion)
+		{
+			return &m_blueSwordMinions;
+		}
+		else if (objectType == ObjectType::BowMinion)
+		{
+			return &m_blueBowMinions;
+		}
+		else if (objectType == ObjectType::StaffMinion)
+		{
+			return &m_blueStaffMinions;
+		}
+	}
+	else if (teamType == TeamType::Red)
+	{
+		if (objectType == ObjectType::SwordMinion)
+		{
+			return &m_redSwordMinions;
+		}
+		else if (objectType == ObjectType::BowMinion)
+		{
+			return &m_redBowMinions;
+		}
+		else if (objectType == ObjectType::StaffMinion)
+		{
+			return &m_redStaffMinions;
+		}
+	}
+	return nullptr;
+}
+
 
 ////////////////////////////////////////////////////////////////////////
 // 내부 함수
@@ -544,197 +730,4 @@ int CMinionShader::GetPossibleIndex()
 		}
 	}
 	return NONE;
-}
-
-void CMinionShader::SpawnMinion()
-{
-	static bool dataPrepared{ false };
-	static CSkinnedMesh swordMinionMesh(m_pCreateMgr, "Resource//3D//Minion//Mesh//Sword Minion.meshinfo");
-	static CSkinnedMesh bowMinionMesh(m_pCreateMgr, "Resource//3D//Minion//Mesh//Bow Minion.meshinfo");
-	static CSkinnedMesh staffMinionMesh(m_pCreateMgr, "Resource//3D//Minion//Mesh//Magic Minion.meshinfo");
-	static UINT incrementSize{ m_pCreateMgr->GetCbvSrvDescriptorIncrementSize() };
-	static CCubeMesh boundingBoxMesh(m_pCreateMgr,
-		CONVERT_PaperUnit_to_InG(3.0f), CONVERT_PaperUnit_to_InG(1.5f), CONVERT_PaperUnit_to_InG(7.0f),
-		0, 0, -CONVERT_PaperUnit_to_InG(4.0f));
-	boundingBoxMesh.AddRef();
-
-	static CSkeleton SIdle("Resource//3D//Minion//Animation//Sword//Minion_S_Idle.aniinfo");
-	static CSkeleton SAtk1("Resource//3D//Minion//Animation//Sword//Minion_S_Attack1.aniinfo");
-	static CSkeleton SAtk2("Resource//3D//Minion//Animation//Sword//Minion_S_Attack2.aniinfo");
-	static CSkeleton SWalkStart("Resource//3D//Minion//Animation//Sword//Minion_S_WalkStart.aniinfo");
-	static CSkeleton SWalk("Resource//3D//Minion//Animation//Sword//Minion_S_Walk.aniinfo");
-	static CSkeleton SDie("Resource//3D//Minion//Animation//Sword//Minion_S_Die.aniinfo");
-
-	static CSkeleton BIdle("Resource//3D//Minion//Animation//Bow//Minion_B_Idle.aniinfo");
-	static CSkeleton BAtk("Resource//3D//Minion//Animation//Bow//Minion_B_Attack.aniinfo");
-	static CSkeleton BWalkStart("Resource//3D//Minion//Animation//Bow//Minion_B_WalkStart.aniinfo");
-	static CSkeleton BWalk("Resource//3D//Minion//Animation//Bow//Minion_B_Walk.aniinfo");
-	static CSkeleton BDie("Resource//3D//Minion//Animation//Bow//Minion_B_Die.aniinfo");
-
-	static CSkeleton MIdle("Resource//3D//Minion//Animation//Magic//Minion_M_Idle.aniinfo");
-	static CSkeleton MAtk1("Resource//3D//Minion//Animation//Magic//Minion_M_Attack1.aniinfo");
-	static CSkeleton MAtk2("Resource//3D//Minion//Animation//Magic//Minion_M_Attack2.aniinfo");
-	static CSkeleton MWalkStart("Resource//3D//Minion//Animation//Magic//Minion_M_WalkStart.aniinfo");
-	static CSkeleton MWalk("Resource//3D//Minion//Animation//Magic//Minion_M_Walk.aniinfo");
-	static CSkeleton MDie("Resource//3D//Minion//Animation//Magic//Minion_M_Die.aniinfo");
-
-	static CSkeleton Die("Resource//3D//Minion//Animation//Minion_Die.aniinfo");
-
-	if (!dataPrepared)
-	{
-		swordMinionMesh.SetBoundingBox(
-			XMFLOAT3(0.0f, 0.0f, -CONVERT_PaperUnit_to_InG(4.0f)),
-			XMFLOAT3(CONVERT_PaperUnit_to_InG(1.5f), CONVERT_PaperUnit_to_InG(1.5f), CONVERT_PaperUnit_to_InG(3.5f)));
-		swordMinionMesh.AddRef();
-		bowMinionMesh.SetBoundingBox(
-			XMFLOAT3(0.0f, 0.0f, -CONVERT_PaperUnit_to_InG(4.0f)),
-			XMFLOAT3(CONVERT_PaperUnit_to_InG(1.5f), CONVERT_PaperUnit_to_InG(1.5f), CONVERT_PaperUnit_to_InG(3.5f)));
-		bowMinionMesh.AddRef();
-		staffMinionMesh.SetBoundingBox(
-			XMFLOAT3(0.0f, 0.0f, -CONVERT_PaperUnit_to_InG(4.0f)),
-			XMFLOAT3(CONVERT_PaperUnit_to_InG(1.5f), CONVERT_PaperUnit_to_InG(1.5f), CONVERT_PaperUnit_to_InG(3.5f)));
-		staffMinionMesh.AddRef();
-		dataPrepared = true;
-		return;
-	}
-
-	m_pCreateMgr->ResetCommandList();
-
-	int wayKind{ 0 };
-
-	m_kind = ObjectType::BowMinion;
-
-	//// 전체 생성되는 수의 절반은 근접 미니언
-	//if (m_curSpawnCount < 10)
-	//{
-	//	m_kind = ObjectType::SwordMinion;
-	//}
-	//// 나머지 절반 마법 / 원기리 미니언
-	//else if (m_curSpawnCount < 15)
-	//{
-	//	m_kind = ObjectType::StaffMinion;
-	//}
-	//else
-	//{
-	//	m_kind = ObjectType::BowMinion;
-	//}
-
-	CollisionObjectList objectAdder;
-	for (; wayKind < 4; ++wayKind)
-	{
-		int index{ GetPossibleIndex() };
-
-		if (index == NONE) break;
-		CMinion *pMinionObject{ NULL };
-
-		switch (m_kind)
-		{
-		case ObjectType::SwordMinion:
-			pMinionObject = new CSwordMinion(m_pCreateMgr);
-			pMinionObject->SetMesh(0, &swordMinionMesh);
-			break;
-		case ObjectType::StaffMinion:
-			pMinionObject = new CMagicMinion(m_pCreateMgr);
-			pMinionObject->SetMesh(0, &staffMinionMesh);
-			pMinionObject->SetThrowingManager(m_pThrowingMgr);
-			break;
-		case ObjectType::BowMinion:
-			pMinionObject = new CBowMinion(m_pCreateMgr);
-			pMinionObject->SetMesh(0, &bowMinionMesh);
-			pMinionObject->SetThrowingManager(m_pThrowingMgr);
-			break;
-		}
-
-		pMinionObject->SetBoundingMesh(&boundingBoxMesh);
-		pMinionObject->SetCollisionSize(CONVERT_PaperUnit_to_InG(2));
-
-		switch (m_kind)
-		{
-		case ObjectType::SwordMinion:
-			pMinionObject->SetSkeleton(&SIdle);
-			pMinionObject->SetSkeleton(&SAtk1);
-			pMinionObject->SetSkeleton(&SAtk2);
-			pMinionObject->SetSkeleton(&SWalkStart);
-			pMinionObject->SetSkeleton(&SWalk);
-			pMinionObject->SetSkeleton(&SDie);
-			break;
-		case ObjectType::StaffMinion:
-			pMinionObject->SetSkeleton(&MIdle);
-			pMinionObject->SetSkeleton(&MAtk1);
-			pMinionObject->SetSkeleton(&MAtk2);
-			pMinionObject->SetSkeleton(&MWalkStart);
-			pMinionObject->SetSkeleton(&MWalk);
-			pMinionObject->SetSkeleton(&MDie);
-			break;
-		case ObjectType::BowMinion:
-			pMinionObject->SetSkeleton(&BIdle);
-			pMinionObject->SetSkeleton(&BAtk);
-			pMinionObject->SetSkeleton(&BAtk);
-			pMinionObject->SetSkeleton(&BWalkStart);
-			pMinionObject->SetSkeleton(&BWalk);
-			pMinionObject->SetSkeleton(&BDie);
-			break;
-		}
-
-		pMinionObject->SetTerrain(m_pTerrain);
-
-		pMinionObject->Rotate(90, 0, 0);
-
-		pMinionObject->SaveIndex(index);
-
-		pMinionObject->SetPathToGo(new Path(m_pathes[wayKind]));
-
-		XMFLOAT2 firstPos{ m_pathes[wayKind].front().From() };
-		pMinionObject->CBaseObject::SetPosition(XMFLOAT3(firstPos.x, 0, firstPos.y));
-
-		pMinionObject->SetCollisionManager(m_pColManager);
-
-		pMinionObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * index));
-		pMinionObject->SetCbvGPUDescriptorHandlePtrForBB(m_pcbvGPUDescriptorStartHandle[1].ptr + (incrementSize * index));
-
-		if (wayKind == Minion_Species::Blue_Up || wayKind == Minion_Species::Blue_Down)
-		{
-			pMinionObject->SetTeam(TeamType::Blue);
-			switch (m_kind)
-			{
-			case ObjectType::SwordMinion:
-				m_blueSwordMinions.emplace_back(pMinionObject);
-				break;
-			case ObjectType::StaffMinion:
-				m_blueStaffMinions.emplace_back(pMinionObject);
-				break;
-			case ObjectType::BowMinion:
-				m_blueBowMinions.emplace_back(pMinionObject);
-				break;
-			}
-		}
-		else if (wayKind == Minion_Species::Red_Up || wayKind == Minion_Species::Red_Down)
-		{
-			pMinionObject->SetTeam(TeamType::Red);
-			switch (m_kind)
-			{
-			case ObjectType::SwordMinion:
-				m_redSwordMinions.emplace_back(pMinionObject);
-				break;
-			case ObjectType::StaffMinion:
-				m_redStaffMinions.emplace_back(pMinionObject);
-				break;
-			case ObjectType::BowMinion:
-				m_redBowMinions.emplace_back(pMinionObject);
-				break;
-			}
-		}
-		objectAdder.emplace_back(pMinionObject);
-	}
-	m_pCreateMgr->ExecuteCommandList();
-
-	for (auto& d : objectAdder)
-	{
-		d->ReleaseUploadBuffers();
-		m_pColManager->AddCollider(d);
-		m_pGaugeManger->AddMinionObject(d);
-	}
-
-	// 현재 웨이브에서 미니언이 생성된 개수
-	++m_curSpawnCount;
 }

@@ -138,7 +138,6 @@ void CAnimatedObject::SetPathToGo(Path * path)
 	}
 	m_mainPath = path;
 	ResetDestination();
-	if (Walkable()) SetState(States::Walk);
 }
 
 ProcessType CAnimatedObject::MoveToDestination(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)

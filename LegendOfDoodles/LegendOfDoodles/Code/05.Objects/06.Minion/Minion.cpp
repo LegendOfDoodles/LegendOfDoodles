@@ -103,15 +103,15 @@ void CMinion::PlayIdle(float timeElapsed)
 {
 	UNREFERENCED_PARAMETER(timeElapsed);
 
-	CCollisionObject* enemy{ m_pColManager->RequestNearObject(this, m_detectRange) };
+	//CCollisionObject* enemy{ m_pColManager->RequestNearObject(this, m_detectRange) };
 
-	if (!enemy) return;
-	if (!Chaseable(enemy)) return;
+	//if (!enemy) return;
+	//if (!Chaseable(enemy)) return;
 
-	SetEnemy(enemy);
+	//SetEnemy(enemy);
 
-	if (Attackable(enemy)) SetState(States::Attack);
-	else SetState(States::Chase);
+	//if (Attackable(enemy)) SetState(States::Attack);
+	//else SetState(States::Chase);
 }
 
 void CMinion::PlayWalk(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)
@@ -129,34 +129,34 @@ void CMinion::PlayWalk(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)
 
 void CMinion::PlayChase(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)
 {
-	if (!Chaseable(m_pEnemy))
-	{
-		SetEnemy(NULL);
-		GenerateSubPathToMainPath(pWayFinder);
-		SetState(States::Walk);
-	}
-	else
-	{
-		MoveToSubDestination(timeElapsed, pWayFinder);
-	}
+	//if (!Chaseable(m_pEnemy))
+	//{
+	//	SetEnemy(NULL);
+	//	GenerateSubPathToMainPath(pWayFinder);
+	//	SetState(States::Walk);
+	//}
+	//else
+	//{
+	//	MoveToSubDestination(timeElapsed, pWayFinder);
+	//}
 
-	if (Attackable(m_pEnemy)) SetState(States::Attack);
+	//if (Attackable(m_pEnemy)) SetState(States::Attack);
 }
 
 void CMinion::PlayAttack(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)
 {
 	UNREFERENCED_PARAMETER(timeElapsed);
 
-	if (!CheckEnemyState(m_pEnemy))
-	{
-		SetEnemy(NULL);
-		GenerateSubPathToMainPath(pWayFinder);
-		SetState(States::Walk);
-	}
-	else if (!Attackable(m_pEnemy))
-	{
-		SetNextState(States::Chase);
-	}
+	//if (!CheckEnemyState(m_pEnemy))
+	//{
+	//	SetEnemy(NULL);
+	//	GenerateSubPathToMainPath(pWayFinder);
+	//	SetState(States::Walk);
+	//}
+	//else if (!Attackable(m_pEnemy))
+	//{
+	//	SetNextState(States::Chase);
+	//}
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -216,11 +216,7 @@ void CSwordMinion::Animate(float timeElapsed)
 	case States::Attack:
 		if (GetAnimTimeRemainRatio() <= 0.05f)
 		{
-			LookAt(m_pEnemy->GetPosition());
-		}
-		if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f
-			&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f) {
-			m_pColManager->RequestCollide(CollisionType::SECTERFORM, this, m_attackRange, 180, m_StatusInfo.Atk);
+			//LookAt(m_pEnemy->GetPosition());
 		}
 		if (m_nCurrAnimation == Animations::Attack1) {
 			if (m_curState == m_nextState)
@@ -268,7 +264,7 @@ void CSwordMinion::Animate(float timeElapsed)
 		if (m_nCurrAnimation != Animations::Die) m_nCurrAnimation = Animations::Die;
 		if (GetAnimTimeRemainRatio() < 0.05)
 		{
-			m_curState = States::Remove;
+			SetState(States::Remove);
 		}
 		break;
 	default:
@@ -307,7 +303,7 @@ void CMagicMinion::Animate(float timeElapsed)
 	case States::Attack:
 		if (GetAnimTimeRemainRatio() <= 0.05f)
 		{
-			LookAt(m_pEnemy->GetPosition());
+			//LookAt(m_pEnemy->GetPosition());
 		}
 		if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f
 			&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f) {
@@ -357,7 +353,7 @@ void CMagicMinion::Animate(float timeElapsed)
 		if (m_nCurrAnimation != Animations::Die) m_nCurrAnimation = Animations::Die;
 		if (GetAnimTimeRemainRatio() < 0.05)
 		{
-			m_curState = States::Remove;
+			SetState(States::Remove);
 		}
 		break;
 	default:
@@ -396,7 +392,7 @@ void CBowMinion::Animate(float timeElapsed)
 	case States::Attack:
 		if (GetAnimTimeRemainRatio() <= 0.05f)
 		{
-			LookAt(m_pEnemy->GetPosition());
+			//LookAt(m_pEnemy->GetPosition());
 		}
 		if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f
 			&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f) {
@@ -433,7 +429,7 @@ void CBowMinion::Animate(float timeElapsed)
 		if (m_nCurrAnimation != Animations::Die) m_nCurrAnimation = Animations::Die;
 		if (GetAnimTimeRemainRatio() < 0.05)
 		{
-			m_curState = States::Remove;
+			SetState(States::Remove);
 		}
 		break;
 	default:

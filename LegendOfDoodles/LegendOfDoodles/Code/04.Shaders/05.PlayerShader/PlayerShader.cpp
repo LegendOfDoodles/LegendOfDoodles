@@ -119,7 +119,7 @@ bool CPlayerShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 	if (GetAsyncKeyState('Q') & 0x0001)
 	{
 		CS_Msg_Demand_Use_Skill p;
-		p.Character_id = m_pNetwork->m_myid;
+		p.Character_id = (BYTE)m_pNetwork->m_myid;
 		p.size = sizeof(p);
 		p.type = CS_DEMAND_USE_SKILL;
 		p.skilltype = AnimationsType::SkillQ;
@@ -128,7 +128,7 @@ bool CPlayerShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 	else if (GetAsyncKeyState('W') & 0x0001)
 	{
 		CS_Msg_Demand_Use_Skill p;
-		p.Character_id = m_pNetwork->m_myid;
+		p.Character_id = (BYTE)m_pNetwork->m_myid;
 		p.size = sizeof(p);
 		p.type = CS_DEMAND_USE_SKILL;
 		p.skilltype = AnimationsType::SkillW;
@@ -137,7 +137,7 @@ bool CPlayerShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 	else if (GetAsyncKeyState('E') & 0x0001)
 	{
 		CS_Msg_Demand_Use_Skill p;
-		p.Character_id = m_pNetwork->m_myid;
+		p.Character_id = (BYTE)m_pNetwork->m_myid;
 		p.size = sizeof(p);
 		p.type = CS_DEMAND_USE_SKILL;
 		p.skilltype = AnimationsType::SkillE;
@@ -146,7 +146,7 @@ bool CPlayerShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 	else if (GetAsyncKeyState('R') & 0x0001)
 	{
 		CS_Msg_Demand_Use_Skill p;
-		p.Character_id = m_pNetwork->m_myid;
+		p.Character_id = (BYTE)m_pNetwork->m_myid;
 		p.size = sizeof(p);
 		p.type = CS_DEMAND_USE_SKILL;
 		p.skilltype = AnimationsType::SkillR;
@@ -396,9 +396,7 @@ void CPlayerShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pConte
 #endif
 			pPlayer->SetBoundingMesh(pBoundingBoxMesh);
 			pPlayer->SetCollisionSize(CONVERT_PaperUnit_to_InG(3));
-			if (x == 0 && z == 0) {
-				pPlayer->tag = 1;
-			}
+
 			pPlayer->CBaseObject::SetPosition(500.0f + (z * 9000.0f), 0.0f, 2000.0f + (x * 1000.0f));
 			if (z == 1) {
 				pPlayer->SetTeam(TeamType::Red);

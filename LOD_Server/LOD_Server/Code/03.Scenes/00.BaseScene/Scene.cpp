@@ -43,6 +43,8 @@ void CScene::Finalize()
 
 void CScene::AnimateObjects(float timeElapsed)
 {
+	g_GameTime += timeElapsed;
+
 	for (int i = 0; i < m_nShaders; i++)
 	{
 		m_ppShaders[i]->AnimateObjects(timeElapsed);

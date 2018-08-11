@@ -8,6 +8,7 @@
 //#include "00.Global/01.Utility/06.HPGaugeManager/HPGaugeManager.h"
 #include "06.Meshes/01.Mesh/MeshImporter.h"
 #include "00.Global/02.AI/00.FSMMgr/FSMMgr.h"
+#include "07.Server/Main.h"
 
 /// <summary>
 /// 목적: 미니언 관리 및 그리기 용도
@@ -31,7 +32,6 @@ CMinionShader::~CMinionShader()
 // 공개 함수
 void CMinionShader::Initialize(void *pContext)
 {
-	
 	BuildObjects(pContext);
 }
 
@@ -49,25 +49,46 @@ void CMinionShader::AnimateObjects(float timeElapsed)
 		return false;
 	};
 
-	//m_spawnTime += timeElapsed;
+	m_spawnTime += timeElapsed;
 
-	//if (m_spawnTime >= 0.0f && m_spawnTime <= 5.0f)
-	//{
-	//	bool spawned{ false };
-	//	for (float time = m_spawnTime - m_preSpawnTime; time >= 0.25; time -= 0.25)
-	//	{
-	//		spawned = true;
-	//		SpawnMinion();
-	//	}
-	//	if(spawned) m_preSpawnTime = m_spawnTime;
-	//}
+	if (m_bSpawning)
+	{
+		if ((m_spawnTime - m_preSpawnTime) >= 0.25f)
+		{
+			for (float time = m_spawnTime - m_preSpawnTime; time >= 0.25f; time -= 0.25f)
+			{
+				int curTag{ m_minionId };
+				SpawnMinion();
+				for (int i = 0; i < MAX_USER; ++i)
+				{
+					if (g_clients[i].m_isconnected) {
+						SC_Msg_Spawn_Minion p;
+						p.Minion_Species = m_kind;
+						p.Minion_Tag = curTag;
+						p.size = sizeof(p);
+						p.type = SC_MINION_SPAWN;
+						SendPacket(i, &p);
+					}
+				}
+			}
+			m_preSpawnTime = m_spawnTime;
+		}
+		if (m_curSpawnCount >= 20)
+		{
+			m_bSpawning = false;
+		}
+	}
 
-	//if (m_spawnTime >= 30.0f)
-	//{
-	//	m_spawnTime -= 30.0f;
-	//	m_preSpawnTime = -0.25f;
-	//	m_curSpawnCount = 0;
-	//}
+	if (m_spawnTime >= 30.0f)
+	{
+		m_spawnTime -= 30.0f;
+		m_preSpawnTime = 0.0f;
+		m_curSpawnCount = 0;
+		if (g_GameTime >= 30.0f)
+		{
+			m_bSpawning = true;
+		}
+	}
 
 	CollisionObjectList* curObjectList{ NULL };
 	for (int i = 0; i < 6; ++i)
@@ -259,6 +280,7 @@ void CMinionShader::SpawnMinion()
 			break;
 		}
 
+		pMinionObject->SetTag(m_minionId++);
 		pMinionObject->SetCollisionSize(CONVERT_PaperUnit_to_InG(2));
 
 		switch (m_kind)
@@ -294,8 +316,6 @@ void CMinionShader::SpawnMinion()
 		pMinionObject->Rotate(90, 0, 0);
 
 		pMinionObject->SaveIndex(index);
-
-		pMinionObject->SetPathToGo(new Path(m_pathes[wayKind]));
 
 		XMFLOAT2 firstPos{ m_pathes[wayKind].front().From() };
 		pMinionObject->CBaseObject::SetPosition(XMFLOAT3(firstPos.x, 0, firstPos.y));
@@ -334,6 +354,8 @@ void CMinionShader::SpawnMinion()
 				break;
 			}
 		}
+		pMinionObject->SetPathToGo(new Path(m_pathes[wayKind]));
+
 		objectAdder.emplace_back(pMinionObject);
 	}
 
@@ -344,4 +366,6 @@ void CMinionShader::SpawnMinion()
 
 	// 현재 웨이브에서 미니언이 생성된 개수
 	++m_curSpawnCount;
+
+	if (m_minionId >= 1000) m_minionId = 0;
 }

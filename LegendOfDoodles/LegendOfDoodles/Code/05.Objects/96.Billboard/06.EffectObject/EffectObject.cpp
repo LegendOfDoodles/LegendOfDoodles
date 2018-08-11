@@ -5,7 +5,7 @@
 ////////////////////////////////////////////////////////////////////////
 // 持失切, 社瑚切
 CEffectObject::CEffectObject(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes)
-	: CCollisionObject(pCreateMgr)
+	: CCollisionObject(pCreateMgr, nMeshes)
 {
 	m_ObjectType = ObjectType::EffectObject;
 

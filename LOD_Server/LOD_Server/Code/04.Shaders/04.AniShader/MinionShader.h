@@ -61,8 +61,13 @@ protected: // º¯¼ö
 
 	shared_ptr<CFSMMgr> m_pFSMMgr;
 
-	float m_spawnTime{ 10.1f };
+	bool m_bSpawning{ false };
+
+	float m_readyTime{ 0.0f };
+	float m_spawnTime{ 0.0f };
 	float m_preSpawnTime{ 0.0f };
 
 	int m_curSpawnCount{ 0 };
+
+	int m_minionId{ 0 };	// 0 ~ 1000
 };

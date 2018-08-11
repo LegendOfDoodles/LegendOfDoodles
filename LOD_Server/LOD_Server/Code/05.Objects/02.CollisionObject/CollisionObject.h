@@ -12,7 +12,6 @@ public:	// 생성자, 소멸자
 	virtual ~CCollisionObject();
 
 public: // 공개 함수
-	int tag{ 0 };
 	bool CheckEnemyState(CCollisionObject* other);
 	virtual bool Attackable(CCollisionObject* other);
 	virtual bool AttackableFarRange(CCollisionObject* other);
@@ -68,9 +67,14 @@ public: // 공개 함수
 	void Activate() { m_Activated = true; }
 	void Deactivate() { m_Activated = false; }
 
+	void SetTag(int id) { m_tag = id; }
+	int GetTag() { return m_tag; }
+
 protected: // 내부 함수
 
 protected: // 변수
+	int m_tag{ 0 };
+
 	float m_fCollisionSize{ 1 };
 	XMFLOAT2 m_xmf2CollisionLevel{ 0,0 };
 

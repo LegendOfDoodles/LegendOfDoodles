@@ -237,6 +237,7 @@
     <ClCompile Include="Code\05.Objects\97.Skeleton\Skeleton.cpp" />
     <ClCompile Include="Code\06.Meshes\01.Mesh\Mesh.cpp" />
     <ClCompile Include="Code\06.Meshes\01.Mesh\MeshImporter.cpp" />
+    <ClCompile Include="Code\07.Server\Main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

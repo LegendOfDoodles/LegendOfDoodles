@@ -43,8 +43,6 @@ protected:	// º¯¼ö
 			0. Idle		1.Attack	2.Attack2	3.StartWalk		4.Walking	5.Die
 			*/
 
-	ObjectType m_ObjectType{ ObjectType::SwordMinion };
-
 	/*
 	0. SwordPlayer, 1. StaffPlayer,   2. BowPlayer,
 	3. SwordMinion,	4. StaffMinion,   5. BowMinion,

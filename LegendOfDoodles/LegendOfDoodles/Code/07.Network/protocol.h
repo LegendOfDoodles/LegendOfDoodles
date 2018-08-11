@@ -157,7 +157,18 @@ struct SC_Msg_Pos_Minion : public Packet
 	short frameTime;
 	XMFLOAT3 vLook;
 };
-
+struct SC_Msg_Spawn_Minion : public Packet
+{
+	BYTE Minion_Species;
+	short Minion_Tag;
+};
+struct SC_Msg_Set_Minion_State : public Packet
+{
+	BYTE Team_Type;
+	int Minion_Species;
+	int Minion_Tag;
+	BYTE Minion_State;
+};
 struct SC_Msg_Pos_Nexus : public Packet
 {
 	BYTE Object_id;
@@ -210,6 +221,8 @@ struct SC_Msg_Login_Time : public Packet
 #define SC_POS_NEXUS			  114
 #define SC_PACKET				  115
 #define SC_CHANGE_TARGET		  116
+#define SC_MINION_SPAWN			  117
+#define SC_MINION_STATE			  118
 //Client->Server
 #define CS_ACTION				  201
 #define CS_MOVE_PLAYER			  202

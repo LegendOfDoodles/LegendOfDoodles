@@ -66,6 +66,8 @@ public: // 공개 함수
 
 	void SetPlayer();
 
+	CShader* GetShader(int index) { return m_ppShaders[index]; }
+
 	// Message Process
 	void OnProcessingMouseMessage(HWND hWnd, UINT messageID,
 		WPARAM wParam, LPARAM lParam);

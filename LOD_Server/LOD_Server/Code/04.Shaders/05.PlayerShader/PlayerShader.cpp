@@ -105,9 +105,7 @@ void CPlayerShader::BuildObjects(void *pContext)
 			pRotatingObject->SetMaterial(pCubeMaterial);
 #endif
 			pPlayer->SetCollisionSize(CONVERT_PaperUnit_to_InG(3));
-			if (x == 0 && z == 0) {
-				pPlayer->tag = 1;
-			}
+
 			pPlayer->CBaseObject::SetPosition(500.0f + (z * 9000.0f), 0.0f, 2000.0f + (x * 1000.0f));
 			if (z == 1) {
 				pPlayer->SetTeam(TeamType::Red);

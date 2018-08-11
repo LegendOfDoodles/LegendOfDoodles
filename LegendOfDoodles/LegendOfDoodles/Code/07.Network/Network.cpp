@@ -6,6 +6,7 @@
 #include "05.Objects\06.Minion\Minion.h"
 #include "05.Objects\09.NexusTower\NexusTower.h"
 #include "03.Scenes/00.BaseScene/Scene.h"
+#include "04.Shaders/04.AniShader/MinionShader.h"
 
 CNetwork::CNetwork()
 {
@@ -32,7 +33,7 @@ void CNetwork::Initialize(HWND hWnd)
 	ServerAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
 	int Result = WSAConnect(m_mysocket, (sockaddr *)&ServerAddr, sizeof(ServerAddr), NULL, NULL, NULL, NULL);
-	WSAGetLastError();
+	if (Result)WSAGetLastError();
 	WSAAsyncSelect(m_mysocket, m_hWnd, WM_SOCKET, FD_READ);
 
 	m_send_wsabuf.buf = m_send_buffer;
@@ -46,7 +47,7 @@ void CNetwork::Finalize()
 	closesocket(m_mysocket);
 }
 
-void CNetwork::ProcessPacket(int myid, char *ptr)
+void CNetwork::ProcessPacket(char *ptr)
 {
 	static bool first_time = true;
 
@@ -202,13 +203,31 @@ void CNetwork::ProcessPacket(int myid, char *ptr)
 		}*/
 		case SC_MINION_COUNT:
 		{
-			m_minon_index = 0;
-			SC_Msg_Minion_Count* my_packet = reinterpret_cast<SC_Msg_Minion_Count*>(ptr);
-			if (my_packet->color == 1) {
-				*m_pnBlue = my_packet->count;
-			}
-			else {
-				*m_pnRed = my_packet->count;
+			break;
+		}
+		case SC_MINION_SPAWN:
+		{
+			SC_Msg_Spawn_Minion* my_packet = reinterpret_cast<SC_Msg_Spawn_Minion*>(ptr);
+			m_pMinionShader->SpawnMinion((ObjectType)my_packet->Minion_Species, my_packet->Minion_Tag);
+			break;
+		}
+		case SC_MINION_STATE:
+		{
+			SC_Msg_Set_Minion_State* my_packet = reinterpret_cast<SC_Msg_Set_Minion_State*>(ptr);
+			//printf("my_packet->Team_Type:    %d     my_packet->Minion_Species:    %d    my_packet->Minion_State:     %d\n",
+			//	my_packet->Team_Type, my_packet->Minion_Species, my_packet->Minion_State);
+			CollisionObjectList* minionList{ m_pMinionShader->GetMinionList((TeamType)my_packet->Team_Type, (ObjectType)my_packet->Minion_Species) };
+			
+
+			if (!minionList) break;
+
+			for (auto i = minionList->begin(); i != minionList->end(); ++i)
+			{
+				if ((*i)->GetTag() == my_packet->Minion_Tag)
+				{
+					(*i)->SetState((StatesType)my_packet->Minion_State);
+					break;
+				}
 			}
 			break;
 		}
@@ -243,7 +262,7 @@ void CNetwork::ReadPacket()
 		if (err_code == 10035) {
 			errorcount += 1;
 			//if (errorcount > 3) return; //10035계속 발생하면 걍 리턴 
-			ProcessPacket(m_myid, m_packet_buffer);
+			ProcessPacket(m_packet_buffer);
 		}
 	}
 	BYTE *ptr = reinterpret_cast<BYTE *>(m_recv_buffer);
@@ -252,7 +271,7 @@ void CNetwork::ReadPacket()
 		if (0 == m_in_packet_size) m_in_packet_size = ptr[0];
 		if (iobyte + m_saved_packet_size >= m_in_packet_size) {
 			memcpy(m_packet_buffer + m_saved_packet_size, ptr, m_in_packet_size - m_saved_packet_size);
-			ProcessPacket(m_myid, m_packet_buffer);
+			ProcessPacket(m_packet_buffer);
 			ptr += m_in_packet_size - m_saved_packet_size;
 			iobyte -= m_in_packet_size - m_saved_packet_size;
 			m_in_packet_size = 0;
@@ -312,6 +331,16 @@ void CNetwork::SendPacket(void* ptr)
 		int err_no = WSAGetLastError();
 		if (WSA_IO_PENDING != err_no) printf("Send Error![%d] ", err_no);
 	}
+}
+
+void CNetwork::SetScene(shared_ptr<CScene> pScene)
+{
+	m_pScene = pScene;
+}
+
+void CNetwork::PrepareData()
+{
+	m_pMinionShader = (CMinionShader*)m_pScene->GetShader(2);
 }
 //
 //void  CNetwork::err_display(char* msg)

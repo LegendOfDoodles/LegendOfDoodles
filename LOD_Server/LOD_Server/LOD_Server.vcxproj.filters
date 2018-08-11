@@ -230,9 +230,6 @@
     <ClInclude Include="Code\06.Meshes\01.Mesh\MeshImporter.h">
       <Filter>소스 파일\06.Meshes\01.Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="Code\07.Server\Main.h">
-      <Filter>소스 파일\07.Server</Filter>
-    </ClInclude>
     <ClInclude Include="Code\00.Global\01.Utility\07.ThrowingManager\ThrowingMgr.h">
       <Filter>소스 파일\00.Global\01.Utility\07.ThrowingManager</Filter>
     </ClInclude>
@@ -253,6 +250,9 @@
     </ClInclude>
     <ClInclude Include="Code\05.Objects\11.FlyingObject\FlyingObject.h">
       <Filter>소스 파일\05.Objects\11.FlyingObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\07.Server\Main.h">
+      <Filter>소스 파일\07.Server</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -367,6 +367,9 @@
     </ClCompile>
     <ClCompile Include="Code\05.Objects\11.FlyingObject\FlyingObject.cpp">
       <Filter>소스 파일\05.Objects\11.FlyingObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\07.Server\Main.cpp">
+      <Filter>소스 파일\07.Server</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -70,6 +70,7 @@ void CScene::Initialize(shared_ptr<CCreateMgr> pCreateMgr, shared_ptr<CNetwork> 
 	m_pNetwork = pNetwork;
 	m_pNetwork->SetScene(shared_from_this());
 	BuildObjects(pCreateMgr);
+	m_pNetwork->PrepareData();
 	CreateShaderVariables(pCreateMgr);
 }
 
@@ -597,7 +598,7 @@ void CScene::GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, XMFLOAT4X4&	 xm
 	}
 
 	CS_Msg_Demand_Pos_Character p;
-	p.Character_id = m_pNetwork->m_myid;
+	p.Character_id = (BYTE)m_pNetwork->m_myid;
 	p.size = sizeof(p);
 	p.type = CS_MOVE_PLAYER;
 	p.x = m_pickWorldPosition.x;

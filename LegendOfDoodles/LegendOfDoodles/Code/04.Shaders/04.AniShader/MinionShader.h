@@ -35,6 +35,9 @@ public: // 공개 함수
 
 	virtual bool OnProcessKeyInput(UCHAR* pKeyBuffer);
 
+	void SpawnMinion(ObjectType minionKind = ObjectType::SwordMinion, int tag = 0);
+	CollisionObjectList* GetMinionList(TeamType teamType, ObjectType objectType);
+
 	void SetCollisionManager(shared_ptr<CCollisionManager> pManger) { m_pColManager = pManger; }
 	void SetThrowingManager(shared_ptr<CThrowingMgr> pManger) { m_pThrowingMgr = pManger; }
 	void SetGaugeManger(shared_ptr<CUIObjectManager> pManger) { m_pGaugeManger = pManger; }
@@ -57,14 +60,11 @@ protected: // 내부 함수
 	void CreatePathes();
 
 	int GetPossibleIndex();
-	void SpawnMinion();
 
 	void SetPossibleIndex(int idx) { m_indexArr[idx] = true; }
 	void ResetPossibleIndex(int idx) { m_indexArr[idx] = false; }
 
 protected: // 변수
-	ObjectType m_kind{ ObjectType::SwordMinion };
-
 	CollisionObjectList m_blueSwordMinions;
 	CollisionObjectList m_blueStaffMinions;
 	CollisionObjectList m_blueBowMinions;
@@ -83,9 +83,4 @@ protected: // 변수
 
 	shared_ptr<CCreateMgr> m_pCreateMgr{ NULL };
 	shared_ptr<CFSMMgr> m_pFSMMgr;
-
-	float m_spawnTime{ 10.1f };
-	float m_preSpawnTime{ 0.0f };
-
-	int m_curSpawnCount{ 0 };
 };
