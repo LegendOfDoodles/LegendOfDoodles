@@ -139,6 +139,7 @@ extern CollisionObjectList* g_blueBowMinions;
 extern CollisionObjectList* g_redSwordMinions;
 extern CollisionObjectList* g_redStaffMinions;
 extern CollisionObjectList* g_redBowMinions;
+extern CAnimatedObject** g_ppNeutrality;
 
 extern bool AcceptFinish;
 

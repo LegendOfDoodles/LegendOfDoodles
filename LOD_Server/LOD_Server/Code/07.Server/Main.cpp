@@ -27,10 +27,11 @@ CollisionObjectList* g_blueBowMinions;
 CollisionObjectList* g_redSwordMinions;
 CollisionObjectList* g_redStaffMinions;
 CollisionObjectList* g_redBowMinions;
+CAnimatedObject** g_ppNeutrality{ NULL };
 
 bool AcceptFinish = false;
 
-int g_MinionCounts = 0;
+int g_NeutralityCount = 0;
 int g_ReuseMinion = -1;
 float g_PacketCoolTime = 0;
 
@@ -83,10 +84,8 @@ void initialize(shared_ptr<CScene> pScene)
 	g_redSwordMinions = g_pScene->GetShader(0)->GetMinionList(SwordMinion, Red);
 	g_redBowMinions = g_pScene->GetShader(0)->GetMinionList(BowMinion, Red);
 	g_redStaffMinions = g_pScene->GetShader(0)->GetMinionList(StaffMinion, Red);
-
-
-	//g_pBlueMinions = g_pScene->GetBlueObjects();
-	//g_pRedMinions = g_pScene->GetRedObjects();
+	g_ppNeutrality = g_pScene->GetNeutralityObject();
+	g_NeutralityCount = g_pScene->GetShader(2)->GetObjectCount();
 	//g_ppNexusTower = g_pScene->GetNexusTower();
 
 	gh_iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0); // 의미없는 파라메터, 마지막은 알아서 쓰레드를 만들어준다.
@@ -514,6 +513,26 @@ void timer_thread()
 						}
 					}
 
+				//Send Every Neutrality's Position Packet
+				for (int i = 0; i < g_NeutralityCount; ++i) {
+					if (g_clients[i].m_isconnected == true) {
+						SC_Msg_Pos_Neutrality p;
+						p.Monster_Tag = (short)g_ppNeutrality[i]->GetTag();
+						p.x = (short)g_ppNeutrality[i]->GetPosition().x;
+						p.y = (short)g_ppNeutrality[i]->GetPosition().z;
+						p.size = sizeof(p);
+						p.type = SC_POS_MONSTER;
+						p.maxhp = (short)g_ppNeutrality[i]->GetCommonStatus()->maxHP;
+						p.curhp = (short)g_ppNeutrality[i]->GetCommonStatus()->HP;
+						p.updatetime = g_GameTime;
+
+						for (int j = 0; j < MAX_USER; ++j) {
+							if (g_clients[j].m_isconnected == true) {
+								SendPacket(j, &p);
+							}
+						}
+					}
+				}
 
 				//	for (int i = 0; i < 14; ++i){
 				//		g_nexustowers[i].m_vPos = g_ppNexusTower[i]->GetPosition();

@@ -23,6 +23,7 @@ public: // 공개 함수
 	void GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, int id);
 
 	CAnimatedObject** GetPlayerObject() { return  (CAnimatedObject**)m_ppShaders[1]->GetCollisionObjects();}
+	CAnimatedObject** GetNeutralityObject() { return (CAnimatedObject**)m_ppShaders[2]->GetCollisionObjects(); }
 	CShader* GetShader(int num) { return m_ppShaders[num]; }
 
 protected: // 내부 함수

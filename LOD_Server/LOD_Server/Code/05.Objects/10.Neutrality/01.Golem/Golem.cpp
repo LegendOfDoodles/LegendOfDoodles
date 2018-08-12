@@ -68,7 +68,17 @@ void CGolem::Animate(float timeElapsed)
 void CGolem::SetState(StatesType newState)
 {
 	m_nextState = m_curState = newState;
-
+	for (int i = 0; i < MAX_USER; ++i)
+	{
+		if (g_clients[i].m_isconnected) {
+			SC_Msg_Set_Monster_State p;
+			p.Monster_State = (BYTE)newState;
+			p.Monster_Tag = (short)m_tag;
+			p.size = sizeof(p);
+			p.type = SC_MONSTER_STATE;
+			SendPacket(i, &p);
+		}
+	}
 	switch (newState)
 	{
 	case States::Idle:
@@ -134,6 +144,19 @@ void CGolem::PlayIdle(float timeElapsed)
 		if (!Chaseable(enemy)) return;
 
 		SetEnemy(enemy);
+
+		for (int i = 0; i < MAX_USER; ++i)
+		{
+			if (g_clients[i].m_isconnected)
+			{
+				SC_Msg_Enemy_Tag p;
+				p.Minion_Tag = (short)m_tag;
+				p.Enemy_Tag = (short)enemy->GetTag();
+				p.size = sizeof(p);
+				p.type = SC_SET_ENEMY;
+				SendPacket(i, &p);
+			}
+		}
 
 		if (Attackable(enemy))
 		{
