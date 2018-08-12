@@ -72,15 +72,9 @@ void CNetwork::ProcessPacket(char *ptr)
 				//딴 아이디 처리
 				m_ppPlayer[id]->CBaseObject::SetPosition(my_packet->x, my_packet->y);
 			}
-			
-			//else { //미니언, 몬스터 관리할때 쓰는거
-			//npc[id - NPC_START].x = my_packet->x;
-			//npc[id - NPC_START].y = my_packet->y;
-			//npc[id - NPC_START].attr |= BOB_ATTR_VISIBLE;
-			//}
 			break;
 		}
-		case SC_PACKET:
+		/*case SC_PACKET:
 		{
 			SC_Msg_What_Is_Packet *my_packet = reinterpret_cast<SC_Msg_What_Is_Packet *>(ptr);
 			if (my_packet->what == 0) break;
@@ -88,7 +82,7 @@ void CNetwork::ProcessPacket(char *ptr)
 				ReadPacket();
 				break;
 			}
-		}
+		}*/
 		case SC_POS:
 		{
 			SC_Msg_Pos_Character *my_packet = reinterpret_cast<SC_Msg_Pos_Character *>(ptr);
@@ -116,7 +110,6 @@ void CNetwork::ProcessPacket(char *ptr)
 					m_ppPlayer[id]->SetHP(my_packet->maxhp, my_packet->curhp);
 					m_ppPlayer[id]->SetUpdateTime(my_packet->updatetime);
 					m_ppPlayer[id]->SetLevel(my_packet->level, my_packet->maxexp, my_packet->exp);
-					//dynamic_cast<CPlayer*>(m_ppPlayer[id])->SetWeapon(my_packet->weapon);
 				}
 			}
 			break;
@@ -131,64 +124,15 @@ void CNetwork::ProcessPacket(char *ptr)
 		{
 			
 			SC_Msg_Target_Location *my_packet = reinterpret_cast<SC_Msg_Target_Location *>(ptr);
-			//printf("%d\n", my_packet->Character_id);
 			int id = my_packet->Character_id;
 			m_ppPlayer[id]->SetPathToGo(m_pWayFinder->GetPathToPosition(
 				m_ppPlayer[id]->GetPosition(),
 				my_packet->location));
 		}
-		case SC_PUT_MINION:
-		{
-			/*SC_MsgMoCreate *my_packet = reinterpret_cast<SC_MsgMoCreate *>(ptr);
-			int id = my_packet->Monster_id;
-			if (first_time) {
-				first_time = false;
-			}
-			else {
-				
-			}*/
+		
 
-			break;
-		}
 
-		case SC_MOVE_PLAYER:
-		{
-			//SC_MsgChMove *my_packet = reinterpret_cast<SC_MsgChMove *>(ptr);
-			//int other_id = my_packet->Character_id;
-			//if (other_id == m_myid) {	
-			///*	m_ppObject[m_myid] = object;
-			//	m_ppObject[m_myid]->SetPosition(my_packet->x, my_packet->y);
-			//	printf("Client[%d] Set Position\n", other_id);*/
-			//	//player.x = my_packet->x;
-			//	//player.y = my_packet->y;
-			//	
-			//}
-			//else if (other_id < NPC_START) {
-			//	m_ppObject[other_id]->SetPosition(my_packet->x, my_packet->y);
-			//}
-			///*
-			//else {
-			//npc[other_id - NPC_START].x = my_packet->x;
-			//npc[other_id - NPC_START].y = my_packet->y;
-			//}*/
-			break;
-		}
-
-		case SC_REMOVE_PLAYER:
-		{
-			//SC_Msg_Remove_Character *my_packet = reinterpret_cast<SC_Msg_Remove_Character *>(ptr);
-			//int other_id = my_packet->Character_id;
-			//if (other_id == myid) {
-
-			//}
-			//else if (other_id < NPC_START) {
-			//	//skelaton[other_id].attr &= //안보이게 처리;
-			//}
-			//else {
-			//	//npc[other_id - NPC_START].attr &= //안보이게 처리;
-			//}
-			break;
-		}
+		
 		case SC_POS_MINION:
 		{
 			SC_Msg_Pos_Minion* my_packet = reinterpret_cast<SC_Msg_Pos_Minion*>(ptr);
@@ -202,10 +146,7 @@ void CNetwork::ProcessPacket(char *ptr)
 			}
 			break;
 		}
-		case SC_MINION_COUNT:
-		{
-			break;
-		}
+		
 		case SC_MINION_SPAWN:
 		{
 			SC_Msg_Spawn_Minion* my_packet = reinterpret_cast<SC_Msg_Spawn_Minion*>(ptr);
@@ -285,35 +226,7 @@ void CNetwork::ReadPacket()
 	
 	
 }
-//
-////void Network::SendMovePacket(WPARAM wParam, CBaseObject* object)
-////{
-////	int x = 0, y = 0;
-////	if (wParam == VK_RIGHT)	x += 1;
-////	if (wParam == VK_LEFT)	x -= 1;
-////	if (wParam == VK_UP)	y -= 1;
-////	if (wParam == VK_DOWN)	y += 1;
-////	CS_MsgChMove *my_packet = reinterpret_cast<CS_MsgChMove *>(m_send_buffer);
-////	my_packet->size = sizeof(my_packet);
-////	m_send_wsabuf.len = sizeof(my_packet);
-////	DWORD iobyte;
-////	if (0 != x) {
-////		if (1 == x) my_packet->type = CS_RIGHT;
-////		else my_packet->type = CS_LEFT;
-////		int ret = WSASend(m_mysocket, &m_send_wsabuf, 1, &iobyte, 0, NULL, NULL);
-////		if (ret) {
-////			int error_code = WSAGetLastError();
-////			printf("Error while sending packet [%d]", error_code);
-////		}
-////	}
-////	if (0 != y) {
-////		if (1 == y) my_packet->type = CS_DOWN;
-////		else my_packet->type = CS_UP;
-////		WSASend(m_mysocket, &m_send_wsabuf, 1, &iobyte, 0, NULL, NULL);
-////	}
-////	ReadPacket(m_mysocket,object);
-////}
-//
+
 void CNetwork::SendPacket(void* ptr)
 {
 	char *packet = reinterpret_cast<char *>(ptr);

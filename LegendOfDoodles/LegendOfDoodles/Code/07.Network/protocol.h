@@ -30,79 +30,6 @@ struct CS_Msg_Demand_Sync : public Packet
 {
 	BYTE Sync_on;
 };
-struct SC_MsgMoCreate : public Packet
-{
-	BYTE Monster_id;
-	short hp;
-};
-struct CS_MsgMoCreate : public Packet
-{
-
-};
-
-struct SC_Msg_Remove_Character : public Packet
-{
-	BYTE Character_id;
-};
-struct CS_MsgMoDelete : public Packet
-{
-	BYTE Monster_id;
-};
-struct SC_MsgChMove : public Packet
-{
-	BYTE Character_id;
-	short x;
-	short y;
-};
-struct SC_MsgMoMove : public Packet
-{
-	BYTE Monster_id;
-	short x;
-	short y;
-};
-struct SC_MsgChAttack : public Packet
-{
-	BYTE Character_id;
-	//배열로 처리해야 할때도 있을듯?
-	//다중스킬!
-	BYTE Monster_id;
-};
-struct SC_MsgMoAttack : public Packet
-{
-	BYTE Monster_id;
-	BYTE Character_id;
-};
-struct SC_MsgChHit : public Packet
-{
-	BYTE Character_id;
-	short Ch_Health;
-};
-struct SC_MsgMoHit : public Packet
-{
-	BYTE Monster_id;
-	short Mo_Health;
-};
-
-struct CS_MsgChMove : public Packet
-{
-	BYTE Character_id;
-	float x;
-	float y;
-};
-
-struct CS_MsgChCollision : public Packet
-{
-	BYTE Character_id;
-	short x;
-	short y;
-};
-
-struct CS_MsgDemandMakeRoom : public Packet
-{
-	BYTE Character_id;
-
-};
-
 struct SC_Msg_Pos_Character : public Packet
 {
 	BYTE Character_id;
@@ -119,10 +46,20 @@ struct SC_Msg_Pos_Character : public Packet
 	float updatetime;
 	XMFLOAT3 vLook;
 };
-struct SC_Msg_What_Is_Packet : public Packet
+struct CS_MsgChMove :public Packet
 {
-	BYTE what;
+	BYTE Character_id;
+	short x;
+	short y;
 };
+struct SC_Msg_Remove_Character : public Packet
+{
+	BYTE Character_id;
+};
+//struct SC_Msg_What_Is_Packet : public Packet
+//{
+//	BYTE what;
+//};
 struct CS_Msg_Demand_Pos_Character : public Packet
 {
 	BYTE Character_id;
@@ -141,11 +78,7 @@ struct SC_Msg_Permit_Use_Skill : public Packet
 	BYTE skilltype;
 };
 
-struct SC_Msg_Minion_Count : public Packet
-{
-	BYTE color;
-	short count;
-};
+
 
 struct SC_Msg_Pos_Minion : public Packet
 {
@@ -180,16 +113,7 @@ struct SC_Msg_Pos_Nexus : public Packet
 	short curhp;
 };
 
-struct CS_Msg_Demand_Change_Weapon : public Packet
-{
-	BYTE Character_id;
-};
 
-struct SC_Msg_Login_Time : public Packet
-{
-	BYTE Character_id;
-	//system_clock::time_point Duration_time;
-};
 
 #pragma pack(pop)
 
@@ -211,41 +135,22 @@ struct SC_Msg_Login_Time : public Packet
 #define SC_CONNECT_PLAYER		  101
 #define SC_PUT_PLAYER			  102
 #define SC_REMOVE_PLAYER		  103
-#define SC_MOVE_PLAYER			  104
-#define SC_ATTACK				  105
-#define SC_HIT					  106
-#define SC_PUT_MONSTER			  107
-#define SC_PUT_MINION			  108
-#define SC_PERMIT_MAKE_ROOM		  109
-#define SC_POS					  110
-#define SC_PERMIT_USE_SKILL		  111
-#define SC_POS_MINION			  112
-#define SC_MINION_COUNT			  113
-#define SC_POS_NEXUS			  114
-#define SC_PACKET				  115
-#define SC_CHANGE_TARGET		  116
-#define SC_MINION_SPAWN			  117
-#define SC_MINION_STATE			  118
-#define SC_SET_ENEMY			  119
+#define SC_POS					  104
+#define SC_PERMIT_USE_SKILL		  105
+#define SC_POS_MINION			  106
+#define SC_POS_NEXUS			  107
+//#define SC_PACKET				  115
+#define SC_CHANGE_TARGET		  108
+#define SC_MINION_SPAWN			  109
+#define SC_MINION_STATE			  110
+#define SC_SET_ENEMY			  111
 //Client->Server
 #define CS_ACTION				  201
 #define CS_MOVE_PLAYER			  202
-#define CS_COLLISION			  203
-#define CS_DAMAND_MAKE_ROOM		  204
-#define CS_PUT_MINION			  205
-#define CS_DELETE_MINION		  206
-#define CS_DEMAND_USE_SKILL		  207
-#define CS_DEMAND_CHANGE_WEAPON   208
-#define CS_DEMAND_SYNC			  209
-//In Client Move Object
-#define CS_UP					  1
-#define CS_DOWN					  2
-#define CS_LEFT					  3
-#define CS_RIGHT				  4
+#define CS_DEMAND_USE_SKILL		  203
 
 
 
 
-//enum 추가할 예정
 
 
