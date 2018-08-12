@@ -63,8 +63,8 @@ void CMinionShader::AnimateObjects(float timeElapsed)
 				{
 					if (g_clients[i].m_isconnected) {
 						SC_Msg_Spawn_Minion p;
-						p.Minion_Species = m_kind;
-						p.Minion_Tag = curTag;
+						p.Minion_Species = (BYTE)m_kind;
+						p.Minion_Tag = (short)curTag;
 						p.size = sizeof(p);
 						p.type = SC_MINION_SPAWN;
 						SendPacket(i, &p);

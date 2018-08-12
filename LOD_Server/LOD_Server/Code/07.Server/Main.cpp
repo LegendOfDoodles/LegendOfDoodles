@@ -127,17 +127,17 @@ void SendPacket(int id, void *ptr)
 void SendPutObjectPacket(int client, int object)
 {
 	SC_Msg_Put_Character p;
-	p.Character_id = object;
+	p.Character_id = (BYTE)object;
 	p.size = sizeof(p);
 	p.type = SC_PUT_PLAYER;
-	p.x = g_clients[object].m_x;
-	p.y = g_clients[object].m_y;
+	p.x = (short)g_clients[object].m_x;
+	p.y = (short)g_clients[object].m_y;
 	SendPacket(client, &p);
 }
 void SendRemovePacket(int client, int object)
 {
 	SC_Msg_Remove_Character p;
-	p.Character_id = object;
+	p.Character_id = (BYTE)object;
 	p.size = sizeof(p);
 	p.type = SC_REMOVE_PLAYER;
 
@@ -147,16 +147,8 @@ void ProcessPacket(int id, char *packet)
 {
 	//클라로부터 오는 패킷 종류들
 	CS_MsgChMove* MovePacket = reinterpret_cast<CS_MsgChMove*>(packet);
-	CS_MsgChCollision* CollisionPacket = reinterpret_cast<CS_MsgChCollision*>(packet);
-	CS_MsgMoDelete* DeleteMinionPacket = reinterpret_cast<CS_MsgMoDelete*>(packet);
 	CS_Msg_Demand_Use_Skill* CSkillPacket = reinterpret_cast<CS_Msg_Demand_Use_Skill*>(packet);
-	CS_Msg_Demand_Change_Weapon* CChangeWeapon = reinterpret_cast<CS_Msg_Demand_Change_Weapon*>(packet);
-	int x = 0;
-	int y = 0;
 	//서버에서 클라로 보내줘야할 패킷들
-	SC_MsgMoCreate p;
-	SC_Msg_Permit_Use_Skill SkillPacket;
-	//cout << packet[1] << endl;
 	switch (MovePacket->type)
 	{
 		//이동하는 부분
@@ -252,7 +244,7 @@ void ProcessPacket(int id, char *packet)
 void DisconnectPlayer(int id)
 {
 	SC_Msg_Remove_Character p;
-	p.Character_id = id;
+	p.Character_id = (BYTE)id;
 	p.size = sizeof(p);
 	p.type = SC_REMOVE_PLAYER;
 	for (int i = 0; i < MAX_USER; ++i) {
@@ -387,11 +379,11 @@ void accept_thread()	//새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 
 		g_clients[id].m_login = system_clock::now();
 		SC_Msg_Put_Character p;
-		p.Character_id = id;
+		p.Character_id = (BYTE)id;
 		p.size = sizeof(p);
 		p.type = SC_PUT_PLAYER;
-		p.x = g_ppPlayer[id]->GetPosition().x;
-		p.y = g_ppPlayer[id]->GetPosition().z;
+		p.x = (short)g_ppPlayer[id]->GetPosition().x;
+		p.y = (short)g_ppPlayer[id]->GetPosition().z;
 		SendPacket(id, &p);
 		//for (int i = 0; i < MAX_USER; ++i)
 		//{
@@ -405,9 +397,9 @@ void accept_thread()	//새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 		for (int i = 0; i < MAX_USER; ++i)
 		{
 			if (i == id) continue;
-			p.Character_id = i;
-			p.x = g_ppPlayer[i]->GetPosition().x;
-			p.y = g_ppPlayer[i]->GetPosition().z;
+			p.Character_id = (BYTE)i;
+			p.x = (short)g_ppPlayer[i]->GetPosition().x;
+			p.y = (short)g_ppPlayer[i]->GetPosition().z;
 
 			SendPacket(id, &p);
 
@@ -430,12 +422,12 @@ void timer_thread()
 				g_PacketCoolTime = 0;
 				//system_clock::time_point duration = system_clock::now();
 				for (int i = 0; i < MAX_USER; ++i) {
-					g_clients[i].m_x = g_ppPlayer[i]->GetPosition().x;
-					g_clients[i].m_y = g_ppPlayer[i]->GetPosition().z;
+					g_clients[i].m_x = (int)g_ppPlayer[i]->GetPosition().x;
+					g_clients[i].m_y = (int)g_ppPlayer[i]->GetPosition().z;
 					//g_clients[i].m_anistate = g_ppPlayer[i]->GetAnimState();
 					//g_clients[i].m_frameTime = g_ppPlayer[i]->GetAnimTimeRemain();
-					g_clients[i].m_maxhp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->maxHP;
-					g_clients[i].m_curhp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->HP;
+					g_clients[i].m_maxhp = (int)((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->maxHP;
+					g_clients[i].m_curhp = (int)((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->HP;
 					
 
 					g_clients[i].m_level = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->Level;
@@ -451,20 +443,20 @@ void timer_thread()
 				for (int i = 0; i < MAX_USER; ++i) {
 					if (g_clients[i].m_isconnected == true) {
 						SC_Msg_Pos_Character p;
-						p.Character_id = i;
+						p.Character_id = (BYTE)i;
 						p.size = sizeof(p);
 						p.type = SC_POS;
-						p.maxhp = g_clients[i].m_maxhp;
-						p.curhp = g_clients[i].m_curhp;
-						p.level = g_clients[i].m_level;
-						p.maxexp = g_clients[i].m_maxexp;
-						p.exp = g_clients[i].m_exp;
+						p.maxhp = (short)g_clients[i].m_maxhp;
+						p.curhp = (short)g_clients[i].m_curhp;
+						p.level = (short)g_clients[i].m_level;
+						p.maxexp = (short)g_clients[i].m_maxexp;
+						p.exp = (short)g_clients[i].m_exp;
 						p.updatetime = g_GameTime;
 						//p.weapon = g_clients[i].m_weaponstate;
-						p.x = g_clients[i].m_x;
-						p.y = g_clients[i].m_y;
-						p.state = g_clients[i].m_anistate;
-						p.frameTime = g_clients[i].m_frameTime;
+						p.x = (short)g_clients[i].m_x;
+						p.y = (short)g_clients[i].m_y;
+						//p.state = (short)g_clients[i].m_anistate;
+						//p.frameTime = (short)g_clients[i].m_frameTime;
 
 						for (int j = 0; j < MAX_USER; ++j) {
 							if (g_clients[j].m_isconnected == true) {
@@ -504,11 +496,11 @@ void timer_thread()
 					for (auto iter = g_redBowMinions->begin(); iter != g_redBowMinions->end(); ++iter) {
 						SC_Msg_Pos_Minion p;
 						p.size = sizeof(p);
-						p.x = (*iter)->GetPosition().x;
-						p.y = (*iter)->GetPosition().z;
-						p.Minion_Tag = (*iter)->GetTag();
-						p.maxhp = ((CMinion*)*iter)->GetCommonStatus()->maxHP;
-						p.curhp = ((CMinion*)*iter)->GetCommonStatus()->HP;
+						p.x = (short)(*iter)->GetPosition().x;
+						p.y = (short)(*iter)->GetPosition().z;
+						p.Minion_Tag = (short)(*iter)->GetTag();
+						p.maxhp = (short)((CMinion*)*iter)->GetCommonStatus()->maxHP;
+						p.curhp = (short)((CMinion*)*iter)->GetCommonStatus()->HP;
 						p.updatetime = g_GameTime;
 						p.type = SC_POS_MINION;
 						for (int j = 0; j < MAX_USER; ++j) {

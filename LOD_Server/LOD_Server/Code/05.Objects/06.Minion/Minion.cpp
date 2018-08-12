@@ -45,8 +45,8 @@ void CMinion::SetState(StatesType newState)
 	{
 		if (g_clients[i].m_isconnected) {
 			SC_Msg_Set_Minion_State p;
-			p.Minion_State = newState;
-			p.Minion_Tag = m_tag;
+			p.Minion_State = (BYTE)newState;
+			p.Minion_Tag = (short)m_tag;
 			p.size = sizeof(p);
 			p.type = SC_MINION_STATE;
 			SendPacket(i, &p);
@@ -104,8 +104,8 @@ void CMinion::PlayIdle(float timeElapsed)
 			if (g_clients[i].m_isconnected)
 			{
 				SC_Msg_Enemy_Tag p;
-				p.Minion_Tag = m_tag;
-				p.Enemy_Tag = enemy->GetTag();
+				p.Minion_Tag = (short)m_tag;
+				p.Enemy_Tag = (short)enemy->GetTag();
 				p.size = sizeof(p);
 				p.type = SC_SET_ENEMY;
 				SendPacket(i, &p);

@@ -62,6 +62,7 @@ void CFlyingShader::SpawnFlyingObject(const XMFLOAT3& position, const XMFLOAT3& 
 		m_ppObjects[idx]->ResetCollisionLevel();
 		m_ppObjects[idx]->Activate();
 		int adjIdx{ idx - m_objectsIndices[objectType].m_begIndex };
+		UNREFERENCED_PARAMETER(adjIdx);
 		if (objectType == FlyingObjectType::Roider_Dumbel)
 		{
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + CONVERT_PaperUnit_to_InG(8), position.z));
@@ -124,6 +125,7 @@ void CFlyingShader::BuildObjects(void *pContext)
 	m_ppObjects = new CCollisionObject*[m_nObjects];
 
 	UINT ncbElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
+	UNREFERENCED_PARAMETER(ncbElementBytes);
 	int accCnt{ 0 };
 
 	for (int i = 0; i < m_nMesh; ++i)
