@@ -95,7 +95,7 @@ void CNetwork::ProcessPacket(char *ptr)
 			if (id == m_myid) {
 				if (m_ppPlayer[id]->GetUpdateTime() <= my_packet->updatetime)
 				{
-					m_ppPlayer[id]->CBaseObject::SetPosition(my_packet->x, my_packet->y);
+					m_ppPlayer[id]->SetPosition(my_packet->x, my_packet->y);
 					//m_ppPlayer[id]->SyncAnimation((AnimationsType)my_packet->state, my_packet->frameTime);
 					m_ppPlayer[id]->SetUpdateTime(my_packet->updatetime);
 					m_ppPlayer[id]->SetHP(my_packet->maxhp, my_packet->curhp);
@@ -105,7 +105,7 @@ void CNetwork::ProcessPacket(char *ptr)
 			else if (id < NPC_START) { 
 				if (m_ppPlayer[id]->GetUpdateTime() <= my_packet->updatetime)
 				{
-					m_ppPlayer[id]->CBaseObject::SetPosition(my_packet->x, my_packet->y);
+					m_ppPlayer[id]->SetPosition(my_packet->x, my_packet->y);
 					//m_ppPlayer[id]->SyncAnimation((AnimationsType)my_packet->state, my_packet->frameTime);
 					m_ppPlayer[id]->SetHP(my_packet->maxhp, my_packet->curhp);
 					m_ppPlayer[id]->SetUpdateTime(my_packet->updatetime);
@@ -122,12 +122,12 @@ void CNetwork::ProcessPacket(char *ptr)
 		}
 		case SC_CHANGE_TARGET:
 		{
-			
 			SC_Msg_Target_Location *my_packet = reinterpret_cast<SC_Msg_Target_Location *>(ptr);
 			int id = my_packet->Character_id;
 			m_ppPlayer[id]->SetPathToGo(m_pWayFinder->GetPathToPosition(
 				m_ppPlayer[id]->GetPosition(),
 				my_packet->location));
+			break;
 		}
 		
 
@@ -172,8 +172,8 @@ void CNetwork::ProcessPacket(char *ptr)
 		}
 		case SC_POS_NEXUS:
 		{
-			SC_Msg_Pos_Nexus* my_packet = reinterpret_cast<SC_Msg_Pos_Nexus*>(ptr);
-			m_ppNexusTower[my_packet->Object_id]->SetPosition(my_packet->vPos);
+			//SC_Msg_Pos_Nexus* my_packet = reinterpret_cast<SC_Msg_Pos_Nexus*>(ptr);
+			//m_ppNexusTower[my_packet->Object_id]->CBaseObject::SetPosition(my_packet->vPos);
 			//dynamic_cast<CNexusTower*>(m_ppNexusTower[my_packet->Object_id])->SetMaxHP(my_packet->maxhp, my_packet->curhp);
 			break;
 		}

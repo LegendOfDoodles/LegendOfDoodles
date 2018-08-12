@@ -126,7 +126,10 @@ XMFLOAT3 CAnimatedObject::GetUp()
 
 void CAnimatedObject::SetPosition(float x, float z)
 {
-	CBaseObject::SetPosition(x, m_pTerrain->GetHeight(x, z), z);
+	if (m_curState == StatesType::Walk && m_curState == StatesType::Chase)
+	{
+		CBaseObject::SetPosition(x, m_pTerrain->GetHeight(x, z), z);
+	}
 }
 
 void CAnimatedObject::SetPathToGo(Path * path)

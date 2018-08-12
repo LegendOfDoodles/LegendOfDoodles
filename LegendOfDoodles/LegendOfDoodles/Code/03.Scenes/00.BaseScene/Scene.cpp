@@ -604,7 +604,6 @@ void CScene::GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, XMFLOAT4X4&	 xm
 	p.type = CS_MOVE_PLAYER;
 	p.x = m_pickWorldPosition.x;
 	p.y = m_pickWorldPosition.z;
-	printf("%f, %f\n", p.x, p.y);
 	m_pNetwork->SendPacket(&p);
 }
 

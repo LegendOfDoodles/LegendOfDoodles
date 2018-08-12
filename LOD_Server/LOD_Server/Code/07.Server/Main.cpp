@@ -154,11 +154,11 @@ void ProcessPacket(int id, char *packet)
 		//이동하는 부분
 	case CS_MOVE_PLAYER:
 	{
-		XMFLOAT3 pickposition{ (float)MovePacket->x, 0 ,(float)MovePacket->y };
+		XMFLOAT3 pickposition{MovePacket->x, 0 ,MovePacket->y };
 		g_pScene->GenerateLayEndWorldPosition(pickposition, MovePacket->Character_id);
 
-		g_clients[MovePacket->Character_id].m_targetlocation.x = (float)MovePacket->x;
-		g_clients[MovePacket->Character_id].m_targetlocation.y = (float)MovePacket->y;
+		g_clients[MovePacket->Character_id].m_targetlocation.x = MovePacket->x;
+		g_clients[MovePacket->Character_id].m_targetlocation.y = MovePacket->y;
 
 		for (int i = 0; i < MAX_USER; ++i)
 		{
@@ -374,12 +374,12 @@ void timer_thread()
 				g_PacketCoolTime = 0;
 				//Sqva User's Information
 				for (int i = 0; i < MAX_USER; ++i) {
-					g_clients[i].m_x = (int)g_ppPlayer[i]->GetPosition().x;
-					g_clients[i].m_y = (int)g_ppPlayer[i]->GetPosition().z;
+					g_clients[i].m_x = g_ppPlayer[i]->GetPosition().x;
+					g_clients[i].m_y = g_ppPlayer[i]->GetPosition().z;
 					//g_clients[i].m_anistate = g_ppPlayer[i]->GetAnimState();
 					//g_clients[i].m_frameTime = g_ppPlayer[i]->GetAnimTimeRemain();
-					g_clients[i].m_maxhp = (int)((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->maxHP;
-					g_clients[i].m_curhp = (int)((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->HP;
+					g_clients[i].m_maxhp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->maxHP;
+					g_clients[i].m_curhp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->HP;
 					g_clients[i].m_level = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->Level;
 					g_clients[i].m_maxexp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->MaxExp;
 					g_clients[i].m_exp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->Exp;
@@ -392,17 +392,16 @@ void timer_thread()
 						p.Character_id = (BYTE)i;
 						p.size = sizeof(p);
 						p.type = SC_POS;
-						p.maxhp = (short)g_clients[i].m_maxhp;
-						p.curhp = (short)g_clients[i].m_curhp;
+						p.maxhp = g_clients[i].m_maxhp;
+						p.curhp = g_clients[i].m_curhp;
 						p.level = (short)g_clients[i].m_level;
 						p.maxexp = (short)g_clients[i].m_maxexp;
 						p.exp = (short)g_clients[i].m_exp;
 						p.updatetime = g_GameTime;
-						p.x = (short)g_clients[i].m_x;
-						p.y = (short)g_clients[i].m_y;
+						p.x = g_clients[i].m_x;
+						p.y = g_clients[i].m_y;
 						//p.state = (short)g_clients[i].m_anistate;
 						//p.frameTime = (short)g_clients[i].m_frameTime;
-
 						for (int j = 0; j < MAX_USER; ++j) {
 							if (g_clients[j].m_isconnected == true) {
 								SendPacket(j, &p);

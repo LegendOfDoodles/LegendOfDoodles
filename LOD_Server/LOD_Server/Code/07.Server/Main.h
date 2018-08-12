@@ -38,8 +38,8 @@ class Client {
 public:
 	SOCKET m_s;
 	bool m_isconnected;
-	int m_x;
-	int m_y;
+	float m_x;
+	float m_y;
 	int m_maxhp;
 	int m_curhp;
 	int m_anistate;

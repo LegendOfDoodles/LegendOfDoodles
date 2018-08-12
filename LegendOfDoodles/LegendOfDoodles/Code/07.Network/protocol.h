@@ -18,8 +18,8 @@ struct SC_MsgConnect : public Packet
 struct SC_Msg_Put_Character : public Packet
 {
 	BYTE Character_id;
-	short x;
-	short y;
+	float x;
+	float y;
 };
 struct SC_Msg_Target_Location : public Packet
 {
@@ -33,10 +33,10 @@ struct CS_Msg_Demand_Sync : public Packet
 struct SC_Msg_Pos_Character : public Packet
 {
 	BYTE Character_id;
-	short x;
-	short y;
-	short maxhp;
-	short curhp;
+	float x;
+	float y;
+	float maxhp;
+	float curhp;
 	short state;
 	short frameTime;
 	short weapon;
@@ -49,8 +49,8 @@ struct SC_Msg_Pos_Character : public Packet
 struct CS_MsgChMove :public Packet
 {
 	BYTE Character_id;
-	short x;
-	short y;
+	float x;
+	float y;
 };
 struct SC_Msg_Remove_Character : public Packet
 {
@@ -83,10 +83,10 @@ struct SC_Msg_Permit_Use_Skill : public Packet
 struct SC_Msg_Pos_Minion : public Packet
 {
 	short Minion_Tag;
-	short x;
-	short y;
-	short maxhp;
-	short curhp;
+	float x;
+	float y;
+	float maxhp;
+	float curhp;
 	float updatetime;
 	XMFLOAT3 vLook;
 };
@@ -109,8 +109,8 @@ struct SC_Msg_Pos_Nexus : public Packet
 {
 	BYTE Object_id;
 	XMFLOAT3 vPos;
-	short maxhp;
-	short curhp;
+	float maxhp;
+	float curhp;
 };
 
 
