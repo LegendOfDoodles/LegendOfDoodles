@@ -40,6 +40,7 @@ void CNetwork::Initialize(HWND hWnd)
 	m_send_wsabuf.len = MAX_BUFF_SIZE;
 	m_recv_wsabuf.buf = m_recv_buffer;
 	m_recv_wsabuf.len = MAX_BUFF_SIZE;
+
 }
 
 void CNetwork::Finalize()
@@ -91,27 +92,32 @@ void CNetwork::ProcessPacket(char *ptr)
 		case SC_POS:
 		{
 			SC_Msg_Pos_Character *my_packet = reinterpret_cast<SC_Msg_Pos_Character *>(ptr);
-			printf("%d\n", my_packet->Character_id);
+			//printf("%d\n", my_packet->Character_id);
 			int id = my_packet->Character_id;
 			if (first_time) {
 				first_time = false;
 				m_myid = id;
 			}
 			if (id == m_myid) {
-				//자기 아이디 처리
-				//printf("CHECK");
-				m_ppPlayer[id]->CBaseObject::SetPosition(my_packet->x, my_packet->y);
-				m_ppPlayer[id]->SyncAnimation((AnimationsType)my_packet->state, my_packet->frameTime);
-				m_ppPlayer[id]->SetHP(my_packet->maxhp, my_packet->curhp);
-				m_ppPlayer[id]->SetLevel(my_packet->level, my_packet->maxexp, my_packet->exp);
-				//dynamic_cast<CPlayer*>(m_ppPlayer[id])->SetWeapon(my_packet->weapon);
+				if (m_ppPlayer[id]->GetUpdateTime() <= my_packet->updatetime)
+				{
+					m_ppPlayer[id]->CBaseObject::SetPosition(my_packet->x, my_packet->y);
+					m_ppPlayer[id]->SyncAnimation((AnimationsType)my_packet->state, my_packet->frameTime);
+					m_ppPlayer[id]->SetUpdateTime(my_packet->updatetime);
+					m_ppPlayer[id]->SetHP(my_packet->maxhp, my_packet->curhp);
+					m_ppPlayer[id]->SetLevel(my_packet->level, my_packet->maxexp, my_packet->exp);
+				}
 			}
 			else if (id < NPC_START) { 
-				m_ppPlayer[id]->CBaseObject::SetPosition(my_packet->x, my_packet->y);
-				m_ppPlayer[id]->SyncAnimation((AnimationsType)my_packet->state, my_packet->frameTime);
-				m_ppPlayer[id]->SetHP(my_packet->maxhp, my_packet->curhp);
-				m_ppPlayer[id]->SetLevel(my_packet->level, my_packet->maxexp, my_packet->exp);
-				//dynamic_cast<CPlayer*>(m_ppPlayer[id])->SetWeapon(my_packet->weapon);
+				if (m_ppPlayer[id]->GetUpdateTime() <= my_packet->updatetime)
+				{
+					m_ppPlayer[id]->CBaseObject::SetPosition(my_packet->x, my_packet->y);
+					m_ppPlayer[id]->SyncAnimation((AnimationsType)my_packet->state, my_packet->frameTime);
+					m_ppPlayer[id]->SetHP(my_packet->maxhp, my_packet->curhp);
+					m_ppPlayer[id]->SetUpdateTime(my_packet->updatetime);
+					m_ppPlayer[id]->SetLevel(my_packet->level, my_packet->maxexp, my_packet->exp);
+					//dynamic_cast<CPlayer*>(m_ppPlayer[id])->SetWeapon(my_packet->weapon);
+				}
 			}
 			break;
 		}
@@ -125,7 +131,7 @@ void CNetwork::ProcessPacket(char *ptr)
 		{
 			
 			SC_Msg_Target_Location *my_packet = reinterpret_cast<SC_Msg_Target_Location *>(ptr);
-			printf("%d\n", my_packet->Character_id);
+			//printf("%d\n", my_packet->Character_id);
 			int id = my_packet->Character_id;
 			m_ppPlayer[id]->SetPathToGo(m_pWayFinder->GetPathToPosition(
 				m_ppPlayer[id]->GetPosition(),
@@ -183,24 +189,18 @@ void CNetwork::ProcessPacket(char *ptr)
 			//}
 			break;
 		}
-		/*case SC_POS_MINION:
+		case SC_POS_MINION:
 		{
 			SC_Msg_Pos_Minion* my_packet = reinterpret_cast<SC_Msg_Pos_Minion*>(ptr);
-			if (my_packet->color == 1) {
-				m_ppBlueMinions[m_minon_index]->CBaseObject::SetPosition(my_packet->x, my_packet->y);
-				dynamic_cast<CAnimatedObject*>(m_ppBlueMinions[m_minon_index])->SetAnimation((AnimationsType)my_packet->state, (float)my_packet->frameTime);
-				dynamic_cast<CAnimatedObject*>(m_ppBlueMinions[m_minon_index])->RegenerateWorldMatrixWithLook(my_packet->vLook);
-				dynamic_cast<CMinion*>(m_ppBlueMinions[m_minon_index++])->SetMaxHP(my_packet->maxhp, my_packet->curhp);
-
-			}
-			else {
-				m_ppRedMinions[m_minon_index]->CBaseObject::SetPosition(my_packet->x, my_packet->y);
-				dynamic_cast<CAnimatedObject*>(m_ppRedMinions[m_minon_index])->SetAnimation((AnimationsType)my_packet->state, (float)my_packet->frameTime);
-				dynamic_cast<CAnimatedObject*>(m_ppRedMinions[m_minon_index])->RegenerateWorldMatrixWithLook(my_packet->vLook);
-				dynamic_cast<CMinion*>(m_ppRedMinions[m_minon_index++])->SetMaxHP(my_packet->maxhp, my_packet->curhp);
+		
+			CCollisionObject* Minion{ m_pColManager->RequestObjectByTag(my_packet->Minion_Tag) };
+			if (Minion->GetUpdateTime() <= my_packet->updatetime)
+			{
+				Minion->SetPosition(my_packet->x, my_packet->y);
+				Minion->SetUpdateTime(my_packet->updatetime);
 			}
 			break;
-		}*/
+		}
 		case SC_MINION_COUNT:
 		{
 			break;
@@ -225,7 +225,7 @@ void CNetwork::ProcessPacket(char *ptr)
 			
 			CCollisionObject* target{ m_pColManager->RequestObjectByTag(my_packet->Minion_Tag) };
 			target->SetEnemyByTag(my_packet->Enemy_Tag);
-			printf("------------------적 설정 완료-------------------\n");
+			
 			break;
 		}
 		case SC_POS_NEXUS:

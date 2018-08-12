@@ -10,14 +10,15 @@ public:	// 생성자, 소멸자
 public: // 공개 함수
 	virtual void Initialize(void *pContext = NULL);
 	virtual void Finalize();
-
 	virtual void AnimateObjects(float timeElapsed);
+	virtual CollisionObjectList* GetMinionList(ObjectType, TeamType) { return nullptr; }
 
 	CCollisionObject **GetCollisionObjects() { return m_ppObjects; }
 	int GetObjectCount() { return m_nObjects; }
 
 	void AddRef() { m_nReferences++; }
 	void Release() { if (--m_nReferences <= 0) delete this; }
+
 
 protected: // 내부 함수
 	virtual void BuildObjects(void *pContext = NULL);

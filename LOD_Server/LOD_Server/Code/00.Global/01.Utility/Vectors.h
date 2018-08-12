@@ -231,6 +231,11 @@ namespace Vector2
 //3차원 벡터의 연산
 namespace Vector3
 {
+	inline XMFLOAT2 ToVector2(const XMFLOAT3& xmf3Vector)
+	{
+		return XMFLOAT2(xmf3Vector.x, xmf3Vector.z);
+	}
+
 	inline XMFLOAT3 XMVectorToFloat3(const XMVECTOR& xmvVector)
 	{
 		XMFLOAT3 xmf3Result;

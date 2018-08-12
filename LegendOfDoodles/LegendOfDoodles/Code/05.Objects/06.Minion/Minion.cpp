@@ -182,7 +182,7 @@ void CSwordMinion::Animate(float timeElapsed)
 	case States::Attack:
 		if (GetAnimTimeRemainRatio() <= 0.05f)
 		{
-			if (!m_pEnemy) LookAt(m_pEnemy->GetPosition());
+			if (m_pEnemy) LookAt(m_pEnemy->GetPosition());
 		}
 		if (m_nCurrAnimation == Animations::Attack1) {
 			if (m_curState == m_nextState)
@@ -259,7 +259,7 @@ void CMagicMinion::Animate(float timeElapsed)
 	case States::Attack:
 		if (GetAnimTimeRemainRatio() <= 0.05f)
 		{
-			if(!m_pEnemy) LookAt(m_pEnemy->GetPosition());
+			if(m_pEnemy) LookAt(m_pEnemy->GetPosition());
 		}
 		if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f
 			&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f) {
@@ -284,6 +284,7 @@ void CMagicMinion::Animate(float timeElapsed)
 		}
 		break;
 	case States::Walk:
+	case States::Chase:
 		if (m_nCurrAnimation != Animations::StartWalk &&
 			m_nCurrAnimation != Animations::Walking)
 			m_nCurrAnimation = Animations::StartWalk;
@@ -331,20 +332,6 @@ CBowMinion::~CBowMinion()
 // 공개 함수
 void CBowMinion::Animate(float timeElapsed)
 {
-	if (m_TeamType == TeamType::Red)
-	{
-		if (GetPosition().z < TERRAIN_SIZE_HEIGHT * 0.5f)
-		{
-			if (!m_pEnemy)
-			{
-				printf("적 없음\n");
-			}
-			else
-			{
-				printf("적 있음\n");
-			}
-		}
-	}
 	switch (m_curState) {
 	case States::Idle:
 		if (m_nCurrAnimation != Animations::Idle) m_nCurrAnimation = Animations::Idle;
@@ -352,7 +339,7 @@ void CBowMinion::Animate(float timeElapsed)
 	case States::Attack:
 		if (GetAnimTimeRemainRatio() <= 0.05f)
 		{
-			if (!m_pEnemy) LookAt(m_pEnemy->GetPosition());
+			if (m_pEnemy) LookAt(m_pEnemy->GetPosition());
 		}
 		if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f
 			&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f) {
@@ -368,6 +355,7 @@ void CBowMinion::Animate(float timeElapsed)
 		}
 		break;
 	case States::Walk:
+	case States::Chase:
 		if (m_nCurrAnimation != Animations::StartWalk &&
 			m_nCurrAnimation != Animations::Walking)
 			m_nCurrAnimation = Animations::StartWalk;

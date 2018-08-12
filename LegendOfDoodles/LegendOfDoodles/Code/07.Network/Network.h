@@ -43,7 +43,13 @@ protected:
 
 	CAnimatedObject ** m_ppPlayer{ NULL };
 	CMinionShader *m_pMinionShader{ NULL };
-	
+	/*CollisionObjectList* m_pBlueSwordMinions;
+	CollisionObjectList* m_pBlueStaffMinions;
+	CollisionObjectList* m_pBlueBowMinions;
+	CollisionObjectList* m_pRedSwordMinions;
+	CollisionObjectList* m_pRedStaffMinions;
+	CollisionObjectList* m_pRedBowMinions;*/
+
 	CBaseObject** m_ppNexusTower{ NULL };
 
 public:

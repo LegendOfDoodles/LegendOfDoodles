@@ -123,9 +123,48 @@ void CMinionShader::AnimateObjects(float timeElapsed)
 		curObjectList->remove_if(removeFunc);
 	}
 }
+CollisionObjectList * CMinionShader::GetMinionList(ObjectType Minion_Type, TeamType Team_Type)
+{
+	if (Team_Type == TeamType::Blue)
+	{
+		if (Minion_Type == ObjectType::SwordMinion)
+		{
+			return &m_blueSwordMinions;
+		}
+		if (Minion_Type == ObjectType::BowMinion)
+		{
+			return &m_blueBowMinions;
+		}
+
+		if (Minion_Type == ObjectType::StaffMinion)
+		{
+			return &m_blueStaffMinions;
+		}
+
+	}
+	if (Team_Type == TeamType::Red)
+	{
+		if (Minion_Type == ObjectType::SwordMinion)
+		{
+			return &m_redSwordMinions;
+		}
+		if (Minion_Type == ObjectType::BowMinion)
+		{
+			return &m_redBowMinions;
+		}
+
+		if (Minion_Type == ObjectType::StaffMinion)
+		{
+			return &m_redStaffMinions;
+		}
+	}
+	return nullptr;
+}
 
 ////////////////////////////////////////////////////////////////////////
 // 내부 함수
+
+
 
 void CMinionShader::BuildObjects(void *pContext)
 {

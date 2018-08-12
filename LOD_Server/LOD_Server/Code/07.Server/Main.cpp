@@ -3,9 +3,11 @@
 //클라쪽 헤더
 #include "03.Scenes\00.BaseScene\Scene.h"
 #include "04.Shaders\05.PlayerShader\PlayerShader.h"
+#include "04.Shaders/04.AniShader/MinionShader.h"
 #include "05.Objects\03.AnimatedObject\AnimatedObject.h"
 #include "05.Objects\08.Player\Player.h"
 #include "05.Objects\09.NexusTower\NexusTower.h"
+
 
 HANDLE gh_iocp;
 
@@ -18,6 +20,12 @@ CNexusTower** g_ppNexusTower{ NULL };
 
 shared_ptr<CScene> g_pScene;
 CAnimatedObject** g_ppPlayer{ NULL };
+CollisionObjectList* g_blueSwordMinions;
+CollisionObjectList* g_blueStaffMinions;
+CollisionObjectList* g_blueBowMinions;
+CollisionObjectList* g_redSwordMinions;
+CollisionObjectList* g_redStaffMinions;
+CollisionObjectList* g_redBowMinions;
 
 bool AcceptFinish = false;
 
@@ -68,6 +76,13 @@ void initialize(shared_ptr<CScene> pScene)
 	g_pScene = pScene;
 
 	g_ppPlayer = g_pScene->GetPlayerObject();
+	g_blueSwordMinions = g_pScene->GetShader(0)->GetMinionList(SwordMinion, Blue);
+	g_blueBowMinions = g_pScene->GetShader(0)->GetMinionList(BowMinion, Blue);
+	g_blueStaffMinions = g_pScene->GetShader(0)->GetMinionList(StaffMinion, Blue);
+	g_redSwordMinions = g_pScene->GetShader(0)->GetMinionList(SwordMinion, Red);
+	g_redBowMinions = g_pScene->GetShader(0)->GetMinionList(BowMinion, Red);
+	g_redStaffMinions = g_pScene->GetShader(0)->GetMinionList(StaffMinion, Red);
+
 
 	//g_pBlueMinions = g_pScene->GetBlueObjects();
 	//g_pRedMinions = g_pScene->GetRedObjects();
@@ -401,14 +416,16 @@ void accept_thread()	//새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 
 void timer_thread()
 {
-	if (g_Clientsync)
+	
+
+	//if (g_Clientsync)
 		while (1)
 		{
 			Sleep(10);
 			g_PacketCoolTime += 10;
 			if (g_PacketCoolTime >= 1000)
 			{
-				cout << "위치 동기화 패킷 보냈어요~" << endl;
+				//cout << "위치 동기화 패킷 보냈어요~" << endl;
 				g_PacketCoolTime = 0;
 				//system_clock::time_point duration = system_clock::now();
 				for (int i = 0; i < MAX_USER; ++i) {
@@ -418,6 +435,7 @@ void timer_thread()
 					g_clients[i].m_frameTime = g_ppPlayer[i]->GetAnimTimeRemain();
 					g_clients[i].m_maxhp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->maxHP;
 					g_clients[i].m_curhp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->HP;
+					
 
 					g_clients[i].m_level = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->Level;
 					g_clients[i].m_maxexp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->MaxExp;
@@ -440,7 +458,7 @@ void timer_thread()
 						p.level = g_clients[i].m_level;
 						p.maxexp = g_clients[i].m_maxexp;
 						p.exp = g_clients[i].m_exp;
-
+						p.updatetime = g_GameTime;
 						//p.weapon = g_clients[i].m_weaponstate;
 						p.x = g_clients[i].m_x;
 						p.y = g_clients[i].m_y;
@@ -456,9 +474,9 @@ void timer_thread()
 					}
 				}
 
-				int idx{ 0 };
-				//for (auto iter = g_pBlueMinions->begin(); iter != g_pBlueMinions->end(); ++iter, ++idx) {
-				//	g_blueminions[idx].m_x = (*iter)->GetPosition().x;
+				
+				//for (auto iter = g_blueSwordMinions->begin(); iter != g_blueSwordMinions->end(); ++iter) {
+				//	g_blueSwordMinions[idx].m_x = (*iter)->GetPosition().x;
 				//	g_blueminions[idx].m_y = (*iter)->GetPosition().z;
 				//	//g_blueminions[idx].m_anistate = (*iter)->GetAnimState();
 				//	//g_blueminions[idx].m_frameTime = (*iter)->GetFrameTime();
@@ -468,37 +486,39 @@ void timer_thread()
 
 				//}
 
-				for (int i = 0; i < MAX_USER; ++i) {
-					SC_Msg_Minion_Count p;
-					p.color = 1;
-					p.count = idx;
-					p.size = sizeof(p);
-					p.type = SC_MINION_COUNT;
-					if (g_clients[i].m_isconnected == true) {
-						SendPacket(i, &p);
-					}
-				}
+				//
 
-				//	//Send Every User Blue Minion Packet
-				//	for (int i = 0; i < idx; ++i) {
-				//		SC_Msg_Pos_Minion p;
-				//		p.color = 1;
-				//		p.size = sizeof(p);
-				//		p.x = g_blueminions[i].m_x;
-				//		p.y = g_blueminions[i].m_y;
-				//		p.maxhp = g_blueminions[i].m_maxhp;
-				//		p.curhp = g_blueminions[i].m_curhp;
-
-				//		p.state = g_blueminions[i].m_anistate;
-				//		p.type = SC_POS_MINION;
-				//		p.frameTime = g_blueminions[i].m_frameTime;
-				//		p.vLook = g_blueminions[i].m_vLook;
-				//		for (int j = 0; j < MAX_USER; ++j) {
-				//			if (g_clients[j].m_isconnected == true) {
-				//				SendPacket(j, &p);
-				//			}
-				//		}
+				//for (int i = 0; i < MAX_USER; ++i) {
+				//	SC_Msg_Minion_Count p;
+				//	p.color = 1;
+				//	p.count = idx;
+				//	p.size = sizeof(p);
+				//	p.type = SC_MINION_COUNT;
+				//	if (g_clients[i].m_isconnected == true) {
+				//		SendPacket(i, &p);
 				//	}
+				//}
+
+					//Send Every User Blue Sword Minion Packet
+					for (auto iter = g_redBowMinions->begin(); iter != g_redBowMinions->end(); ++iter) {
+						SC_Msg_Pos_Minion p;
+						p.size = sizeof(p);
+						p.x = (*iter)->GetPosition().x;
+						p.y = (*iter)->GetPosition().z;
+						p.Minion_Tag = (*iter)->GetTag();
+						//p.maxhp = g_blueminions[i].m_maxhp;
+						//p.curhp = g_blueminions[i].m_curhp;
+						p.updatetime = g_GameTime;
+						//p.state = g_blueminions[i].m_anistate;
+						p.type = SC_POS_MINION;
+						//p.frameTime = g_blueminions[i].m_frameTime;
+						//p.vLook = g_blueminions[i].m_vLook;
+						for (int j = 0; j < MAX_USER; ++j) {
+							if (g_clients[j].m_isconnected == true) {
+								SendPacket(j, &p);
+							}
+						}
+					}
 
 				//	idx = 0;
 				//	for (auto iter = g_pRedMinions->begin(); iter != g_pRedMinions->end(); ++iter, ++idx) {

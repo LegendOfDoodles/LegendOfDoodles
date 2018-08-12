@@ -116,6 +116,7 @@ struct SC_Msg_Pos_Character : public Packet
 	short level;
 	short maxexp;
 	short exp;
+	float updatetime;
 	XMFLOAT3 vLook;
 };
 struct SC_Msg_What_Is_Packet : public Packet
@@ -148,13 +149,14 @@ struct SC_Msg_Minion_Count : public Packet
 
 struct SC_Msg_Pos_Minion : public Packet
 {
-	BYTE color;
+	short Minion_Tag;
 	short x;
 	short y;
 	short maxhp;
 	short curhp;
 	short state;
 	short frameTime;
+	float updatetime;
 	XMFLOAT3 vLook;
 };
 struct SC_Msg_Spawn_Minion : public Packet

@@ -59,6 +59,7 @@ public: // 공개 함수
 	virtual void SetFlyingObjectsType(FlyingObjectType type) { type; }
 	virtual void SetDirection(const XMFLOAT3& direction) { direction; }
 	virtual FlyingObjectType GetFlyingObjectsType() { return FlyingObjectType::Roider_Dumbel; }
+	
 
 	float GetDetectRange() { return m_detectRange; }
 	float GetSightRange() { return m_sightRange; }
@@ -74,10 +75,15 @@ public: // 공개 함수
 	void SetTag(short id) { m_tag = id; }
 	short GetTag() { return m_tag; }
 
+	void SetUpdateTime(float updatetime) { m_updatetime = updatetime; }
+	float GetUpdateTime() { return m_updatetime; }
+
+
 protected: // 내부 함수
 
 protected: // 변수
 	short m_tag{ 0 };
+	float m_updatetime{ 0 };
 
 	float m_fCollisionSize{ 1 };
 	XMFLOAT2 m_xmf2CollisionLevel{ 0,0 };

@@ -178,11 +178,14 @@ void CAnimatedObject::MoveToSubDestination(float timeElapsed, shared_ptr<CWayFin
 		m_availableTime -= timeElapsed;
 		if (m_availableTime <= 0.0f)
 		{
+			XMFLOAT3 myPos{ GetPosition() };
+			XMFLOAT3 enemyPos{ m_pEnemy->GetPosition() };
 			m_availableTime = TIME_AVAILABILITY_CHECK;
 			ResetSubPath();
 			m_subPath = pWayFinder->GetPathToPosition(
-				GetPosition(),
-				m_pEnemy->GetPosition());
+				myPos,
+				enemyPos);
+			m_subPath->push_back(CPathEdge(XMFLOAT2(enemyPos.x, enemyPos.z), Vector3::ToVector2(Vector3::Add(enemyPos, Vector3::Subtract(enemyPos, myPos)))));
 		}
 	}
 
@@ -201,14 +204,12 @@ void CAnimatedObject::MoveToSubDestination(float timeElapsed, shared_ptr<CWayFin
 			LookAt(m_subDestination);
 		}
 	}
-	else  // 아직 도착하지 않은 경우
-	{
-		MoveForward(m_speed * timeElapsed);
-		XMFLOAT3 position = GetPosition();
-		position.y = m_pTerrain->GetHeight(position.x, position.z);
-		CBaseObject::SetPosition(position);
-		CheckRightWay(PathType::Sub, pWayFinder);
-	}
+
+	MoveForward(m_speed * timeElapsed);
+	XMFLOAT3 position = GetPosition();
+	position.y = m_pTerrain->GetHeight(position.x, position.z);
+	CBaseObject::SetPosition(position);
+	CheckRightWay(PathType::Sub, pWayFinder);
 }
 
 void CAnimatedObject::GenerateSubPathToMainPath(shared_ptr<CWayFinder> pWayFinder)

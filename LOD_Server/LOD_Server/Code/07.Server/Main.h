@@ -133,6 +133,12 @@ extern CNexusTower** g_ppNexusTower;
 
 extern shared_ptr<CScene> g_pScene;
 extern CAnimatedObject** g_ppPlayer;
+extern CollisionObjectList* g_blueSwordMinions;
+extern CollisionObjectList* g_blueStaffMinions;
+extern CollisionObjectList* g_blueBowMinions;
+extern CollisionObjectList* g_redSwordMinions;
+extern CollisionObjectList* g_redStaffMinions;
+extern CollisionObjectList* g_redBowMinions;
 
 extern bool AcceptFinish;
 

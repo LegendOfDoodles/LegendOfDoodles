@@ -42,6 +42,8 @@ public: // 공개 함수
 	void SetGaugeManger(shared_ptr<CUIObjectManager> pManger) { m_pGaugeManger = pManger; }
 	void SetFSMManager(shared_ptr<CFSMMgr> pManger) { m_pFSMMgr = pManger; }
 
+	CollisionObjectList* GetMinionList(ObjectType Minion_Type, TeamType Team_Type);
+
 protected: // 내부 함수
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
 
