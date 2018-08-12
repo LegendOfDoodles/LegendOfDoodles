@@ -288,7 +288,7 @@ bool CAnimatedObject::IsArrive(float dst, PathType type)
 		int distanceSqr = static_cast<int>(Vector2::DistanceSquare(curPos, m_destination));
 		// 정확히 도착 하는 경우
 		if (distanceSqr < dst * dst) return true;
-		if (!m_mainPath->empty())
+		if (m_mainPath && !m_mainPath->empty())
 		{
 			XMFLOAT2 next = m_mainPath->front().To();
 			XMFLOAT2 dstToNext = Vector2::Subtract(next, m_destination, true);
@@ -305,13 +305,17 @@ bool CAnimatedObject::IsArrive(float dst, PathType type)
 		if (distanceSqr < dst * dst) return true;
 
 		XMFLOAT2 next;
-		if (!m_subPath->empty())
+		if (m_subPath && !m_subPath->empty())
 		{
 			next = m_subPath->front().To();
 		}
-		else
+		else if (m_mainPath && !m_mainPath->empty())
 		{
 			next = m_mainPath->front().To();
+		}
+		else
+		{
+			return false;
 		}
 		XMFLOAT2 dstToNext = Vector2::Subtract(next, m_subDestination, true);
 		float dstToNextLengthSqr = Vector2::DistanceSquare(next, m_subDestination);
