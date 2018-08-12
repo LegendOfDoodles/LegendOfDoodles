@@ -40,8 +40,8 @@ public:
 	bool m_isconnected;
 	float m_x;
 	float m_y;
-	int m_maxhp;
-	int m_curhp;
+	float m_maxhp;
+	float m_curhp;
 	int m_anistate;
 	int m_weaponstate;
 	
@@ -83,10 +83,10 @@ public:
 
 class Minion {
 public:
-	int m_x;
-	int m_y;
-	int m_maxhp;
-	int m_curhp;
+	float m_x;
+	float m_y;
+	float m_maxhp;
+	float m_curhp;
 	int m_anistate;
 	float m_frameTime;
 	XMFLOAT3 m_vLook;
@@ -158,13 +158,6 @@ void error_display(const char *msg, int err_no);
 
 
 void ErrorDisplay(const char * location);
-
-//굳이 서버에서 안할듯 싶음
-bool CanSee(int a, int b);
-
-
-bool IsNPC(int id);
-
 
 void initialize(shared_ptr<CScene> pScene);
 

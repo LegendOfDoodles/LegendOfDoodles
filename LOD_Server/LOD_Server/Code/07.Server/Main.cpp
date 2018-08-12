@@ -58,20 +58,6 @@ void ErrorDisplay(const char * location)
 {
 	error_display(location, WSAGetLastError());
 }
-//굳이 서버에서 안할듯 싶음
-bool CanSee(int a, int b)
-{
-	int dist_x = g_clients[a].m_x - g_clients[b].m_x;
-	int dist_y = g_clients[a].m_y - g_clients[b].m_y;
-	int dist = dist_x * dist_x + dist_y * dist_y;
-	//don't use sqrt() in SERVER! 
-	return (VIEW_RADIUS * VIEW_RADIUS >= dist);
-}
-
-bool IsNPC(int id)
-{
-	return ((id >= NPC_START) && id < (NUM_OF_NPC));
-}
 
 void initialize(shared_ptr<CScene> pScene)
 {
@@ -202,7 +188,6 @@ void DisconnectPlayer(int id)
 	for (int i = 0; i < MAX_USER; ++i) {
 		if (false == g_clients[i].m_isconnected) continue;
 		if (i == id) continue;
-		if (true == IsNPC(i)) break;
 		g_clients[i].m_mvl.lock();
 		if (0 != g_clients[i].m_viewlist.count(id)) {
 			g_clients[i].m_viewlist.erase(id);
@@ -414,11 +399,11 @@ void timer_thread()
 				for (auto iter = g_blueSwordMinions->begin(); iter != g_blueSwordMinions->end(); ++iter) {
 						SC_Msg_Pos_Minion p;
 						p.size = sizeof(p);
-						p.x = (short)(*iter)->GetPosition().x;
-						p.y = (short)(*iter)->GetPosition().z;
+						p.x = (*iter)->GetPosition().x;
+						p.y = (*iter)->GetPosition().z;
 						p.Minion_Tag = (short)(*iter)->GetTag();
-						p.maxhp = (short)((CMinion*)*iter)->GetCommonStatus()->maxHP;
-						p.curhp = (short)((CMinion*)*iter)->GetCommonStatus()->HP;
+						p.maxhp = ((CMinion*)*iter)->GetCommonStatus()->maxHP;
+						p.curhp = ((CMinion*)*iter)->GetCommonStatus()->HP;
 						p.updatetime = g_GameTime;
 						p.type = SC_POS_MINION;
 						for (int j = 0; j < MAX_USER; ++j) {
@@ -431,11 +416,11 @@ void timer_thread()
 				for (auto iter = g_blueBowMinions->begin(); iter != g_blueBowMinions->end(); ++iter) {
 						SC_Msg_Pos_Minion p;
 						p.size = sizeof(p);
-						p.x = (short)(*iter)->GetPosition().x;
-						p.y = (short)(*iter)->GetPosition().z;
+						p.x = (*iter)->GetPosition().x;
+						p.y = (*iter)->GetPosition().z;
 						p.Minion_Tag = (short)(*iter)->GetTag();
-						p.maxhp = (short)((CMinion*)*iter)->GetCommonStatus()->maxHP;
-						p.curhp = (short)((CMinion*)*iter)->GetCommonStatus()->HP;
+						p.maxhp = ((CMinion*)*iter)->GetCommonStatus()->maxHP;
+						p.curhp = ((CMinion*)*iter)->GetCommonStatus()->HP;
 						p.updatetime = g_GameTime;
 						p.type = SC_POS_MINION;
 						for (int j = 0; j < MAX_USER; ++j) {
@@ -448,11 +433,11 @@ void timer_thread()
 				for (auto iter = g_blueStaffMinions->begin(); iter != g_blueStaffMinions->end(); ++iter) {
 						SC_Msg_Pos_Minion p;
 						p.size = sizeof(p);
-						p.x = (short)(*iter)->GetPosition().x;
-						p.y = (short)(*iter)->GetPosition().z;
+						p.x = (*iter)->GetPosition().x;
+						p.y = (*iter)->GetPosition().z;
 						p.Minion_Tag = (short)(*iter)->GetTag();
-						p.maxhp = (short)((CMinion*)*iter)->GetCommonStatus()->maxHP;
-						p.curhp = (short)((CMinion*)*iter)->GetCommonStatus()->HP;
+						p.maxhp = ((CMinion*)*iter)->GetCommonStatus()->maxHP;
+						p.curhp = ((CMinion*)*iter)->GetCommonStatus()->HP;
 						p.updatetime = g_GameTime;
 						p.type = SC_POS_MINION;
 						for (int j = 0; j < MAX_USER; ++j) {
@@ -465,11 +450,11 @@ void timer_thread()
 				for (auto iter = g_redSwordMinions->begin(); iter != g_redSwordMinions->end(); ++iter) {
 						SC_Msg_Pos_Minion p;
 						p.size = sizeof(p);
-						p.x = (short)(*iter)->GetPosition().x;
-						p.y = (short)(*iter)->GetPosition().z;
+						p.x = (*iter)->GetPosition().x;
+						p.y = (*iter)->GetPosition().z;
 						p.Minion_Tag = (short)(*iter)->GetTag();
-						p.maxhp = (short)((CMinion*)*iter)->GetCommonStatus()->maxHP;
-						p.curhp = (short)((CMinion*)*iter)->GetCommonStatus()->HP;
+						p.maxhp = ((CMinion*)*iter)->GetCommonStatus()->maxHP;
+						p.curhp = ((CMinion*)*iter)->GetCommonStatus()->HP;
 						p.updatetime = g_GameTime;
 						p.type = SC_POS_MINION;
 						for (int j = 0; j < MAX_USER; ++j) {
@@ -482,11 +467,11 @@ void timer_thread()
 				for (auto iter = g_redBowMinions->begin(); iter != g_redBowMinions->end(); ++iter) {
 						SC_Msg_Pos_Minion p;
 						p.size = sizeof(p);
-						p.x = (short)(*iter)->GetPosition().x;
-						p.y = (short)(*iter)->GetPosition().z;
+						p.x = (*iter)->GetPosition().x;
+						p.y = (*iter)->GetPosition().z;
 						p.Minion_Tag = (short)(*iter)->GetTag();
-						p.maxhp = (short)((CMinion*)*iter)->GetCommonStatus()->maxHP;
-						p.curhp = (short)((CMinion*)*iter)->GetCommonStatus()->HP;
+						p.maxhp = ((CMinion*)*iter)->GetCommonStatus()->maxHP;
+						p.curhp = ((CMinion*)*iter)->GetCommonStatus()->HP;
 						p.updatetime = g_GameTime;
 						p.type = SC_POS_MINION;
 						for (int j = 0; j < MAX_USER; ++j) {
@@ -499,11 +484,11 @@ void timer_thread()
 				for (auto iter = g_redStaffMinions->begin(); iter != g_redStaffMinions->end(); ++iter) {
 						SC_Msg_Pos_Minion p;
 						p.size = sizeof(p);
-						p.x = (short)(*iter)->GetPosition().x;
-						p.y = (short)(*iter)->GetPosition().z;
+						p.x = (*iter)->GetPosition().x;
+						p.y = (*iter)->GetPosition().z;
 						p.Minion_Tag = (short)(*iter)->GetTag();
-						p.maxhp = (short)((CMinion*)*iter)->GetCommonStatus()->maxHP;
-						p.curhp = (short)((CMinion*)*iter)->GetCommonStatus()->HP;
+						p.maxhp = ((CMinion*)*iter)->GetCommonStatus()->maxHP;
+						p.curhp = ((CMinion*)*iter)->GetCommonStatus()->HP;
 						p.updatetime = g_GameTime;
 						p.type = SC_POS_MINION;
 						for (int j = 0; j < MAX_USER; ++j) {
@@ -518,12 +503,12 @@ void timer_thread()
 					if (g_clients[i].m_isconnected == true) {
 						SC_Msg_Pos_Neutrality p;
 						p.Monster_Tag = (short)g_ppNeutrality[i]->GetTag();
-						p.x = (short)g_ppNeutrality[i]->GetPosition().x;
-						p.y = (short)g_ppNeutrality[i]->GetPosition().z;
+						p.x = g_ppNeutrality[i]->GetPosition().x;
+						p.y = g_ppNeutrality[i]->GetPosition().z;
 						p.size = sizeof(p);
 						p.type = SC_POS_MONSTER;
-						p.maxhp = (short)g_ppNeutrality[i]->GetCommonStatus()->maxHP;
-						p.curhp = (short)g_ppNeutrality[i]->GetCommonStatus()->HP;
+						p.maxhp = g_ppNeutrality[i]->GetCommonStatus()->maxHP;
+						p.curhp = g_ppNeutrality[i]->GetCommonStatus()->HP;
 						p.updatetime = g_GameTime;
 
 						for (int j = 0; j < MAX_USER; ++j) {

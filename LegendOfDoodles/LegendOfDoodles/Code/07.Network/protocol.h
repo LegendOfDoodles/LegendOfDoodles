@@ -77,8 +77,21 @@ struct SC_Msg_Permit_Use_Skill : public Packet
 	BYTE Character_id;
 	BYTE skilltype;
 };
+struct SC_Msg_Pos_Neutrality : public Packet
+{
+	short Monster_Tag;
+	float x;
+	float y;
+	float maxhp;
+	float curhp;
+	float updatetime;
+};
 
-
+struct SC_Msg_Set_Monster_State : public Packet
+{
+	BYTE Monster_State;
+	short Monster_Tag;
+};
 
 struct SC_Msg_Pos_Minion : public Packet
 {
@@ -144,6 +157,8 @@ struct SC_Msg_Pos_Nexus : public Packet
 #define SC_MINION_SPAWN			  109
 #define SC_MINION_STATE			  110
 #define SC_SET_ENEMY			  111
+#define SC_POS_MONSTER			  112
+#define SC_MONSTER_STATE		  113
 //Client->Server
 #define CS_ACTION				  201
 #define CS_MOVE_PLAYER			  202
