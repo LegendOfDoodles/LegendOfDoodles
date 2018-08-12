@@ -154,8 +154,6 @@ struct SC_Msg_Pos_Minion : public Packet
 	short y;
 	short maxhp;
 	short curhp;
-	short state;
-	short frameTime;
 	float updatetime;
 	XMFLOAT3 vLook;
 };

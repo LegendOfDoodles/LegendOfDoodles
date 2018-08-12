@@ -6,6 +6,7 @@
 #include "04.Shaders/04.AniShader/MinionShader.h"
 #include "05.Objects\03.AnimatedObject\AnimatedObject.h"
 #include "05.Objects\08.Player\Player.h"
+#include "05.Objects/06.Minion/Minion.h"
 #include "05.Objects\09.NexusTower\NexusTower.h"
 
 
@@ -431,8 +432,8 @@ void timer_thread()
 				for (int i = 0; i < MAX_USER; ++i) {
 					g_clients[i].m_x = g_ppPlayer[i]->GetPosition().x;
 					g_clients[i].m_y = g_ppPlayer[i]->GetPosition().z;
-					g_clients[i].m_anistate = g_ppPlayer[i]->GetAnimState();
-					g_clients[i].m_frameTime = g_ppPlayer[i]->GetAnimTimeRemain();
+					//g_clients[i].m_anistate = g_ppPlayer[i]->GetAnimState();
+					//g_clients[i].m_frameTime = g_ppPlayer[i]->GetAnimTimeRemain();
 					g_clients[i].m_maxhp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->maxHP;
 					g_clients[i].m_curhp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->HP;
 					
@@ -506,13 +507,10 @@ void timer_thread()
 						p.x = (*iter)->GetPosition().x;
 						p.y = (*iter)->GetPosition().z;
 						p.Minion_Tag = (*iter)->GetTag();
-						//p.maxhp = g_blueminions[i].m_maxhp;
-						//p.curhp = g_blueminions[i].m_curhp;
+						p.maxhp = ((CMinion*)*iter)->GetCommonStatus()->maxHP;
+						p.curhp = ((CMinion*)*iter)->GetCommonStatus()->HP;
 						p.updatetime = g_GameTime;
-						//p.state = g_blueminions[i].m_anistate;
 						p.type = SC_POS_MINION;
-						//p.frameTime = g_blueminions[i].m_frameTime;
-						//p.vLook = g_blueminions[i].m_vLook;
 						for (int j = 0; j < MAX_USER; ++j) {
 							if (g_clients[j].m_isconnected == true) {
 								SendPacket(j, &p);

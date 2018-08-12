@@ -102,7 +102,7 @@ void CNetwork::ProcessPacket(char *ptr)
 				if (m_ppPlayer[id]->GetUpdateTime() <= my_packet->updatetime)
 				{
 					m_ppPlayer[id]->CBaseObject::SetPosition(my_packet->x, my_packet->y);
-					m_ppPlayer[id]->SyncAnimation((AnimationsType)my_packet->state, my_packet->frameTime);
+					//m_ppPlayer[id]->SyncAnimation((AnimationsType)my_packet->state, my_packet->frameTime);
 					m_ppPlayer[id]->SetUpdateTime(my_packet->updatetime);
 					m_ppPlayer[id]->SetHP(my_packet->maxhp, my_packet->curhp);
 					m_ppPlayer[id]->SetLevel(my_packet->level, my_packet->maxexp, my_packet->exp);
@@ -112,7 +112,7 @@ void CNetwork::ProcessPacket(char *ptr)
 				if (m_ppPlayer[id]->GetUpdateTime() <= my_packet->updatetime)
 				{
 					m_ppPlayer[id]->CBaseObject::SetPosition(my_packet->x, my_packet->y);
-					m_ppPlayer[id]->SyncAnimation((AnimationsType)my_packet->state, my_packet->frameTime);
+					//m_ppPlayer[id]->SyncAnimation((AnimationsType)my_packet->state, my_packet->frameTime);
 					m_ppPlayer[id]->SetHP(my_packet->maxhp, my_packet->curhp);
 					m_ppPlayer[id]->SetUpdateTime(my_packet->updatetime);
 					m_ppPlayer[id]->SetLevel(my_packet->level, my_packet->maxexp, my_packet->exp);
@@ -198,6 +198,7 @@ void CNetwork::ProcessPacket(char *ptr)
 			{
 				Minion->SetPosition(my_packet->x, my_packet->y);
 				Minion->SetUpdateTime(my_packet->updatetime);
+				Minion->SetHP(my_packet->maxhp, my_packet->curhp);
 			}
 			break;
 		}
