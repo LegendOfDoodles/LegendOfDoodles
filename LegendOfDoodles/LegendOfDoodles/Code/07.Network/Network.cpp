@@ -62,7 +62,6 @@ void CNetwork::ProcessPacket(char *ptr)
 			if (first_time) {
 				first_time = false;
 				m_myid = id;
-				m_pScene->SetPlayer();
 			}
 			if (id == m_myid) {
 				//자기 아이디 처리

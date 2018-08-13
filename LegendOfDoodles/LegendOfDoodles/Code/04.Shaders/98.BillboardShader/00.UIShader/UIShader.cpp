@@ -3,7 +3,6 @@
 #include "05.Objects/96.Billboard/01.FrameObject/UIFrameObject.h"
 #include "02.Framework/01.CreateMgr/CreateMgr.h"
 #include "05.Objects/99.Material/Material.h"
-#include "05.Objects/08.Player/Player.h"
 
 /// <summary>
 /// 목적: UI Frame 쉐이더 (틀만 생성)
@@ -68,31 +67,26 @@ void CUIObjectShader::Render(CCamera * pCamera)
 			break;
 		case CharacterFrame:
 			isRendering = true;
-			m_ppMaterials[0]->UpdateShaderVariable(2);
+			m_ppMaterials[0]->UpdateShaderVariable(1);
 			break;
 		case SelectSpecial_7:
 		case SelectSpecial_12:
 		case SelectSpecial_17:
 		case SelectSpecial_21:
 			isRendering = true;
-			m_ppMaterials[0]->UpdateShaderVariable(6);
+			m_ppMaterials[0]->UpdateShaderVariable(5);
 			break;
 		case StatusFrame:
 			isRendering = true;
-			m_ppMaterials[0]->UpdateShaderVariable(3);
+			m_ppMaterials[0]->UpdateShaderVariable(2);
 			break;
 		case KDAFrame:
 			isRendering = true;
-			m_ppMaterials[0]->UpdateShaderVariable(4);
+			m_ppMaterials[0]->UpdateShaderVariable(3);
 			break;
 		case TimerFrame:
 			isRendering = true;
-			m_ppMaterials[0]->UpdateShaderVariable(5);
-			break;
-		case SpecialFrame:
-			if (LButton == true) isRendering = true;
-			else isRendering = false;
-			m_ppMaterials[0]->UpdateShaderVariable(1);
+			m_ppMaterials[0]->UpdateShaderVariable(4);
 			break;
 		default:
 			break;
@@ -102,106 +96,18 @@ void CUIObjectShader::Render(CCamera * pCamera)
 	}
 }
 
-void CUIObjectShader::SetCamera(CCamera * pCamera)
-{
-	m_pCamera = pCamera;
-
-	for (int i = 0; i < m_nObjects; ++i) {
-		static_cast<CUIFrameObject*>(m_ppObjects[i])->SetCamera(m_pCamera);
-	}
-}
-
 bool CUIObjectShader::OnProcessKeyInput(UCHAR * pKeyBuffer)
 {
 	UNREFERENCED_PARAMETER(pKeyBuffer);
 
-	return true;
+	return false;
 }
 
 bool CUIObjectShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 {
-	POINT cursorPos;
+	UNREFERENCED_PARAMETER(pKeyBuffer);
 
-	GetCursorPos(&cursorPos);
-	ScreenToClient(m_pCamera->GetHwnd(), &cursorPos);
-
-
-	if (pKeyBuffer == MK_LBUTTON)
-	{
-		// 캐릭터창 클릭
-		if ((cursorPos.x > SPECIAL_MINIMUM_X  && cursorPos.x < SPECIAL_MAXIMUM_X)
-			&& (cursorPos.y > SPECIAL_MINIMUM_Y && cursorPos.y < SPECIAL_MAXIMUM_Y))
-		{
-			if (LButton == true) LButton = false;
-			else LButton = true;
-		}
-
-		// 특성창이 켜져있고 (LButton == true) 플레이어(현재 조종중인)의 특성 포인트가 있을 경우
-		// 각 특성을 선택한다. (윈도우 좌표로)
-		if (LButton == true && m_pPlayer->GetPlayerStatus()->SpecialPoint >= 1) {
-
-			// Attack
-			if ((cursorPos.x > SELECT_SPECIAL_MINIMUM_X  && cursorPos.x < SELECT_SPECIAL_MAXIMUM_X)
-				&& (cursorPos.y > SELECT_ATTACK_SPECIAL_MINIMUM_Y && cursorPos.y < SELECT_ATTACK_SPECIAL_MAXIMUM_Y))
-			{
-				// 빈곳 찾아서 넣기
-				for (int i = 0; i < 4; ++i) {
-					if (m_pPlayer->GetPlayerStatus()->Special[i] == (SpecialType::NoSelected)) {
-						m_pPlayer->GetPlayerStatus()->Special[i] = (SpecialType::AttackSpecial);
-						break;
-					};
-				}
-
-				// 특성 포인트 사용
-				m_pPlayer->GetPlayerStatus()->SpecialPoint = m_pPlayer->GetPlayerStatus()->SpecialPoint - 1;
-
-				// 특성창 닫기
-				LButton = false;
-			}
-
-			// Defence
-			if ((cursorPos.x > SELECT_SPECIAL_MINIMUM_X  && cursorPos.x < SELECT_SPECIAL_MAXIMUM_X)
-				&& (cursorPos.y > SELECT_DEFENCE_SPECIAL_MINIMUM_Y && cursorPos.y < SELECT_DEFENCE_SPECIAL_MAXIMUM_Y))
-			{
-				// 빈곳 찾아서 넣기
-				for (int i = 0; i < 4; ++i) {
-					if (m_pPlayer->GetPlayerStatus()->Special[i] == (SpecialType::NoSelected)) {
-						m_pPlayer->GetPlayerStatus()->Special[i] = (SpecialType::DefenceSpecial);
-						break;
-					};
-				}
-
-				// 특성 포인트 사용
-				m_pPlayer->GetPlayerStatus()->SpecialPoint = m_pPlayer->GetPlayerStatus()->SpecialPoint - 1;
-
-				// 특성창 닫기
-				LButton = false;
-			}
-
-			// Tech
-			if ((cursorPos.x > SELECT_SPECIAL_MINIMUM_X  && cursorPos.x < SELECT_SPECIAL_MAXIMUM_X)
-				&& (cursorPos.y > SELECT_TECHNIC_SPECIAL_MINIMUM_Y && cursorPos.y < SELECT_TECHNIC_SPECIAL_MAXIMUM_Y))
-			{
-				// 빈곳 찾아서 넣기
-				for (int i = 0; i < 4; ++i) {
-					if (m_pPlayer->GetPlayerStatus()->Special[i] == (SpecialType::NoSelected)) {
-						m_pPlayer->GetPlayerStatus()->Special[i] = (SpecialType::TechnicSpecial);
-						break;
-					};
-				}
-
-				// 특성 포인트 사용
-				m_pPlayer->GetPlayerStatus()->SpecialPoint = m_pPlayer->GetPlayerStatus()->SpecialPoint - 1;
-
-				// 특성창 닫기
-				LButton = false;
-			}
-
-		}
-
-	}
-
-	return true;
+	return false;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -289,7 +195,7 @@ void CUIObjectShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pCo
 {
 	m_pCamera = (CCamera*)pContext;
 
-	m_nObjects = 14;
+	m_nObjects = 13;
 	m_ppObjects = new CBaseObject*[m_nObjects];
 
 	UINT ncbElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
@@ -314,27 +220,4 @@ void CUIObjectShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pCo
 
 		m_ppObjects[i] = pUIObject;
 	}
-}
-
-void CUIObjectShader::ReleaseObjects()
-{
-	if (m_ppObjects)
-	{
-		for (int j = 0; j < m_nObjects; j++)
-		{
-			Safe_Delete(m_ppObjects[j]);
-		}
-		Safe_Delete_Array(m_ppObjects);
-	}
-
-#if USE_BATCH_MATERIAL
-	if (m_ppMaterials)
-	{
-		for (int i = 0; i < m_nMaterials; ++i)
-		{
-			Safe_Delete(m_ppMaterials[i]);
-		}
-		Safe_Delete_Array(m_ppMaterials);
-	}
-#endif
 }

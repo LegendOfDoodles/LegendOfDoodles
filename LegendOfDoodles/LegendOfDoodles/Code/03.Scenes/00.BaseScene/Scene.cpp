@@ -21,6 +21,7 @@
 #include "04.Shaders/98.BillboardShader/03.MinimapUIShader/MinimapShader.h"
 #include "04.Shaders/98.BillboardShader/04.SkillShader/SkillShader.h"
 #include "04.Shaders/98.BillboardShader/98.NumberShader/NumberShader.h"
+#include "04.Shaders/98.BillboardShader/05.SpecialShader/01.SpecialSelectShader/SpecialSelectShader.h"
 #include "04.Shaders/98.BillboardShader/05.SpecialShader/02.SelectedSpecialShader/SelectedSpecialShader.h"
 #include "04.Shaders/09.EffectShader/EffectShader.h"
 #include "05.Objects/01.Camera/01.AOSCamera/AOSCamera.h"
@@ -52,6 +53,7 @@
 #define NexusTowerHP_Shader m_ppShaders[18]
 #define NeutralityHP_Shader m_ppShaders[19]
 #define Eeffect_Shader m_ppShaders[20]
+#define SpecialSelect_Shader m_ppShaders[21]
 
 ////////////////////////////////////////////////////////////////////////
 // 持失切, 社瑚切
@@ -341,7 +343,7 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 
 	m_pCamera->Initialize(pCreateMgr);
 
-	m_nShaders = 21;
+	m_nShaders = 22;
 	m_ppShaders = new CShader*[m_nShaders];
 	m_ppShaders[0] = new CSkyBoxShader(pCreateMgr);
 	CTerrainShader* pTerrainShader = new CTerrainShader(pCreateMgr);
@@ -372,6 +374,7 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	NexusTowerHP_Shader = new CNexusAndTowerHPGaugeShader(pCreateMgr);
 	NeutralityHP_Shader = new CNeutralityGaugeShader(pCreateMgr);
 	Eeffect_Shader = new CEffectShader(pCreateMgr);
+	SpecialSelect_Shader = new CSpecialSelectShader(pCreateMgr);
 
 	for (int i = 0; i < 2; ++i)
 	{
@@ -404,6 +407,7 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	m_ppObjects = ((CPlayerShader *)m_ppShaders[3])->GetCollisionObjects();
 	
 	SetPlayer();
+
 	((CSkillShader*)Skill_Shader)->SetChangeWeapon(((CPlayerShader*)m_ppShaders[3])->GetChangeWeapon());
 	((CPlayerHPGaugeShader*)Number_Shader)->SetPlayerCnt(((CPlayerShader *)m_ppShaders[3])->GetObjectCount());
 	((CPlayerHPGaugeShader*)Number_Shader)->SetPlayer(((CPlayerShader *)m_ppShaders[3])->GetCollisionObjects());
@@ -424,6 +428,7 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	NexusTowerHP_Shader->Initialize(pCreateMgr, m_pCamera);
 	NeutralityHP_Shader->Initialize(pCreateMgr, m_pCamera);
 	Eeffect_Shader->Initialize(pCreateMgr, m_pCamera);
+	SpecialSelect_Shader->Initialize(pCreateMgr, m_pCamera);
 
 	//Managere Initialize
 	m_pWayFinder = shared_ptr<CWayFinder>(new CWayFinder());
@@ -490,11 +495,12 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 void CScene::SetPlayer()
 {
 	m_pMyPlayer = (CAnimatedObject*)m_ppObjects[m_pNetwork->m_myid];
-	((CMinimapShader*)UI_Shader)->SetPlayer(m_ppObjects[m_pNetwork->m_myid]);
+	
 	((CSkillShader*)Skill_Shader)->SetPlayer(m_ppObjects[m_pNetwork->m_myid]);
 	((CMinimapShader*)Minimap_Shader)->SetPlayer(m_ppObjects[m_pNetwork->m_myid]);
 	((CharacterFrameGaugeShader*)CharFrame_Shader)->SetPlayer(m_ppObjects[m_pNetwork->m_myid]);
 	((CSelectedSpecialShader*)SelectedSpecial_Shader)->SetPlayer(m_ppObjects[m_pNetwork->m_myid]);
+	((CSelectedSpecialShader*)SpecialSelect_Shader)->SetPlayer(m_ppObjects[m_pNetwork->m_myid]);
 }
 
 void CScene::ReleaseObjects()

@@ -25,6 +25,9 @@ public:	// 외부 함수
 
 	virtual PlayerInfo* GetPlayerStatus() { return &m_StatusInfo; }
 
+	void SetWeaponChangeTriger(bool triger) { m_ChangeWeapon = triger; }
+	bool GetWeaponChangeTriger() { return m_ChangeWeapon; }
+	
 	//virtual void SetObjectType(ObjectType type) { m_StatusInfo.WeaponType = type; };
 	virtual void ReceiveDamage(float damage)
 	{
@@ -54,5 +57,6 @@ protected: // 내부 함수
 
 protected: // 변수
 	PlayerInfo m_StatusInfo;
+	bool m_ChangeWeapon{ false };
 };
 

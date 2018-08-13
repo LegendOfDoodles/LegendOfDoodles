@@ -4,7 +4,6 @@
 class CBillboardObject;
 class CUIFrameObject;
 class CMaterial;
-class CPlayer;
 
 class CUIObjectShader : public CBillboardShader
 {
@@ -19,9 +18,6 @@ public: // 공개 함수
 
 	virtual void Render(CCamera *pCamera);
 
-	virtual void SetCamera(CCamera *pCamera);
-	virtual void SetPlayer(CBaseObject *pPlayer) { m_pPlayer = (CPlayer*)pPlayer; };
-
 	virtual bool OnProcessKeyInput(UCHAR* pKeyBuffer);
 	virtual bool OnProcessMouseInput(WPARAM pKeyBuffer);
 
@@ -35,14 +31,9 @@ protected: // 내부 함수
 	virtual void CreateShader(shared_ptr<CCreateMgr> pCreateMgr, UINT nRenderTargets = 1, bool isRenderBB = false, bool isRenderShadow = false);
 
 	virtual void BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pContext = NULL);
-
-	virtual void ReleaseObjects();
-
 protected: // 변수
 	CCamera * m_pCamera;
-	CPlayer *m_pPlayer;
 
 	bool isRendering{ true };
-	bool LButton{ false };
 };
 

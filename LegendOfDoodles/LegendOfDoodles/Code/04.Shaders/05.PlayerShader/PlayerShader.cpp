@@ -75,6 +75,40 @@ void CPlayerShader::AnimateObjects(float timeElapsed)
 	//printf("패킷 수신 완료\n");
 	for (int j = 0; j < m_nObjects; j++)
 	{
+		if (static_cast<CPlayer*>(m_ppObjects[j])->GetWeaponChangeTriger() == true)
+		{
+			switch (m_ppObjects[j]->GetPlayerStatus()->Weapon)
+			{
+			case 1:
+				m_ppObjects[0]->SetType((ObjectType)m_nWeaponState);
+				m_ppObjects[0]->SetType(ObjectType::SwordPlayer);
+				dynamic_cast<CPlayer*>(m_ppObjects[0])->ChangeSkillSet(m_ppSwordAni);
+				dynamic_cast<CPlayer*>(m_ppObjects[0])->SetWeaponData(ObjectType::SwordPlayer, 0);
+
+				m_ChangeWeapon = true;
+				static_cast<CPlayer*>(m_ppObjects[j])->SetWeaponChangeTriger(false);
+				break;
+			case 2:
+				m_ppObjects[0]->SetType((ObjectType)m_nWeaponState);
+				m_ppObjects[0]->SetType(ObjectType::StaffPlayer);
+				dynamic_cast<CPlayer*>(m_ppObjects[0])->ChangeSkillSet(m_ppStaffAni);
+				dynamic_cast<CPlayer*>(m_ppObjects[0])->SetWeaponData(ObjectType::StaffPlayer, 0);
+
+				m_ChangeWeapon = true;
+				static_cast<CPlayer*>(m_ppObjects[j])->SetWeaponChangeTriger(false);
+				break;
+			case 3:
+				m_ppObjects[0]->SetType((ObjectType)m_nWeaponState);
+				m_ppObjects[0]->SetType(ObjectType::BowPlayer);
+				dynamic_cast<CPlayer*>(m_ppObjects[0])->ChangeSkillSet(m_ppBowAni);
+				dynamic_cast<CPlayer*>(m_ppObjects[0])->SetWeaponData(ObjectType::BowPlayer, 0);
+
+				m_ChangeWeapon = true;
+				static_cast<CPlayer*>(m_ppObjects[j])->SetWeaponChangeTriger(false);
+				break;
+			}
+		}
+
 		m_ppObjects[j]->Animate(timeElapsed);
 	}
 }

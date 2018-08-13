@@ -2,6 +2,8 @@
 #include "SpecialSelectShader.h"
 #include "02.Framework/01.CreateMgr/CreateMgr.h"
 #include "05.Objects/99.Material/Material.h"
+#include "05.Objects/96.Billboard/01.FrameObject/UIFrameObject.h"
+#include "05.Objects/08.Player/Player.h"
 
 /// <summary>
 /// 목적: 선택된 특성
@@ -50,6 +52,20 @@ void CSpecialSelectShader::Render(CCamera * pCamera)
 
 	for (int j = 0; j < m_nObjects; j++)
 	{
+		UIFrameType type = (UIFrameType)((CUIFrameObject*)m_ppObjects[j])->GetType();
+
+		if (type == SpecialFrame)
+		{
+			if (ShowWindow[0] == true) {
+				isRendering = true;
+				m_ppMaterials[0]->UpdateShaderVariable(0);
+			}
+			else if (ShowWindow[1] == true) {
+				isRendering = true;
+				m_ppMaterials[0]->UpdateShaderVariable(1);
+			}
+		}
+
 		if (isRendering) m_ppObjects[j]->Render(pCamera);
 	}
 }
@@ -63,9 +79,132 @@ bool CSpecialSelectShader::OnProcessKeyInput(UCHAR * pKeyBuffer)
 
 bool CSpecialSelectShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 {
-	UNREFERENCED_PARAMETER(pKeyBuffer);
+	POINT cursorPos;
 
-	return false;
+	GetCursorPos(&cursorPos);
+	ScreenToClient(m_pCamera->GetHwnd(), &cursorPos);
+
+
+	if (pKeyBuffer == MK_LBUTTON)
+	{
+		// 캐릭터창 클릭
+		if ((cursorPos.x > SPECIAL_MINIMUM_X  && cursorPos.x < SPECIAL_MAXIMUM_X)
+			&& (cursorPos.y > SPECIAL_MINIMUM_Y && cursorPos.y < SPECIAL_MAXIMUM_Y))
+		{
+			if (m_pPlayer->GetPlayerStatus()->Weapon == 0)
+				ShowWindow[0] = true;
+			else
+				ShowWindow[1] = true;
+		}
+
+		if (ShowWindow[0] == true && m_pPlayer->GetPlayerStatus()->Weapon == 0) {
+			// Sword
+			if ((cursorPos.x > SELECT_SPECIAL_MINIMUM_X  && cursorPos.x < SELECT_SPECIAL_MAXIMUM_X)
+				&& (cursorPos.y > SELECT_ATTACK_SPECIAL_MINIMUM_Y && cursorPos.y < SELECT_ATTACK_SPECIAL_MAXIMUM_Y))
+			{
+				// 무기 변경
+				m_pPlayer->GetPlayerStatus()->Weapon = 1;
+				m_pPlayer->SetWeaponChangeTriger(true);
+
+				// 무기 선택창 닫기
+				ShowWindow[0] = false;
+				isRendering = false;
+			}
+
+			// Bow
+			if ((cursorPos.x > SELECT_SPECIAL_MINIMUM_X  && cursorPos.x < SELECT_SPECIAL_MAXIMUM_X)
+				&& (cursorPos.y > SELECT_DEFENCE_SPECIAL_MINIMUM_Y && cursorPos.y < SELECT_DEFENCE_SPECIAL_MAXIMUM_Y))
+			{
+				// 무기 변경
+				m_pPlayer->GetPlayerStatus()->Weapon = 3;
+				m_pPlayer->SetWeaponChangeTriger(true);
+
+				// 무기 선택창 닫기
+				ShowWindow[0] = false;
+				isRendering = false;
+			}
+
+			// Magic
+			if ((cursorPos.x > SELECT_SPECIAL_MINIMUM_X  && cursorPos.x < SELECT_SPECIAL_MAXIMUM_X)
+				&& (cursorPos.y > SELECT_TECHNIC_SPECIAL_MINIMUM_Y && cursorPos.y < SELECT_TECHNIC_SPECIAL_MAXIMUM_Y))
+			{
+				// 무기 변경
+				m_pPlayer->GetPlayerStatus()->Weapon = 2;
+				m_pPlayer->SetWeaponChangeTriger(true);
+
+				// 무기 선택창 닫기
+				ShowWindow[0] = false;
+				isRendering = false;
+			}
+
+		}
+		// 특성창이 켜져있고 (LButton == true) 플레이어(현재 조종중인)의 특성 포인트가 있을 경우
+		// 각 특성을 선택한다. (윈도우 좌표로)
+		else if (ShowWindow[1] == true && m_pPlayer->GetPlayerStatus()->SpecialPoint >= 1) {
+
+			// Attack
+			if ((cursorPos.x > SELECT_SPECIAL_MINIMUM_X  && cursorPos.x < SELECT_SPECIAL_MAXIMUM_X)
+				&& (cursorPos.y > SELECT_ATTACK_SPECIAL_MINIMUM_Y && cursorPos.y < SELECT_ATTACK_SPECIAL_MAXIMUM_Y))
+			{
+				// 빈곳 찾아서 넣기
+				for (int i = 0; i < 4; ++i) {
+					if (m_pPlayer->GetPlayerStatus()->Special[i] == (SpecialType::NoSelected)) {
+						m_pPlayer->GetPlayerStatus()->Special[i] = (SpecialType::AttackSpecial);
+						break;
+					};
+				}
+
+				// 특성 포인트 사용
+				m_pPlayer->GetPlayerStatus()->SpecialPoint = m_pPlayer->GetPlayerStatus()->SpecialPoint - 1;
+
+				// 특성창 닫기
+				ShowWindow[1] = false;
+				isRendering = false;
+			}
+
+			// Defence
+			if ((cursorPos.x > SELECT_SPECIAL_MINIMUM_X  && cursorPos.x < SELECT_SPECIAL_MAXIMUM_X)
+				&& (cursorPos.y > SELECT_DEFENCE_SPECIAL_MINIMUM_Y && cursorPos.y < SELECT_DEFENCE_SPECIAL_MAXIMUM_Y))
+			{
+				// 빈곳 찾아서 넣기
+				for (int i = 0; i < 4; ++i) {
+					if (m_pPlayer->GetPlayerStatus()->Special[i] == (SpecialType::NoSelected)) {
+						m_pPlayer->GetPlayerStatus()->Special[i] = (SpecialType::DefenceSpecial);
+						break;
+					};
+				}
+
+				// 특성 포인트 사용
+				m_pPlayer->GetPlayerStatus()->SpecialPoint = m_pPlayer->GetPlayerStatus()->SpecialPoint - 1;
+
+				// 특성창 닫기
+				ShowWindow[1] = false;
+				isRendering = false;
+			}
+
+			// Tech
+			if ((cursorPos.x > SELECT_SPECIAL_MINIMUM_X  && cursorPos.x < SELECT_SPECIAL_MAXIMUM_X)
+				&& (cursorPos.y > SELECT_TECHNIC_SPECIAL_MINIMUM_Y && cursorPos.y < SELECT_TECHNIC_SPECIAL_MAXIMUM_Y))
+			{
+				// 빈곳 찾아서 넣기
+				for (int i = 0; i < 4; ++i) {
+					if (m_pPlayer->GetPlayerStatus()->Special[i] == (SpecialType::NoSelected)) {
+						m_pPlayer->GetPlayerStatus()->Special[i] = (SpecialType::TechnicSpecial);
+						break;
+					};
+				}
+
+				// 특성 포인트 사용
+				m_pPlayer->GetPlayerStatus()->SpecialPoint = m_pPlayer->GetPlayerStatus()->SpecialPoint - 1;
+
+				// 특성창 닫기
+				ShowWindow[1] = false;
+				isRendering = false;
+			}
+		}
+	}
+
+	return true;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -97,27 +236,6 @@ D3D12_INPUT_LAYOUT_DESC CSpecialSelectShader::CreateInputLayout()
 	d3dInputLayoutDesc.NumElements = nInputElementDescs;
 
 	return(d3dInputLayoutDesc);
-}
-
-D3D12_BLEND_DESC CSpecialSelectShader::CreateBlendState()
-{
-	D3D12_BLEND_DESC blendDesc;
-	::ZeroMemory(&blendDesc, sizeof(D3D12_BLEND_DESC));
-
-	blendDesc.AlphaToCoverageEnable = TRUE;
-	blendDesc.IndependentBlendEnable = FALSE;
-	blendDesc.RenderTarget[0].BlendEnable = FALSE;
-	blendDesc.RenderTarget[0].LogicOpEnable = FALSE;
-	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_ONE;
-	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ZERO;
-	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
-	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
-	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].LogicOp = D3D12_LOGIC_OP_NOOP;
-	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-
-	return(blendDesc);
 }
 
 D3D12_SHADER_BYTECODE CSpecialSelectShader::CreateVertexShader(ComPtr<ID3DBlob>& pShaderBlob)
@@ -153,51 +271,29 @@ void CSpecialSelectShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void 
 {
 	m_pCamera = (CCamera*)pContext;
 
-	m_nObjects = 4;
+	m_nObjects = 1;
 	m_ppObjects = new CBaseObject*[m_nObjects];
 
 	UINT ncbElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
 
-	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, m_nObjects, 3);
+	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, m_nObjects, 2);
 	CreateShaderVariables(pCreateMgr, ncbElementBytes, m_nObjects);
 	CreateConstantBufferViews(pCreateMgr, m_nObjects, m_pConstBuffer.Get(), ncbElementBytes);
 
-	//UINT incrementSize{ pCreateMgr->GetCbvSrvDescriptorIncrementSize() };
-	//CSpecialObejct *pUIObject{ NULL };
+	UINT incrementSize{ pCreateMgr->GetCbvSrvDescriptorIncrementSize() };
+	CUIFrameObject *pUIObject{ NULL };
 
 	m_nMaterials = 1;
 	m_ppMaterials = new CMaterial*[m_nMaterials];
-	m_ppMaterials[0] = Materials::CreateSpecialMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[0], &m_psrvGPUDescriptorStartHandle[0]);
+	m_ppMaterials[0] = Materials::CreateSpecialSelectWindowsMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[0], &m_psrvGPUDescriptorStartHandle[0]);
 
 	for (int i = 0; i < m_nObjects; ++i)
 	{
-		//pUIObject = new CSpecialObejct(pCreateMgr, (UIFrameType)(SelectSpecial_7 + i));
-		//pUIObject->SetCamera(m_pCamera);
-		//pUIObject->SetDistance(FRAME_BUFFER_WIDTH / 128);	 // distance 10
-		//pUIObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * i));
-		//m_ppObjects[i] = pUIObject;
-	}
-}
+		pUIObject = new CUIFrameObject(pCreateMgr, (UIFrameType::SpecialFrame));
+		pUIObject->SetCamera(m_pCamera);
+		pUIObject->SetDistance(FRAME_BUFFER_WIDTH / 128.0128f);	 // distance 10
+		pUIObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * i));
 
-void CSpecialSelectShader::ReleaseObjects()
-{
-	if (m_ppObjects)
-	{
-		for (int j = 0; j < m_nObjects; j++)
-		{
-			Safe_Delete(m_ppObjects[j]);
-		}
-		Safe_Delete_Array(m_ppObjects);
+		m_ppObjects[i] = pUIObject;
 	}
-
-#if USE_BATCH_MATERIAL
-	if (m_ppMaterials)
-	{
-		for (int i = 0; i < m_nMaterials; ++i)
-		{
-			Safe_Delete(m_ppMaterials[i]);
-		}
-		Safe_Delete_Array(m_ppMaterials);
-	}
-#endif
 }
