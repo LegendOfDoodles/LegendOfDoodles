@@ -129,15 +129,48 @@ void CNetwork::ProcessPacket(char *ptr)
 			break;
 		}
 		
+		case SC_POS_MONSTER:
+		{
+			SC_Msg_Pos_Neutrality* my_packet = reinterpret_cast<SC_Msg_Pos_Neutrality*>(ptr);
 
+			CCollisionObject* Monster{ m_pColManager->RequestNeutralByTag(my_packet->Monster_Tag) };
+			if (Monster->GetUpdateTime() <= my_packet->updatetime)
+			{	
+				Monster->SetPosition(my_packet->x, my_packet->y);
+				Monster->SetUpdateTime(my_packet->updatetime);
+				Monster->SetHP(my_packet->maxhp, my_packet->curhp);
+			}
+			break;
+		}
+		case SC_MONSTER_STATE:
+		{
+			SC_Msg_Set_Monster_State* my_packet = reinterpret_cast<SC_Msg_Set_Monster_State*>(ptr);
 
-		
+			CCollisionObject* target{ m_pColManager->RequestNeutralByTag(my_packet->Monster_Tag) };
+			target->SetState((StatesType)my_packet->Monster_State, m_pWayFinder);
+			break;
+		}
+		case SC_MONSTER_CHANGE_TEAM:
+		{
+			SC_Msg_Monster_Ready_to_Attak* my_packet = reinterpret_cast<SC_Msg_Monster_Ready_to_Attak*>(ptr);
+			CCollisionObject* Roider{ m_pColManager->RequestNeutralByTag(my_packet->Monster_Tag) };
+			Roider->NotifyDamageTeam((TeamType)my_packet->Team_Type);
+			Roider->ReadyToAtk(m_pWayFinder);
+			break;
+		}
+		case SC_MONSTER_RESPAWN:
+		{
+			SC_Msg_Monster_Respawn* my_packet = reinterpret_cast<SC_Msg_Monster_Respawn*>(ptr);
+			CCollisionObject* Roider{ m_pColManager->RequestNeutralByTag(my_packet->Monster_Tag) };
+			Roider->Respawn();
+			break;
+		}
 		case SC_POS_MINION:
 		{
 			SC_Msg_Pos_Minion* my_packet = reinterpret_cast<SC_Msg_Pos_Minion*>(ptr);
 		
 			CCollisionObject* Minion{ m_pColManager->RequestObjectByTag(my_packet->Minion_Tag) };
-			if (Minion->GetUpdateTime() <= my_packet->updatetime)
+			if (Minion && Minion->GetUpdateTime() <= my_packet->updatetime)
 			{
 				Minion->SetPosition(my_packet->x, my_packet->y);
 				Minion->SetUpdateTime(my_packet->updatetime);
@@ -167,6 +200,14 @@ void CNetwork::ProcessPacket(char *ptr)
 			CCollisionObject* target{ m_pColManager->RequestObjectByTag(my_packet->Minion_Tag) };
 			target->SetEnemyByTag(my_packet->Enemy_Tag);
 			
+			break;
+		}
+		case SC_MONSTER_SET_ENEMY:
+		{
+			SC_Msg_Enemy_Tag_Neutral* my_packet = reinterpret_cast<SC_Msg_Enemy_Tag_Neutral*>(ptr);
+
+			CCollisionObject* target{ m_pColManager->RequestNeutralByTag(my_packet->Monster_Tag) };
+			target->SetEnemyByTag(my_packet->Enemy_Tag);
 			break;
 		}
 		case SC_POS_NEXUS:

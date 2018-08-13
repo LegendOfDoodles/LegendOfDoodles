@@ -43,13 +43,6 @@ void CGolem::Animate(float timeElapsed)
 	AdjustAnimationIndex();
 	AnimateByCurState();
 
-	// 스킬 쿨타임 감소 적용
-	if (m_curState != States::Idle)
-	{
-		m_spAttack1CoolTime -= timeElapsed;
-		m_spAttack2CoolTime -= timeElapsed;
-	}
-
 	if (m_curState != States::Remove)
 	{
 		m_fPreFrameTime = m_fFrameTime;
@@ -89,7 +82,15 @@ void CGolem::Render(CCamera * pCamera, UINT instanceCnt)
 
 void CGolem::SetState(StatesType newState, shared_ptr<CWayFinder> pWayFinder)
 {
-	UNREFERENCED_PARAMETER(pWayFinder);
+	if ((m_curState == States::Chase || m_curState == States::Attack) && newState == States::Walk)
+	{
+		SetEnemy(NULL);
+		if (m_TeamType == TeamType::Neutral)
+			GenerateSubPathToSpawnLocation(pWayFinder);
+		else
+			GenerateSubPathToMainPath(pWayFinder);
+	}
+
 	m_nextState = m_curState = newState;
 
 	switch (newState)
@@ -128,44 +129,6 @@ void CGolem::SetState(StatesType newState, shared_ptr<CWayFinder> pWayFinder)
 	}
 }
 
-void CGolem::PlayIdle(float timeElapsed)
-{
-	UNREFERENCED_PARAMETER(timeElapsed);
-
-	if (!m_activated) return;
-
-	if (m_activated && m_TeamType == TeamType::Neutral)
-	{
-		m_deactiveTime += timeElapsed;
-		if (m_deactiveTime > TIME_ACTIVATE_CHECK_GOLEM)
-		{
-			m_activated = false;
-			m_deactiveTime = 0.0f;
-			m_nCurrAnimation = Animations::IdleToSit;
-			// Warning! 회복 처리
-			// 방안 1: 전체 회복
-			// 방안 2: 일정 시간동안 몇 %의 체력 회복
-		}
-	}
-
-	if (m_nCurrAnimation == Animations::Idle ||
-		m_curState == States::Walk)
-	{
-		CCollisionObject* enemy{ m_pColManager->RequestNearObject(this, m_detectRange) };
-
-		if (!enemy) return;
-		if (!Chaseable(enemy)) return;
-
-		SetEnemy(enemy);
-
-		if (Attackable(enemy))
-		{
-			SetState(States::Attack);
-		}
-		else SetState(States::Chase);
-	}
-}
-
 void CGolem::PlayWalk(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)
 {
 	if (NoneDestination(PathType::Sub))
@@ -175,81 +138,14 @@ void CGolem::PlayWalk(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)
 	else
 	{
 		MoveToSubDestination(timeElapsed);
-		// 중립인데 원래 위치로 돌아갔으면 상태를 아이들 상태로 전환한다.
-		if (m_TeamType == TeamType::Neutral && NoneDestination(PathType::Sub))
-		{
-			SetState(States::Idle);
-		}
 	}
-	if(!m_returning) PlayIdle(timeElapsed);
 }
 
 void CGolem::PlayChase(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)
 {
-	if (!Chaseable(m_pEnemy) || FarFromSpawnLocation())
-	{
-		SetEnemy(NULL);
-		if (m_TeamType == TeamType::Neutral)
-		{
-			GenerateSubPathToSpawnLocation(pWayFinder);
-			m_returning = true;
-		}
-		else
-			GenerateSubPathToMainPath(pWayFinder);
-		SetState(States::Walk);
-	}
-	else
+	if (Chaseable(m_pEnemy) && !FarFromSpawnLocation())
 	{
 		MoveToSubDestination(timeElapsed, pWayFinder);
-	}
-
-	if (Attackable(m_pEnemy))
-	{
-		SetState(States::Attack);
-	}
-}
-
-void CGolem::PlayAttack(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)
-{
-	UNREFERENCED_PARAMETER(timeElapsed);
-
-	if (!CheckEnemyState(m_pEnemy))
-	{
-		SetEnemy(NULL);
-		GenerateSubPathToMainPath(pWayFinder);
-		SetState(States::Walk);
-	}
-	else if (Attackable(m_pEnemy))
-	{
-		int usingSkill{ rand() % 2 };
-		if (usingSkill == 1 && m_spAttack1CoolTime <= 0.0f)
-		{
-			m_nNextAnimation = Animations::SpecialAttack1;
-			m_spAttack1CoolTime = COOLTIME_SPECIAL_ATTACK1;
-		}
-		else if (usingSkill == 1 && m_spAttack2CoolTime <= 0.0f)
-		{
-			m_nNextAnimation = Animations::SpecialAttack2;
-			m_spAttack2CoolTime = COOLTIME_SPECIAL_ATTACK1;
-		}
-	}
-	else
-	{
-		SetNextState(States::Chase);
-	}
-}
-
-void CGolem::PlayRemove(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)
-{
-	m_spawnCoolTime -= timeElapsed;
-
-	if (m_TeamType == TeamType::Neutral)
-	{
-		ReadyToAtk(pWayFinder);
-	}
-	else if (m_spawnCoolTime < 0.0f)
-	{
-		Respawn();
 	}
 }
 
@@ -257,26 +153,6 @@ void CGolem::SaveCurrentState()
 {
 	m_xmf4x4SpawnWorld = m_xmf4x4World;
 	m_spawnLocation = GetPosition();
-}
-
-void CGolem::ReceiveDamage(float damage)
-{
-	// 이미 사망한 상태인 경우 데미지 처리를 하지 않는다.
-	if (m_curState == States::Die || m_curState == States::Remove) { return; }
-
-	m_StatusInfo.HP -= damage * Compute_Defence(m_StatusInfo.Def);
-	if (m_StatusInfo.HP <= 0 && m_curState != States::Die) {
-		SetState(States::Die);
-	}
-
-	if (!m_activated)
-	{
-		m_activated = true;
-		if (m_nCurrAnimation == Animations::Sit)
-		{
-			m_nCurrAnimation = Animations::SitToIdle;
-		}
-	}
 }
 
 void CGolem::BuildSelf(shared_ptr<CCreateMgr> pCreateMgr)
@@ -316,6 +192,86 @@ void CGolem::BuildSelf(shared_ptr<CCreateMgr> pCreateMgr)
 	SetSkeleton(pSpAttack1);
 	SetSkeleton(pSpAttack2);
 	SetSkeleton(pSDie);
+}
+
+void CGolem::ReadyToAtk(shared_ptr<CWayFinder> pWayFinder)
+{
+	if (m_lastDamageTeam == TeamType::Red)
+		SetTeam(TeamType::Red);
+	else if (m_lastDamageTeam == TeamType::Blue)
+		SetTeam(TeamType::Blue);
+
+	m_StatusInfo.HP = m_StatusInfo.maxHP;
+
+	m_pColManager->AddCollider(this);
+
+	CPathEdge pathBeg{ m_pathes[WayType::Golem_Exit].front() };
+	XMFLOAT3 curPos{ GetPosition() };
+
+	int wayKind = rand() % 2; // 0: 아래, 1: 위
+	if (wayKind == 0)
+	{
+		pathBeg = m_pathes[WayType::Golem_Exit].front();
+	}
+	else
+	{
+		pathBeg = m_pathes[WayType::Golem_Exit].back();
+	}
+
+	Path *newPath{ NULL };
+	if (m_TeamType == TeamType::Blue)
+	{
+		// 위로 가야함
+		if (wayKind == 1)
+		{
+			newPath = new Path(m_pathes[WayType::Blue_Up]);
+		}
+		else
+		{
+			newPath = new Path(m_pathes[WayType::Blue_Down]);
+		}
+		newPath->remove_if([pathBeg](CPathEdge& edge) {
+			return edge.To().x < pathBeg.To().x;
+		});
+	}
+	else if (m_TeamType == TeamType::Red)
+	{
+		// 위로 가야함
+		if (wayKind == 1)
+		{
+			newPath = new Path(m_pathes[WayType::Red_Up]);
+		}
+		else
+		{
+			newPath = new Path(m_pathes[WayType::Red_Down]);
+		}
+		newPath->remove_if([pathBeg](CPathEdge& edge) {
+			return edge.To().x > pathBeg.To().x;
+		});
+	}
+
+	SetPathToGo(newPath);
+	GenerateSubPathToPosition(pWayFinder, XMFLOAT3(pathBeg.To().x, curPos.y, pathBeg.To().y));
+}
+
+void CGolem::Respawn()
+{
+	m_activated = false;
+
+	SetAnimation(Animations::Sit);
+	SetTeam(TeamType::Neutral);
+
+	m_StatusInfo.HP = m_StatusInfo.maxHP;
+
+	m_pColManager->AddCollider(this);
+
+	m_xmf4x4World = m_xmf4x4SpawnWorld;
+}
+
+void CGolem::SetCollisionManager(shared_ptr<CCollisionManager> manager)
+{
+	m_pColManager = manager;
+	m_pColManager->AddNeutralCollider(this);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -375,7 +331,7 @@ void CGolem::AnimateByCurState()
 	case States::Attack:
 		if (GetAnimTimeRemainRatio() <= 0.05f)
 		{
-			LookAt(m_pEnemy->GetPosition());
+			if (m_pEnemy) LookAt(m_pEnemy->GetPosition());
 		}
 		if (m_nCurrAnimation == Animations::Attack1)
 		{
@@ -400,12 +356,8 @@ void CGolem::AnimateByCurState()
 				m_nNextAnimation = Animations::Attack1;
 			}
 		}
-		if (m_curState != m_nextState)
-		{
-			if (GetAnimTimeRemainRatio() > 0.05f) break;
-			SetState(m_nextState);
-		}
-		else if (m_nCurrAnimation != m_nNextAnimation)
+
+		if (m_nCurrAnimation != m_nNextAnimation)
 		{
 			if (GetAnimTimeRemainRatio() > 0.05f) break;
 			m_nCurrAnimation = m_nNextAnimation;
@@ -436,83 +388,6 @@ void CGolem::AnimateByCurState()
 	default:
 		break;
 	}
-}
-
-void CGolem::ReadyToAtk(shared_ptr<CWayFinder> pWayFinder)
-{
-	if (m_lastDamageTeam == TeamType::Red)
-		SetTeam(TeamType::Red);
-	else if (m_lastDamageTeam == TeamType::Blue)
-		SetTeam(TeamType::Blue);
-	
-	m_StatusInfo.HP = m_StatusInfo.maxHP;
-
-	m_pColManager->AddCollider(this);
-
-	CPathEdge pathBeg{ m_pathes[WayType::Golem_Exit].front() };
-	XMFLOAT3 curPos{ GetPosition() };
-
-	int wayKind = rand() % 2; // 0: 아래, 1: 위
-	if (wayKind == 0)
-	{
-		pathBeg = m_pathes[WayType::Golem_Exit].front();
-	}
-	else
-	{
-		pathBeg = m_pathes[WayType::Golem_Exit].back();
-	}
-
-	Path *newPath{ NULL };
-	if (m_TeamType == TeamType::Blue)
-	{
-		// 위로 가야함
-		if (wayKind == 1)
-		{
-			newPath = new Path(m_pathes[WayType::Blue_Up]);
-		}
-		else
-		{
-			newPath = new Path(m_pathes[WayType::Blue_Down]);
-		}
-		newPath->remove_if([pathBeg](CPathEdge& edge) {
-			return edge.To().x < pathBeg.To().x;
-		});
-	}
-	else if (m_TeamType == TeamType::Red)
-	{
-		// 위로 가야함
-		if (wayKind == 1)
-		{
-			newPath = new Path(m_pathes[WayType::Red_Up]);
-		}
-		else
-		{
-			newPath = new Path(m_pathes[WayType::Red_Down]);
-		}
-		newPath->remove_if([pathBeg](CPathEdge& edge) {
-			return edge.To().x > pathBeg.To().x;
-		});
-	}
-
-	SetPathToGo(newPath);
-	GenerateSubPathToPosition(pWayFinder, XMFLOAT3(pathBeg.To().x, curPos.y, pathBeg.To().y));
-
-	SetState(StatesType::Walk);
-}
-
-void CGolem::Respawn()
-{
-	m_activated = false;
-
-	SetState(StatesType::Idle);
-	SetAnimation(Animations::Sit);
-	SetTeam(TeamType::Neutral);
-
-	m_StatusInfo.HP = m_StatusInfo.maxHP;
-
-	m_pColManager->AddCollider(this);
-
-	m_xmf4x4World = m_xmf4x4SpawnWorld;
 }
 
 void CGolem::GenerateSubPathToSpawnLocation(shared_ptr<CWayFinder> pWayFinder)

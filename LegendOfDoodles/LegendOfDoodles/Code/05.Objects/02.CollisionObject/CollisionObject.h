@@ -86,6 +86,8 @@ public: // 공개 함수
 	void SetUpdateTime(float updatetime) { m_updatetime = updatetime; }
 	float GetUpdateTime() { return m_updatetime; }
 
+	virtual void ReadyToAtk(shared_ptr<CWayFinder> pWayFinder) { pWayFinder; }
+	virtual void Respawn() {}
 
 protected: // 내부 함수
 

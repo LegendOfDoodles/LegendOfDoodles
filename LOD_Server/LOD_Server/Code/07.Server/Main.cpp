@@ -70,6 +70,7 @@ void initialize(shared_ptr<CScene> pScene)
 	g_redSwordMinions = g_pScene->GetShader(0)->GetMinionList(SwordMinion, Red);
 	g_redBowMinions = g_pScene->GetShader(0)->GetMinionList(BowMinion, Red);
 	g_redStaffMinions = g_pScene->GetShader(0)->GetMinionList(StaffMinion, Red);
+	
 	g_ppNeutrality = g_pScene->GetNeutralityObject();
 	g_NeutralityCount = g_pScene->GetShader(2)->GetObjectCount();
 	//g_ppNexusTower = g_pScene->GetNexusTower();
@@ -171,6 +172,7 @@ void ProcessPacket(int id, char *packet)
 				SendPacket(i, &p);
 			}
 		}
+		g_ppPlayer[CSkillPacket->Character_id]->ActiveSkill((AnimationsType)CSkillPacket->skilltype);
 		break;
 	}
 	default:
@@ -358,15 +360,17 @@ void timer_thread()
 				g_PacketCoolTime = 0;
 				//Sqva User's Information
 				for (int i = 0; i < MAX_USER; ++i) {
-					g_clients[i].m_x = g_ppPlayer[i]->GetPosition().x;
-					g_clients[i].m_y = g_ppPlayer[i]->GetPosition().z;
+					XMFLOAT3 playerPos{ g_ppPlayer[i]->GetPosition() };
+					g_clients[i].m_x = playerPos.x;
+					g_clients[i].m_y = playerPos.z;
 					//g_clients[i].m_anistate = g_ppPlayer[i]->GetAnimState();
 					//g_clients[i].m_frameTime = g_ppPlayer[i]->GetAnimTimeRemain();
-					g_clients[i].m_maxhp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->maxHP;
-					g_clients[i].m_curhp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->HP;
-					g_clients[i].m_level = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->Level;
-					g_clients[i].m_maxexp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->MaxExp;
-					g_clients[i].m_exp = ((CPlayer*)g_ppPlayer[i])->GetPlayerStatus()->Exp;
+					PlayerInfo* playerStat{ g_ppPlayer[i]->GetPlayerStatus() };
+					g_clients[i].m_maxhp = playerStat->maxHP;
+					g_clients[i].m_curhp = playerStat->HP;
+					g_clients[i].m_level = playerStat->Level;
+					g_clients[i].m_maxexp = playerStat->MaxExp;
+					g_clients[i].m_exp = playerStat->Exp;
 				}
 
 				//Send Every User's Position Packet
@@ -500,7 +504,7 @@ void timer_thread()
 
 				//Send Every Neutrality's Position Packet
 				for (int i = 0; i < g_NeutralityCount; ++i) {
-					if (g_clients[i].m_isconnected == true) {
+					
 						SC_Msg_Pos_Neutrality p;
 						p.Monster_Tag = (short)g_ppNeutrality[i]->GetTag();
 						p.x = g_ppNeutrality[i]->GetPosition().x;
@@ -510,13 +514,14 @@ void timer_thread()
 						p.maxhp = g_ppNeutrality[i]->GetCommonStatus()->maxHP;
 						p.curhp = g_ppNeutrality[i]->GetCommonStatus()->HP;
 						p.updatetime = g_GameTime;
+						//cout << p.x << "             " << p.y << "               " << g_ppNeutrality[i]->GetPosition().x << "                      " << g_ppNeutrality[i]->GetPosition().z << endl;
 
 						for (int j = 0; j < MAX_USER; ++j) {
 							if (g_clients[j].m_isconnected == true) {
 								SendPacket(j, &p);
 							}
 						}
-					}
+					
 				}
 
 				//	for (int i = 0; i < 14; ++i){

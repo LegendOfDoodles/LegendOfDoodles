@@ -1,6 +1,8 @@
 #pragma once
 #include "00.Global\01.Utility/08.EffectManager/EffectManager.h"
 
+typedef std::list<CCollisionObject*> CollisionObjectList;
+
 class CCollisionObject;
 class CWayFinder;
 struct NodeMap;
@@ -21,10 +23,12 @@ public:
 	void GameOver(TeamType type);
 	void SetNodeMap(std::vector<NodeMap> map,float size, XMFLOAT2 wh);
 	void AddCollider(CCollisionObject* pcol);
+	void AddNeutralCollider(CCollisionObject* pcol);
 	void Update(shared_ptr<CWayFinder> pWayFinder);
 	void RequestCollide(CollisionType type, CCollisionObject* pCol, float data1 = 0, float data2 = 0,float damage=0);
 	CCollisionObject* RequestNearObject(CCollisionObject* pCol,float lengh);
 	CCollisionObject* RequestObjectByTag(short tag);
+	CCollisionObject* RequestNeutralByTag(short tag);
 	~CCollisionManager();
 	int(*GetFoW(void))[NODE_HEIGHT];
 	
@@ -57,9 +61,11 @@ protected:
 
 	shared_ptr<CEffectMgr> m_pEffectMgr;
 	
-	std::list<CCollisionObject*> m_lstColliders;
+	CollisionObjectList m_lstColliders;
 	
-	std::list<CCollisionObject*> m_lstBlueSight;
-	std::list<CCollisionObject*> m_lstRedSight;
+	CollisionObjectList m_lstBlueSight;
+	CollisionObjectList m_lstRedSight;
+
+	CollisionObjectList m_neutralList;
 };
 

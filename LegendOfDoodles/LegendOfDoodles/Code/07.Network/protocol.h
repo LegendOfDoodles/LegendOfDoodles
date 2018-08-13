@@ -93,6 +93,17 @@ struct SC_Msg_Set_Monster_State : public Packet
 	short Monster_Tag;
 };
 
+struct SC_Msg_Monster_Ready_to_Attak : public Packet
+{
+	short Monster_Tag;
+	BYTE Team_Type;
+};
+
+struct SC_Msg_Monster_Respawn : public Packet
+{
+	short Monster_Tag;
+};
+
 struct SC_Msg_Pos_Minion : public Packet
 {
 	short Minion_Tag;
@@ -118,6 +129,15 @@ struct SC_Msg_Enemy_Tag : public Packet
 	short Minion_Tag;
 	short Enemy_Tag;
 };
+
+struct SC_Msg_Enemy_Tag_Neutral : public Packet
+{
+	short Monster_Tag;
+	short Enemy_Tag;
+};
+
+
+
 struct SC_Msg_Pos_Nexus : public Packet
 {
 	BYTE Object_id;
@@ -159,6 +179,10 @@ struct SC_Msg_Pos_Nexus : public Packet
 #define SC_SET_ENEMY			  111
 #define SC_POS_MONSTER			  112
 #define SC_MONSTER_STATE		  113
+#define SC_MONSTER_CHANGE_TEAM	  114
+#define SC_MONSTER_RESPAWN		  115
+#define SC_MONSTER_SET_ENEMY	  116
+
 //Client->Server
 #define CS_ACTION				  201
 #define CS_MOVE_PLAYER			  202

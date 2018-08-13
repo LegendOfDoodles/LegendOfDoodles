@@ -149,11 +149,11 @@ void CGolem::PlayIdle(float timeElapsed)
 		{
 			if (g_clients[i].m_isconnected)
 			{
-				SC_Msg_Enemy_Tag p;
-				p.Minion_Tag = (short)m_tag;
+				SC_Msg_Enemy_Tag_Neutral p;
+				p.Monster_Tag = (short)m_tag;
 				p.Enemy_Tag = (short)enemy->GetTag();
 				p.size = sizeof(p);
-				p.type = SC_SET_ENEMY;
+				p.type = SC_MONSTER_SET_ENEMY;
 				SendPacket(i, &p);
 			}
 		}

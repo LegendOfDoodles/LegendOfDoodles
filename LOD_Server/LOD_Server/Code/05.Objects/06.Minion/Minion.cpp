@@ -44,12 +44,14 @@ void CMinion::SetState(StatesType newState)
 	for (int i = 0; i < MAX_USER; ++i)
 	{
 		if (g_clients[i].m_isconnected) {
-			SC_Msg_Set_Minion_State p;
-			p.Minion_State = (BYTE)newState;
-			p.Minion_Tag = (short)m_tag;
-			p.size = sizeof(p);
-			p.type = SC_MINION_STATE;
-			SendPacket(i, &p);
+			if (newState != StatesType::Remove) {
+				SC_Msg_Set_Minion_State p;
+				p.Minion_State = (BYTE)newState;
+				p.Minion_Tag = (short)m_tag;
+				p.size = sizeof(p);
+				p.type = SC_MINION_STATE;
+				SendPacket(i, &p);
+			}
 		}
 	}
 

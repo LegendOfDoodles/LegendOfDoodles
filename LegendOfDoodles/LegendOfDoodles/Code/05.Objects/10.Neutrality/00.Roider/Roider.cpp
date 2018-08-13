@@ -79,7 +79,15 @@ void CRoider::Render(CCamera * pCamera, UINT instanceCnt)
 
 void CRoider::SetState(StatesType newState, shared_ptr<CWayFinder> pWayFinder)
 {
-	UNREFERENCED_PARAMETER(pWayFinder);
+	if ((m_curState == States::Chase || m_curState == States::Attack) && newState == States::Walk)
+	{
+		SetEnemy(NULL);
+		if (m_TeamType == TeamType::Neutral)
+			GenerateSubPathToSpawnLocation(pWayFinder);
+		else
+			GenerateSubPathToMainPath(pWayFinder);
+	}
+
 	m_nextState = m_curState = newState;
 
 	switch (newState)
@@ -98,7 +106,14 @@ void CRoider::SetState(StatesType newState, shared_ptr<CWayFinder> pWayFinder)
 		m_nCurrAnimation = Animations::StartWalk;
 		break;
 	case States::Attack:
-		SetAnimation(Animations::Attack1);
+		if (Attackable(m_pEnemy))
+		{
+			SetAnimation(Animations::Attack1);
+		}
+		else if (AttackableFarRange(m_pEnemy))
+		{
+			SetAnimation(Animations::Attack2);
+		}
 		m_fFrameTime = 0;
 		break;
 	case States::Die:
@@ -118,43 +133,6 @@ void CRoider::SetState(StatesType newState, shared_ptr<CWayFinder> pWayFinder)
 	}
 }
 
-void CRoider::PlayIdle(float timeElapsed)
-{
-	UNREFERENCED_PARAMETER(timeElapsed);
-
-	if (!m_activated) return;
-
-	if (m_activated && m_TeamType == TeamType::Neutral)
-	{
-		m_deactiveTime += timeElapsed;
-		if (m_deactiveTime > TIME_ACTIVATE_CHECK)
-		{
-			m_activated = false;
-			m_deactiveTime = 0.0f;
-			// Warning! 회복 처리
-			// 방안 1: 전체 회복
-			// 방안 2: 일정 시간동안 몇 %의 체력 회복
-		}
-	}
-
-	CCollisionObject* enemy{ m_pColManager->RequestNearObject(this, m_detectRange) };
-
-	if (!enemy) return;
-	if (!Chaseable(enemy)) return;
-
-	SetEnemy(enemy);
-
-	if (Attackable(enemy))
-	{
-		SetState(States::Attack);
-	}
-	else if (AttackableFarRange(enemy)) {
-		SetState(States::Attack);
-		SetAnimation(Animations::Attack2);
-	}
-	else SetState(States::Chase);
-}
-
 void CRoider::PlayWalk(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)
 {
 	if (NoneDestination(PathType::Sub))
@@ -164,55 +142,23 @@ void CRoider::PlayWalk(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)
 	else
 	{
 		MoveToSubDestination(timeElapsed);
-		// 중립인데 원래 위치로 돌아갔으면 상태를 아이들 상태로 전환한다.
-		if(m_TeamType == TeamType::Neutral && NoneDestination(PathType::Sub))
-		{ 
-			SetState(States::Idle);
-		}
 	}
-	if (!m_returning) PlayIdle(timeElapsed);
 }
 
 void CRoider::PlayChase(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)
 {
-	if (!Chaseable(m_pEnemy) || FarFromSpawnLocation())
-	{
-		SetEnemy(NULL);
-		if (m_TeamType == TeamType::Neutral)
-		{
-			GenerateSubPathToSpawnLocation(pWayFinder);
-			m_returning = true;
-		}
-		else
-			GenerateSubPathToMainPath(pWayFinder);
-		SetState(States::Walk);
-	}
-	else
+	if (Chaseable(m_pEnemy) && !FarFromSpawnLocation())
 	{
 		MoveToSubDestination(timeElapsed, pWayFinder);
-	}
-
-	if (Attackable(m_pEnemy))
-	{
-		SetState(States::Attack);
-	}
-	else if (AttackableFarRange(m_pEnemy)) {
-		SetState(States::Attack);
-		SetAnimation(Animations::Attack2);
 	}
 }
 
 void CRoider::PlayAttack(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)
 {
 	UNREFERENCED_PARAMETER(timeElapsed);
+	UNREFERENCED_PARAMETER(pWayFinder);
 
-	if (!CheckEnemyState(m_pEnemy))
-	{
-		SetEnemy(NULL);
-		GenerateSubPathToMainPath(pWayFinder);
-		SetState(States::Walk);
-	}
-	else if (Attackable(m_pEnemy))
+	if (Attackable(m_pEnemy))
 	{
 		if (m_nCurrAnimation != Animations::Attack1)
 			m_nNextAnimation = Animations::Attack1;
@@ -222,24 +168,6 @@ void CRoider::PlayAttack(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)
 		if (m_nCurrAnimation != Animations::Attack2)
 			m_nNextAnimation = Animations::Attack2;
 	}
-	else
-	{
-		SetNextState(States::Chase);
-	}
-}
-
-void CRoider::PlayRemove(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)
-{
-	m_spawnCoolTime -= timeElapsed;
-
-	if (m_TeamType == TeamType::Neutral)
-	{
-		ReadyToAtk(pWayFinder);
-	}
-	else if(m_spawnCoolTime < 0.0f)
-	{
-		Respawn();
-	}
 }
 
 void CRoider::SaveCurrentState()
@@ -248,99 +176,9 @@ void CRoider::SaveCurrentState()
 	m_spawnLocation = GetPosition();
 }
 
-////////////////////////////////////////////////////////////////////////
-// 내부 함수
-void CRoider::AdjustAnimationIndex()
-{
-	switch (m_nCurrAnimation)
-	{
-	case Animations::Idle:
-		m_nAniIndex = 0;
-		break;
-	case Animations::Attack1:
-		m_nAniIndex = 3;
-		break;
-	case Animations::Attack2:
-		m_nAniIndex = 4;
-		break;
-	case Animations::StartWalk:
-		m_nAniIndex = 1;
-		break;
-	case Animations::Walking:
-		m_nAniIndex = 2;
-		break;
-	case Animations::Die:
-		m_nAniIndex = 5;
-		break;
-	}
-}
-
-void CRoider::AnimateByCurState()
-{
-	switch (m_curState) {
-	case States::Idle:
-		if (m_nCurrAnimation != Animations::Idle) m_nCurrAnimation = Animations::Idle;
-		break;
-	case States::Attack:
-		if (GetAnimTimeRemainRatio() <= 0.05f)
-		{
-			LookAt(m_pEnemy->GetPosition());
-		}
-		if (m_nCurrAnimation == Animations::Attack1) 
-		{
-			if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f
-				&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f) {
-				m_pColManager->RequestCollide(CollisionType::SECTERFORM, this, m_attackRange, 180, m_StatusInfo.Atk);
-			}
-		}
-		else if (m_nCurrAnimation == Animations::Attack2)
-		{
-			if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f
-				&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f) {
-				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Roider_Dumbel);
-			}
-		}
-		if (m_curState != m_nextState)
-		{
-			if (GetAnimTimeRemainRatio() > 0.05f) break;
-			SetState(m_nextState);
-		}
-		else if (m_nCurrAnimation != m_nNextAnimation)
-		{
-			if (GetAnimTimeRemainRatio() > 0.05f) break;
-			m_nCurrAnimation = m_nNextAnimation;
-			m_fFrameTime = 0;
-		}
-		break;
-	case States::Walk:
-	case States::Chase:
-		if (m_nCurrAnimation != Animations::StartWalk&&
-			m_nCurrAnimation != Animations::Walking)
-			m_nCurrAnimation = Animations::StartWalk;
-
-		if (m_nCurrAnimation == Animations::StartWalk) {
-			if (m_fFrameTime >= m_nAniLength[m_nAniIndex] - 1)
-			{
-				m_nCurrAnimation = Animations::Walking;
-				m_fFrameTime = 0;
-			}
-		}
-		break;
-	case States::Die:
-		if (m_nCurrAnimation != Animations::Die) m_nCurrAnimation = Animations::Die;
-		if (GetAnimTimeRemainRatio() < 0.05)
-		{
-			SetState(States::Remove);
-		}
-		break;
-	default:
-		break;
-	}
-}
-
 void CRoider::ReadyToAtk(shared_ptr<CWayFinder> pWayFinder)
 {
-	if(m_lastDamageTeam == TeamType::Red)
+	if (m_lastDamageTeam == TeamType::Red)
 		SetTeam(TeamType::Red);
 	else if (m_lastDamageTeam == TeamType::Blue)
 		SetTeam(TeamType::Blue);
@@ -394,18 +232,15 @@ void CRoider::ReadyToAtk(shared_ptr<CWayFinder> pWayFinder)
 			return edge.To().x > pathBeg.To().x;
 		});
 	}
-	
+
 	SetPathToGo(newPath);
 	GenerateSubPathToPosition(pWayFinder, XMFLOAT3(pathBeg.To().x, curPos.y, pathBeg.To().y));
-
-	SetState(StatesType::Walk);
 }
 
 void CRoider::Respawn()
 {
 	m_activated = false;
 
-	SetState(StatesType::Idle);
 	SetTeam(TeamType::Neutral);
 
 	m_StatusInfo.HP = m_StatusInfo.maxHP;
@@ -413,6 +248,98 @@ void CRoider::Respawn()
 	m_pColManager->AddCollider(this);
 
 	m_xmf4x4World = m_xmf4x4SpawnWorld;
+}
+
+void CRoider::SetCollisionManager(shared_ptr<CCollisionManager> manager)
+{
+	m_pColManager = manager;
+	m_pColManager->AddNeutralCollider(this);
+}
+
+////////////////////////////////////////////////////////////////////////
+// 내부 함수
+void CRoider::AdjustAnimationIndex()
+{
+	switch (m_nCurrAnimation)
+	{
+	case Animations::Idle:
+		m_nAniIndex = 0;
+		break;
+	case Animations::Attack1:
+		m_nAniIndex = 3;
+		break;
+	case Animations::Attack2:
+		m_nAniIndex = 4;
+		break;
+	case Animations::StartWalk:
+		m_nAniIndex = 1;
+		break;
+	case Animations::Walking:
+		m_nAniIndex = 2;
+		break;
+	case Animations::Die:
+		m_nAniIndex = 5;
+		break;
+	}
+}
+
+void CRoider::AnimateByCurState()
+{
+	switch (m_curState) {
+	case States::Idle:
+		if (m_nCurrAnimation != Animations::Idle) m_nCurrAnimation = Animations::Idle;
+		break;
+	case States::Attack:
+		if (GetAnimTimeRemainRatio() <= 0.05f)
+		{
+			if (m_pEnemy) LookAt(m_pEnemy->GetPosition());
+		}
+		if (m_nCurrAnimation == Animations::Attack1) 
+		{
+			if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f
+				&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f) {
+				m_pColManager->RequestCollide(CollisionType::SECTERFORM, this, m_attackRange, 180, m_StatusInfo.Atk);
+			}
+		}
+		else if (m_nCurrAnimation == Animations::Attack2)
+		{
+			if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f
+				&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f) {
+				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Roider_Dumbel);
+			}
+		}
+		
+		if (m_nCurrAnimation != m_nNextAnimation)
+		{
+			if (GetAnimTimeRemainRatio() > 0.05f) break;
+			m_nCurrAnimation = m_nNextAnimation;
+			m_fFrameTime = 0;
+		}
+		break;
+	case States::Walk:
+	case States::Chase:
+		if (m_nCurrAnimation != Animations::StartWalk&&
+			m_nCurrAnimation != Animations::Walking)
+			m_nCurrAnimation = Animations::StartWalk;
+
+		if (m_nCurrAnimation == Animations::StartWalk) {
+			if (m_fFrameTime >= m_nAniLength[m_nAniIndex] - 1)
+			{
+				m_nCurrAnimation = Animations::Walking;
+				m_fFrameTime = 0;
+			}
+		}
+		break;
+	case States::Die:
+		if (m_nCurrAnimation != Animations::Die) m_nCurrAnimation = Animations::Die;
+		if (GetAnimTimeRemainRatio() < 0.05)
+		{
+			SetState(States::Remove);
+		}
+		break;
+	default:
+		break;
+	}
 }
 
 void CRoider::GenerateSubPathToSpawnLocation(shared_ptr<CWayFinder> pWayFinder)

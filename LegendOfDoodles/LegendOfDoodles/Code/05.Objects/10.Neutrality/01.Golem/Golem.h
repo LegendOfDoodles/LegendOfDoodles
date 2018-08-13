@@ -15,21 +15,21 @@ public:	// 외부 함수
 
 	virtual 	void SetState(StatesType newState, shared_ptr<CWayFinder> pWayFinder = nullptr);
 
-	virtual void PlayIdle(float timeElapsed);
 	virtual void PlayWalk(float timeElapsed, shared_ptr<CWayFinder> pWayFinder);
 	virtual void PlayChase(float timeElapsed, shared_ptr<CWayFinder> pWayFinder);
-	virtual void PlayAttack(float timeElapsed, shared_ptr<CWayFinder> pWayFinder);
-	virtual void PlayRemove(float timeElapsed, shared_ptr<CWayFinder> pWayFinder);
 
 	void SaveCurrentState();
+
+	virtual void ReadyToAtk(shared_ptr<CWayFinder> pWayFinder);
+	virtual void Respawn();
+
+	virtual void SetCollisionManager(shared_ptr<CCollisionManager> manager);
 
 	void SetNexusPoses(const XMFLOAT3& bluePos, const XMFLOAT3& redPos)
 	{
 		m_blueNexusLoc = bluePos;
 		m_redNexusLoc = redPos;
 	}
-
-	virtual void ReceiveDamage(float damage);
 
 	virtual void NotifyDamager(CCollisionObject* other) { m_pDamager = other; }
 	virtual void NotifyDamageTeam(TeamType type) { m_lastDamageTeam = type; }
@@ -42,8 +42,6 @@ protected:	// 내부 함수
 	void BuildSelf(shared_ptr<CCreateMgr> pCreateMgr);
 	virtual void AdjustAnimationIndex();
 	void AnimateByCurState();
-	void ReadyToAtk(shared_ptr<CWayFinder> pWayFinder);
-	void Respawn();
 	void GenerateSubPathToSpawnLocation(shared_ptr<CWayFinder> pWayFinder);
 	bool FarFromSpawnLocation();
 
