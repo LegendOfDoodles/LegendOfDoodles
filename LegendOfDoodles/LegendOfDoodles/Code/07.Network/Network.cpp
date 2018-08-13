@@ -132,7 +132,6 @@ void CNetwork::ProcessPacket(char *ptr)
 		case SC_POS_MONSTER:
 		{
 			SC_Msg_Pos_Neutrality* my_packet = reinterpret_cast<SC_Msg_Pos_Neutrality*>(ptr);
-
 			CCollisionObject* Monster{ m_pColManager->RequestNeutralByTag(my_packet->Monster_Tag) };
 			if (Monster->GetUpdateTime() <= my_packet->updatetime)
 			{	
@@ -153,9 +152,10 @@ void CNetwork::ProcessPacket(char *ptr)
 		case SC_MONSTER_CHANGE_TEAM:
 		{
 			SC_Msg_Monster_Ready_to_Attak* my_packet = reinterpret_cast<SC_Msg_Monster_Ready_to_Attak*>(ptr);
-			CCollisionObject* Roider{ m_pColManager->RequestNeutralByTag(my_packet->Monster_Tag) };
-			Roider->NotifyDamageTeam((TeamType)my_packet->Team_Type);
-			Roider->ReadyToAtk(m_pWayFinder);
+			CCollisionObject* Monster{ m_pColManager->RequestNeutralByTag(my_packet->Monster_Tag) };
+			Monster->NotifyDamageTeam((TeamType)my_packet->Team_Type);
+			Monster->SetWayKind(my_packet->Way_Kind);
+			Monster->ReadyToAtk(m_pWayFinder);
 			break;
 		}
 		case SC_MONSTER_RESPAWN:
@@ -210,6 +210,22 @@ void CNetwork::ProcessPacket(char *ptr)
 			target->SetEnemyByTag(my_packet->Enemy_Tag);
 			break;
 		}
+
+		case SC_BOSS_SET_CURR_ANIM:
+		{
+			SC_Msg_Boss_Idle_Animation* my_packet = reinterpret_cast<SC_Msg_Boss_Idle_Animation*>(ptr);
+			CCollisionObject* Golem{ m_pColManager->RequestNeutralByTag(my_packet->Monster_Tag) };
+			Golem->SetAnimation((AnimationsType)my_packet->Animation);
+			break;
+		}
+		case SC_BOSS_SET_NEXT_ANIM:
+		{
+			SC_Msg_Boss_Idle_Animation* my_packet = reinterpret_cast<SC_Msg_Boss_Idle_Animation*>(ptr);
+			CCollisionObject* Golem{ m_pColManager->RequestNeutralByTag(my_packet->Monster_Tag) };
+			Golem->SetNextAnimation((AnimationsType)my_packet->Animation);
+			break;
+		}
+
 		case SC_POS_NEXUS:
 		{
 			//SC_Msg_Pos_Nexus* my_packet = reinterpret_cast<SC_Msg_Pos_Nexus*>(ptr);

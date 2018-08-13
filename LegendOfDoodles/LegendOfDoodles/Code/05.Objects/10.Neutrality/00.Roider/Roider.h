@@ -38,7 +38,7 @@ public:	// 외부 함수
 	virtual void NotifyDamageTeam(TeamType type) { m_lastDamageTeam = type; }
 
 	virtual CommonInfo* GetCommonStatus() { return &m_StatusInfo; };
-
+	virtual void SetHP(float maxHP, float curHP) { m_StatusInfo.maxHP= maxHP;  m_StatusInfo.HP = curHP; }
 	void SetPathes(Path* pathes) { m_pathes = pathes; }
 
 protected:	// 내부 함수

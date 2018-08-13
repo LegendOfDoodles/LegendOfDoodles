@@ -31,7 +31,6 @@ void CFlyingObject::Animate(float timeElapsed)
 	{
 		m_distance += timeElapsed * m_speed;
 		MoveToDirection(timeElapsed * m_speed);
-		m_pColManager->RequestCollide(CollisionType::SPHERE, this, 0, m_attackRange, m_damage * timeElapsed);
 		
 		if (m_flyingObjectType == FlyingObjectType::Minion_Arrow  && m_EffectTriger)
 		{
@@ -48,7 +47,6 @@ void CFlyingObject::Animate(float timeElapsed)
 	{
 		m_distance += timeElapsed * m_speed;
 		MoveToDirection(timeElapsed * m_speed);
-		m_pColManager->RequestCollide(CollisionType::SPHERE, this, 0, m_attackRange, m_damage * timeElapsed);
 		Rotate(0, 0, 10.0f);
 		if (m_distance > m_maxDistance)
 		{

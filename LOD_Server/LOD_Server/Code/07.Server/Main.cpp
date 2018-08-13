@@ -514,8 +514,6 @@ void timer_thread()
 						p.maxhp = g_ppNeutrality[i]->GetCommonStatus()->maxHP;
 						p.curhp = g_ppNeutrality[i]->GetCommonStatus()->HP;
 						p.updatetime = g_GameTime;
-						//cout << p.x << "             " << p.y << "               " << g_ppNeutrality[i]->GetPosition().x << "                      " << g_ppNeutrality[i]->GetPosition().z << endl;
-
 						for (int j = 0; j < MAX_USER; ++j) {
 							if (g_clients[j].m_isconnected == true) {
 								SendPacket(j, &p);

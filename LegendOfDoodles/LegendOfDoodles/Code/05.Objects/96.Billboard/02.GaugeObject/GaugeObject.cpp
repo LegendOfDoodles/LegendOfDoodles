@@ -74,7 +74,7 @@ void CGaugeObject::Animate(float fTimeElapsed)
 			m_xmf4x4World._43 = m_pMasterObject->GetPosition().z;
 		}
 	}
-	else if (m_Type == m_Type == GaugeUIType::RoiderGauge) {
+	else if (m_Type == GaugeUIType::RoiderGauge) {
 		m_xmf4x4World._41 = m_pMasterObject->GetPosition().x;
 		m_xmf4x4World._42 = m_pMasterObject->GetPosition().y + 120.f;
 		m_xmf4x4World._43 = m_pMasterObject->GetPosition().z;

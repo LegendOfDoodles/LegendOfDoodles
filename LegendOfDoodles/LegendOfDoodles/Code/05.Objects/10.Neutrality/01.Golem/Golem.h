@@ -35,8 +35,9 @@ public:	// 외부 함수
 	virtual void NotifyDamageTeam(TeamType type) { m_lastDamageTeam = type; }
 
 	virtual CommonInfo* GetCommonStatus() { return &m_StatusInfo; };
-
+	virtual void SetHP(float maxHP, float curHP) { m_StatusInfo.maxHP = maxHP;  m_StatusInfo.HP = curHP; }
 	void SetPathes(Path* pathes) { m_pathes = pathes; }
+	virtual void SetWayKind(int wayKind) { m_wayKind = wayKind; }
 
 protected:	// 내부 함수
 	void BuildSelf(shared_ptr<CCreateMgr> pCreateMgr);
@@ -77,4 +78,5 @@ protected:	// 변수
 	TeamType m_lastDamageTeam;
 
 	Path* m_pathes;
+	int m_wayKind{ 0 };
 };

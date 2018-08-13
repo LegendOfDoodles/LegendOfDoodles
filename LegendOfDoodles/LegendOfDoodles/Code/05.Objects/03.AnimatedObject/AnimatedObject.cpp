@@ -126,7 +126,7 @@ XMFLOAT3 CAnimatedObject::GetUp()
 
 void CAnimatedObject::SetPosition(float x, float z)
 {
-	if (m_curState == StatesType::Walk && m_curState == StatesType::Chase)
+	if (m_curState == StatesType::Walk || m_curState == StatesType::Chase)
 	{
 		CBaseObject::SetPosition(x, m_pTerrain->GetHeight(x, z), z);
 	}

@@ -40,6 +40,7 @@ CGolem::~CGolem()
 // 공개 함수
 void CGolem::Animate(float timeElapsed)
 {
+
 	AdjustAnimationIndex();
 	AnimateByCurState();
 
@@ -129,6 +130,18 @@ void CGolem::PlayIdle(float timeElapsed)
 			m_activated = false;
 			m_deactiveTime = 0.0f;
 			m_nCurrAnimation = Animations::IdleToSit;
+			for (int i = 0; i < MAX_USER; ++i) {
+				if (g_clients[i].m_isconnected) {
+					SC_Msg_Boss_Idle_Animation p;
+					p.Animation = (BYTE)m_nCurrAnimation;
+					p.Monster_Tag = (short)m_tag;
+					p.size = sizeof(p);
+					p.type = SC_BOSS_SET_CURR_ANIM;
+					SendPacket(i, &p);
+				}
+			}
+
+			
 			// Warning! 회복 처리
 			// 방안 1: 전체 회복
 			// 방안 2: 일정 시간동안 몇 %의 체력 회복
@@ -226,11 +239,31 @@ void CGolem::PlayAttack(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)
 		{
 			m_nNextAnimation = Animations::SpecialAttack1;
 			m_spAttack1CoolTime = COOLTIME_SPECIAL_ATTACK1;
+			for (int i = 0; i < MAX_USER; ++i) {
+				if (g_clients[i].m_isconnected) {
+					SC_Msg_Boss_Idle_Animation p;
+					p.Animation = (BYTE)m_nNextAnimation;
+					p.Monster_Tag = (short)m_tag;
+					p.size = sizeof(p);
+					p.type = SC_BOSS_SET_NEXT_ANIM;
+					SendPacket(i, &p);
+				}
+			}
 		}
 		else if (usingSkill == 1 && m_spAttack2CoolTime <= 0.0f)
 		{
 			m_nNextAnimation = Animations::SpecialAttack2;
-			m_spAttack2CoolTime = COOLTIME_SPECIAL_ATTACK1;
+			m_spAttack2CoolTime = COOLTIME_SPECIAL_ATTACK2;
+			for (int i = 0; i < MAX_USER; ++i) {
+				if (g_clients[i].m_isconnected) {
+					SC_Msg_Boss_Idle_Animation p;
+					p.Animation = (BYTE)m_nNextAnimation;
+					p.Monster_Tag = (short)m_tag;
+					p.size = sizeof(p);
+					p.type = SC_BOSS_SET_NEXT_ANIM;
+					SendPacket(i, &p);
+				}
+			}
 		}
 	}
 	else
@@ -275,6 +308,16 @@ void CGolem::ReceiveDamage(float damage)
 		if (m_nCurrAnimation == Animations::Sit)
 		{
 			m_nCurrAnimation = Animations::SitToIdle;
+			for (int i = 0; i < MAX_USER; ++i) {
+				if (g_clients[i].m_isconnected) {
+					SC_Msg_Boss_Idle_Animation p;
+					p.Animation = (BYTE)m_nCurrAnimation;
+					p.Monster_Tag = (short)m_tag;
+					p.size = sizeof(p);
+					p.type = SC_BOSS_SET_CURR_ANIM;
+					SendPacket(i, &p);
+				}
+			}
 		}
 	}
 }
@@ -293,6 +336,8 @@ void CGolem::BuildSelf()
 	CSkeleton *pSDie = new CSkeleton("Resource//3D//Golem//Animation//Golem_Die.aniinfo");
 
 	SetCollisionSize(CONVERT_PaperUnit_to_InG(14));
+
+	SetAnimation(AnimationsType::Sit);
 
 	SetSkeleton(pSIdle);
 	SetSkeleton(pSIdleToSit);
@@ -486,6 +531,18 @@ void CGolem::ReadyToAtk(shared_ptr<CWayFinder> pWayFinder)
 	GenerateSubPathToPosition(pWayFinder, XMFLOAT3(pathBeg.To().x, curPos.y, pathBeg.To().y));
 
 	SetState(StatesType::Walk);
+	
+	for (int i = 0; i < MAX_USER; ++i) {
+		if (g_clients[i].m_isconnected) {
+			SC_Msg_Monster_Ready_to_Attak p;
+			p.Monster_Tag = (short)m_tag;
+			p.size = sizeof(p);
+			p.Team_Type = (BYTE)m_TeamType;
+			p.Way_Kind = (BYTE)wayKind;
+			p.type = SC_MONSTER_CHANGE_TEAM;
+			SendPacket(i, &p);
+		}
+	}
 }
 
 void CGolem::Respawn()
@@ -501,6 +558,15 @@ void CGolem::Respawn()
 	m_pColManager->AddCollider(this);
 
 	m_xmf4x4World = m_xmf4x4SpawnWorld;
+	for (int i = 0; i < MAX_USER; ++i) {
+		if (g_clients[i].m_isconnected) {
+			SC_Msg_Monster_Respawn p;
+			p.Monster_Tag = (short)m_tag;
+			p.size = sizeof(p);
+			p.type = SC_MONSTER_RESPAWN;
+			SendPacket(i, &p);
+		}
+	}
 }
 
 void CGolem::GenerateSubPathToSpawnLocation(shared_ptr<CWayFinder> pWayFinder)

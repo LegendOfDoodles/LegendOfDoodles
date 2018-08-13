@@ -97,11 +97,18 @@ struct SC_Msg_Monster_Ready_to_Attak : public Packet
 {
 	short Monster_Tag;
 	BYTE Team_Type;
+	BYTE Way_Kind;
 };
 
 struct SC_Msg_Monster_Respawn : public Packet
 {
 	short Monster_Tag;
+};
+
+struct SC_Msg_Boss_Idle_Animation : public Packet
+{
+	short Monster_Tag;
+	BYTE Animation;
 };
 
 struct SC_Msg_Pos_Minion : public Packet
@@ -182,6 +189,8 @@ struct SC_Msg_Pos_Nexus : public Packet
 #define SC_MONSTER_CHANGE_TEAM	  114
 #define SC_MONSTER_RESPAWN		  115
 #define SC_MONSTER_SET_ENEMY	  116
+#define SC_BOSS_SET_CURR_ANIM	  117
+#define SC_BOSS_SET_NEXT_ANIM	  118
 
 //Client->Server
 #define CS_ACTION				  201

@@ -64,6 +64,8 @@ public: // 공개 함수
 
 	virtual void SetAnimationTime(float time) { time; }
 	virtual void SetAnimationLength(int time) { time; }
+	virtual void SetAnimation(AnimationsType newAnimation) { newAnimation; }
+	virtual void SetNextAnimation(AnimationsType newAnimation) { newAnimation; }
 
 	virtual void SetDirection(const XMFLOAT3& direction) { direction; }
 	virtual FlyingObjectType GetFlyingObjectsType() { return FlyingObjectType::Roider_Dumbel; }
@@ -85,6 +87,8 @@ public: // 공개 함수
 
 	void SetUpdateTime(float updatetime) { m_updatetime = updatetime; }
 	float GetUpdateTime() { return m_updatetime; }
+
+	virtual void SetWayKind(int wayKind) { wayKind; }
 
 	virtual void ReadyToAtk(shared_ptr<CWayFinder> pWayFinder) { pWayFinder; }
 	virtual void Respawn() {}

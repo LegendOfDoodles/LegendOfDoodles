@@ -182,6 +182,8 @@ void CGolem::BuildSelf(shared_ptr<CCreateMgr> pCreateMgr)
 	SetBoundingMesh(pBoundingBoxMesh);
 	SetCollisionSize(CONVERT_PaperUnit_to_InG(14));
 
+	SetAnimation(Animations::Sit);
+
 	SetSkeleton(pSIdle);
 	SetSkeleton(pSIdleToSit);
 	SetSkeleton(pSSitToIdle);
@@ -208,8 +210,7 @@ void CGolem::ReadyToAtk(shared_ptr<CWayFinder> pWayFinder)
 	CPathEdge pathBeg{ m_pathes[WayType::Golem_Exit].front() };
 	XMFLOAT3 curPos{ GetPosition() };
 
-	int wayKind = rand() % 2; // 0: 아래, 1: 위
-	if (wayKind == 0)
+	if (m_wayKind == 0)
 	{
 		pathBeg = m_pathes[WayType::Golem_Exit].front();
 	}
@@ -222,7 +223,7 @@ void CGolem::ReadyToAtk(shared_ptr<CWayFinder> pWayFinder)
 	if (m_TeamType == TeamType::Blue)
 	{
 		// 위로 가야함
-		if (wayKind == 1)
+		if (m_wayKind == 1)
 		{
 			newPath = new Path(m_pathes[WayType::Blue_Up]);
 		}
@@ -237,7 +238,7 @@ void CGolem::ReadyToAtk(shared_ptr<CWayFinder> pWayFinder)
 	else if (m_TeamType == TeamType::Red)
 	{
 		// 위로 가야함
-		if (wayKind == 1)
+		if (m_wayKind == 1)
 		{
 			newPath = new Path(m_pathes[WayType::Red_Up]);
 		}
@@ -333,18 +334,10 @@ void CGolem::AnimateByCurState()
 		{
 			if (m_pEnemy) LookAt(m_pEnemy->GetPosition());
 		}
-		if (m_nCurrAnimation == Animations::Attack1)
-		{
-			if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f
-				&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f) {
-				m_pColManager->RequestCollide(CollisionType::SPHERE, this, m_fCollisionSize, m_fCollisionSize * 0.5f, m_StatusInfo.Atk);
-			}
-		}
-		else if (m_nCurrAnimation == Animations::SpecialAttack1)
+		if (m_nCurrAnimation == Animations::SpecialAttack1)
 		{
 			if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.666f
 				&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.666f) {
-				m_pColManager->RequestCollide(CollisionType::SPHERE, this, 0, m_attackRange, m_StatusInfo.Atk * 2);
 				m_nNextAnimation = Animations::Attack1;
 			}
 		}
@@ -352,7 +345,6 @@ void CGolem::AnimateByCurState()
 		{
 			if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.666f
 				&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.666f) {
-				m_pColManager->RequestCollide(CollisionType::SPHERE, this, 0, m_attackRange, m_StatusInfo.Atk * 3);
 				m_nNextAnimation = Animations::Attack1;
 			}
 		}

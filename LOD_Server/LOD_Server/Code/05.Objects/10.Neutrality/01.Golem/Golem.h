@@ -47,7 +47,7 @@ protected:	// 내부 함수
 	bool FarFromSpawnLocation();
 
 protected:	// 변수
-	bool m_activated{ true };
+	bool m_activated{ false };
 	bool m_returning{ false };
 	/*
 	0. Idle		1.Attack	2.Attack2	3.StartWalk		4.Walking	5.Die

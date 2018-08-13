@@ -50,8 +50,8 @@ public: // 공개 함수
 	virtual bool Chaseable(CCollisionObject* other);
 
 	void SyncAnimation(AnimationsType syncAnimation, int animtimeremain) { m_nCurrAnimation = syncAnimation; m_fFrameTime = static_cast<float>(animtimeremain); }
-	void SetAnimation(AnimationsType newAnimation) { m_nNextAnimation = m_nCurrAnimation = newAnimation; }
-	void SetNextAnimation(AnimationsType newAnimation) { m_nNextAnimation = newAnimation; }
+	virtual void SetAnimation(AnimationsType newAnimation) { m_nNextAnimation = m_nCurrAnimation = newAnimation; }
+	virtual void SetNextAnimation(AnimationsType newAnimation) { m_nNextAnimation = newAnimation; }
 
 	void SetTerrain(CHeightMapTerrain *pTerrain) { m_pTerrain = pTerrain; }
 

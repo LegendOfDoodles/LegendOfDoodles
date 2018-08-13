@@ -294,14 +294,7 @@ void CRoider::AnimateByCurState()
 		{
 			if (m_pEnemy) LookAt(m_pEnemy->GetPosition());
 		}
-		if (m_nCurrAnimation == Animations::Attack1) 
-		{
-			if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f
-				&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f) {
-				m_pColManager->RequestCollide(CollisionType::SECTERFORM, this, m_attackRange, 180, m_StatusInfo.Atk);
-			}
-		}
-		else if (m_nCurrAnimation == Animations::Attack2)
+		if (m_nCurrAnimation == Animations::Attack2)
 		{
 			if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f
 				&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f) {

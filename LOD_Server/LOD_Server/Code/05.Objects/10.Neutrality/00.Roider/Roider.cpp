@@ -236,15 +236,7 @@ void CRoider::PlayRemove(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)
 	if (m_TeamType == TeamType::Neutral)
 	{
 		ReadyToAtk(pWayFinder);
-		for (int i = 0; i < MAX_USER; ++i) {
-			if (g_clients[i].m_isconnected) {
-				SC_Msg_Monster_Ready_to_Attak p;
-				p.Monster_Tag = m_tag;
-				p.size = sizeof(p);
-				p.Team_Type = m_TeamType;
-				p.type = SC_MONSTER_CHANGE_TEAM;
-			}
-		}
+	
 	}
 	else if(m_spawnCoolTime < 0.0f)
 	{
@@ -409,6 +401,16 @@ void CRoider::ReadyToAtk(shared_ptr<CWayFinder> pWayFinder)
 	GenerateSubPathToPosition(pWayFinder, XMFLOAT3(pathBeg.To().x, curPos.y, pathBeg.To().y));
 
 	SetState(StatesType::Walk);
+	for (int i = 0; i < MAX_USER; ++i) {
+		if (g_clients[i].m_isconnected) {
+			SC_Msg_Monster_Ready_to_Attak p;
+			p.Monster_Tag = (short)m_tag;
+			p.size = sizeof(p);
+			p.Team_Type = (BYTE)m_TeamType;
+			p.type = SC_MONSTER_CHANGE_TEAM;
+			SendPacket(i, &p);
+		}
+	}
 }
 
 void CRoider::Respawn()
@@ -427,9 +429,10 @@ void CRoider::Respawn()
 	for (int i = 0; i < MAX_USER; ++i) {
 		if (g_clients[i].m_isconnected) {
 			SC_Msg_Monster_Respawn p;
-			p.Monster_Tag = m_tag;
+			p.Monster_Tag = (short)m_tag;
 			p.size = sizeof(p);
 			p.type = SC_MONSTER_RESPAWN;
+			SendPacket(i, &p);
 		}
 	}
 
