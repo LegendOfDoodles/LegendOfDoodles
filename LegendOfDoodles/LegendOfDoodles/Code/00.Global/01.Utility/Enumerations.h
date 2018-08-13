@@ -245,13 +245,15 @@ enum GaugeUIType {
 	MinionGauge,
 	NexusAndTower,
 	RoiderGauge,
+	GolemGauge,
 };
 
 enum IconUIType {
 	PlayerIcon,
 	MinionIcon,
 	NexusAndTowerIcon,
-	RoiderIcon
+	RoiderIcon,
+	GolemIcon
 };
 
 enum class PathType {

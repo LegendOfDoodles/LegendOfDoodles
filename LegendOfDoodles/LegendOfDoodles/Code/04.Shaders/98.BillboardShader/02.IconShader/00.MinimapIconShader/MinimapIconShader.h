@@ -28,7 +28,7 @@ public: // 공개 함수
 
 	virtual bool OnProcessKeyInput(UCHAR* pKeyBuffer);
 	virtual bool OnProcessMouseInput(WPARAM pKeyBuffer);
-	
+
 	void SetUIObjectsManager(shared_ptr<CUIObjectManager> pManger);
 
 	virtual void SetPlayer(CCollisionObject **ppPlayer) { m_ppPlayer = ppPlayer; };
@@ -48,8 +48,6 @@ protected: // 내부 함수
 
 	virtual void BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pContext = NULL);
 
-	virtual void ReleaseObjects();
-
 	int GetPossibleIndex();
 	void SpawnMinionIcon();
 
@@ -57,8 +55,8 @@ protected: // 내부 함수
 	void ResetPossibleIndex(int idx) { m_indexArr[idx] = false; }
 
 protected: // 변수
-	// 카메라
-	CCamera *m_pCamera;
+		   // 카메라
+	CCamera * m_pCamera;
 
 	// Players
 	CCollisionObject **m_ppPlayer;

@@ -30,6 +30,7 @@ CGaugeObject::CGaugeObject(shared_ptr<CCreateMgr> pCreateMgr, GaugeUIType type)
 		SetMesh(0, pRectMesh);
 		break;
 	case NexusAndTower:
+	case GolemGauge:
 		pRectMesh = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 20.6f, FRAME_BUFFER_HEIGHT / 144.f, 0.f);
 		SetMesh(0, pRectMesh);
 		break;
@@ -49,7 +50,7 @@ void CGaugeObject::Animate(float fTimeElapsed)
 {
 	CBillboardObject::Animate(fTimeElapsed);
 
-	if (m_Type == GaugeUIType::PlayerGauge || m_Type == GaugeUIType::RoiderGauge)
+	if (m_Type == GaugeUIType::PlayerGauge)
 	{
 		m_xmf4x4World._41 = m_pMasterObject->GetPosition().x;
 		m_xmf4x4World._42 = m_pMasterObject->GetPosition().y + 110.f;
@@ -72,9 +73,17 @@ void CGaugeObject::Animate(float fTimeElapsed)
 			m_xmf4x4World._42 = m_pMasterObject->GetPosition().y + 200.f;
 			m_xmf4x4World._43 = m_pMasterObject->GetPosition().z;
 		}
-
 	}
-
+	else if (m_Type == m_Type == GaugeUIType::RoiderGauge) {
+		m_xmf4x4World._41 = m_pMasterObject->GetPosition().x;
+		m_xmf4x4World._42 = m_pMasterObject->GetPosition().y + 120.f;
+		m_xmf4x4World._43 = m_pMasterObject->GetPosition().z;
+	}
+	else if (m_Type == GaugeUIType::GolemGauge) {
+		m_xmf4x4World._41 = m_pMasterObject->GetPosition().x;
+		m_xmf4x4World._42 = m_pMasterObject->GetPosition().y + 250.f;
+		m_xmf4x4World._43 = m_pMasterObject->GetPosition().z;
+	}
 }
 
 void CGaugeObject::Render(CCamera * pCamera, UINT istanceCnt)
@@ -105,7 +114,7 @@ float CGaugeObject::GetCurrentHP()
 	if (m_Type == GaugeUIType::PlayerGauge) {
 		return (m_pMasterObject->GetPlayerStatus()->HP / m_pMasterObject->GetPlayerStatus()->maxHP);
 	}
-	else if (m_Type == GaugeUIType::MinionGauge || m_Type == GaugeUIType::RoiderGauge)
+	else if (m_Type == GaugeUIType::MinionGauge || m_Type == GaugeUIType::RoiderGauge || m_Type == GaugeUIType::GolemGauge)
 	{
 		return (m_pMasterObject->GetCommonStatus()->HP / m_pMasterObject->GetCommonStatus()->maxHP);
 	}

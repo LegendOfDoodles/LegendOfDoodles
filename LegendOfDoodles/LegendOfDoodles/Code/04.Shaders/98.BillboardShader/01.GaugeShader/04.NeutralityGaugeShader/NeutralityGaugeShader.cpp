@@ -172,37 +172,20 @@ void CNeutralityGaugeShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, voi
 
 	for (int i = 0; i < m_nObjects; ++i) {
 
-		pGaugeObject = new CGaugeObject(pCreateMgr, GaugeUIType::RoiderGauge);
-		pGaugeObject->SetCamera(m_pCamera);
-		pGaugeObject->SetObject(m_ppRoider[i]);
+		if (i < m_nObjects - 1) {
+			pGaugeObject = new CGaugeObject(pCreateMgr, GaugeUIType::RoiderGauge);
+			pGaugeObject->SetCamera(m_pCamera);
+			pGaugeObject->SetObject(m_ppRoider[i]);
+		}
+		else if (i == m_nObjects - 1) {
+			pGaugeObject = new CGaugeObject(pCreateMgr, GaugeUIType::GolemGauge);
+			pGaugeObject->SetCamera(m_pCamera);
+			pGaugeObject->SetObject(m_ppRoider[i]);
+		}
 
-		XMFLOAT3 HPGaugePosition = m_ppRoider[i]->GetPosition();
-		HPGaugePosition.y += 110.f;
-		pGaugeObject->SetPosition(HPGaugePosition);
 
 		pGaugeObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * i));
 
 		m_ppObjects[i] = pGaugeObject;
-	}
-}
-
-void CNeutralityGaugeShader::ReleaseObjects()
-{
-	if (m_ppObjects)
-	{
-		for (int j = 0; j < m_nObjects; j++)
-		{
-			delete m_ppObjects[j];
-		}
-		Safe_Delete_Array(m_ppObjects);
-	}
-
-	if (m_ppMaterials)
-	{
-		for (int i = 0; i < m_nMaterials; ++i)
-		{
-			Safe_Delete(m_ppMaterials[i]);
-		}
-		Safe_Delete_Array(m_ppMaterials);
 	}
 }
