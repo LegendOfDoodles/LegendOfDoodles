@@ -30,6 +30,7 @@ public: // 공개 함수
 	void SpawnFlyingObject(const XMFLOAT3& position, const XMFLOAT3& direction, TeamType teamType, FlyingObjectType objectType);
 
 	void SetColManagerToObject(shared_ptr<CCollisionManager> manager);
+	void SetEffectManagerToObject(shared_ptr<CEffectMgr> manager);
 
 	void Pause() { m_Paused = true; }
 	void Resume() { m_Paused = false; };

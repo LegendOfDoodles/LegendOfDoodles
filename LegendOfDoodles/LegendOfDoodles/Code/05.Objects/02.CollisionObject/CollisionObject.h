@@ -2,6 +2,7 @@
 #include "05.Objects/00.BaseObject/BaseObject.h"
 #include "00.Global/01.Utility/05.CollisionManager/CollisionManager.h"
 #include "00.Global/01.Utility/07.ThrowingManager/ThrowingMgr.h"
+#include "00.Global\01.Utility/08.EffectManager/EffectManager.h"
 
 class CWayFinder;
 
@@ -49,6 +50,7 @@ public: // 공개 함수
 	}
 
 	void SetThrowingManager(shared_ptr<CThrowingMgr> manager) { m_pThrowingMgr = manager; }
+	void SetEffectManager(shared_ptr<CEffectMgr> manager) { m_pEffectMgr = manager; }
 
 	void SetStatic(StaticType type) { m_StaticType = type; }
 	StaticType GetStaticType() { return m_StaticType; }
@@ -56,10 +58,16 @@ public: // 공개 함수
 	virtual PlayerInfo* GetPlayerStatus() { return NULL; }
 	virtual CommonInfo* GetCommonStatus() { return NULL; }
 	virtual StaticInfo* GetNexusAndTowerStatus() { return NULL; }
+
 	virtual void SetFlyingObjectsType(FlyingObjectType type) { type; }
+	virtual void SetEffectObjectsType(EffectObjectType type) { type; }
+
+	virtual void SetAnimationTime(float time) { time; }
+	virtual void SetAnimationLength(int time) { time; }
+
 	virtual void SetDirection(const XMFLOAT3& direction) { direction; }
 	virtual FlyingObjectType GetFlyingObjectsType() { return FlyingObjectType::Roider_Dumbel; }
-	
+	virtual EffectObjectType GetEffetObjectsType() { return EffectObjectType::Player_SwordSkill_Q_Effect; }
 
 	float GetDetectRange() { return m_detectRange; }
 	float GetSightRange() { return m_sightRange; }
@@ -101,6 +109,7 @@ protected: // 변수
 	StaticType m_StaticType{ StaticType::Move };
 	shared_ptr<CCollisionManager> m_pColManager;
 	shared_ptr<CThrowingMgr> m_pThrowingMgr;
+	shared_ptr<CEffectMgr> m_pEffectMgr;
 
 	bool m_GameOver{ false };
 

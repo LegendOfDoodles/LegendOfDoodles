@@ -772,7 +772,7 @@ void CCreateMgr::CreateGraphicsRootSignature()
 {
 	HRESULT hResult;
 
-	D3D12_DESCRIPTOR_RANGE pDescriptorRanges[5];
+	D3D12_DESCRIPTOR_RANGE pDescriptorRanges[6];
 
 	pDescriptorRanges[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
 	pDescriptorRanges[0].NumDescriptors = 1;
@@ -803,8 +803,14 @@ void CCreateMgr::CreateGraphicsRootSignature()
 	pDescriptorRanges[4].BaseShaderRegister = 5; //UI Gague
 	pDescriptorRanges[4].RegisterSpace = 0;
 	pDescriptorRanges[4].OffsetInDescriptorsFromTableStart = 0;
+	
+	pDescriptorRanges[5].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+	pDescriptorRanges[5].NumDescriptors = 1;
+	pDescriptorRanges[5].BaseShaderRegister = 7; //Effect
+	pDescriptorRanges[5].RegisterSpace = 0;
+	pDescriptorRanges[5].OffsetInDescriptorsFromTableStart = 0;
 
-	D3D12_ROOT_PARAMETER pRootParameters[10];
+	D3D12_ROOT_PARAMETER pRootParameters[11];
 
 	pRootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	pRootParameters[0].Descriptor.ShaderRegister = 0; //Camera
@@ -819,7 +825,8 @@ void CCreateMgr::CreateGraphicsRootSignature()
 	pRootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	pRootParameters[2].DescriptorTable.NumDescriptorRanges = 1;
 	pRootParameters[2].DescriptorTable.pDescriptorRanges = &pDescriptorRanges[1]; //Texture
-	pRootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	//pRootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	pRootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 	pRootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	pRootParameters[3].DescriptorTable.NumDescriptorRanges = 1;
@@ -855,6 +862,11 @@ void CCreateMgr::CreateGraphicsRootSignature()
 	pRootParameters[9].Descriptor.ShaderRegister = 12; //t12
 	pRootParameters[9].Descriptor.RegisterSpace = 0;
 	pRootParameters[9].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+
+	pRootParameters[10].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	pRootParameters[10].DescriptorTable.NumDescriptorRanges = 1;
+	pRootParameters[10].DescriptorTable.pDescriptorRanges = &pDescriptorRanges[5];  //Effects
+	pRootParameters[10].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 	D3D12_STATIC_SAMPLER_DESC samplerDesc[2];
 	::ZeroMemory(&samplerDesc, sizeof(D3D12_STATIC_SAMPLER_DESC));

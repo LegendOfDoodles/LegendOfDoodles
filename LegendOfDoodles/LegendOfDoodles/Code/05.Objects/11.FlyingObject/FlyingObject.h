@@ -31,6 +31,7 @@ protected: // º¯¼ö
 	float	m_speed{ 0.0f };
 	float	m_distance{ 0.0f };
 	float	m_maxDistance{ 0.0f };
+	bool	m_EffectTriger{ true };
 	XMFLOAT3 m_direction{};
 
 	shared_ptr<CCollisionManager> m_pColManager{ NULL };

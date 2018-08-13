@@ -41,6 +41,7 @@ public: // 공개 함수
 	void SetThrowingManager(shared_ptr<CThrowingMgr> pManger) { m_pThrowingMgr = pManger; }
 	void SetGaugeManger(shared_ptr<CUIObjectManager> pManger) { m_pGaugeManger = pManger; }
 	void SetFSMManager(shared_ptr<CFSMMgr> pManger) { m_pFSMMgr = pManger; }
+	void SetEffectManager(shared_ptr<CEffectMgr> pManger) { m_pEffectMgr = pManger; }
 
 	CollisionObjectList* GetMinionList(ObjectType Minion_Type, TeamType Team_Type);
 
@@ -84,4 +85,6 @@ protected: // 변수
 
 	shared_ptr<CCreateMgr> m_pCreateMgr{ NULL };
 	shared_ptr<CFSMMgr> m_pFSMMgr;
+	shared_ptr<CEffectMgr> m_pEffectMgr;
+
 };

@@ -8,7 +8,7 @@ public: // 생성자, 소멸자
 	virtual ~CEffectMgr();
 
 public: // 공개 함수
-	void RequestSpawn(const XMFLOAT3& position, const float positionOffset, const XMFLOAT3& direction, TeamType teamType, EffectObjectType objectType);
+	void RequestSpawn(const XMFLOAT3& position, const XMFLOAT3& direction, int aniLength, EffectObjectType objectType);
 
 	void RequestPause();
 	void RequestResume();

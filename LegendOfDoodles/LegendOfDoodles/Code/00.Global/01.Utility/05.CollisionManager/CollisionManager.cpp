@@ -189,6 +189,11 @@ void CCollisionManager::RequestCollide(CollisionType type, CCollisionObject * pC
 							float collisionLength = (*i)->GetCollisionSize() + (data2);
 							if (distance <= collisionLength)
 							{
+								if (pCol->GetType() == ObjectType::FlyingObject)
+								{
+									m_pEffectMgr->RequestSpawn((*i)->GetPosition(), pCol->GetLook(), 15, EffectObjectType::Player_ArrowAndFireBall_HitPosition_Effect);
+								}
+
 								//std::cout << "col\n";
 								(*i)->ReceiveDamage(damage);
 								(*i)->NotifyDamageTeam(pCol->GetTeam());

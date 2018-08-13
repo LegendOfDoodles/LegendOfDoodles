@@ -1,4 +1,6 @@
 #pragma once
+#include "00.Global\01.Utility/08.EffectManager/EffectManager.h"
+
 class CCollisionObject;
 class CWayFinder;
 struct NodeMap;
@@ -25,7 +27,8 @@ public:
 	CCollisionObject* RequestObjectByTag(short tag);
 	~CCollisionManager();
 	int(*GetFoW(void))[NODE_HEIGHT];
-
+	
+	void SetEffectManager(shared_ptr<CEffectMgr> manager) { m_pEffectMgr = manager; }
 
 	float GetnodeSize() { return nodeSize; }
 	int GetEnemyCout() {
@@ -52,7 +55,8 @@ protected:
 	XMFLOAT2 nodeWH;
 	int Fow[NODE_WIDTH][NODE_HEIGHT];
 
-
+	shared_ptr<CEffectMgr> m_pEffectMgr;
+	
 	std::list<CCollisionObject*> m_lstColliders;
 	
 	std::list<CCollisionObject*> m_lstBlueSight;

@@ -130,10 +130,33 @@ enum FlyingObjectType {
 };
 
 enum EffectObjectType {
-	Player_SwordSkill_Q,
-	Player_SwordSkill_W,
-	Player_SwordSkill_E,
-	Player_SwordSkill_R,
+	// Player Skill Effect
+	Player_SwordSkill_Q_Effect,			
+	Player_SwordSkill_W_Effect,			
+	Player_SwordSkill_E_Effect,
+	Player_SwordSkill_R_Effect,			
+	
+	Player_StaffSkill_W_Effect,			
+	Player_StaffSkill_E_Effect,			
+
+	// Player Attack Motion Effect
+	Player_ArrowAttack_Effect,			
+	Player_StaffAttack_Effect,			
+	Player_StaffQSkill_Effect,
+	Player_StaffESkill_Effect,
+
+	// Minion Attack Motion Effect
+	Minion_ArrowAttack_Effect,
+	Minion_StaffAttack_Effect,		
+
+	// FollowingToFlyingObejct Effect
+	Flying_MinionArrow_Effect,
+	Flying_PlayerArrow_Effect,
+	Flying_PlayerFireBall_Effect,
+	Player_ArrowAndFireBall_HitPosition_Effect,
+
+	// Effect Type Cnt
+	EffectObjectTime_Max_COUNT,
 };
 
 struct CommonInfo

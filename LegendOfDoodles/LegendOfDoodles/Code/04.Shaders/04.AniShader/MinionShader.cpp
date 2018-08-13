@@ -367,11 +367,13 @@ void CMinionShader::SpawnMinion(ObjectType minionKind, short tag)
 			pMinionObject = new CMagicMinion(m_pCreateMgr);
 			pMinionObject->SetMesh(0, &staffMinionMesh);
 			pMinionObject->SetThrowingManager(m_pThrowingMgr);
+			pMinionObject->SetEffectManager(m_pEffectMgr);
 			break;
 		case ObjectType::BowMinion:
 			pMinionObject = new CBowMinion(m_pCreateMgr);
 			pMinionObject->SetMesh(0, &bowMinionMesh);
 			pMinionObject->SetThrowingManager(m_pThrowingMgr);
+			pMinionObject->SetEffectManager(m_pEffectMgr);
 			break;
 		}
 

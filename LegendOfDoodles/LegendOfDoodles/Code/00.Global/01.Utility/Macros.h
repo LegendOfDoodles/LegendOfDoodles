@@ -71,9 +71,17 @@
 #define MAX_MINION 300
 #define MAX_ARROW 70
 #define MAX_MAGIC 70
+#define MAX_HIT 100
+#define MAX_EACH_TOWER_ATK 6	// 각 팀당 타워 6개
+#define MAX_PLAYER_ARROW_ATK 30
+#define MAX_PLAYER_MAGIC_ATK 30
+#define MAX_PLAYER_SKILL 4
 
 // 최대 최소
-#define MAX_QSKILL 4
+#define MAX_SKILL 4
+
+// Animation Speed
+#define ANIMATION_SPEED 30
 
 // 최대, 최소 속도
 #define MIN_CAMERA_SPEED 100.0f
@@ -90,6 +98,10 @@
 // 중립 몬스터 복귀 거리
 #define MAX_RANGE_FROM_SPAWN_ROIDER CONVERT_Unit_to_InG(0.489f)
 #define MAX_RANGE_FROM_SPAWN_GOLEM CONVERT_Unit_to_InG(0.636f)
+
+// Flying Object Spped
+#define MINION_ARROW_SPEED CONVERT_cm_to_InG(1.805f)
+
 
 // 경험치 증가량
 #define INCREASE_STATICOBJECT_EXP 5

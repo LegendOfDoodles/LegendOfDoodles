@@ -197,6 +197,13 @@ void CPlayerShader::SetColManagerToObject(shared_ptr<CCollisionManager> manager)
 	}
 }
 
+void CPlayerShader::SetEffectManagerToObject(shared_ptr<CEffectMgr> manager)
+{
+	for (int i = 0; i < 4; ++i) {
+		m_ppObjects[i]->SetEffectManager(manager);
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////
 // 내부 함수
 D3D12_INPUT_LAYOUT_DESC CPlayerShader::CreateInputLayout()

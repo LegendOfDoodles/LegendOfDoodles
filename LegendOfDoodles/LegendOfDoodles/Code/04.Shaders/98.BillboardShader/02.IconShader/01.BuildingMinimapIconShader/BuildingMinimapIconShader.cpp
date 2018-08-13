@@ -217,27 +217,17 @@ void CBuildingMinimapIconShader::BuildObjects(shared_ptr<CCreateMgr>  pCreateMgr
 	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, m_nNexus, 2, 1);
 	CreateConstantBufferViews(pCreateMgr, m_nNexus, m_pConstBuffer.Get(), ncbElementBytes, m_nTower, 1);
 
-#if USE_BATCH_MATERIAL
 	m_nMaterials = m_nHeaps;
 	m_ppMaterials = new CMaterial*[m_nMaterials];
 
 	// Tower
 	/* 0. Blue 1. Red */
 	m_ppMaterials[0] = Materials::CreateTowerIconMaterial(pCreateMgr,	&m_psrvCPUDescriptorStartHandle[0], &m_psrvGPUDescriptorStartHandle[0]);/*
-	m_ppMaterials[1] = Materials::CreateRedTowerIconMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[1], &m_psrvGPUDescriptorStartHandle[1]);*/
-	
+
 	// Nexus
 	/* 0. Blue 1. Red */
 	m_ppMaterials[1] = Materials::CreateNexusIconMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[1], &m_psrvGPUDescriptorStartHandle[1]);
-	/*
-	m_ppMaterials[2] = Materials::CreateBoxNexusIconMaterial(pCreateMgr,	&m_psrvCPUDescriptorStartHandle[2], &m_psrvGPUDescriptorStartHandle[2]);
-	m_ppMaterials[3] = Materials::CreateShellNexusIconMaterial(pCreateMgr,	&m_psrvCPUDescriptorStartHandle[3], &m_psrvGPUDescriptorStartHandle[3]);*/
 
-#else
-	CMaterial *pCubeMaterial = Materials::CreateBrickMaterial(pCreateMgr, &m_srvCPUDescriptorStartHandle, &m_srvGPUDescriptorStartHandle);
-#endif
-
-	// Player Icon »ý¼º
 	UINT incrementSize{ pCreateMgr->GetCbvSrvDescriptorIncrementSize() };
 	CIconObject *pIconObject = NULL;
 

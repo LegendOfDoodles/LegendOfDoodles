@@ -440,6 +440,8 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	m_pEffectMgr->SetEffectShader(static_cast<CEffectShader*>(Eeffect_Shader));
 	m_pFSMMgr = shared_ptr<CFSMMgr>(new CFSMMgr(m_pWayFinder));
 	((CMinimapShader*)Minimap_Shader)->SetWayFinder(m_pWayFinder);
+	
+	m_pCollisionManager->SetEffectManager(m_pEffectMgr);
 
 	//Manager Shaders Setting
 	CMinionShader* pMinionS = (CMinionShader *)m_ppShaders[2];
@@ -448,6 +450,7 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	pMinionS->SetGaugeManger(m_pUIObjectsManager);
 	pMinionS->SetFSMManager(m_pFSMMgr);
 	pMinionS->SetThrowingManager(m_pThrowingMgr);
+	pMinionS->SetEffectManager(m_pEffectMgr);
 
 	static_cast<CMinionHPGaugeShader*>(MinionHP_Shader)->SetUIObjectsManager(m_pUIObjectsManager);
 	static_cast<CMinimapIconShader*>(MinimapIco_Shader)->SetUIObjectsManager(m_pUIObjectsManager);
@@ -461,6 +464,7 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 		m_pCollisionManager->AddCollider((pPlayerS->GetCollisionObjects())[i]);
 	}
 	pPlayerS->SetColManagerToObject(m_pCollisionManager);
+	pPlayerS->SetEffectManagerToObject(m_pEffectMgr);
 
 	// 중립 몬스터에 충돌체 부여
 	CNeutralityShader* pNetral = (CNeutralityShader *)m_ppShaders[4];
@@ -485,6 +489,7 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 
 	CFlyingShader* pFS = (CFlyingShader*)m_ppShaders[7];
 	pFS->SetColManagerToObject(m_pCollisionManager);
+	pFS->SetEffectManagerToObject(m_pEffectMgr);
 
 	BuildLights();
 

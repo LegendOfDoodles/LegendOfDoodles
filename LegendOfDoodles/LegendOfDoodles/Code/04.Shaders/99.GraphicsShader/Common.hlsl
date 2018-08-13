@@ -54,3 +54,9 @@ cbuffer cbCameraInfo : register(b6)
     matrix gmtxLightProjection : packoffset(c4);
     matrix gmtxShadowViewProjTex : packoffset(c8);
 };
+
+cbuffer cbEffectObjectInfo : register(b7)
+{
+	matrix gmtxEffectObject : packoffset(c0);
+	float animationTime : packoffset(c4);
+}

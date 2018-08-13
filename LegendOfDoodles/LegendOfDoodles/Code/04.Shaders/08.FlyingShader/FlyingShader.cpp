@@ -181,6 +181,12 @@ void CFlyingShader::SetColManagerToObject(shared_ptr<CCollisionManager> manager)
 		m_ppObjects[i]->SetCollisionManager(manager);
 	}
 }
+void CFlyingShader::SetEffectManagerToObject(shared_ptr<CEffectMgr> manager)
+{
+	for (int i = 0; i < m_nObjects; ++i) {
+		m_ppObjects[i]->SetEffectManager(manager);
+	}
+}
 
 ////////////////////////////////////////////////////////////////////////
 // 내부 함수

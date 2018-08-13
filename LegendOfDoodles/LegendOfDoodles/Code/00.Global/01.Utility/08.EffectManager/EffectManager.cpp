@@ -21,9 +21,9 @@ CEffectMgr::~CEffectMgr()
 
 ////////////////////////////////////////////////////////////////////////
 // 공개 함수
-void CEffectMgr::RequestSpawn(const XMFLOAT3 & position, const float positionOffset, const XMFLOAT3 & direction, TeamType teamType, EffectObjectType objectType)
+void CEffectMgr::RequestSpawn(const XMFLOAT3 & position, const XMFLOAT3 & direction, int aniLength, EffectObjectType objectType)
 {
-	m_pEffectShader->SpawnEffectObject(position, positionOffset, direction, teamType, objectType);
+	m_pEffectShader->SpawnEffectObject(position, direction, aniLength, objectType);
 }
 
 void CEffectMgr::RequestPause()
