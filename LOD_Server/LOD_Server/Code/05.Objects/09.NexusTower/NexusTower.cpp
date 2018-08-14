@@ -32,6 +32,7 @@ CNexusTower::~CNexusTower()
 // 공개 함수
 void CNexusTower::Animate(float timeElapsed)
 {
+	m_hpSyncCoolTime += timeElapsed;
 	m_atkCoolTime -= timeElapsed;
 }
 
@@ -116,7 +117,7 @@ void CNexusTower::PlayAttack(float timeElapsed, shared_ptr<CWayFinder> pWayFinde
 				if (g_clients[i].m_isconnected)
 				{
 					SC_Msg_Building_Attack_Enemy p;
-					p.Building_Tag = m_tag;
+					p.Building_Tag = (short)m_tag;
 					p.size = sizeof(p);
 					p.type = SC_BUILDING_ATTACK;
 					SendPacket(i, &p);
@@ -155,6 +156,23 @@ void CNexusTower::ReceiveDamage(float damage)
 
 	m_StatusInfo.HP -= damage * Compute_Defence(m_StatusInfo.Def);
 
+	if (m_hpSyncCoolTime > COOLTIME_HP_SYNC)
+	{
+		SC_Msg_Hp_Sync hpPacket;
+		hpPacket.curhp = m_StatusInfo.HP;
+		hpPacket.maxhp = m_StatusInfo.maxHP;
+		hpPacket.size = sizeof(hpPacket);
+		hpPacket.type = SC_HP_SYNC;
+		hpPacket.Target_Tag = (short)m_tag;
+		hpPacket.updatetime = g_GameTime;
+		for (int j = 0; j < MAX_USER; ++j) {
+			if (g_clients[j].m_isconnected == true) {
+				SendPacket(j, &hpPacket);
+			}
+		}
+		m_hpSyncCoolTime = 0.0f;
+	}
+
 	if (m_StatusInfo.HP <= 0 && m_curState != States::Die) {
 		SetState(States::Die);
 		if (m_ObjectType == ObjectType::Nexus) {
@@ -163,7 +181,7 @@ void CNexusTower::ReceiveDamage(float damage)
 			{
 				if (g_clients[i].m_isconnected) {
 					SC_Msg_Game_Over p;
-					p.Team_Type = m_TeamType;
+					p.Team_Type = (BYTE)m_TeamType;
 					p.size = sizeof(p);
 					p.type = SC_GAME_OVER;
 					SendPacket(i, &p);

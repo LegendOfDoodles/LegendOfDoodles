@@ -40,6 +40,7 @@ CGolem::~CGolem()
 // 공개 함수
 void CGolem::Animate(float timeElapsed)
 {
+	m_hpSyncCoolTime += timeElapsed;
 
 	AdjustAnimationIndex();
 	AnimateByCurState();
@@ -298,6 +299,24 @@ void CGolem::ReceiveDamage(float damage)
 	if (m_curState == States::Die || m_curState == States::Remove) { return; }
 
 	m_StatusInfo.HP -= damage * Compute_Defence(m_StatusInfo.Def);
+
+	if (m_hpSyncCoolTime > COOLTIME_HP_SYNC)
+	{
+		SC_Msg_Hp_Sync hpPacket;
+		hpPacket.curhp = m_StatusInfo.HP;
+		hpPacket.maxhp = m_StatusInfo.maxHP;
+		hpPacket.size = sizeof(hpPacket);
+		hpPacket.type = SC_HP_SYNC;
+		hpPacket.Target_Tag = (short)m_tag;
+		hpPacket.updatetime = g_GameTime;
+		for (int j = 0; j < MAX_USER; ++j) {
+			if (g_clients[j].m_isconnected == true) {
+				SendPacket(j, &hpPacket);
+			}
+		}
+		m_hpSyncCoolTime = 0.0f;
+	}
+
 	if (m_StatusInfo.HP <= 0 && m_curState != States::Die) {
 		SetState(States::Die);
 	}

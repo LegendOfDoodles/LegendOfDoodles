@@ -97,7 +97,6 @@ void CNetwork::ProcessPacket(char *ptr)
 					m_ppPlayer[id]->SetPosition(my_packet->x, my_packet->y);
 					//m_ppPlayer[id]->SyncAnimation((AnimationsType)my_packet->state, my_packet->frameTime);
 					m_ppPlayer[id]->SetUpdateTime(my_packet->updatetime);
-					m_ppPlayer[id]->SetHP(my_packet->maxhp, my_packet->curhp);
 					m_ppPlayer[id]->SetLevel(my_packet->level, my_packet->maxexp, my_packet->exp);
 				}
 			}
@@ -106,7 +105,6 @@ void CNetwork::ProcessPacket(char *ptr)
 				{
 					m_ppPlayer[id]->SetPosition(my_packet->x, my_packet->y);
 					//m_ppPlayer[id]->SyncAnimation((AnimationsType)my_packet->state, my_packet->frameTime);
-					m_ppPlayer[id]->SetHP(my_packet->maxhp, my_packet->curhp);
 					m_ppPlayer[id]->SetUpdateTime(my_packet->updatetime);
 					m_ppPlayer[id]->SetLevel(my_packet->level, my_packet->maxexp, my_packet->exp);
 				}
@@ -137,7 +135,6 @@ void CNetwork::ProcessPacket(char *ptr)
 			{	
 				Monster->SetPosition(my_packet->x, my_packet->y);
 				Monster->SetUpdateTime(my_packet->updatetime);
-				Monster->SetHP(my_packet->maxhp, my_packet->curhp);
 			}
 			break;
 		}
@@ -174,7 +171,6 @@ void CNetwork::ProcessPacket(char *ptr)
 			{
 				Minion->SetPosition(my_packet->x, my_packet->y);
 				Minion->SetUpdateTime(my_packet->updatetime);
-				Minion->SetHP(my_packet->maxhp, my_packet->curhp);
 			}
 			break;
 		}
@@ -226,15 +222,15 @@ void CNetwork::ProcessPacket(char *ptr)
 			break;
 		}
 
-		case SC_HP_NEXUS:
+		case SC_HP_SYNC:
 		{
-			SC_Msg_Hp_Nexus* my_packet = reinterpret_cast<SC_Msg_Hp_Nexus*>(ptr);
-			CCollisionObject* Building{ m_pColManager->RequestObjectByTag(my_packet->Building_Tag) };
+			SC_Msg_Hp_Sync* my_packet = reinterpret_cast<SC_Msg_Hp_Sync*>(ptr);
+			CCollisionObject* Target{ m_pColManager->RequestObjectByTag(my_packet->Target_Tag) };
 			
-			if (Building && Building->GetUpdateTime() <= my_packet->updatetime)
+			if (Target && Target->GetUpdateTime() <= my_packet->updatetime)
 			{
-				Building->SetUpdateTime(my_packet->updatetime);
-				Building->SetHP(my_packet->maxhp, my_packet->curhp);
+				Target->SetUpdateTime(my_packet->updatetime);
+				Target->SetHP(my_packet->maxhp, my_packet->curhp);
 			}
 			break;
 		}

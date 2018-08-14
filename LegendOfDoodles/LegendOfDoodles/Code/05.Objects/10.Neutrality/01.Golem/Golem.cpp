@@ -115,6 +115,7 @@ void CGolem::SetState(StatesType newState, shared_ptr<CWayFinder> pWayFinder)
 	case States::Die:
 		m_nCurrAnimation = Animations::Die;
 		m_fFrameTime = 0;
+		m_StatusInfo.HP = 0.f;
 		SetPathToGo(NULL);
 		break;
 	case States::Remove:

@@ -24,12 +24,8 @@ public:	// 외부 함수
 	virtual PlayerInfo* GetPlayerStatus() { return &m_StatusInfo; }
 
 	//virtual void SetObjectType(ObjectType type) { m_StatusInfo.WeaponType = type; };
-	virtual void ReceiveDamage(float damage)
-	{
-		// 이미 사망한 상태인 경우 대미지 처리를 하지 않는다.
-		if (m_curState == States::Die || m_curState == States::Remove) { return; }
-		m_StatusInfo.HP -= damage * Compute_Defence(m_StatusInfo.Def);
-	}
+	virtual void ReceiveDamage(float damage);
+	
 	//virtual void ReceiveDamage(float damage) { m_StatusInfo.HP -= damage * Compute_Defence(m_StatusInfo.Def); }
 	UINT GetWeaponType() { return m_StatusInfo.Weapon; }
 	UINT GetWeaponNum() { return m_StatusInfo.WeaponNum; }

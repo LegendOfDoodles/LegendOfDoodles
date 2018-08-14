@@ -140,10 +140,10 @@ void CScene::ReleaseObjects()
 // 플레이어 이동 시 사용 -> 입력 값 월드 포지션 패킷으로 받아서 적용
 void CScene::GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, int id)
 {
-	XMFLOAT3 m_pickWorldPosition = pickPosition;
+	XMFLOAT3 pickWorldPosition = pickPosition;
 	CAnimatedObject* pPlayer = ((CAnimatedObject * *)m_ppShaders[1]->GetCollisionObjects())[id];
-	pPlayer->LookAt(m_pickWorldPosition);
+	pPlayer->LookAt(pickWorldPosition);
 	pPlayer->SetPathToGo(m_pWayFinder->GetPathToPosition(
 		XMFLOAT2(pPlayer->GetPosition().x, pPlayer->GetPosition().z),
-		XMFLOAT2(m_pickWorldPosition.x, m_pickWorldPosition.z)));
+		XMFLOAT2(pickWorldPosition.x, pickWorldPosition.z)));
 }

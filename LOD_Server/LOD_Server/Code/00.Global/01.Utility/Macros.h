@@ -54,6 +54,8 @@
 #define TIME_ACTIVATE_CHECK 3.0f	// 중립 몬스터가 대기 상태로 돌아가는 시간
 #define TIME_ACTIVATE_CHECK_GOLEM 10.0f	// 중립 몬스터가 대기 상태로 돌아가는 시간
 
+#define COOLTIME_HP_SYNC 0.5f
+
 // 높이(Height) 관련
 #define REVISE_HEIGHT 100.0f
 #define REVISE_HEIGHT_FOR_OBJECT REVISE_HEIGHT + 7.0f

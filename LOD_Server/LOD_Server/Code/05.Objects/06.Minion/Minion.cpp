@@ -25,6 +25,8 @@ CMinion::~CMinion()
 // 공개 함수
 void CMinion::Animate(float timeElapsed)
 {
+	m_hpSyncCoolTime += timeElapsed;
+
 	AdjustAnimationIndex();
 
 	m_fPreFrameTime = m_fFrameTime;
@@ -161,6 +163,35 @@ void CMinion::PlayAttack(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)
 	else if (!Attackable(m_pEnemy))
 	{
 		SetNextState(States::Chase);
+	}
+}
+
+void CMinion::ReceiveDamage(float damage)
+{
+	// 이미 사망한 상태인 경우 대미지 처리를 하지 않는다.
+	if (m_curState == States::Die || m_curState == States::Remove) { return; }
+
+	m_StatusInfo.HP -= damage * Compute_Defence(m_StatusInfo.Def);
+
+	if (m_hpSyncCoolTime > COOLTIME_HP_SYNC)
+	{
+		SC_Msg_Hp_Sync p;
+		p.curhp = m_StatusInfo.HP;
+		p.maxhp = m_StatusInfo.maxHP;
+		p.size = sizeof(p);
+		p.type = SC_HP_SYNC;
+		p.Target_Tag = (short)m_tag;
+		p.updatetime = g_GameTime;
+		for (int j = 0; j < MAX_USER; ++j) {
+			if (g_clients[j].m_isconnected == true) {
+				SendPacket(j, &p);
+			}
+		}
+		m_hpSyncCoolTime = 0.0f;
+	}
+
+	if (m_StatusInfo.HP <= 0) {
+		SetState(States::Die);
 	}
 }
 

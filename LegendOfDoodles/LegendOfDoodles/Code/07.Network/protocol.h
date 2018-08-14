@@ -35,8 +35,6 @@ struct SC_Msg_Pos_Character : public Packet
 	BYTE Character_id;
 	float x;
 	float y;
-	float maxhp;
-	float curhp;
 	short state;
 	short frameTime;
 	short weapon;
@@ -82,8 +80,6 @@ struct SC_Msg_Pos_Neutrality : public Packet
 	short Monster_Tag;
 	float x;
 	float y;
-	float maxhp;
-	float curhp;
 	float updatetime;
 };
 
@@ -116,8 +112,6 @@ struct SC_Msg_Pos_Minion : public Packet
 	short Minion_Tag;
 	float x;
 	float y;
-	float maxhp;
-	float curhp;
 	float updatetime;
 	XMFLOAT3 vLook;
 };
@@ -143,13 +137,12 @@ struct SC_Msg_Enemy_Tag_Neutral : public Packet
 	short Enemy_Tag;
 };
 
-struct SC_Msg_Hp_Nexus : public Packet
+struct SC_Msg_Hp_Sync : public Packet
 {
-	BYTE Object_id;
 	float maxhp;
 	float curhp;
 	float updatetime;
-	short Building_Tag;
+	short Target_Tag;
 };
 
 struct SC_Msg_Set_Nexus_State : public Packet
@@ -196,7 +189,7 @@ struct SC_Msg_Building_Attack_Enemy : public Packet
 #define SC_POS					  104
 #define SC_PERMIT_USE_SKILL		  105
 #define SC_POS_MINION			  106
-#define SC_HP_NEXUS				  107
+#define SC_HP_SYNC				  107
 //#define SC_PACKET				  115
 #define SC_CHANGE_TARGET		  108
 #define SC_MINION_SPAWN			  109

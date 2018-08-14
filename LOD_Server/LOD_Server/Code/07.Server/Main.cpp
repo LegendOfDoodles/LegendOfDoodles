@@ -384,8 +384,6 @@ void timer_thread()
 					p.Character_id = (BYTE)i;
 					p.size = sizeof(p);
 					p.type = SC_POS;
-					p.maxhp = g_clients[i].m_maxhp;
-					p.curhp = g_clients[i].m_curhp;
 					p.level = (short)g_clients[i].m_level;
 					p.maxexp = (short)g_clients[i].m_maxexp;
 					p.exp = (short)g_clients[i].m_exp;
@@ -406,14 +404,11 @@ void timer_thread()
 			//Send Every User Blue Sword Minion Packet
 			for (auto iter = g_blueSwordMinions->begin(); iter != g_blueSwordMinions->end(); ++iter) {
 				XMFLOAT3 MinionPos{ (*iter)->GetPosition() };
-				CommonInfo* MinionHP{ (*iter)->GetCommonStatus() };
 				SC_Msg_Pos_Minion p;
 				p.size = sizeof(p);
 				p.x = MinionPos.x;
 				p.y = MinionPos.z;
 				p.Minion_Tag = (short)(*iter)->GetTag();
-				p.maxhp = MinionHP->maxHP;
-				p.curhp = MinionHP->HP;
 				p.updatetime = g_GameTime;
 				p.type = SC_POS_MINION;
 				for (int j = 0; j < MAX_USER; ++j) {
@@ -425,14 +420,11 @@ void timer_thread()
 			//Send Every User Blue Bow Minion Packet
 			for (auto iter = g_blueBowMinions->begin(); iter != g_blueBowMinions->end(); ++iter) {
 				XMFLOAT3 MinionPos{ (*iter)->GetPosition() };
-				CommonInfo* MinionHP{ (*iter)->GetCommonStatus() };
 				SC_Msg_Pos_Minion p;
 				p.size = sizeof(p);
 				p.x = MinionPos.x;
 				p.y = MinionPos.z;
 				p.Minion_Tag = (short)(*iter)->GetTag();
-				p.maxhp = MinionHP->maxHP;
-				p.curhp = MinionHP->HP;
 				p.updatetime = g_GameTime;
 				p.type = SC_POS_MINION;
 				for (int j = 0; j < MAX_USER; ++j) {
@@ -444,14 +436,11 @@ void timer_thread()
 			//Send Every User Blue Staff Minion Packet
 			for (auto iter = g_blueStaffMinions->begin(); iter != g_blueStaffMinions->end(); ++iter) {
 				XMFLOAT3 MinionPos{ (*iter)->GetPosition() };
-				CommonInfo* MinionHP{ (*iter)->GetCommonStatus() };
 				SC_Msg_Pos_Minion p;
 				p.size = sizeof(p);
 				p.x = MinionPos.x;
 				p.y = MinionPos.z;
 				p.Minion_Tag = (short)(*iter)->GetTag();
-				p.maxhp = MinionHP->maxHP;
-				p.curhp = MinionHP->HP;
 				p.updatetime = g_GameTime;
 				p.type = SC_POS_MINION;
 				for (int j = 0; j < MAX_USER; ++j) {
@@ -463,14 +452,11 @@ void timer_thread()
 			//Send Every User Red Sword Minion Packet
 			for (auto iter = g_redSwordMinions->begin(); iter != g_redSwordMinions->end(); ++iter) {
 				XMFLOAT3 MinionPos{ (*iter)->GetPosition() };
-				CommonInfo* MinionHP{ (*iter)->GetCommonStatus() };
 				SC_Msg_Pos_Minion p;
 				p.size = sizeof(p);
 				p.x = MinionPos.x;
 				p.y = MinionPos.z;
 				p.Minion_Tag = (short)(*iter)->GetTag();
-				p.maxhp = MinionHP->maxHP;
-				p.curhp = MinionHP->HP;
 				p.updatetime = g_GameTime;
 				p.type = SC_POS_MINION;
 				for (int j = 0; j < MAX_USER; ++j) {
@@ -482,14 +468,11 @@ void timer_thread()
 			//Send Every User Red Bow Minion Packet
 			for (auto iter = g_redBowMinions->begin(); iter != g_redBowMinions->end(); ++iter) {
 				XMFLOAT3 MinionPos{ (*iter)->GetPosition() };
-				CommonInfo* MinionHP{ (*iter)->GetCommonStatus() };
 				SC_Msg_Pos_Minion p;
 				p.size = sizeof(p);
 				p.x = MinionPos.x;
 				p.y = MinionPos.z;
 				p.Minion_Tag = (short)(*iter)->GetTag();
-				p.maxhp = MinionHP->maxHP;
-				p.curhp = MinionHP->HP;
 				p.updatetime = g_GameTime;
 				p.type = SC_POS_MINION;
 				for (int j = 0; j < MAX_USER; ++j) {
@@ -501,14 +484,11 @@ void timer_thread()
 			//Send Every User Red Staff Minion Packet
 			for (auto iter = g_redStaffMinions->begin(); iter != g_redStaffMinions->end(); ++iter) {
 				XMFLOAT3 MinionPos{ (*iter)->GetPosition() };
-				CommonInfo* MinionHP{ (*iter)->GetCommonStatus() };
 				SC_Msg_Pos_Minion p;
 				p.size = sizeof(p);
 				p.x = MinionPos.x;
 				p.y = MinionPos.z;
 				p.Minion_Tag = (short)(*iter)->GetTag();
-				p.maxhp = MinionHP->maxHP;
-				p.curhp = MinionHP->HP;
 				p.updatetime = g_GameTime;
 				p.type = SC_POS_MINION;
 				for (int j = 0; j < MAX_USER; ++j) {
@@ -520,7 +500,6 @@ void timer_thread()
 
 			//Send Every Neutrality's Position Packet
 			for (int i = 0; i < g_NeutralityCount; ++i) {
-				CommonInfo* NeutralHP{ g_ppNeutrality[i]->GetCommonStatus() };
 				XMFLOAT3 NeutralPos{ g_ppNeutrality[i]->GetPosition() };
 				SC_Msg_Pos_Neutrality p;
 				p.Monster_Tag = (short)g_ppNeutrality[i]->GetTag();
@@ -528,8 +507,6 @@ void timer_thread()
 				p.y = NeutralPos.z;
 				p.size = sizeof(p);
 				p.type = SC_POS_MONSTER;
-				p.maxhp = NeutralHP->maxHP;
-				p.curhp = NeutralHP->HP;
 				p.updatetime = g_GameTime;
 				for (int j = 0; j < MAX_USER; ++j) {
 					if (g_clients[j].m_isconnected == true) {
@@ -537,23 +514,6 @@ void timer_thread()
 					}
 				}
 				
-			}
-			for (int i = 0; i < g_NexusTowerCount; ++i) {
-				SC_Msg_Hp_Nexus p;
-				StaticInfo* NexusHP{ g_ppNexusTower[i]->GetNexusAndTowerStatus() };
-				if (g_ppNexusTower[i]->GetState() != StatesType::Remove) {
-					p.curhp = NexusHP->HP;
-					p.maxhp = NexusHP->maxHP;
-					p.size = sizeof(p);
-					p.type = SC_HP_NEXUS;
-					p.Building_Tag = g_ppNexusTower[i]->GetTag();
-					p.updatetime = g_GameTime;
-					for (int j = 0; j < MAX_USER; ++j) {
-						if (g_clients[j].m_isconnected == true) {
-							SendPacket(j, &p);
-						}
-					}
-				}
 			}
 		}
 	}

@@ -38,8 +38,6 @@ protected: // 변수
 	CShader **m_ppShaders{ NULL };
 	int m_nShaders{ 0 };
 
-	XMFLOAT3 m_pickWorldPosition{ 0.f, 0.f, 0.f };
-
 	// 매니저 클래스
 	shared_ptr<CWayFinder> m_pWayFinder;
 	shared_ptr<CCollisionManager>m_pCollisionManager;

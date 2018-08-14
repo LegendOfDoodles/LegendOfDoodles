@@ -90,6 +90,8 @@ protected: // º¯¼ö
 	float m_attackRange{ 0.0f };
 	float m_farAttackRange{ 0.0f };
 
+	float m_hpSyncCoolTime{ 0.0f };
+
 	CCollisionObject* m_pEnemy{ NULL };
 	StaticType m_StaticType{ StaticType::Move };
 	shared_ptr<CCollisionManager> m_pColManager;
