@@ -143,20 +143,35 @@ struct SC_Msg_Enemy_Tag_Neutral : public Packet
 	short Enemy_Tag;
 };
 
-
-
-struct SC_Msg_Pos_Nexus : public Packet
+struct SC_Msg_Hp_Nexus : public Packet
 {
 	BYTE Object_id;
-	float x;
-	float y;
 	float maxhp;
 	float curhp;
 	float updatetime;
 	short Building_Tag;
 };
 
+struct SC_Msg_Set_Nexus_State : public Packet
+{
+	short Building_Tag;
+	BYTE Building_State;
+};
+struct SC_Msg_Enemy_Tag_Nexus : public Packet
+{
+	short Building_Tag;
+	short Enemy_Tag;
+ };
 
+struct SC_Msg_Game_Over :public Packet
+{
+	BYTE Team_Type;
+};
+
+struct SC_Msg_Building_Attack_Enemy : public Packet
+{
+	short Building_Tag;
+};
 
 #pragma pack(pop)
 
@@ -181,7 +196,7 @@ struct SC_Msg_Pos_Nexus : public Packet
 #define SC_POS					  104
 #define SC_PERMIT_USE_SKILL		  105
 #define SC_POS_MINION			  106
-#define SC_POS_NEXUS			  107
+#define SC_HP_NEXUS				  107
 //#define SC_PACKET				  115
 #define SC_CHANGE_TARGET		  108
 #define SC_MINION_SPAWN			  109
@@ -194,6 +209,10 @@ struct SC_Msg_Pos_Nexus : public Packet
 #define SC_MONSTER_SET_ENEMY	  116
 #define SC_BOSS_SET_CURR_ANIM	  117
 #define SC_BOSS_SET_NEXT_ANIM	  118
+#define SC_NEXUS_STATE			  119
+#define SC_BUILDING_SET_ENEMY	  120
+#define SC_GAME_OVER			  121
+#define SC_BUILDING_ATTACK		  122
 
 //Client->Server
 #define CS_ACTION				  201

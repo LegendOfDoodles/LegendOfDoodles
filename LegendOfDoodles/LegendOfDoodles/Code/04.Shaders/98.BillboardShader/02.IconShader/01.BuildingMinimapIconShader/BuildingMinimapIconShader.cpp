@@ -110,14 +110,14 @@ bool CBuildingMinimapIconShader::OnProcessKeyInput(UCHAR * pKeyBuffer)
 {
 	UNREFERENCED_PARAMETER(pKeyBuffer);
 
-	return false;
+	return true;
 }
 
 bool CBuildingMinimapIconShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 {
 	UNREFERENCED_PARAMETER(pKeyBuffer);
 
-	return false;
+	return true;
 }
 
 ////////////////////////////////////////////////////////////////////////

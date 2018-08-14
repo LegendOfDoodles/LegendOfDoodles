@@ -30,6 +30,9 @@ CGaugeObject::CGaugeObject(shared_ptr<CCreateMgr> pCreateMgr, GaugeUIType type)
 		SetMesh(0, pRectMesh);
 		break;
 	case NexusAndTower:
+		pRectMesh = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 20.6f, FRAME_BUFFER_HEIGHT / 144.f, 0.f);
+		SetMesh(0, pRectMesh);
+		break;
 	case GolemGauge:
 		pRectMesh = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 20.6f, FRAME_BUFFER_HEIGHT / 144.f, 0.f);
 		SetMesh(0, pRectMesh);
@@ -63,14 +66,14 @@ void CGaugeObject::Animate(float fTimeElapsed)
 		m_xmf4x4World._43 = m_pMasterObject->GetPosition().z;
 	}
 	else if (m_Type == GaugeUIType::NexusAndTower) {
-		if (m_MasterObjectType == ObjectType::Nexus) {
+		if (m_pMasterObject->GetType() == ObjectType::Nexus) {
 			m_xmf4x4World._41 = m_pMasterObject->GetPosition().x;
-			m_xmf4x4World._42 = m_pMasterObject->GetPosition().y + 300.f;
+			m_xmf4x4World._42 = m_pMasterObject->GetPosition().y + CONVERT_PaperUnit_to_InG(32);
 			m_xmf4x4World._43 = m_pMasterObject->GetPosition().z;
 		}
 		else {
 			m_xmf4x4World._41 = m_pMasterObject->GetPosition().x;
-			m_xmf4x4World._42 = m_pMasterObject->GetPosition().y + 200.f;
+			m_xmf4x4World._42 = m_pMasterObject->GetPosition().y + CONVERT_PaperUnit_to_InG(26);
 			m_xmf4x4World._43 = m_pMasterObject->GetPosition().z;
 		}
 	}

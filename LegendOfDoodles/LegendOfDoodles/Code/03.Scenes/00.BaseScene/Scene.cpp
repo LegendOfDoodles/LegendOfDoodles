@@ -248,12 +248,18 @@ void CScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID,
 	{
 	case WM_LBUTTONDOWN:
 	case WM_RBUTTONDOWN:
+	{
 		::SetCapture(hWnd);
 		m_pCamera->SavePickedPos();
-		PickObjectPointedByCursor(wParam, lParam);
+		bool continual{ true };
 		for (int i = 0; i < m_nShaders; ++i)
-			m_ppShaders[i]->OnProcessMouseInput(wParam);
+			if (continual) continual = m_ppShaders[i]->OnProcessMouseInput(wParam);
+		if (continual)
+		{
+			PickObjectPointedByCursor(wParam, lParam);
+		}
 		break;
+	}
 	case WM_LBUTTONUP:
 	case WM_RBUTTONUP:
 		::ReleaseCapture();
@@ -429,6 +435,11 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	NeutralityHP_Shader->Initialize(pCreateMgr, m_pCamera);
 	Eeffect_Shader->Initialize(pCreateMgr, m_pCamera);
 	SpecialSelect_Shader->Initialize(pCreateMgr, m_pCamera);
+
+	for (int i = 8; i <= 21; ++i)
+	{
+		m_ppShaders[i]->SetNetwork(m_pNetwork);
+	}
 
 	//Managere Initialize
 	m_pWayFinder = shared_ptr<CWayFinder>(new CWayFinder());

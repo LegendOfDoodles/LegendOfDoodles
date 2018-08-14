@@ -35,44 +35,19 @@ void CNexusTower::Animate(float timeElapsed)
 	m_atkCoolTime -= timeElapsed;
 }
 
-void CNexusTower::PlayIdle(float timeElapsed)
+void CNexusTower::SetState(StatesType newState, shared_ptr<CWayFinder> pWayFinder)
 {
-	UNREFERENCED_PARAMETER(timeElapsed);
-
-	if (m_ObjectType == ObjectType::FirstTower)
+	if (m_curState == States::Attack && newState == States::Idle)
 	{
-		CCollisionObject* enemy{ m_pColManager->RequestNearObject(this, m_detectRange) };
-
-		if (!enemy) return;
-
-		if (Attackable(enemy))
-		{
-			SetEnemy(enemy);
-			SetState(States::Attack);
-		}
+		SetEnemy(NULL);
 	}
-}
 
-void CNexusTower::PlayAttack(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)
-{
-	UNREFERENCED_PARAMETER(timeElapsed);
-
-	if (m_ObjectType == ObjectType::FirstTower)
+	if (newState == States::Die)
 	{
-		if (!CheckEnemyState(m_pEnemy) || !Attackable(m_pEnemy))
-		{
-			SetEnemy(NULL);
-			SetState(States::Idle);
-		}
-
-		if (m_atkCoolTime < 0.0f)
-		{
-			XMFLOAT3 curPos{ GetPosition() };
-			curPos.y += m_fCollisionSize * 2;
-			m_atkCoolTime = COOLTIME_TOWER_ATTACK;
-			m_pThrowingMgr->RequestSpawn(curPos, Vector3::Subtract(m_pEnemy->GetPosition(), curPos, true), m_TeamType, FlyingObjectType::Roider_Dumbel);
-		}
+		m_StatusInfo.HP = 0.f;
 	}
+
+	m_nextState = m_curState = newState;
 }
 
 void CNexusTower::PlayDie(float timeElapsed)
@@ -84,7 +59,18 @@ void CNexusTower::PlayDie(float timeElapsed)
 		Translate(new XMFLOAT3(0, sin(m_fEndTime * 2)*1.f, 0));
 		Translate(new XMFLOAT3(sin(m_fEndTime * 2)*1.f, 0, 0));
 		Translate(new XMFLOAT3(0, 0, sin(m_fEndTime * 2)*1.f));
+		if (m_fEndTime > 100)
+		{
+			SetState(StatesType::Remove);
+		}
 	}
+}
+
+void CNexusTower::AttackEnemy()
+{
+	XMFLOAT3 curPos{ GetPosition() };
+	curPos.y += m_fCollisionSize * 2;
+	m_pThrowingMgr->RequestSpawn(curPos, Vector3::Subtract(m_pEnemy->GetPosition(), curPos, true), m_TeamType, FlyingObjectType::Roider_Dumbel);
 }
 
 ////////////////////////////////////////////////////////////////////////

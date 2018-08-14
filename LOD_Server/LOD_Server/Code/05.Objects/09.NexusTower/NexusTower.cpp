@@ -35,6 +35,34 @@ void CNexusTower::Animate(float timeElapsed)
 	m_atkCoolTime -= timeElapsed;
 }
 
+void CNexusTower::SetState(StatesType newState, shared_ptr<CWayFinder> pWayFinder)
+{
+	if (m_curState == States::Attack && newState == States::Idle)
+	{
+		SetEnemy(NULL);
+	}
+
+	m_nextState = m_curState = newState;
+
+	if (m_curState == States::Remove) return;
+	else if (m_curState == States::Die)
+	{
+		if(m_masterObject) m_masterObject->MakeMortal();
+	}
+
+	for (int i = 0; i < MAX_USER; ++i)
+	{
+		if (g_clients[i].m_isconnected) {
+			SC_Msg_Set_Nexus_State p;
+			p.Building_State = (BYTE)newState;
+			p.Building_Tag = (short)m_tag;
+			p.size = sizeof(p);
+			p.type = SC_NEXUS_STATE;
+			SendPacket(i, &p);
+		}
+	}
+}
+
 void CNexusTower::PlayIdle(float timeElapsed)
 {
 	UNREFERENCED_PARAMETER(timeElapsed);
@@ -48,6 +76,18 @@ void CNexusTower::PlayIdle(float timeElapsed)
 		if (Attackable(enemy))
 		{
 			SetEnemy(enemy);
+			for (int i = 0; i < MAX_USER; ++i)
+			{
+				if (g_clients[i].m_isconnected)
+				{
+					SC_Msg_Enemy_Tag_Nexus p;
+					p.Building_Tag = (short)m_tag;
+					p.Enemy_Tag = (short)enemy->GetTag();
+					p.size = sizeof(p);
+					p.type = SC_BUILDING_SET_ENEMY;
+					SendPacket(i, &p);
+				}
+			}
 			SetState(States::Attack);
 		}
 	}
@@ -71,6 +111,17 @@ void CNexusTower::PlayAttack(float timeElapsed, shared_ptr<CWayFinder> pWayFinde
 			curPos.y += m_fCollisionSize * 2;
 			m_atkCoolTime = COOLTIME_TOWER_ATTACK;
 			m_pThrowingMgr->RequestSpawn(curPos, Vector3::Subtract(m_pEnemy->GetPosition(), curPos, true), m_TeamType, FlyingObjectType::Roider_Dumbel);
+			for (int i = 0; i < MAX_USER; ++i)
+			{
+				if (g_clients[i].m_isconnected)
+				{
+					SC_Msg_Building_Attack_Enemy p;
+					p.Building_Tag = m_tag;
+					p.size = sizeof(p);
+					p.type = SC_BUILDING_ATTACK;
+					SendPacket(i, &p);
+				}
+			}
 		}
 	}
 }
@@ -84,6 +135,41 @@ void CNexusTower::PlayDie(float timeElapsed)
 		Translate(new XMFLOAT3(0, sin(m_fEndTime * 2)*1.f, 0));
 		Translate(new XMFLOAT3(sin(m_fEndTime * 2)*1.f, 0, 0));
 		Translate(new XMFLOAT3(0, 0, sin(m_fEndTime * 2)*1.f));
+		if (m_fEndTime > 100)
+		{
+			SetState(StatesType::Remove);
+		}
+	}
+}
+
+void CNexusTower::SetMaster(CCollisionObject * masterObject)
+{
+	m_masterObject = masterObject;
+	m_masterObject->MakeImmortal();
+}
+
+void CNexusTower::ReceiveDamage(float damage)
+{
+	// 이미 사망한 상태인 경우 대미지 처리를 하지 않는다.
+	if (m_bImmortal || m_curState == States::Die || m_curState == States::Remove) { return; }
+
+	m_StatusInfo.HP -= damage * Compute_Defence(m_StatusInfo.Def);
+
+	if (m_StatusInfo.HP <= 0 && m_curState != States::Die) {
+		SetState(States::Die);
+		if (m_ObjectType == ObjectType::Nexus) {
+			m_pColManager->GameOver(m_TeamType);
+			for (int i = 0; i < MAX_USER; ++i)
+			{
+				if (g_clients[i].m_isconnected) {
+					SC_Msg_Game_Over p;
+					p.Team_Type = m_TeamType;
+					p.size = sizeof(p);
+					p.type = SC_GAME_OVER;
+					SendPacket(i, &p);
+				}
+			}
+		}
 	}
 }
 

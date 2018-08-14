@@ -105,7 +105,7 @@ bool CMinionHPGaugeShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 {
 	UNREFERENCED_PARAMETER(pKeyBuffer);
 
-	return false;
+	return true;
 }
 
 ////////////////////////////////////////////////////////////////////////

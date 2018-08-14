@@ -12,24 +12,14 @@ public:
 public:	// 외부 함수
 	virtual void Animate(float timeElapsed);
 
-	virtual void PlayIdle(float timeElapsed);
-	virtual void PlayAttack(float timeElapsed, shared_ptr<CWayFinder> pWayFinder);
+	virtual void SetState(StatesType newState, shared_ptr<CWayFinder> pWayFinder = nullptr);
+
 	virtual void PlayDie(float timeElapsed);
 
-	virtual void ReceiveDamage(float damage) {
-		// 이미 사망한 상태인 경우 대미지 처리를 하지 않는다.
-		if (m_curState == States::Die || m_curState == States::Remove) { return; }
-
-		m_StatusInfo.HP -= damage * Compute_Defence(m_StatusInfo.Def);
-
-		if (m_StatusInfo.HP <= 0 && m_curState != States::Die) {
-			SetState(States::Die);
-			if (m_ObjectType == ObjectType::Nexus)
-				m_pColManager->GameOver(m_TeamType);
-		}
-	}
+	virtual void AttackEnemy();
 
 	virtual StaticInfo* GetNexusAndTowerStatus() { return &m_StatusInfo; }
+	virtual void SetHP(float maxHP, float curHP) { m_StatusInfo.maxHP = maxHP;  m_StatusInfo.HP = curHP; }
 
 protected: // 내부 함수
 		   /*

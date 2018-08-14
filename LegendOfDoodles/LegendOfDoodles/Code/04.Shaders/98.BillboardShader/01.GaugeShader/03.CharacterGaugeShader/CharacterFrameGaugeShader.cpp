@@ -113,14 +113,14 @@ bool CharacterFrameGaugeShader::OnProcessKeyInput(UCHAR * pKeyBuffer)
 {
 	UNREFERENCED_PARAMETER(pKeyBuffer);
 
-	return false;
+	return true;
 }
 
 bool CharacterFrameGaugeShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 {
 	UNREFERENCED_PARAMETER(pKeyBuffer);
 
-	return false;
+	return true;
 }
 
 ////////////////////////////////////////////////////////////////////////

@@ -61,27 +61,18 @@ void CNexusAndTowerHPGaugeShader::Render(CCamera * pCamera)
 	}
 }
 
-void CNexusAndTowerHPGaugeShader::GetCamera(CCamera * pCamera)
-{
-	m_pCamera = pCamera;
-
-	for (int i = 0; i < m_nObjects; ++i) {
-		static_cast<CGaugeObject*>(m_ppObjects[i])->SetCamera(m_pCamera);
-	}
-}
-
 bool CNexusAndTowerHPGaugeShader::OnProcessKeyInput(UCHAR * pKeyBuffer)
 {
 	UNREFERENCED_PARAMETER(pKeyBuffer);
 
-	return false;
+	return true;
 }
 
 bool CNexusAndTowerHPGaugeShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 {
 	UNREFERENCED_PARAMETER(pKeyBuffer);
 
-	return false;
+	return true;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -189,10 +180,6 @@ void CNexusAndTowerHPGaugeShader::BuildObjects(shared_ptr<CCreateMgr>  pCreateMg
 		pGaugeObject = new CGaugeObject(pCreateMgr, GaugeUIType::NexusAndTower);
 		pGaugeObject->SetCamera(m_pCamera);
 		pGaugeObject->SetObject(m_ppNexusAndTower[i]);
-		
-		XMFLOAT3 HPGaugePosition = m_ppNexusAndTower[i]->GetPosition();
-		HPGaugePosition.y += 200.f;
-		pGaugeObject->SetPosition(HPGaugePosition);
 
 		pGaugeObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * i));
 

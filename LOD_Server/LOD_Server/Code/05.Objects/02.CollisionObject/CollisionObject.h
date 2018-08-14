@@ -70,6 +70,9 @@ public: // 공개 함수
 	void SetTag(int id) { m_tag = id; }
 	int GetTag() { return m_tag; }
 
+	void MakeMortal() { m_bImmortal = false; }
+	void MakeImmortal() { m_bImmortal = true; }
+
 protected: // 내부 함수
 
 protected: // 변수
@@ -95,4 +98,6 @@ protected: // 변수
 	bool m_GameOver{ false };
 
 	bool m_Activated{ false };
+
+	bool m_bImmortal{ false };	// 무적 검사용 변수
 };

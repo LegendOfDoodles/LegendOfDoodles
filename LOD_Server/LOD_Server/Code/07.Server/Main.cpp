@@ -539,20 +539,19 @@ void timer_thread()
 				
 			}
 			for (int i = 0; i < g_NexusTowerCount; ++i) {
-				SC_Msg_Pos_Nexus p;
+				SC_Msg_Hp_Nexus p;
 				StaticInfo* NexusHP{ g_ppNexusTower[i]->GetNexusAndTowerStatus() };
-				XMFLOAT3 NexusPos{ g_ppNexusTower[i]->GetPosition() };
-				p.curhp = NexusHP->HP;
-				p.maxhp = NexusHP->maxHP;
-				p.size = sizeof(p);
-				p.type = SC_POS_NEXUS;
-				p.Building_Tag = g_ppNexusTower[i]->GetTag();
-				p.x = NexusPos.x;
-				p.y = NexusPos.z;
-				p.updatetime = g_GameTime;
-				for (int j = 0; j < MAX_USER; ++j) {
-					if (g_clients[j].m_isconnected == true) {
-						SendPacket(j, &p);
+				if (g_ppNexusTower[i]->GetState() != StatesType::Remove) {
+					p.curhp = NexusHP->HP;
+					p.maxhp = NexusHP->maxHP;
+					p.size = sizeof(p);
+					p.type = SC_HP_NEXUS;
+					p.Building_Tag = g_ppNexusTower[i]->GetTag();
+					p.updatetime = g_GameTime;
+					for (int j = 0; j < MAX_USER; ++j) {
+						if (g_clients[j].m_isconnected == true) {
+							SendPacket(j, &p);
+						}
 					}
 				}
 			}

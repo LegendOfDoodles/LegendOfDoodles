@@ -5,6 +5,7 @@
 #include "05.Objects/99.Material/Material.h"
 #include "05.Objects/08.Player/Player.h"
 #include "00.Global/01.Utility/04.WayFinder/WayFinder.h"
+#include "07.Network/Network.h"
 
 /// <summary>
 /// 格利: Minimap Ui Shader (FrameShader客狼 盒府)
@@ -94,6 +95,8 @@ bool CMinimapShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 			newCameraPos.z = (MINIMAP_MAXIMUM_Y - cursorPos.y) * 1.736f * 20;
 
 			m_pCamera->SetPosition(newCameraPos);
+
+			return false;
 		}
 	}
 
@@ -111,8 +114,18 @@ bool CMinimapShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 			m_pPlayer->LookAt(PlayerDestination);
 			m_pPlayer->SetPathToGo(
 				m_pWayFinder->GetPathToPosition(
-				XMFLOAT2(m_pPlayer->GetPosition().x, m_pPlayer->GetPosition().z),
-				XMFLOAT2(PlayerDestination.x, PlayerDestination.z)));
+					m_pPlayer->GetPosition(),
+					PlayerDestination));
+
+			CS_Msg_Demand_Pos_Character p;
+			p.Character_id = (BYTE)m_pNetwork->m_myid;
+			p.size = sizeof(p);
+			p.type = CS_MOVE_PLAYER;
+			p.x = PlayerDestination.x;
+			p.y = PlayerDestination.z;
+			m_pNetwork->SendPacket(&p);
+
+			return false;
 		}
 	}
 

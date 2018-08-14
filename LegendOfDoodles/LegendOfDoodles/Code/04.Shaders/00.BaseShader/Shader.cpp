@@ -119,7 +119,7 @@ bool CShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 bool CShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 {
 	UNREFERENCED_PARAMETER(pKeyBuffer);
-	return false;
+	return true;
 }
 
 void CShader::OnStatus(int ObjectType)

@@ -17,8 +17,6 @@ public: // 공개 함수
 
 	virtual void Render(CCamera *pCamera);
 
-	virtual void GetCamera(CCamera *pCamera);
-
 	virtual void SetNexusAndTower(CCollisionObject **ppObjects) { m_ppNexusAndTower = (CCollisionObject**)ppObjects; };
 	virtual void SetNexusAndTowerCnt(int cnt) { m_nNexusAndTower = cnt; };
 

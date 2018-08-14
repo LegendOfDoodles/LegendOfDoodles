@@ -129,7 +129,7 @@ bool CSkillShader::OnProcessKeyInput(UCHAR * pKeyBuffer)
 {
 	UNREFERENCED_PARAMETER(pKeyBuffer);
 
-	return false;
+	return true;
 }
 
 bool CSkillShader::OnProcessMouseInput(WPARAM pKeyBuffer)
@@ -145,15 +145,19 @@ bool CSkillShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 		
 			if ((cursorPos.x > QSKILL_MINIMUM_X  && cursorPos.x < QSKILL_MAXIMUM_X)) {
 				m_pPlayer->ActiveSkill(AnimationsType::SkillQ);
+				return false;
 			}
 			if ((cursorPos.x > WSKILL_MINIMUM_X  && cursorPos.x < WSKILL_MAXIMUM_X)) {
 				m_pPlayer->ActiveSkill(AnimationsType::SkillW);
+				return false;
 			}
 			if ((cursorPos.x > ESKILL_MINIMUM_X  && cursorPos.x < ESKILL_MAXIMUM_X)) {
 				m_pPlayer->ActiveSkill(AnimationsType::SkillE);
+				return false;
 			}
 			if ((cursorPos.x > RSKILL_MINIMUM_X  && cursorPos.x < RSKILL_MAXIMUM_X)) {
 				m_pPlayer->ActiveSkill(AnimationsType::SkillR);
+				return false;
 			}
 		}
 	}

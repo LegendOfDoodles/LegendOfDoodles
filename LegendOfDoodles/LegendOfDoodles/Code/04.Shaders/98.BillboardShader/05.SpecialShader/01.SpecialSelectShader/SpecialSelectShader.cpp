@@ -74,7 +74,7 @@ bool CSpecialSelectShader::OnProcessKeyInput(UCHAR * pKeyBuffer)
 {
 	UNREFERENCED_PARAMETER(pKeyBuffer);
 
-	return false;
+	return true;
 }
 
 bool CSpecialSelectShader::OnProcessMouseInput(WPARAM pKeyBuffer)
@@ -95,6 +95,8 @@ bool CSpecialSelectShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 				ShowWindow[0] = true;
 			else
 				ShowWindow[1] = true;
+
+			return false;
 		}
 
 		if (ShowWindow[0] == true && m_pPlayer->GetPlayerStatus()->Weapon == 0) {
@@ -109,6 +111,8 @@ bool CSpecialSelectShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 				// 무기 선택창 닫기
 				ShowWindow[0] = false;
 				isRendering = false;
+
+				return false;
 			}
 
 			// Bow
@@ -122,6 +126,8 @@ bool CSpecialSelectShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 				// 무기 선택창 닫기
 				ShowWindow[0] = false;
 				isRendering = false;
+
+				return false;
 			}
 
 			// Magic
@@ -135,6 +141,8 @@ bool CSpecialSelectShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 				// 무기 선택창 닫기
 				ShowWindow[0] = false;
 				isRendering = false;
+
+				return false;
 			}
 
 		}
@@ -160,6 +168,8 @@ bool CSpecialSelectShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 				// 특성창 닫기
 				ShowWindow[1] = false;
 				isRendering = false;
+
+				return false;
 			}
 
 			// Defence
@@ -180,6 +190,8 @@ bool CSpecialSelectShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 				// 특성창 닫기
 				ShowWindow[1] = false;
 				isRendering = false;
+
+				return false;
 			}
 
 			// Tech
@@ -200,6 +212,8 @@ bool CSpecialSelectShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 				// 특성창 닫기
 				ShowWindow[1] = false;
 				isRendering = false;
+
+				return false;
 			}
 		}
 	}

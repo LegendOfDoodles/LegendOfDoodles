@@ -133,7 +133,7 @@ void CNetwork::ProcessPacket(char *ptr)
 		{
 			SC_Msg_Pos_Neutrality* my_packet = reinterpret_cast<SC_Msg_Pos_Neutrality*>(ptr);
 			CCollisionObject* Monster{ m_pColManager->RequestNeutralByTag(my_packet->Monster_Tag) };
-			if (Monster->GetUpdateTime() <= my_packet->updatetime)
+			if ( Monster && Monster->GetUpdateTime() <= my_packet->updatetime )
 			{	
 				Monster->SetPosition(my_packet->x, my_packet->y);
 				Monster->SetUpdateTime(my_packet->updatetime);
@@ -226,16 +226,44 @@ void CNetwork::ProcessPacket(char *ptr)
 			break;
 		}
 
-		case SC_POS_NEXUS:
+		case SC_HP_NEXUS:
 		{
-			SC_Msg_Pos_Nexus* my_packet = reinterpret_cast<SC_Msg_Pos_Nexus*>(ptr);
-			CCollisionObject* Building{ m_pColManager->RequestNeutralByTag(my_packet->Building_Tag) };
-			if (Building->GetUpdateTime() <= my_packet->updatetime)
+			SC_Msg_Hp_Nexus* my_packet = reinterpret_cast<SC_Msg_Hp_Nexus*>(ptr);
+			CCollisionObject* Building{ m_pColManager->RequestObjectByTag(my_packet->Building_Tag) };
+			
+			if (Building && Building->GetUpdateTime() <= my_packet->updatetime)
 			{
-				Building->SetPosition(my_packet->x, my_packet->y);
 				Building->SetUpdateTime(my_packet->updatetime);
 				Building->SetHP(my_packet->maxhp, my_packet->curhp);
 			}
+			break;
+		}
+		case SC_NEXUS_STATE:
+		{
+			SC_Msg_Set_Nexus_State* my_packet = reinterpret_cast<SC_Msg_Set_Nexus_State*>(ptr);
+			CCollisionObject* target{ m_pColManager->RequestObjectByTag(my_packet->Building_Tag) };
+			if(target) target->SetState((StatesType)my_packet->Building_State, m_pWayFinder);
+			break;
+		}
+		case SC_BUILDING_SET_ENEMY:
+		{
+			SC_Msg_Enemy_Tag_Nexus* my_packet = reinterpret_cast<SC_Msg_Enemy_Tag_Nexus*>(ptr);
+
+			CCollisionObject* target{ m_pColManager->RequestObjectByTag(my_packet->Building_Tag) };
+			target->SetEnemyByTag(my_packet->Enemy_Tag);
+			break;
+		}
+		case SC_GAME_OVER:
+		{
+			SC_Msg_Game_Over* my_packet = reinterpret_cast<SC_Msg_Game_Over*>(ptr);
+			m_pColManager->GameOver((TeamType)my_packet->Team_Type);
+			break;
+		}
+		case SC_BUILDING_ATTACK:
+		{
+			SC_Msg_Building_Attack_Enemy* my_packet = reinterpret_cast<SC_Msg_Building_Attack_Enemy*>(ptr);
+			CCollisionObject* Building{ m_pColManager->RequestObjectByTag(my_packet->Building_Tag) };
+			Building->AttackEnemy();
 			break;
 		}
 		default:

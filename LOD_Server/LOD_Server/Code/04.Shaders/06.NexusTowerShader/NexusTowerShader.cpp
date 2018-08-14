@@ -76,6 +76,12 @@ void CNexusTowerShader::BuildObjects(void *pContext)
 	m_nNexus = transformInporter.m_iKindMeshCnt[0] + transformInporter.m_iKindMeshCnt[1];
 	m_nTower = transformInporter.m_iKindMeshCnt[2] + transformInporter.m_iKindMeshCnt[3];
 
+	CCollisionObject* pBlueNexus{ NULL }, *pRedNexus{ NULL };
+	CCollisionObject* pBlueUpTower{ NULL }, *pBlueDownTower{ NULL };
+	CCollisionObject* pRedUpTower{ NULL }, *pRedDownTower{ NULL };
+	float blueUpNear{ FLT_MAX }, blueDownNear{ FLT_MAX };
+	float redUpNear{ 0.f }, redDownNear{ 0.f };
+
 	int cnt = 0;
 	for (int i = 0; i < 4; ++i) {
 		m_meshCounts[i] = transformInporter.m_iKindMeshCnt[i];
@@ -84,21 +90,62 @@ void CNexusTowerShader::BuildObjects(void *pContext)
 			XMFLOAT3 rot = transformInporter.m_Transform[cnt].rotation;
 			pBuild = new CNexusTower();
 			pBuild->SetPosition(CONVERT_Unit_to_InG(pos.x), CONVERT_Unit_to_InG(pos.y), CONVERT_Unit_to_InG(pos.z));
-			if (i == 0 || i == 2)
-			{
-				pBuild->SetTeam(TeamType::Blue);
-			}
-			else {
-				pBuild->SetTeam(TeamType::Red);
-			}
+
 			if (i < 2) {
 				pBuild->SetCollisionSize(CONVERT_PaperUnit_to_InG(40));
 				pBuild->SetType(ObjectType::Nexus);
+				if (i == 0 || i == 2)
+				{
+					pBuild->SetTeam(TeamType::Blue);
+					pBlueNexus = pBuild;
+				}
+				else {
+					pBuild->SetTeam(TeamType::Red);
+					pRedNexus = pBuild;
+				}
 			}
 			else {
 				pBuild->SetCollisionSize(CONVERT_PaperUnit_to_InG(8));
 				pBuild->SetType(ObjectType::FirstTower);
-
+				if (i == 0 || i == 2)
+				{
+					pBuild->SetTeam(TeamType::Blue);
+					if (CONVERT_Unit_to_InG(pos.z) > TERRAIN_SIZE_HEIGHT * 0.5f)
+					{
+						if (CONVERT_Unit_to_InG(pos.x) < blueUpNear)
+						{
+							blueUpNear = CONVERT_Unit_to_InG(pos.x);
+							pBlueUpTower = pBuild;
+						}
+					}
+					else
+					{
+						if (CONVERT_Unit_to_InG(pos.x) < blueDownNear)
+						{
+							blueDownNear = CONVERT_Unit_to_InG(pos.x);
+							pBlueDownTower = pBuild;
+						}
+					}
+				}
+				else {
+					pBuild->SetTeam(TeamType::Red);
+					if (CONVERT_Unit_to_InG(pos.z) > TERRAIN_SIZE_HEIGHT * 0.5f)
+					{
+						if (CONVERT_Unit_to_InG(pos.x) > redUpNear)
+						{
+							redUpNear = CONVERT_Unit_to_InG(pos.x);
+							pRedUpTower = pBuild;
+						}
+					}
+					else
+					{
+						if (CONVERT_Unit_to_InG(pos.x) > redDownNear)
+						{
+							redDownNear = CONVERT_Unit_to_InG(pos.x);
+							pRedDownTower = pBuild;
+						}
+					}
+				}
 			}
 			pBuild->Rotate(0, 180, 0);
 			pBuild->Rotate(-rot.x, rot.y, -rot.z);
@@ -110,4 +157,10 @@ void CNexusTowerShader::BuildObjects(void *pContext)
 			m_ppObjects[cnt++] = pBuild;
 		}
 	}
+
+	pBlueUpTower->SetMaster(pBlueNexus);
+	pBlueDownTower->SetMaster(pBlueNexus);
+
+	pRedUpTower->SetMaster(pRedNexus);
+	pRedDownTower->SetMaster(pRedNexus);
 }

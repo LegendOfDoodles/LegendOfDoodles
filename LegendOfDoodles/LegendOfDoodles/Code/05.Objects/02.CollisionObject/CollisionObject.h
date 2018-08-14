@@ -93,6 +93,8 @@ public: // 공개 함수
 	virtual void ReadyToAtk(shared_ptr<CWayFinder> pWayFinder) { pWayFinder; }
 	virtual void Respawn() {}
 
+	virtual void AttackEnemy() {};
+
 protected: // 내부 함수
 
 protected: // 변수
