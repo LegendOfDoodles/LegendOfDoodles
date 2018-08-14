@@ -11,7 +11,7 @@
 #define gnSpecular 3
 #define gnEmissive 4
 
-#define EMISSIVE_POWER 6
+#define EMISSIVE_POWER 12
 #define REFLECTION_POWER 0.25
 #define OUTLINE_POWER 1
 

@@ -646,7 +646,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT_TOON PSBone(VS_TEXTURED_LIGHTING_TOON_OUTPUT i
     N = mul(normal, TBN); // 노말을 TBN행렬로 변환
 
     output.normal = float4(N, 1);
-    output.color = gtxtTextures.Sample(wrapSampler, float3(input.uv, gnDiffuse));
+    output.color = gtxtTextures.Sample(wrapSampler, float3(input.uv, gnDiffuse)) + gtxtTextures.Sample(wrapSampler, float3(input.uv, gnSpecular));
     output.roughMetalFresnel = float4(gMaterials.m_cRoughness, gMaterials.m_cMetalic, 1, 1);
     output.albedo = gMaterials.m_cAlbedo;
     output.position = float4(input.positionW, 0);
