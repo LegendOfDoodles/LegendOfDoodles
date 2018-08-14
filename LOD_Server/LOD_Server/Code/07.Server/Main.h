@@ -129,7 +129,7 @@ extern array <NexusTower, 14> g_nexustowers;
 
 //CScene* g_pScene{ NULL };
 
-extern CNexusTower** g_ppNexusTower;
+
 
 extern shared_ptr<CScene> g_pScene;
 extern CAnimatedObject** g_ppPlayer;
@@ -140,6 +140,7 @@ extern CollisionObjectList* g_redSwordMinions;
 extern CollisionObjectList* g_redStaffMinions;
 extern CollisionObjectList* g_redBowMinions;
 extern CAnimatedObject** g_ppNeutrality;
+extern CCollisionObject** g_ppNexusTower;
 
 extern bool AcceptFinish;
 

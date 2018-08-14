@@ -30,6 +30,7 @@ public:	// 외부 함수
 	}
 
 	virtual StaticInfo* GetNexusAndTowerStatus() { return &m_StatusInfo; }
+	
 
 protected: // 내부 함수
 		   /*

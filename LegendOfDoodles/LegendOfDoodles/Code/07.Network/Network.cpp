@@ -228,9 +228,14 @@ void CNetwork::ProcessPacket(char *ptr)
 
 		case SC_POS_NEXUS:
 		{
-			//SC_Msg_Pos_Nexus* my_packet = reinterpret_cast<SC_Msg_Pos_Nexus*>(ptr);
-			//m_ppNexusTower[my_packet->Object_id]->CBaseObject::SetPosition(my_packet->vPos);
-			//dynamic_cast<CNexusTower*>(m_ppNexusTower[my_packet->Object_id])->SetMaxHP(my_packet->maxhp, my_packet->curhp);
+			SC_Msg_Pos_Nexus* my_packet = reinterpret_cast<SC_Msg_Pos_Nexus*>(ptr);
+			CCollisionObject* Building{ m_pColManager->RequestNeutralByTag(my_packet->Building_Tag) };
+			if (Building->GetUpdateTime() <= my_packet->updatetime)
+			{
+				Building->SetPosition(my_packet->x, my_packet->y);
+				Building->SetUpdateTime(my_packet->updatetime);
+				Building->SetHP(my_packet->maxhp, my_packet->curhp);
+			}
 			break;
 		}
 		default:

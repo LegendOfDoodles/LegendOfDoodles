@@ -24,6 +24,7 @@ public: // 공개 함수
 
 	CAnimatedObject** GetPlayerObject() { return  (CAnimatedObject**)m_ppShaders[1]->GetCollisionObjects();}
 	CAnimatedObject** GetNeutralityObject() { return (CAnimatedObject**)m_ppShaders[2]->GetCollisionObjects(); }
+	CCollisionObject** GetNexusTower() { return m_ppShaders[3]->GetCollisionObjects(); }
 	CShader* GetShader(int num) { return m_ppShaders[num]; }
 
 protected: // 내부 함수

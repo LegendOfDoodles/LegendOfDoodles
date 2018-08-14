@@ -148,9 +148,12 @@ struct SC_Msg_Enemy_Tag_Neutral : public Packet
 struct SC_Msg_Pos_Nexus : public Packet
 {
 	BYTE Object_id;
-	XMFLOAT3 vPos;
+	float x;
+	float y;
 	float maxhp;
 	float curhp;
+	float updatetime;
+	short Building_Tag;
 };
 
 
