@@ -161,7 +161,10 @@ void CAnimatedObject::MoveToSubDestination(float timeElapsed, shared_ptr<CWayFin
 			m_subPath = pWayFinder->GetPathToPosition(
 				myPos,
 				enemyPos);
-			m_subPath->push_back(CPathEdge(XMFLOAT2(enemyPos.x, enemyPos.z), Vector3::ToVector2(Vector3::Add(enemyPos, Vector3::Subtract(enemyPos, myPos)))));
+			if (m_subPath)
+			{
+				m_subPath->push_back(CPathEdge(XMFLOAT2(enemyPos.x, enemyPos.z), Vector3::ToVector2(Vector3::Add(enemyPos, Vector3::Subtract(enemyPos, myPos)))));
+			}
 		}
 	}
 
@@ -201,9 +204,12 @@ void CAnimatedObject::GenerateSubPathToMainPath(shared_ptr<CWayFinder> pWayFinde
 	m_subPath = pWayFinder->GetPathToPosition(
 		GetPosition(),
 		m_destination);
-	m_subDestination = m_subPath->front().To();
-	m_subPath->pop_front();
-	LookAt(m_subDestination);
+	if (m_subPath)
+	{
+		m_subDestination = m_subPath->front().To();
+		m_subPath->pop_front();
+		LookAt(m_subDestination);
+	}
 }
 
 void CAnimatedObject::GenerateSubPathToPosition(shared_ptr<CWayFinder> pWayFinder, XMFLOAT3 position)
@@ -212,9 +218,12 @@ void CAnimatedObject::GenerateSubPathToPosition(shared_ptr<CWayFinder> pWayFinde
 	m_subPath = pWayFinder->GetPathToPosition(
 		GetPosition(),
 		position);
-	m_subDestination = m_subPath->front().To();
-	m_subPath->pop_front();
-	LookAt(m_subDestination);
+	if (m_subPath)
+	{
+		m_subDestination = m_subPath->front().To();
+		m_subPath->pop_front();
+		LookAt(m_subDestination);
+	}
 }
 
 void CAnimatedObject::RegenerateLookAt()
