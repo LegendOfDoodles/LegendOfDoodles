@@ -1658,7 +1658,7 @@ CMaterial * Materials::CreateCompoundMaterial(shared_ptr<CCreateMgr> pCreateMgr,
 {
 	CMaterial *pMaterial{ new CMaterial(pCreateMgr) };
 	CTexture *pTexture{ new CTexture(1, RESOURCE_TEXTURE_2DARRAY, 0) };
-	pTexture->LoadTextureFromFile(pCreateMgr, L"./Resource/Textures/Player/Bow/Bow/Textures.dds", 0);
+	pTexture->LoadTextureFromFile(pCreateMgr, L"./Resource/Textures/Player/Bow/Compound/Textures.dds", 0);
 
 	CreateShaderResourceViews(
 		pCreateMgr, pTexture,
