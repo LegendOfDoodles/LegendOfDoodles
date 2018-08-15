@@ -76,7 +76,6 @@ void CNetwork::ProcessPacket(char *ptr)
 		case SC_POS:
 		{
 			SC_Msg_Pos_Character *my_packet = reinterpret_cast<SC_Msg_Pos_Character *>(ptr);
-			printf("%d\n", my_packet->Character_id);
 			int id = my_packet->Character_id;
 			if (id == m_myid) {
 				if (m_ppPlayer[id]->GetUpdateTime() <= my_packet->updatetime)
@@ -85,11 +84,6 @@ void CNetwork::ProcessPacket(char *ptr)
 					//m_ppPlayer[id]->SyncAnimation((AnimationsType)my_packet->state, my_packet->frameTime);
 					m_ppPlayer[id]->SetUpdateTime(my_packet->updatetime);
 					m_ppPlayer[id]->SetLevel(my_packet->level, my_packet->maxexp, my_packet->exp);
-					min(m_ppPlayer[id]->GetPlayerStatus()->QSkillCoolTime += 0.2f, 1.f);
-					min(m_ppPlayer[id]->GetPlayerStatus()->WSkillCoolTime += 0.2f, 1.f);
-					min(m_ppPlayer[id]->GetPlayerStatus()->ESkillCoolTime += 0.2f, 1.f);
-					min(m_ppPlayer[id]->GetPlayerStatus()->RSkillCoolTime += 0.2f, 1.f);
-
 				}
 			}
 			else if (id < NPC_START) { 
@@ -118,19 +112,15 @@ void CNetwork::ProcessPacket(char *ptr)
 			}
 			if ((AnimationsType)my_packet->skilltype == AnimationsType::SkillQ && m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->QSkillCoolTime >= 1) {
 				m_ppPlayer[my_packet->Character_id]->ActiveSkill((AnimationsType)my_packet->skilltype);
-				m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->QSkillCoolTime = 0;
 			}
 			if ((AnimationsType)my_packet->skilltype == AnimationsType::SkillW && m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->WSkillCoolTime >= 1) {
 				m_ppPlayer[my_packet->Character_id]->ActiveSkill((AnimationsType)my_packet->skilltype);
-				m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->WSkillCoolTime = 0;
 			}
 			if ((AnimationsType)my_packet->skilltype == AnimationsType::SkillE && m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->ESkillCoolTime >= 1) {
 				m_ppPlayer[my_packet->Character_id]->ActiveSkill((AnimationsType)my_packet->skilltype);
-				m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->ESkillCoolTime = 0;
 			}
 			if ((AnimationsType)my_packet->skilltype == AnimationsType::SkillR && m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->RSkillCoolTime >= 1) {
 				m_ppPlayer[my_packet->Character_id]->ActiveSkill((AnimationsType)my_packet->skilltype);
-				m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->RSkillCoolTime = 0;
 			}
 			break;
 		}
@@ -323,8 +313,8 @@ void CNetwork::ProcessPacket(char *ptr)
 		case SC_UPDATE_TOWER_STAT:
 		{
 			SC_Msg_Update_Tower_Stat* my_packet = reinterpret_cast<SC_Msg_Update_Tower_Stat*>(ptr);
-			CCollisionObject* Tower{ m_pColManager->RequestNeutralByTag(my_packet->Tower_Tag) };
-			Tower->SetCommonStatus(Tower->GetCommonStatus()->maxHP, my_packet->atk, my_packet->def);
+			CCollisionObject* Tower{ m_pColManager->RequestObjectByTag(my_packet->Tower_Tag) };
+			if(Tower) Tower->SetCommonStatus(Tower->GetCommonStatus()->maxHP, my_packet->atk, my_packet->def);
 			break;
 		}
 		case SC_SET_ABILITY_POINT:
@@ -349,6 +339,16 @@ void CNetwork::ProcessPacket(char *ptr)
 			SC_Msg_Player_Missile* my_packet = reinterpret_cast<SC_Msg_Player_Missile*>(ptr);
 			CCollisionObject* Player{ m_pColManager->RequestPlayerByTag(my_packet->Target_Tag) };
 			Player->RequestSpawnMissile((FlyingObjectType)my_packet->Missile_Type);
+			break;
+		}
+		case SC_COOLTIME:
+		{
+			SC_Msg_Cooltime_Percent* my_packet = reinterpret_cast<SC_Msg_Cooltime_Percent*>(ptr);
+			CCollisionObject* Player{ m_pColManager->RequestPlayerByTag(my_packet->Target_Tag) };
+			Player->GetPlayerStatus()->QSkillCoolTime = my_packet->QPercentage;
+			Player->GetPlayerStatus()->WSkillCoolTime = my_packet->WPercentage;
+			Player->GetPlayerStatus()->ESkillCoolTime = my_packet->EPercentage;
+			Player->GetPlayerStatus()->RSkillCoolTime = my_packet->RPercentage;
 			break;
 		}
 		default:
@@ -432,7 +432,6 @@ void CNetwork::PrepareData()
 	p.size = sizeof(p);
 	p.type = CS_PREPARE_DATA;
 	SendPacket(&p);
-	printf("ÆÐÅ¶ º¸³¿\n");
 }
 //
 //void  CNetwork::err_display(char* msg)

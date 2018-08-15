@@ -26,6 +26,8 @@ public:	// 외부 함수
 
 	virtual void SetType(ObjectType newObjectType);
 
+	virtual void SendCoolTime(int id);
+
 	virtual PlayerInfo* GetPlayerStatus() { return &m_StatusInfo; }
 
 	//virtual void SetObjectType(ObjectType type) { m_StatusInfo.WeaponType = type; };
@@ -62,5 +64,10 @@ protected: // 변수
 	XMFLOAT3 m_spawnLocation;	// 생성 위치
 
 	float m_spawnCoolTime{ 0 };	// 죽은 이후 다시 생성할 때 까지 시간
+
+	float m_skillCoolTimeQ{ COOLTIME_SKILL_Q };
+	float m_skillCoolTimeW{ COOLTIME_SKILL_W };
+	float m_skillCoolTimeE{ COOLTIME_SKILL_E };
+	float m_skillCoolTimeR{ COOLTIME_SKILL_R };
 };
 

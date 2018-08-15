@@ -239,6 +239,16 @@ struct SC_Msg_Player_Missile : public Packet
 	short Missile_Type;
 };
 
+struct SC_Msg_Cooltime_Percent : public Packet
+{
+	short Target_Tag;
+	float QPercentage;
+	float WPercentage;
+	float EPercentage;
+	float RPercentage;
+};
+
+
 
 #pragma pack(pop)
 
@@ -260,6 +270,7 @@ struct SC_Msg_Player_Missile : public Packet
 #define SC_PLAYER_RESPAWN		  1
 #define SC_PLAYER_MISSILE		  2
 #define SC_UPDATE_TOWER_STAT	  3
+#define SC_COOLTIME				  4
 
 #define SC_CONNECT_PLAYER		  101
 #define SC_PUT_PLAYER			  102

@@ -198,10 +198,10 @@ struct PlayerInfo
 	float Atk{ 50 };
 	float Def{ 20 };
 
-	float QSkillCoolTime{ 1.0f };
-	float WSkillCoolTime{ 1.0f };
-	float ESkillCoolTime{ 1.0f };
-	float RSkillCoolTime{ 1.0f };
+	float QSkillCoolTime{ COOLTIME_SKILL_Q };
+	float WSkillCoolTime{ COOLTIME_SKILL_W };
+	float ESkillCoolTime{ COOLTIME_SKILL_E };
+	float RSkillCoolTime{ COOLTIME_SKILL_R };
 
 	float QSkillPower{ 1.0f };
 	float WSkillPower{ 1.0f };

@@ -59,6 +59,10 @@ public:	// 외부 함수
 		m_StatusInfo.WeaponNum = num;
 	}
 
+	virtual void OnSkill() { m_skilling = true; }
+	virtual void OffSkill() { m_skilling = false; }
+	virtual bool SkillPossible() { return m_skilling; }
+
 protected: // 내부 함수
 	virtual void AdjustAnimationIndex();
 	/*
@@ -71,6 +75,8 @@ protected: // 내부 함수
 	*/
 
 protected: // 변수
+	bool m_skilling{ false };
+
 	PlayerInfo m_StatusInfo;
 	bool m_ChangeWeapon{ false };
 

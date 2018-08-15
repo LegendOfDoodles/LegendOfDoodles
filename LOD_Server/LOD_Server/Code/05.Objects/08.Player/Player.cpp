@@ -28,6 +28,11 @@ void CPlayer::Animate(float timeElapsed)
 {
 	m_hpSyncCoolTime += timeElapsed;
 
+	m_skillCoolTimeQ += timeElapsed;
+	m_skillCoolTimeW += timeElapsed;
+	m_skillCoolTimeE += timeElapsed;
+	m_skillCoolTimeR += timeElapsed;
+
 	switch (m_curState) {
 	case States::Idle:
 		if (m_nCurrAnimation != Animations::Idle) m_nCurrAnimation = Animations::Idle;
@@ -208,12 +213,6 @@ void CPlayer::Animate(float timeElapsed)
 		m_fFrameTime += ANIMATION_SPEED * timeElapsed;
 	}
 
-	m_StatusInfo.QSkillCoolTime = min(m_StatusInfo.QSkillCoolTime += timeElapsed * 0.1f, 1.f);
-	m_StatusInfo.WSkillCoolTime = min(m_StatusInfo.WSkillCoolTime += timeElapsed * 0.1f, 1.f);
-	m_StatusInfo.ESkillCoolTime = min(m_StatusInfo.ESkillCoolTime += timeElapsed * 0.1f, 1.f);
-	m_StatusInfo.RSkillCoolTime = min(m_StatusInfo.RSkillCoolTime += timeElapsed * 0.1f, 1.f);
-
-
 	AdjustAnimationIndex();
 
 	if (m_fFrameTime > m_nAniLength[m_nAniIndex]) {
@@ -243,8 +242,40 @@ void CPlayer::ActiveSkill(AnimationsType act)
 {
 	if (m_curState != States::Attack) {
 		m_curState = States::Attack;
-		m_nCurrAnimation = act;
-		m_fFrameTime = 0;
+
+		if (act == Animations::SkillQ &&
+			m_skillCoolTimeQ >= m_StatusInfo.QSkillCoolTime)
+		{
+			m_skillCoolTimeQ = 0;
+			m_nCurrAnimation = act;
+			m_fFrameTime = 0;
+		}
+		else if (act == Animations::SkillW &&
+			m_skillCoolTimeW >= m_StatusInfo.WSkillCoolTime)
+		{
+			m_skillCoolTimeW = 0;
+			m_nCurrAnimation = act;
+			m_fFrameTime = 0;
+		}
+		else if (act == Animations::SkillE &&
+			m_skillCoolTimeE >= m_StatusInfo.ESkillCoolTime)
+		{
+			m_skillCoolTimeE = 0;
+			m_nCurrAnimation = act;
+			m_fFrameTime = 0;
+		}
+		else if (act == Animations::SkillR &&
+			m_skillCoolTimeR >= m_StatusInfo.RSkillCoolTime)
+		{
+			m_skillCoolTimeR = 0;
+			m_nCurrAnimation = act;
+			m_fFrameTime = 0;
+		}
+		else
+		{
+			m_nCurrAnimation = act;
+			m_fFrameTime = 0;
+		}
 	}
 }
 
@@ -335,24 +366,37 @@ void CPlayer::SetType(ObjectType newObjectType)
 	if (m_ObjectType == ObjectType::SwordPlayer)
 	{
 		m_StatusInfo.QSkillPower = 2.5f;
-		m_StatusInfo.WSkillPower = 3.0f;
-		m_StatusInfo.ESkillPower = 3.5f;
-		m_StatusInfo.RSkillPower = 4.0f;
+		m_StatusInfo.WSkillPower = 3.5f;
+		m_StatusInfo.ESkillPower = 5.0f;
+		m_StatusInfo.RSkillPower = 7.6f;
 	}
 	else if (m_ObjectType == ObjectType::StaffPlayer)
 	{
 		m_StatusInfo.QSkillPower = 2.5f;
-		m_StatusInfo.WSkillPower = 3.0f;
-		m_StatusInfo.ESkillPower = 3.5f;
-		m_StatusInfo.RSkillPower = 4.0f;
+		m_StatusInfo.WSkillPower = 3.5f;
+		m_StatusInfo.ESkillPower = 5.0f;
+		m_StatusInfo.RSkillPower = 7.6f;
 	}
 	else if (m_ObjectType == ObjectType::BowPlayer)
 	{
 		m_StatusInfo.QSkillPower = 2.5f;
-		m_StatusInfo.WSkillPower = 3.0f;
-		m_StatusInfo.ESkillPower = 3.5f;
-		m_StatusInfo.RSkillPower = 4.0f;
+		m_StatusInfo.WSkillPower = 3.5f;
+		m_StatusInfo.ESkillPower = 5.0f;
+		m_StatusInfo.RSkillPower = 7.6f;
 	}
+}
+
+void CPlayer::SendCoolTime(int id)
+{
+	SC_Msg_Cooltime_Percent p;
+	p.Target_Tag = (short)m_tag;
+	p.QPercentage = min(m_skillCoolTimeQ / m_StatusInfo.QSkillCoolTime, 1.f);
+	p.WPercentage = min(m_skillCoolTimeW / m_StatusInfo.WSkillCoolTime, 1.f);
+	p.EPercentage = min(m_skillCoolTimeE / m_StatusInfo.ESkillCoolTime, 1.f);
+	p.RPercentage = min(m_skillCoolTimeR / m_StatusInfo.RSkillCoolTime, 1.f);
+	p.size = sizeof(p);
+	p.type = SC_COOLTIME;
+	SendPacket(id, &p);
 }
 
 void CPlayer::ReceiveDamage(float damage, CCollisionObject * pCol)

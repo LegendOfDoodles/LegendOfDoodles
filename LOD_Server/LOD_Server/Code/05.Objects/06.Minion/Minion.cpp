@@ -270,11 +270,7 @@ void CMinion::AdjustAnimationIndex()
 CSwordMinion::CSwordMinion() : CMinion()
 {
 	SetType(ObjectType::SwordMinion);
-	m_StatusInfo.maxHP = 445;
-	m_StatusInfo.HP = 445;
-	m_StatusInfo.Atk = 100;
-	m_StatusInfo.Def = 0;
-	m_StatusInfo.Exp = 64;
+	m_StatusInfo = g_SwordMinionStat;
 
 	m_attackRange = CONVERT_PaperUnit_to_InG(10);
 }
@@ -361,11 +357,7 @@ void CSwordMinion::Animate(float timeElapsed)
 CMagicMinion::CMagicMinion() : CMinion()
 {
 	SetType(ObjectType::StaffMinion);
-	m_StatusInfo.maxHP = 280;
-	m_StatusInfo.HP = 280;
-	m_StatusInfo.Atk = 23;
-	m_StatusInfo.Def = 0;
-	m_StatusInfo.Exp = 64;
+	m_StatusInfo = g_StaffMinionStat;
 
 	m_attackRange = CONVERT_PaperUnit_to_InG(24);
 }
@@ -450,11 +442,7 @@ void CMagicMinion::Animate(float timeElapsed)
 CBowMinion::CBowMinion() : CMinion()
 {
 	SetType(ObjectType::BowMinion);
-	m_StatusInfo.maxHP = 300;
-	m_StatusInfo.HP = 300;
-	m_StatusInfo.Atk = 20;
-	m_StatusInfo.Def = 0;
-	m_StatusInfo.Exp = 64;
+	m_StatusInfo = g_BowMinionStat;
 
 	m_attackRange = CONVERT_PaperUnit_to_InG(30);
 }

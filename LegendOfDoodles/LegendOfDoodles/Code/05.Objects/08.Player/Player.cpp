@@ -272,6 +272,7 @@ void CPlayer::ActiveSkill(AnimationsType act)
 		m_curState = States::Attack;
 		m_nCurrAnimation = act;
 		m_fFrameTime = 0;
+		m_skilling = false;
 	}
 }
 
