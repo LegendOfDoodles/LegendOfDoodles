@@ -46,6 +46,10 @@ void CCollisionObject::LevelUP(CCollisionObject* player)
 {
 	PlayerInfo* PlayerStatus{ player->GetPlayerStatus() };
 	PlayerStatus->Level++;
+
+	player->GetEffectManager()->RequestSpawn(player->GetPosition(), player->GetLook(), 30, EffectObjectType::Player_LevelUp_CircleEffect);
+	player->GetEffectManager()->RequestSpawn(player->GetPosition(), player->GetLook(), 30, EffectObjectType::Player_LevelUp_ArrowEffect);
+
 	if (PlayerStatus->Level == 7 || PlayerStatus->Level == 12 || PlayerStatus->Level == 17 || PlayerStatus->Level == 21) {
 		PlayerStatus->SpecialPoint += 1;
 	}

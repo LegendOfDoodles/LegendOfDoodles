@@ -299,7 +299,7 @@ void CGolem::ReceiveDamage(float damage)
 	if (m_curState == States::Die || m_curState == States::Remove) { return; }
 
 	m_StatusInfo.HP -= damage * Compute_Defence(m_StatusInfo.Def);
-	if (m_StatusInfo.HP <= 0) {
+	if (m_StatusInfo.HP <= 0 && m_pEnemy) {
 		PlayerInfo* PlayerStatus{ m_pEnemy->GetPlayerStatus() };
 		if (m_pEnemy->GetTag() >= 10000 && m_pEnemy->GetTag() < 20000)
 		{

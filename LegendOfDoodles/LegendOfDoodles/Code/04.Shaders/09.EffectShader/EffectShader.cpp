@@ -75,6 +75,10 @@ void CEffectShader::UpdateShaderVariables(int opt)
 		beg = UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4];
 		end = UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4] + UseMatrialNumToObjectCnt[5];
 		break;
+	case 6:
+		beg = UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4] + UseMatrialNumToObjectCnt[5];
+		end = UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4] + UseMatrialNumToObjectCnt[5] + UseMatrialNumToObjectCnt[6];
+		break;
 	}
 
 	for (int i = beg; i < end; ++i)
@@ -134,6 +138,9 @@ void CEffectShader::AnimateObjects(float timeElapsed)
 	m_GolemStandardAttack_EffectList.remove_if(removeFunc);
 	m_GolemStumpAttack_EffectList.remove_if(removeFunc);
 	m_GolemSpecialAttack_EffectList.remove_if(removeFunc);
+
+	m_CircleLevelUp_EffectList.remove_if(removeFunc);
+	m_ArrowLevelUp_EffectList.remove_if(removeFunc);
 }
 
 void CEffectShader::Render(CCamera * pCamera)
@@ -321,6 +328,24 @@ void CEffectShader::Render(CCamera * pCamera)
 		}
 	}
 
+	CShader::Render(pCamera, 6);
+	if (!m_CircleLevelUp_EffectList.empty())
+	{
+		m_ppMaterials[6]->UpdateShaderVariable(0);
+		for (auto iter = m_CircleLevelUp_EffectList.begin(); iter != m_CircleLevelUp_EffectList.end(); ++iter)
+		{
+			(*iter)->Render(pCamera);
+		}
+	}
+	if (!m_ArrowLevelUp_EffectList.empty())
+	{
+		m_ppMaterials[6]->UpdateShaderVariable(1);
+		for (auto iter = m_ArrowLevelUp_EffectList.begin(); iter != m_ArrowLevelUp_EffectList.end(); ++iter)
+		{
+			(*iter)->Render(pCamera);
+		}
+	}
+
 }
 
 void CEffectShader::SpawnEffectObject(const XMFLOAT3 & position, const XMFLOAT3 & direction, int aniLength, EffectObjectType objectType)
@@ -420,7 +445,6 @@ void CEffectShader::SpawnEffectObject(const XMFLOAT3 & position, const XMFLOAT3 
 			m_PlayerStaffESkill_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 
-
 		// Minion Attack Motion Effect
 		else if (objectType == EffectObjectType::Minion_ArrowAttack_Effect)
 		{
@@ -506,6 +530,22 @@ void CEffectShader::SpawnEffectObject(const XMFLOAT3 & position, const XMFLOAT3 
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + (CONVERT_PaperUnit_to_InG(2)), position.z));
 			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[5].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4]))));
 			m_GolemSpecialAttack_EffectList.emplace_back(m_ppObjects[idx]);
+		}
+
+		// Level Up Effect
+		else if (objectType == EffectObjectType::Player_LevelUp_CircleEffect)
+		{
+			m_ppObjects[idx]->SetMesh(0, m_ppMesh[5]);
+			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + (CONVERT_PaperUnit_to_InG(2)), position.z));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[6].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4] + UseMatrialNumToObjectCnt[5]))));
+			m_CircleLevelUp_EffectList.emplace_back(m_ppObjects[idx]);
+		}
+		else if (objectType == EffectObjectType::Player_LevelUp_ArrowEffect)
+		{
+			m_ppObjects[idx]->SetMesh(0, m_ppMesh[5]);
+			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + (CONVERT_PaperUnit_to_InG(4)), position.z));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[5].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4] + UseMatrialNumToObjectCnt[5]))));
+			m_ArrowLevelUp_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 	}
 }
@@ -622,6 +662,9 @@ void CEffectShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pCont
 		EffectObjectType::Golem_StandardAttack_Effect,
 		EffectObjectType::Golem_StumpAttack_Effect,
 		EffectObjectType::Golem_SpecialAttack_Effect,
+
+		EffectObjectType::Player_LevelUp_CircleEffect,
+		EffectObjectType::Player_LevelUp_ArrowEffect,
 	};
 
 	// 각 오브젝트의 최대 개수 설정
@@ -665,6 +708,11 @@ void CEffectShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pCont
 	// 5번 Matrial을 사용하는 Obejct 갯수
 	UseMatrialNumToObjectCnt[5] = (m_nObjects - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4]));
 
+	m_nObjects += m_objectsMaxCount[EffectObjectType::Player_LevelUp_CircleEffect] = 4;
+	m_nObjects += m_objectsMaxCount[EffectObjectType::Player_LevelUp_ArrowEffect] = 4;
+	// 6번 Matrial을 사용하는 Obejct 갯수
+	UseMatrialNumToObjectCnt[6] = (m_nObjects - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4] + UseMatrialNumToObjectCnt[5]));
+
 	// 각 오브젝트 개수 만큼 Possible Index 생성
 	m_objectsPossibleIndices = std::unique_ptr<bool[]>(new bool[m_nObjects]);
 
@@ -697,6 +745,9 @@ void CEffectShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pCont
 	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, UseMatrialNumToObjectCnt[5], 3, 5);
 	CreateConstantBufferViews(pCreateMgr, UseMatrialNumToObjectCnt[5], m_pConstBuffer.Get(), ncbElementBytes, UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4], 5);
 
+	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, UseMatrialNumToObjectCnt[6], 2, 6);
+	CreateConstantBufferViews(pCreateMgr, UseMatrialNumToObjectCnt[6], m_pConstBuffer.Get(), ncbElementBytes, UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4] + UseMatrialNumToObjectCnt[5], 6);
+
 	// 오브젝트 Index
 	for (int i = 0; i < EffectObjectTime_Max_COUNT; ++i) {
 		m_objectsIndices[objectOrder[i]] = EffectObjectIndices();
@@ -714,6 +765,7 @@ void CEffectShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pCont
 	m_ppMaterials[3] = Materials::CreateFlyingObjectEffectMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[3], &m_psrvGPUDescriptorStartHandle[3]);
 	m_ppMaterials[4] = Materials::CreateHitEffectMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[4], &m_psrvGPUDescriptorStartHandle[4]);
 	m_ppMaterials[5] = Materials::CreateGolemAttackEffectMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[5], &m_psrvGPUDescriptorStartHandle[5]);
+	m_ppMaterials[6] = Materials::CreateLevelUpEffectMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[6], &m_psrvGPUDescriptorStartHandle[6]);
 
 	m_ppMesh[0] = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 25.6f, FRAME_BUFFER_HEIGHT / 14.4f, 0.f);		// 50 x 50
 	m_ppMesh[1] = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 12.8f, FRAME_BUFFER_HEIGHT / 7.2f, 0.f);		// 100 x 100
@@ -721,6 +773,7 @@ void CEffectShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pCont
 	m_ppMesh[3] = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 6.4f, FRAME_BUFFER_HEIGHT / 3.6f, 0.f);		// 200 x 200
 	m_ppMesh[4] = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 5.12f, FRAME_BUFFER_HEIGHT / 2.88f, 0.f);		// 250 x 250
 	m_ppMesh[5] = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 4.26f, FRAME_BUFFER_HEIGHT / 2.4f, 0.f);		// 300 x 300
+	m_ppMesh[6] = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 3.65f, FRAME_BUFFER_HEIGHT / 2.05f, 0.f);		// 350 x 350
 
 	for (int i = 0; i < m_nMesh; ++i)
 	{
@@ -770,6 +823,9 @@ void CEffectShader::ReleaseObjects()
 	if (!m_GolemStandardAttack_EffectList.empty()) m_GolemStandardAttack_EffectList.clear();
 	if (!m_GolemStumpAttack_EffectList.empty()) m_GolemStumpAttack_EffectList.clear();
 	if (!m_GolemSpecialAttack_EffectList.empty()) m_GolemSpecialAttack_EffectList.clear();
+
+	if (!m_CircleLevelUp_EffectList.empty()) m_CircleLevelUp_EffectList.clear();
+	if (!m_ArrowLevelUp_EffectList.empty()) m_ArrowLevelUp_EffectList.clear();
 
 	if (m_ppObjects)
 	{

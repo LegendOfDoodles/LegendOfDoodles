@@ -166,6 +166,10 @@ enum EffectObjectType {
 	Golem_StumpAttack_Effect,
 	Golem_SpecialAttack_Effect,
 
+	// LevelUp Effect
+	Player_LevelUp_CircleEffect,
+	Player_LevelUp_ArrowEffect,
+
 	// Effect Type Cnt
 	EffectObjectTime_Max_COUNT,
 };
