@@ -20,9 +20,9 @@ CRoider::CRoider() : CAnimatedObject()
 	m_speed = CONVERT_cm_to_InG(3.237f);
 
 	// Warning! 로이더 스테이터스 설정 필요
-	m_StatusInfo.HP = m_StatusInfo.maxHP = 100.0f;
+	m_StatusInfo.HP = m_StatusInfo.maxHP = 1300.0f;
 	m_StatusInfo.Def = 10.0f;
-	m_StatusInfo.Atk = 200.0f;
+	m_StatusInfo.Atk = 42.0f;
 	m_StatusInfo.Exp = 100;
 
 	m_attackRange = CONVERT_PaperUnit_to_InG(16);

@@ -61,9 +61,6 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				// CoolTime 초기화
-				m_StatusInfo.QSkillCoolTime = 0.0f;
-
 				// EffectMgr
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_SwordSkill_Q_Effect);
 				m_pSoundMgr->play(SOUND::Player_Sword_Q_Sound, GetPosition());
@@ -72,8 +69,6 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_StatusInfo.WSkillCoolTime = 0.0f;
-
 				// EffectMgr
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_SwordSkill_W_Effect);
 				m_pSoundMgr->play(SOUND::Player_Sword_W_Sound, GetPosition());
@@ -82,8 +77,6 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_StatusInfo.ESkillCoolTime = 0.0f;
-
 				// EffectMgr
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_SwordSkill_E_Effect);
 				m_pSoundMgr->play(SOUND::Player_Sword_E_Sound, GetPosition());
@@ -92,8 +85,6 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.666f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.666f)
 			{
-				m_StatusInfo.RSkillCoolTime = 0.0f;
-
 				// EffectMgr
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_SwordSkill_R_Effect);
 				m_pSoundMgr->play(SOUND::Player_Sword_R_Sound, GetPosition());
@@ -113,9 +104,6 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				// CoolTime 초기화
-				m_StatusInfo.QSkillCoolTime = 0.0f;
-
 				// EffectMgr
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_StaffQSkill_Effect);
 				m_pSoundMgr->play(SOUND::Player_Staff_Q_Sound, GetPosition());
@@ -124,7 +112,6 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_StatusInfo.WSkillCoolTime = 0.0f;
 				// EffectMgr
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_StaffAttack_Effect);
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_StaffSkill_W_Effect);
@@ -134,8 +121,6 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_StatusInfo.ESkillCoolTime = 0.0f;
-
 				// EffectMgr
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_StaffESkill_Effect);
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_StaffSkill_E_Effect);
@@ -145,8 +130,6 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.666f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.666f)
 			{
-				m_StatusInfo.RSkillCoolTime = 0.0f;
-
 				// EffectMgr
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_StaffAttack_Effect);
 			}
@@ -165,9 +148,6 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				// CoolTime 초기화
-				m_StatusInfo.QSkillCoolTime = 0.0f;
-
 				// EffectMgr
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_ArrowAttack_Effect);
 				m_pSoundMgr->play(SOUND::Player_Arrow_Q_Sound, GetPosition());
@@ -176,8 +156,6 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_StatusInfo.WSkillCoolTime = 0.0f;
-
 				// EffectMgr
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_ArrowAttack_Effect);
 				m_pSoundMgr->play(SOUND::Player_Arrow_W_Sound, GetPosition());
@@ -186,8 +164,6 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_StatusInfo.ESkillCoolTime = 0.0f;
-
 				// EffectMgr
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_ArrowAttack_Effect);
 				m_pSoundMgr->play(SOUND::Player_Arrow_E_Sound, GetPosition());
@@ -196,8 +172,6 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.666f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.666f)
 			{
-				m_StatusInfo.RSkillCoolTime = 0.0f;
-
 				// EffectMgr
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_ArrowAttack_Effect);
 				m_pSoundMgr->play(SOUND::Player_Arrow_R_Sound, GetPosition());
@@ -251,12 +225,6 @@ void CPlayer::Animate(float timeElapsed)
 		m_fPreFrameTime = m_fFrameTime;
 		m_fFrameTime += ANIMATION_SPEED * timeElapsed;
 	}
-
-	m_StatusInfo.QSkillCoolTime = min(m_StatusInfo.QSkillCoolTime += timeElapsed * 0.1f, 1.f);
-	m_StatusInfo.WSkillCoolTime = min(m_StatusInfo.WSkillCoolTime += timeElapsed * 0.1f, 1.f);
-	m_StatusInfo.ESkillCoolTime = min(m_StatusInfo.ESkillCoolTime += timeElapsed * 0.1f, 1.f);
-	m_StatusInfo.RSkillCoolTime = min(m_StatusInfo.RSkillCoolTime += timeElapsed * 0.1f, 1.f);
-
 
 	AdjustAnimationIndex();
 
@@ -406,6 +374,23 @@ void CPlayer::SetCollisionManager(shared_ptr<CCollisionManager> manager)
 void CPlayer::RequestSpawnMissile(FlyingObjectType type)
 {
 	m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, type, m_StatusInfo.Atk);
+}
+
+void CPlayer::ReceiveSpecial(BYTE idx,  SpecialType type, bool myid)
+{
+	m_StatusInfo.Special[idx] = type;
+
+	if (myid) m_StatusInfo.SpecialPoint--;
+
+	if (type == SpecialType::AttackSpecial) {
+		SetWeaponData(m_StatusInfo.Weapon, idx + 1);
+	}
+	else if (type == SpecialType::DefenceSpecial) {
+		AddEquipCnt(0, idx);
+	}
+	else if (type == SpecialType::TechnicSpecial) {
+		AddEquipCnt(1, idx);
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////

@@ -30,7 +30,7 @@ void CNetwork::Initialize(HWND hWnd)
 	ZeroMemory(&ServerAddr, sizeof(SOCKADDR_IN));
 	ServerAddr.sin_family = AF_INET;
 	ServerAddr.sin_port = htons(MY_SERVER_PORT);
-	ServerAddr.sin_addr.s_addr = inet_addr("192.168.0.101");
+	ServerAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
 	int Result = WSAConnect(m_mysocket, (sockaddr *)&ServerAddr, sizeof(ServerAddr), NULL, NULL, NULL, NULL);
 	if (Result)WSAGetLastError();
@@ -202,7 +202,7 @@ void CNetwork::ProcessPacket(char *ptr)
 			SC_Msg_Set_Minion_State* my_packet = reinterpret_cast<SC_Msg_Set_Minion_State*>(ptr);
 			
 			CCollisionObject* target{ m_pColManager->RequestObjectByTag(my_packet->Minion_Tag) };
-			target->SetState((StatesType)my_packet->Minion_State, m_pWayFinder);
+			if(target) target->SetState((StatesType)my_packet->Minion_State, m_pWayFinder);
 			break;
 		}
 		case SC_SET_ENEMY:
@@ -304,13 +304,21 @@ void CNetwork::ProcessPacket(char *ptr)
 			Golem->SetCommonStatus(my_packet->maxHP, my_packet->atk, my_packet->def);
 			break;
 		}
+		case SC_UPDATE_TOWER_STAT:
+		{
+			SC_Msg_Update_Tower_Stat* my_packet = reinterpret_cast<SC_Msg_Update_Tower_Stat*>(ptr);
+			CCollisionObject* Tower{ m_pColManager->RequestNeutralByTag(my_packet->Tower_Tag) };
+			Tower->SetCommonStatus(Tower->GetCommonStatus()->maxHP, my_packet->atk, my_packet->def);
+			break;
+		}
 		case SC_SET_ABILITY_POINT:
 		{
 			SC_Msg_Set_Speacial_Point* my_packet = reinterpret_cast<SC_Msg_Set_Speacial_Point*>(ptr);
 
-			m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->Special[my_packet->idx] = (SpecialType)my_packet->Ability_Type;
 			if(my_packet->Character_id == m_myid)
-				m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->SpecialPoint = m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->SpecialPoint - 1;
+				m_ppPlayer[my_packet->Character_id]->ReceiveSpecial(my_packet->idx, (SpecialType)my_packet->Ability_Type,true);
+			else
+				m_ppPlayer[my_packet->Character_id]->ReceiveSpecial(my_packet->idx, (SpecialType)my_packet->Ability_Type);
 			break;
 		}
 		case SC_PLAYER_RESPAWN:

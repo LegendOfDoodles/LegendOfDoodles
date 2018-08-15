@@ -199,7 +199,7 @@ void CCollisionManager::RequestCollide(CollisionType type, CCollisionObject * pC
 					TeamType b = pCol->GetTeam();
 					if (a != b) {
 
-						if (NearLevel((*i)->GetCollisionLevel(), pCol->GetCollisionLevel()),true)
+						if (NearLevel((*i)->GetCollisionLevel(), pCol->GetCollisionLevel()), true)
 						{
 							XMFLOAT2 apos = XMFLOAT2((*i)->GetPosition().x, (*i)->GetPosition().z);
 							XMFLOAT2 bpos = XMFLOAT2(pCol->GetPosition().x, pCol->GetPosition().z);
@@ -217,8 +217,8 @@ void CCollisionManager::RequestCollide(CollisionType type, CCollisionObject * pC
 										&&
 										(pCol->GetFlyingObjectsType() == FlyingObjectType::Player_ArrowSkill_Q
 											|| pCol->GetFlyingObjectsType() == FlyingObjectType::Player_Magic))
-											//|| pCol->GetFlyingObjectsType() == FlyingObjectType::BlueTower_Attack
-											//|| pCol->GetFlyingObjectsType() == FlyingObjectType::RedTower_Attack))
+										//|| pCol->GetFlyingObjectsType() == FlyingObjectType::BlueTower_Attack
+										//|| pCol->GetFlyingObjectsType() == FlyingObjectType::RedTower_Attack))
 									{
 										m_pEffectMgr->RequestSpawn((*i)->GetPosition(), pCol->GetLook(), 10.f, EffectObjectType::Player_ArrowAndFireBall_HitPosition_Effect);
 									}
@@ -247,7 +247,7 @@ void CCollisionManager::RequestCollide(CollisionType type, CCollisionObject * pC
 					TeamType a = (*i)->GetTeam();
 					TeamType b = pCol->GetTeam();
 					if (a != b) {
-						if (NearLevel((*i)->GetCollisionLevel(), pCol->GetCollisionLevel()),true)
+						if (NearLevel((*i)->GetCollisionLevel(), pCol->GetCollisionLevel()), true)
 						{
 							XMFLOAT3 apos = (*i)->GetPosition();
 							XMFLOAT3 bpos = pCol->GetPosition();
@@ -440,7 +440,7 @@ void CCollisionManager::SearchSight(XMFLOAT2 startpos, int dir, int slength, Tea
 		if (isBuilding) {
 			buildingout = false;
 		}
-		else 
+		else
 			buildingout = true;
 
 		for (int j = 1; j < slength; ++j) {
@@ -463,7 +463,7 @@ void CCollisionManager::SearchSight(XMFLOAT2 startpos, int dir, int slength, Tea
 				{
 					m_BlueSight[(int)result.x][(int)result.y].Detected = true;
 					if (m_BlueSight[(int)result.x][(int)result.y].Static == true) {
-						if(buildingout)
+						if (buildingout)
 						{
 							for (int x = -2; x < 3; ++x) {
 								for (int y = -2; y < 3; ++y) {
@@ -530,14 +530,22 @@ CCollisionManager::~CCollisionManager()
 	}
 }
 
-int(*CCollisionManager::GetFoW(void))[NODE_HEIGHT]
+int(*CCollisionManager::GetFoW(TeamType type))[NODE_HEIGHT]
 {
 	for (int i = 0; i < NODE_WIDTH; ++i) {
 		for (int j = 0; j < NODE_HEIGHT; ++j) {
-			if (!m_BlueSight[i][j].Detected)
+			if (type == TeamType::Blue) {
+				if (!m_BlueSight[i][j].Detected)
 				Fow[i][j] = 0;
-			else
-				Fow[i][j] = 1;
+				else
+					Fow[i][j] = 1;
+			}
+			else if (type == TeamType::Red) {
+				if (!m_RedSight[i][j].Detected)
+					Fow[i][j] = 0;
+				else
+					Fow[i][j] = 1;
+			}
 		}
 	}
 	return Fow;

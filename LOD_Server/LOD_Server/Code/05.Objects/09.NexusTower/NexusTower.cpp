@@ -92,6 +92,20 @@ void CNexusTower::PlayIdle(float timeElapsed)
 			SetState(States::Attack);
 		}
 	}
+	if ((int)g_GameTime % 60000 == 0)
+	{
+		m_StatusInfo.Atk += 5;
+		m_StatusInfo.Def += 2;
+		SC_Msg_Update_Tower_Stat p;
+		p.Tower_Tag = (short)m_tag;
+		p.atk = m_StatusInfo.Atk;
+		p.def = m_StatusInfo.Def;
+		p.size = sizeof(p);
+		p.type = SC_UPDATE_TOWER_STAT;
+		for (int i = 0; i < MAX_USER; ++i) {
+			if (g_clients[i].m_isconnected) SendPacket(i, &p);
+		}
+	}
 }
 
 void CNexusTower::PlayAttack(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)

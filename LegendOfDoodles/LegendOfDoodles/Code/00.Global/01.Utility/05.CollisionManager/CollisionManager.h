@@ -32,7 +32,7 @@ public:
 	CCollisionObject* RequestNeutralByTag(short tag);
 	CCollisionObject* RequestPlayerByTag(short tag);
 	~CCollisionManager();
-	int(*GetFoW(void))[NODE_HEIGHT];
+	int(*GetFoW(TeamType type))[NODE_HEIGHT];
 
 	void SetMyTeam(TeamType team) { m_User = team; }
 	

@@ -171,6 +171,14 @@ struct SC_Msg_Update_Golem_Stat : public Packet
 	float def;
 };
 
+struct SC_Msg_Update_Tower_Stat : public Packet
+{
+	short Tower_Tag;
+	float atk;
+	float def;
+};
+
+
 struct SC_Msg_Enemy_Tag_Neutral : public Packet
 {
 	short Monster_Tag;
@@ -249,6 +257,7 @@ struct SC_Msg_Player_Missile : public Packet
 //Server-> Client
 #define SC_PLAYER_RESPAWN		  1
 #define SC_PLAYER_MISSILE		  2
+#define SC_UPDATE_TOWER_STAT	  3
 
 #define SC_CONNECT_PLAYER		  101
 #define SC_PUT_PLAYER			  102
@@ -278,6 +287,7 @@ struct SC_Msg_Player_Missile : public Packet
 #define SC_CHANGE_WEAPON		  125
 #define SC_UPDATE_GOLEM_STAT	  126
 #define SC_SET_ABILITY_POINT      127
+
 //Client->Server
 #define CS_ACTION				  201
 #define CS_MOVE_PLAYER			  202

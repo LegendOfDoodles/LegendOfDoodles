@@ -31,6 +31,7 @@ public:	// 외부 함수
 	virtual void RequestSpawnMissile(FlyingObjectType type);
 
 	virtual PlayerInfo* GetPlayerStatus() { return &m_StatusInfo; }
+	virtual void ReceiveSpecial(BYTE idx,  SpecialType type, bool myid = false);
 
 	void SetWeaponChangeTriger(bool triger) { m_ChangeWeapon = triger; }
 	bool GetWeaponChangeTriger() { return m_ChangeWeapon; }
@@ -40,6 +41,18 @@ public:	// 외부 함수
 	//virtual void ReceiveDamage(float damage) { m_StatusInfo.HP -= damage * Compute_Defence(m_StatusInfo.Def); }
 	UINT GetWeaponType() { return m_StatusInfo.Weapon; }
 	UINT GetWeaponNum() { return m_StatusInfo.WeaponNum; }
+
+	UINT GetSpecialCnt() { return m_StatusInfo.SpecialPoint; }
+	SpecialType* GetSpecialIndext() { return m_StatusInfo.Special; }
+	UINT GetEquipCnt() { return EquipCnt; }
+
+	UINT* GetEquipIndex() { return m_nEquipIndex; }
+
+
+	void AddEquipCnt(UINT equiptype, UINT specialnum) {
+		m_nEquipIndex[EquipCnt++] = equiptype * 4 + specialnum;
+		//0123 방어 4567 특수
+	}
 
 	void SetWeaponData(UINT type, UINT num) {
 		m_StatusInfo.Weapon = type;
@@ -60,7 +73,9 @@ protected: // 내부 함수
 protected: // 변수
 	PlayerInfo m_StatusInfo;
 	bool m_ChangeWeapon{ false };
+
 	UINT m_nEquipIndex[4];
+	UINT EquipCnt{ 0 };
 
 	XMFLOAT4X4 m_xmf4x4SpawnWorld;	// 생성시 월드 변환 행렬
 	XMFLOAT3 m_spawnLocation;	// 생성 위치

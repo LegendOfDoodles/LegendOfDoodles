@@ -13,10 +13,10 @@
 // 持失切, 社瑚切
 CNexusTower::CNexusTower(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes) : CCollisionObject(pCreateMgr, nMeshes)
 {
-	m_StatusInfo.maxHP = 1000;
-	m_StatusInfo.HP = 1000;
-	m_StatusInfo.Atk = 0;
-	m_StatusInfo.Def = 0;
+	m_StatusInfo.maxHP = 3800;
+	m_StatusInfo.HP = 3800;
+	m_StatusInfo.Atk = 152;
+	m_StatusInfo.Def = 40;
 	m_StatusInfo.Exp = 0;
 	m_sightRange = CONVERT_PaperUnit_to_InG(160.0f);
 	m_detectRange = CONVERT_PaperUnit_to_InG(80.0f);

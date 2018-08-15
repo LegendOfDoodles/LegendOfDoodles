@@ -282,6 +282,12 @@
     <Filter Include="소스 파일\05.Objects\96.Billboard\99.BillboardObject">
       <UniqueIdentifier>{baf95376-2485-48e9-890a-e9b2aa5de243}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\04.Shaders\10.EquipShader">
+      <UniqueIdentifier>{c986ee24-f417-450a-9d99-b31d0e7c4e70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\05.Objects\12.Equipment">
+      <UniqueIdentifier>{915d30d8-a457-402e-bc9a-4f2d7dccdc3c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\00.Global\00.Standard\stdafx.h">
@@ -533,6 +539,12 @@
     <ClInclude Include="Code\05.Objects\96.Billboard\99.BillboardObject\Billboard.h">
       <Filter>소스 파일\05.Objects\96.Billboard\99.BillboardObject</Filter>
     </ClInclude>
+    <ClInclude Include="Code\04.Shaders\10.EquipShader\EquipShader.h">
+      <Filter>소스 파일\04.Shaders\10.EquipShader</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\05.Objects\12.Equipment\Equipment.h">
+      <Filter>소스 파일\05.Objects\12.Equipment</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\00.Global\00.Standard\stdafx.cpp">
@@ -762,6 +774,12 @@
     </ClCompile>
     <ClCompile Include="Code\01.Main\LegendOfDoodles.cpp">
       <Filter>소스 파일\01.Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\04.Shaders\10.EquipShader\EquipShader.cpp">
+      <Filter>소스 파일\04.Shaders\10.EquipShader</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\05.Objects\12.Equipment\Equipment.cpp">
+      <Filter>소스 파일\05.Objects\12.Equipment</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

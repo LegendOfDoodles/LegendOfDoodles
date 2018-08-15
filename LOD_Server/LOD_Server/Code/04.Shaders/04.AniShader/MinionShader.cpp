@@ -85,7 +85,7 @@ void CMinionShader::AnimateObjects(float timeElapsed)
 		m_spawnTime -= 30.0f;
 		m_preSpawnTime = 0.0f;
 		m_curSpawnCount = 0;
-		if (g_GameTime >= 30.0f)
+		if (g_GameTime >= 60.0f)
 		{
 			m_bSpawning = true;
 		}

@@ -163,10 +163,14 @@ Path *CWayFinder::GetPathToPosition(const XMFLOAT2 &source, const XMFLOAT2 &targ
 	if (m_pCollisionMapImage->GetCollision(target.x, target.y))
 		adjTarget = GetClosestNotCollidePos(target, m_nodes[dstIndex].Position());
 
-	// 직선으로 이동 가능한 경우
-	if (CanGoDirectly(adjSource, adjTarget))
+	// 바로 근처면 이동하지 않음
+	if (Vector2::DistanceSquare(adjSource, adjTarget) < NODE_SIZE_SQR)
 	{
-		// 목적지만 패스에 넣고 종료
+		return nullptr;
+	}
+	else if (CanGoDirectly(adjSource, adjTarget))
+	{
+		// 직선으로 이동 가능한 경우 목적지만 패스에 넣고 종료
 		path = new Path;
 		path->push_back(CPathEdge(adjSource, adjTarget));
 		return path;

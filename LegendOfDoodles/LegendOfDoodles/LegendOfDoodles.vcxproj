@@ -194,6 +194,7 @@
     <ClInclude Include="Code\04.Shaders\07.NeutralityShader\NeutralityShader.h" />
     <ClInclude Include="Code\04.Shaders\08.FlyingShader\FlyingShader.h" />
     <ClInclude Include="Code\04.Shaders\09.EffectShader\EffectShader.h" />
+    <ClInclude Include="Code\04.Shaders\10.EquipShader\EquipShader.h" />
     <ClInclude Include="Code\04.Shaders\97.TextureToFullScreenShader\TextureToFullScreenShader.h" />
     <ClInclude Include="Code\04.Shaders\98.BillboardShader\00.UIShader\UIShader.h" />
     <ClInclude Include="Code\04.Shaders\98.BillboardShader\01.GaugeShader\00.PlayerGaugeShader\PlayerGaugeShader.h" />
@@ -224,6 +225,7 @@
     <ClInclude Include="Code\05.Objects\10.Neutrality\00.Roider\Roider.h" />
     <ClInclude Include="Code\05.Objects\10.Neutrality\01.Golem\Golem.h" />
     <ClInclude Include="Code\05.Objects\11.FlyingObject\FlyingObject.h" />
+    <ClInclude Include="Code\05.Objects\12.Equipment\Equipment.h" />
     <ClInclude Include="Code\05.Objects\96.Billboard\01.FrameObject\UIFrameObject.h" />
     <ClInclude Include="Code\05.Objects\96.Billboard\02.GaugeObject\GaugeObject.h" />
     <ClInclude Include="Code\05.Objects\96.Billboard\03.IconObject\IconObject.h" />
@@ -279,6 +281,7 @@
     <ClCompile Include="Code\04.Shaders\07.NeutralityShader\NeutralityShader.cpp" />
     <ClCompile Include="Code\04.Shaders\08.FlyingShader\FlyingShader.cpp" />
     <ClCompile Include="Code\04.Shaders\09.EffectShader\EffectShader.cpp" />
+    <ClCompile Include="Code\04.Shaders\10.EquipShader\EquipShader.cpp" />
     <ClCompile Include="Code\04.Shaders\97.TextureToFullScreenShader\TextureToFullScreenShader.cpp" />
     <ClCompile Include="Code\04.Shaders\98.BillboardShader\00.UIShader\UIShader.cpp" />
     <ClCompile Include="Code\04.Shaders\98.BillboardShader\01.GaugeShader\00.PlayerGaugeShader\PlayerGaugeShader.cpp" />
@@ -309,6 +312,7 @@
     <ClCompile Include="Code\05.Objects\10.Neutrality\00.Roider\Roider.cpp" />
     <ClCompile Include="Code\05.Objects\10.Neutrality\01.Golem\Golem.cpp" />
     <ClCompile Include="Code\05.Objects\11.FlyingObject\FlyingObject.cpp" />
+    <ClCompile Include="Code\05.Objects\12.Equipment\Equipment.cpp" />
     <ClCompile Include="Code\05.Objects\96.Billboard\01.FrameObject\UIFrameObject.cpp" />
     <ClCompile Include="Code\05.Objects\96.Billboard\02.GaugeObject\GaugeObject.cpp" />
     <ClCompile Include="Code\05.Objects\96.Billboard\03.IconObject\IconObject.cpp" />

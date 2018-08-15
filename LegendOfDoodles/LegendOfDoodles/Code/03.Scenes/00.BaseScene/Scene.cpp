@@ -10,6 +10,7 @@
 #include "04.Shaders/06.NexusTowerShader/NexusTowerShader.h"
 #include "04.Shaders/07.NeutralityShader/NeutralityShader.h"
 #include "04.Shaders/08.FlyingShader/FlyingShader.h"
+#include "04.Shaders/10.EquipShader/EquipShader.h"
 #include "04.Shaders/98.BillboardShader/00.UIShader/UIShader.h"
 #include "04.Shaders/98.BillboardShader/01.GaugeShader/00.PlayerGaugeShader/PlayerGaugeShader.h"
 #include "04.Shaders/98.BillboardShader/01.GaugeShader/01.MinionGaugeShader/MinionGaugeShader.h"
@@ -139,7 +140,7 @@ void CScene::AnimateObjects(float timeElapsed)
 	if (m_pCollisionManager) {
 		m_pCollisionManager->Update(m_pWayFinder);
 
-		int(*fow)[NODE_HEIGHT] = m_pCollisionManager->GetFoW();
+		int(*fow)[NODE_HEIGHT] = m_pCollisionManager->GetFoW(m_pMyPlayer->GetTeam());
 		for (int i = 0; i < NODE_WIDTH; ++i)
 			for (int j = 0; j < NODE_HEIGHT; ++j)
 			{
@@ -353,7 +354,7 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 
 	m_pCamera->Initialize(pCreateMgr);
 
-	m_nShaders = 22;
+	m_nShaders = 23;
 	m_ppShaders = new CShader*[m_nShaders];
 	m_ppShaders[0] = new CSkyBoxShader(pCreateMgr);
 	CTerrainShader* pTerrainShader = new CTerrainShader(pCreateMgr);
@@ -385,6 +386,7 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	NeutralityHP_Shader = new CNeutralityGaugeShader(pCreateMgr);
 	Eeffect_Shader = new CEffectShader(pCreateMgr);
 	SpecialSelect_Shader = new CSpecialSelectShader(pCreateMgr);
+	m_ppShaders[22] = new CEquipShader(pCreateMgr);
 
 	m_pCollisionManager = shared_ptr<CCollisionManager>(new CCollisionManager());
 	//m_pCollisionManager->SetMyTeam((TeamType)(m_pNetwork->m_myid % 2));
@@ -394,10 +396,13 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 		m_ppShaders[i]->Initialize(pCreateMgr);
 	}
 
-	for (int i = 2; i < m_nShaders - 13; ++i)
+	for (int i = 2; i < m_nShaders - 14; ++i)
 	{
 		m_ppShaders[i]->Initialize(pCreateMgr, pTerrainShader->GetTerrain());
 	}
+
+	((CEquipShader*)m_ppShaders[22])->SetPlayerCnt(((CPlayerShader *)m_ppShaders[3])->GetObjectCount());
+	((CEquipShader*)m_ppShaders[22])->SetPlayer(((CPlayerShader *)m_ppShaders[3])->GetCollisionObjects());
 
 	// UI Shaders Initialize
 	((CPlayerHPGaugeShader*)PlayerHP_Shader)->SetPlayerCnt(((CPlayerShader *)m_ppShaders[3])->GetObjectCount());
@@ -442,6 +447,7 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	NeutralityHP_Shader->Initialize(pCreateMgr, m_pCamera);
 	Eeffect_Shader->Initialize(pCreateMgr, m_pCamera);
 	SpecialSelect_Shader->Initialize(pCreateMgr, m_pCamera);
+	m_ppShaders[22]->Initialize(pCreateMgr, m_pCamera);
 
 	for (int i = 8; i <= 21; ++i)
 	{
@@ -527,12 +533,13 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 void CScene::SetPlayer()
 {
 	m_pMyPlayer = (CAnimatedObject*)m_ppObjects[m_pNetwork->m_myid];
-	
 	((CSkillShader*)Skill_Shader)->SetPlayer(m_ppObjects[m_pNetwork->m_myid]);
 	((CMinimapShader*)Minimap_Shader)->SetPlayer(m_ppObjects[m_pNetwork->m_myid]);
 	((CharacterFrameGaugeShader*)CharFrame_Shader)->SetPlayer(m_ppObjects[m_pNetwork->m_myid]);
 	((CSelectedSpecialShader*)SelectedSpecial_Shader)->SetPlayer(m_ppObjects[m_pNetwork->m_myid]);
 	((CSelectedSpecialShader*)SpecialSelect_Shader)->SetPlayer(m_ppObjects[m_pNetwork->m_myid]);
+	
+	m_pCollisionManager->SetMyTeam(m_pMyPlayer->GetTeam());
 }
 
 void CScene::ReleaseObjects()
