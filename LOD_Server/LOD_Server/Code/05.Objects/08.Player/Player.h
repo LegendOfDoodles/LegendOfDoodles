@@ -27,7 +27,7 @@ public:	// 외부 함수
 	virtual PlayerInfo* GetPlayerStatus() { return &m_StatusInfo; }
 
 	//virtual void SetObjectType(ObjectType type) { m_StatusInfo.WeaponType = type; };
-	virtual void ReceiveDamage(float damage);
+	virtual void ReceiveDamage(float damage, CCollisionObject * pCol);
 	
 	//virtual void ReceiveDamage(float damage) { m_StatusInfo.HP -= damage * Compute_Defence(m_StatusInfo.Def); }
 	UINT GetWeaponType() { return m_StatusInfo.Weapon; }

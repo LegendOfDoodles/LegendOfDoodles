@@ -191,6 +191,8 @@ struct SC_Msg_Hp_Sync : public Packet
 	float curhp;
 	float updatetime;
 	short Target_Tag;
+	short Object_Type;
+	short Flying_Type;
 };
 
 struct SC_Msg_Set_Nexus_State : public Packet

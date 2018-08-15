@@ -251,7 +251,7 @@ void CRoider::SaveCurrentState()
 	m_spawnLocation = GetPosition();
 }
 
-void CRoider::ReceiveDamage(float damage)
+void CRoider::ReceiveDamage(float damage, CCollisionObject * pCol)
 {
 	// 이미 사망한 상태인 경우 대미지 처리를 하지 않는다.
 	if (m_curState == States::Die || m_curState == States::Remove) { return; }
@@ -300,6 +300,8 @@ void CRoider::ReceiveDamage(float damage)
 		p.size = sizeof(p);
 		p.type = SC_HP_SYNC;
 		p.Target_Tag = (short)m_tag;
+		p.Object_Type = (short)pCol->GetType();
+		p.Flying_Type = (short)pCol->GetFlyingObjectsType();
 		p.updatetime = g_GameTime;
 		for (int j = 0; j < MAX_USER; ++j) {
 			if (g_clients[j].m_isconnected == true) {

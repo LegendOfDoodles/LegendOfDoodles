@@ -217,8 +217,6 @@ void CCollisionManager::RequestCollide(CollisionType type, CCollisionObject * pC
 										&&
 										(pCol->GetFlyingObjectsType() == FlyingObjectType::Player_ArrowSkill_Q
 											|| pCol->GetFlyingObjectsType() == FlyingObjectType::Player_Magic))
-										//|| pCol->GetFlyingObjectsType() == FlyingObjectType::BlueTower_Attack
-										//|| pCol->GetFlyingObjectsType() == FlyingObjectType::RedTower_Attack))
 									{
 										m_pEffectMgr->RequestSpawn((*i)->GetPosition(), pCol->GetLook(), 10.f, EffectObjectType::Player_ArrowAndFireBall_HitPosition_Effect);
 									}
@@ -227,8 +225,6 @@ void CCollisionManager::RequestCollide(CollisionType type, CCollisionObject * pC
 										m_pEffectMgr->RequestSpawn((*i)->GetPosition(), pCol->GetLook(), 10.f, EffectObjectType::NormallHit_Effect);
 									}
 								}
-
-								//std::cout << "col\n";
 								(*i)->ReceiveDamage(damage);
 								(*i)->NotifyDamageTeam(pCol->GetTeam());
 							}
@@ -267,7 +263,6 @@ void CCollisionManager::RequestCollide(CollisionType type, CCollisionObject * pC
 								// 시야 각 안에 들어오는가
 								if (angle <= data2)
 								{
-									//std::cout << "col\n";
 									(*i)->ReceiveDamage(damage);
 								}
 							}
@@ -320,7 +315,6 @@ CCollisionObject* CCollisionManager::RequestNearObject(CCollisionObject * pCol, 
 				else if (nearDistance > distance) {
 					nearDistance = distance;
 					nearObject = (*i);
-					//std::cout << "col\n";
 				}
 			}
 		}

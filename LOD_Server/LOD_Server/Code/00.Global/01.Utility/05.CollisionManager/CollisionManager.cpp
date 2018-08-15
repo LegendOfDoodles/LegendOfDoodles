@@ -193,7 +193,7 @@ void CCollisionManager::RequestCollide(CollisionType type, CCollisionObject * pC
 							if (distance <= collisionLength)
 							{
 								//std::cout << "col\n";
-								(*i)->ReceiveDamage(damage);
+								(*i)->ReceiveDamage(damage, pCol);
 								(*i)->NotifyDamageTeam(pCol->GetTeam());
 							}
 						}
@@ -232,7 +232,7 @@ void CCollisionManager::RequestCollide(CollisionType type, CCollisionObject * pC
 								if (angle <= data2)
 								{
 									//std::cout << "col\n";
-									(*i)->ReceiveDamage(damage);
+									(*i)->ReceiveDamage(damage, pCol);
 									(*i)->NotifyDamageTeam(pCol->GetTeam());
 								}
 							}

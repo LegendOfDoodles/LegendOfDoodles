@@ -165,7 +165,7 @@ void CNexusTower::SetMaster(CCollisionObject * masterObject)
 	m_masterObject->MakeImmortal();
 }
 
-void CNexusTower::ReceiveDamage(float damage)
+void CNexusTower::ReceiveDamage(float damage, CCollisionObject * pCol)
 {
 	// 이미 사망한 상태인 경우 대미지 처리를 하지 않는다.
 	if (m_bImmortal || m_curState == States::Die || m_curState == States::Remove) { return; }
