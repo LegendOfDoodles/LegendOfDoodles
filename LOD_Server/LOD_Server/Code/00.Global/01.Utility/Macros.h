@@ -218,6 +218,11 @@
 // 플레이어 관련
 #define COOLTIME_SPAWN_PLAYER 10.0f
 
+#define COOLTIME_SKILL_Q 5.0f
+#define COOLTIME_SKILL_W 8.0f
+#define COOLTIME_SKILL_E 12.0f
+#define COOLTIME_SKILL_R 15.0f
+
 // 몬스터 관련
 #define COOLTIME_SPAWN_ROIDER 10.0f
 #define COOLTIME_SPAWN_GOLEM 10.0f

@@ -59,6 +59,8 @@ public: // 공개 함수
 	int GetAnimTimeRemain() { return static_cast<int>(m_nAniLength[m_nAniIndex] - m_fFrameTime); }
 	float GetAnimTimeRemainRatio() { return (m_nAniLength[m_nAniIndex] - m_fFrameTime) / (float)m_nAniLength[m_nAniIndex]; }
 
+	virtual void SendCoolTime(int id) { id; }
+
 protected: // 내부 함수
 	bool IsArrive(float dst, PathType type = PathType::Main);
 

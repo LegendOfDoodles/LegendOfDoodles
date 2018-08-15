@@ -28,6 +28,11 @@ void CPlayer::Animate(float timeElapsed)
 {
 	m_hpSyncCoolTime += timeElapsed;
 
+	m_skillCoolTimeQ += timeElapsed;
+	m_skillCoolTimeW += timeElapsed;
+	m_skillCoolTimeE += timeElapsed;
+	m_skillCoolTimeR += timeElapsed;
+
 	switch (m_curState) {
 	case States::Idle:
 		if (m_nCurrAnimation != Animations::Idle) m_nCurrAnimation = Animations::Idle;
@@ -44,7 +49,7 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_pColManager->RequestCollide(CollisionType::SPHERE, this, CONVERT_PaperUnit_to_InG(5), CONVERT_PaperUnit_to_InG(20), 100);
+				m_pColManager->RequestCollide(CollisionType::SPHERE, this, CONVERT_PaperUnit_to_InG(5), CONVERT_PaperUnit_to_InG(20), m_StatusInfo.Atk);
 			}
 		}
 		else if (GetType() == ObjectType::SwordPlayer)
@@ -53,40 +58,31 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_pColManager->RequestCollide(CollisionType::SPHERE, this, CONVERT_PaperUnit_to_InG(5), CONVERT_PaperUnit_to_InG(20), 100);
+				m_pColManager->RequestCollide(CollisionType::SPHERE, this, CONVERT_PaperUnit_to_InG(5), CONVERT_PaperUnit_to_InG(20), m_StatusInfo.Atk);
 			}
 			else if (m_nCurrAnimation == Animations::SkillQ &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				// CoolTime 초기화
-				m_StatusInfo.QSkillCoolTime = 0.0f;
-
-				m_pColManager->RequestCollide(CollisionType::SPHERE, this, CONVERT_PaperUnit_to_InG(8), CONVERT_PaperUnit_to_InG(8), 100);
+				m_pColManager->RequestCollide(CollisionType::SPHERE, this, CONVERT_PaperUnit_to_InG(8), CONVERT_PaperUnit_to_InG(8), m_StatusInfo.Atk * m_StatusInfo.QSkillPower);
 			}
 			else if (m_nCurrAnimation == Animations::SkillW &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_StatusInfo.WSkillCoolTime = 0.0f;
-
-				m_pColManager->RequestCollide(CollisionType::SECTERFORM, this, CONVERT_PaperUnit_to_InG(24), 180, 500);
+				m_pColManager->RequestCollide(CollisionType::SECTERFORM, this, CONVERT_PaperUnit_to_InG(24), 180, m_StatusInfo.Atk * m_StatusInfo.WSkillPower);
 			}
 			else if (m_nCurrAnimation == Animations::SkillE &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_StatusInfo.ESkillCoolTime = 0.0f;
-
-				m_pColManager->RequestCollide(CollisionType::SECTERFORM, this, CONVERT_PaperUnit_to_InG(16), 150, 100);
+				m_pColManager->RequestCollide(CollisionType::SECTERFORM, this, CONVERT_PaperUnit_to_InG(16), 150, m_StatusInfo.Atk * m_StatusInfo.ESkillPower);
 			}
 			else if (m_nCurrAnimation == Animations::SkillR &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.666f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.666f)
 			{
-				m_StatusInfo.RSkillCoolTime = 0.0f;
-
-				m_pColManager->RequestCollide(CollisionType::SPHERE, this, 0, CONVERT_PaperUnit_to_InG(12), 500);
+				m_pColManager->RequestCollide(CollisionType::SPHERE, this, 0, CONVERT_PaperUnit_to_InG(12), m_StatusInfo.Atk * m_StatusInfo.RSkillPower);
 			}
 		}
 		else if (GetType() == ObjectType::StaffPlayer)
@@ -95,41 +91,33 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_Magic, 100);
+				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_Magic, m_StatusInfo.Atk);
 				SendMissilePacket(FlyingObjectType::Player_Magic);
-				//// EffectMgr
-				//m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_SwordSkill_Q_Effect);
-				//m_pSoundMgr->play(SOUND::Player_Sword_Q_Sound, GetPosition());
 			}
 			else if (m_nCurrAnimation == Animations::SkillQ &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				// CoolTime 초기화
-				m_StatusInfo.QSkillCoolTime = 0.0f;
-
-				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_MagicSkill_Q, 100);
+				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_MagicSkill_Q, m_StatusInfo.Atk * m_StatusInfo.QSkillPower);
 				SendMissilePacket(FlyingObjectType::Player_MagicSkill_Q);
 			}
 			else if (m_nCurrAnimation == Animations::SkillW &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_StatusInfo.WSkillCoolTime = 0.0f;
+				m_pColManager->RequestCollide(CollisionType::SPHERE, this, CONVERT_PaperUnit_to_InG(8), CONVERT_PaperUnit_to_InG(8), m_StatusInfo.Atk * m_StatusInfo.WSkillPower);
 			}
 			else if (m_nCurrAnimation == Animations::SkillE &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_StatusInfo.ESkillCoolTime = 0.0f;
+				m_pColManager->RequestCollide(CollisionType::SECTERFORM, this, CONVERT_PaperUnit_to_InG(15), 90, m_StatusInfo.Atk * m_StatusInfo.ESkillPower);
 			}
 			else if (m_nCurrAnimation == Animations::SkillR &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.666f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.666f)
 			{
-				m_StatusInfo.RSkillCoolTime = 0.0f;
-
-				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_MagicSkill_R, 100);
+				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_MagicSkill_R, m_StatusInfo.Atk * m_StatusInfo.RSkillPower);
 				SendMissilePacket(FlyingObjectType::Player_MagicSkill_R);
 			}
 		}
@@ -139,47 +127,35 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_Arrow, 100);
+				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_Arrow, m_StatusInfo.Atk);
 				SendMissilePacket(FlyingObjectType::Player_Arrow);
-				//// EffectMgr
-				//m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_SwordSkill_Q_Effect);
-				//m_pSoundMgr->play(SOUND::Player_Sword_Q_Sound, GetPosition());
 			}
 			else if (m_nCurrAnimation == Animations::SkillQ &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				// CoolTime 초기화
-				m_StatusInfo.QSkillCoolTime = 0.0f;
-
-				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_ArrowSkill_Q, 100);
+				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_ArrowSkill_Q, m_StatusInfo.Atk * m_StatusInfo.QSkillPower);
 				SendMissilePacket(FlyingObjectType::Player_ArrowSkill_Q);
 			}
 			else if (m_nCurrAnimation == Animations::SkillW &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_StatusInfo.WSkillCoolTime = 0.0f;
-
-				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_ArrowSkill_W, 100);
+				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_ArrowSkill_W, m_StatusInfo.Atk * m_StatusInfo.WSkillPower);
 				SendMissilePacket(FlyingObjectType::Player_ArrowSkill_W);
 			}
 			else if (m_nCurrAnimation == Animations::SkillE &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_StatusInfo.ESkillCoolTime = 0.0f;
-
-				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_ArrowSkill_E, 100);
+				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_ArrowSkill_E, m_StatusInfo.Atk * m_StatusInfo.ESkillPower);
 				SendMissilePacket(FlyingObjectType::Player_ArrowSkill_E);
 			}
 			else if (m_nCurrAnimation == Animations::SkillR &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.666f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.666f)
 			{
-				m_StatusInfo.RSkillCoolTime = 0.0f;
-
-				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_ArrowSkill_R, 100);
+				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_ArrowSkill_R, m_StatusInfo.Atk * m_StatusInfo.RSkillPower);
 				SendMissilePacket(FlyingObjectType::Player_ArrowSkill_R);
 			}
 		}
@@ -237,12 +213,6 @@ void CPlayer::Animate(float timeElapsed)
 		m_fFrameTime += ANIMATION_SPEED * timeElapsed;
 	}
 
-	m_StatusInfo.QSkillCoolTime = min(m_StatusInfo.QSkillCoolTime += timeElapsed * 0.1f, 1.f);
-	m_StatusInfo.WSkillCoolTime = min(m_StatusInfo.WSkillCoolTime += timeElapsed * 0.1f, 1.f);
-	m_StatusInfo.ESkillCoolTime = min(m_StatusInfo.ESkillCoolTime += timeElapsed * 0.1f, 1.f);
-	m_StatusInfo.RSkillCoolTime = min(m_StatusInfo.RSkillCoolTime += timeElapsed * 0.1f, 1.f);
-
-
 	AdjustAnimationIndex();
 
 	if (m_fFrameTime > m_nAniLength[m_nAniIndex]) {
@@ -272,8 +242,40 @@ void CPlayer::ActiveSkill(AnimationsType act)
 {
 	if (m_curState != States::Attack) {
 		m_curState = States::Attack;
-		m_nCurrAnimation = act;
-		m_fFrameTime = 0;
+
+		if (act == Animations::SkillQ &&
+			m_skillCoolTimeQ >= m_StatusInfo.QSkillCoolTime)
+		{
+			m_skillCoolTimeQ = 0;
+			m_nCurrAnimation = act;
+			m_fFrameTime = 0;
+		}
+		else if (act == Animations::SkillW &&
+			m_skillCoolTimeW >= m_StatusInfo.WSkillCoolTime)
+		{
+			m_skillCoolTimeW = 0;
+			m_nCurrAnimation = act;
+			m_fFrameTime = 0;
+		}
+		else if (act == Animations::SkillE &&
+			m_skillCoolTimeE >= m_StatusInfo.ESkillCoolTime)
+		{
+			m_skillCoolTimeE = 0;
+			m_nCurrAnimation = act;
+			m_fFrameTime = 0;
+		}
+		else if (act == Animations::SkillR &&
+			m_skillCoolTimeR >= m_StatusInfo.RSkillCoolTime)
+		{
+			m_skillCoolTimeR = 0;
+			m_nCurrAnimation = act;
+			m_fFrameTime = 0;
+		}
+		else
+		{
+			m_nCurrAnimation = act;
+			m_fFrameTime = 0;
+		}
 	}
 }
 
@@ -355,6 +357,46 @@ void CPlayer::Respawn()
 			SendPacket(j, &p);
 		}
 	}
+}
+
+void CPlayer::SetType(ObjectType newObjectType)
+{
+	m_ObjectType = newObjectType;
+
+	if (m_ObjectType == ObjectType::SwordPlayer)
+	{
+		m_StatusInfo.QSkillPower = 2.5f;
+		m_StatusInfo.WSkillPower = 3.5f;
+		m_StatusInfo.ESkillPower = 5.0f;
+		m_StatusInfo.RSkillPower = 7.6f;
+	}
+	else if (m_ObjectType == ObjectType::StaffPlayer)
+	{
+		m_StatusInfo.QSkillPower = 2.5f;
+		m_StatusInfo.WSkillPower = 3.5f;
+		m_StatusInfo.ESkillPower = 5.0f;
+		m_StatusInfo.RSkillPower = 7.6f;
+	}
+	else if (m_ObjectType == ObjectType::BowPlayer)
+	{
+		m_StatusInfo.QSkillPower = 2.5f;
+		m_StatusInfo.WSkillPower = 3.5f;
+		m_StatusInfo.ESkillPower = 5.0f;
+		m_StatusInfo.RSkillPower = 7.6f;
+	}
+}
+
+void CPlayer::SendCoolTime(int id)
+{
+	SC_Msg_Cooltime_Percent p;
+	p.Target_Tag = (short)m_tag;
+	p.QPercentage = min(m_skillCoolTimeQ / m_StatusInfo.QSkillCoolTime, 1.f);
+	p.WPercentage = min(m_skillCoolTimeW / m_StatusInfo.WSkillCoolTime, 1.f);
+	p.EPercentage = min(m_skillCoolTimeE / m_StatusInfo.ESkillCoolTime, 1.f);
+	p.RPercentage = min(m_skillCoolTimeR / m_StatusInfo.RSkillCoolTime, 1.f);
+	p.size = sizeof(p);
+	p.type = SC_COOLTIME;
+	SendPacket(id, &p);
 }
 
 void CPlayer::ReceiveDamage(float damage, CCollisionObject * pCol)

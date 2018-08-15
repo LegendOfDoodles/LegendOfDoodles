@@ -163,7 +163,8 @@ void CPlayerShader::RenderShadow(CCamera * pCamera)
 
 bool CPlayerShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 {
-	if (m_ppObjects[m_pNetwork->m_myid]->GetState() == States::Die || m_ppObjects[m_pNetwork->m_myid]->GetState() == States::Remove) return true;
+	if (m_ppObjects[m_pNetwork->m_myid]->GetState() == States::Die || m_ppObjects[m_pNetwork->m_myid]->GetState() == States::Remove
+		|| m_ppObjects[m_pNetwork->m_myid]->GetState() == States::Attack || m_ppObjects[m_pNetwork->m_myid]->SkillPossible()) return true;
 
 	UNREFERENCED_PARAMETER(pKeyBuffer);
 	
@@ -178,39 +179,55 @@ bool CPlayerShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 	}
 	else if (GetAsyncKeyState('Q') & 0x0001)
 	{
-		CS_Msg_Demand_Use_Skill p;
-		p.Character_id = (BYTE)m_pNetwork->m_myid;
-		p.size = sizeof(p);
-		p.type = CS_DEMAND_USE_SKILL;
-		p.skilltype = AnimationsType::SkillQ;
-		m_pNetwork->SendPacket(&p);
+		if (m_ppObjects[m_pNetwork->m_myid]->GetPlayerStatus()->QSkillCoolTime >= 1.f)
+		{
+			CS_Msg_Demand_Use_Skill p;
+			p.Character_id = (BYTE)m_pNetwork->m_myid;
+			p.size = sizeof(p);
+			p.type = CS_DEMAND_USE_SKILL;
+			p.skilltype = AnimationsType::SkillQ;
+			m_pNetwork->SendPacket(&p);
+			m_ppObjects[m_pNetwork->m_myid]->OnSkill();
+		}
 	}
 	else if (GetAsyncKeyState('W') & 0x0001)
 	{
-		CS_Msg_Demand_Use_Skill p;
-		p.Character_id = (BYTE)m_pNetwork->m_myid;
-		p.size = sizeof(p);
-		p.type = CS_DEMAND_USE_SKILL;
-		p.skilltype = AnimationsType::SkillW;
-		m_pNetwork->SendPacket(&p);
+		if (m_ppObjects[m_pNetwork->m_myid]->GetPlayerStatus()->WSkillCoolTime >= 1.f)
+		{
+			CS_Msg_Demand_Use_Skill p;
+			p.Character_id = (BYTE)m_pNetwork->m_myid;
+			p.size = sizeof(p);
+			p.type = CS_DEMAND_USE_SKILL;
+			p.skilltype = AnimationsType::SkillW;
+			m_pNetwork->SendPacket(&p);
+			m_ppObjects[m_pNetwork->m_myid]->OnSkill();
+		}
 	}
 	else if (GetAsyncKeyState('E') & 0x0001)
 	{
-		CS_Msg_Demand_Use_Skill p;
-		p.Character_id = (BYTE)m_pNetwork->m_myid;
-		p.size = sizeof(p);
-		p.type = CS_DEMAND_USE_SKILL;
-		p.skilltype = AnimationsType::SkillE;
-		m_pNetwork->SendPacket(&p);
+		if (m_ppObjects[m_pNetwork->m_myid]->GetPlayerStatus()->ESkillCoolTime >= 1.f)
+		{
+			CS_Msg_Demand_Use_Skill p;
+			p.Character_id = (BYTE)m_pNetwork->m_myid;
+			p.size = sizeof(p);
+			p.type = CS_DEMAND_USE_SKILL;
+			p.skilltype = AnimationsType::SkillE;
+			m_pNetwork->SendPacket(&p);
+			m_ppObjects[m_pNetwork->m_myid]->OnSkill();
+		}
 	}
 	else if (GetAsyncKeyState('R') & 0x0001)
 	{
-		CS_Msg_Demand_Use_Skill p;
-		p.Character_id = (BYTE)m_pNetwork->m_myid;
-		p.size = sizeof(p);
-		p.type = CS_DEMAND_USE_SKILL;
-		p.skilltype = AnimationsType::SkillR;
-		m_pNetwork->SendPacket(&p);
+		if (m_ppObjects[m_pNetwork->m_myid]->GetPlayerStatus()->RSkillCoolTime >= 1.f)
+		{
+			CS_Msg_Demand_Use_Skill p;
+			p.Character_id = (BYTE)m_pNetwork->m_myid;
+			p.size = sizeof(p);
+			p.type = CS_DEMAND_USE_SKILL;
+			p.skilltype = AnimationsType::SkillR;
+			m_pNetwork->SendPacket(&p);
+			m_ppObjects[m_pNetwork->m_myid]->OnSkill();
+		}
 	}
 
 	return true;

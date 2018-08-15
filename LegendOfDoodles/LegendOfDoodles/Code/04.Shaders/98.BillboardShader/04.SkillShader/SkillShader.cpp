@@ -66,55 +66,58 @@ void CSkillShader::AnimateObjects(float timeElapsed)
 
 void CSkillShader::Render(CCamera * pCamera)
 {
-	for (int j = 0; j < m_nObjects; j++)
+	if (m_pPlayer->GetType() != ObjectType::StickPlayer) 
 	{
-		SkillUIType type = (SkillUIType)((CSkillObject*)m_ppObjects[j])->GetType();
-
-		int WeaponType = m_pPlayer->GetPlayerStatus()->Weapon;
-
-		int GrayIcon = WeaponType * 2;
-		int ColorIcon = GrayIcon + 1;
-
-		if (j == 0)
+		for (int j = 0; j < m_nObjects; j++)
 		{
-			CShader::Render(pCamera, GrayIcon);
-		}
-		else if (j == 4)
-		{
-			CShader::Render(pCamera, ColorIcon);
-		}
+			SkillUIType type = (SkillUIType)((CSkillObject*)m_ppObjects[j])->GetType();
 
-		switch (type)
-		{
-		case GrayQSkill:
-			m_ppMaterials[GrayIcon]->UpdateShaderVariable(0);
-			break;
-		case GrayWSkill:
-			m_ppMaterials[GrayIcon]->UpdateShaderVariable(1);
-			break;
-		case GrayESkill:
-			m_ppMaterials[GrayIcon]->UpdateShaderVariable(2);
-			break;
-		case GrayRSkill:
-			m_ppMaterials[GrayIcon]->UpdateShaderVariable(3);
-			break;
-		case QSkill:
-			m_ppMaterials[ColorIcon]->UpdateShaderVariable(0);
-			break;
-		case WSkill:
-			m_ppMaterials[ColorIcon]->UpdateShaderVariable(1);
-			break;
-		case ESkill:
-			m_ppMaterials[ColorIcon]->UpdateShaderVariable(2);
-			break;
-		case RSkill:
-			m_ppMaterials[ColorIcon]->UpdateShaderVariable(3);
-			break;
-		default:
-			break;
-		}
+			int WeaponType = m_pPlayer->GetPlayerStatus()->Weapon;
 
-		m_ppObjects[j]->Render(pCamera);
+			int GrayIcon = WeaponType * 2;
+			int ColorIcon = GrayIcon + 1;
+
+			if (j == 0)
+			{
+				CShader::Render(pCamera, GrayIcon);
+			}
+			else if (j == 4)
+			{
+				CShader::Render(pCamera, ColorIcon);
+			}
+
+			switch (type)
+			{
+			case GrayQSkill:
+				m_ppMaterials[GrayIcon]->UpdateShaderVariable(0);
+				break;
+			case GrayWSkill:
+				m_ppMaterials[GrayIcon]->UpdateShaderVariable(1);
+				break;
+			case GrayESkill:
+				m_ppMaterials[GrayIcon]->UpdateShaderVariable(2);
+				break;
+			case GrayRSkill:
+				m_ppMaterials[GrayIcon]->UpdateShaderVariable(3);
+				break;
+			case QSkill:
+				m_ppMaterials[ColorIcon]->UpdateShaderVariable(0);
+				break;
+			case WSkill:
+				m_ppMaterials[ColorIcon]->UpdateShaderVariable(1);
+				break;
+			case ESkill:
+				m_ppMaterials[ColorIcon]->UpdateShaderVariable(2);
+				break;
+			case RSkill:
+				m_ppMaterials[ColorIcon]->UpdateShaderVariable(3);
+				break;
+			default:
+				break;
+			}
+
+			m_ppObjects[j]->Render(pCamera);
+		}
 	}
 }
 

@@ -147,13 +147,15 @@ extern bool AcceptFinish;
 
 extern int g_MinionCounts;
 extern int g_ReuseMinion;
-extern float g_PacketCoolTime;
+extern int g_PacketCoolTime;
 
 extern bool g_Clientsync;
 
 extern float g_GameTime;
 
-extern CommonInfo* g_MinionStat;
+extern CommonInfo g_SwordMinionStat;
+extern CommonInfo g_StaffMinionStat;
+extern CommonInfo g_BowMinionStat;
 
 //////////////////////////////////////////////////////////////
 // 네크워크 함수

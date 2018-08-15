@@ -107,6 +107,10 @@ public: // 공개 함수
 
 	virtual void AttackEnemy() {};
 
+	virtual void OnSkill() { }
+	virtual void OffSkill() { }
+	virtual bool SkillPossible() { return false; }
+
 	void LevelUP(CCollisionObject* player);
 
 protected: // 내부 함수
