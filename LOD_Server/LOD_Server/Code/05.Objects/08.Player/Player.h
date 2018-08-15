@@ -24,6 +24,8 @@ public:	// 외부 함수
 	void SaveCurrentState();
 	void Respawn();
 
+	virtual void SetType(ObjectType newObjectType);
+
 	virtual PlayerInfo* GetPlayerStatus() { return &m_StatusInfo; }
 
 	//virtual void SetObjectType(ObjectType type) { m_StatusInfo.WeaponType = type; };

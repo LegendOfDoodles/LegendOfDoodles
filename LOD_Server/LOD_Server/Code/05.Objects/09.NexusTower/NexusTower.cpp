@@ -92,7 +92,7 @@ void CNexusTower::PlayIdle(float timeElapsed)
 			SetState(States::Attack);
 		}
 	}
-	if ((int)g_GameTime % 60000 == 0)
+	if (static_cast<int>(g_GameTime) % 60 == 0)
 	{
 		m_StatusInfo.Atk += 5;
 		m_StatusInfo.Def += 2;

@@ -57,7 +57,7 @@ public: // 공개 함수
 	int GetIndex() { return m_index; }
 
 	int GetType() { return m_ObjectType; };
-	void SetType(ObjectType newObjectType) { m_ObjectType = newObjectType; };
+	virtual void SetType(ObjectType newObjectType) { m_ObjectType = newObjectType; };
 
 	virtual TeamType GetTeam() { return m_TeamType; }
 	virtual void SetTeam(TeamType type) { m_TeamType = type; }

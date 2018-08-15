@@ -153,7 +153,7 @@ extern bool g_Clientsync;
 
 extern float g_GameTime;
 
-extern CommonInfo* g_MinionStat;
+extern CommonInfo* g_SwordMinionStat;
 
 //////////////////////////////////////////////////////////////
 // 네크워크 함수

@@ -41,9 +41,9 @@ float g_PacketCoolTime = 0;
 bool g_Clientsync = false;
 
 float g_GameTime{ 0.0f };
-CommonInfo* g_MinionStat{ NULL };
-
-
+CommonInfo* g_SwordMinionStat{ NULL };
+CommonInfo* g_StaffMinionStat{ NULL };
+CommonInfo* g_BowMinionStat{ NULL };
 
 void error_display(const char *msg, int err_no)
 {
@@ -415,45 +415,36 @@ void timer_thread()
 	{
 		Sleep(10);
 		g_PacketCoolTime += 10;
-		if ((int)g_GameTime % 60000 == 0)
+		if (static_cast<int>(g_GameTime) % 60 == 0)
 		{
+			g_BowMinionStat->maxHP += 15;
+			g_BowMinionStat->Atk += 2;
+			g_BowMinionStat->Def += 1;
+
+			g_SwordMinionStat->maxHP += 20;
+			g_SwordMinionStat->Atk += 1;
+			g_SwordMinionStat->Def += 2;
+
+			g_StaffMinionStat->maxHP += 10;
+			g_StaffMinionStat->Atk += 3;
+
 			for (auto iter = g_blueBowMinions->begin(); iter != g_blueBowMinions->end(); ++iter) {
-				g_MinionStat->maxHP += 15;
-				g_MinionStat->Atk += 2;
-				g_MinionStat->Def += 1;
-				(*iter)->SetCommonStatus(g_MinionStat);
+				(*iter)->SetCommonStatus(g_BowMinionStat);
 			}
 			for (auto iter = g_blueSwordMinions->begin(); iter != g_blueSwordMinions->end(); ++iter) {
-				g_MinionStat->maxHP += 20;
-				g_MinionStat->Atk += 1;
-				g_MinionStat->Def += 2;
-				(*iter)->SetCommonStatus(g_MinionStat);
+				(*iter)->SetCommonStatus(g_SwordMinionStat);
 			}
 			for (auto iter = g_blueStaffMinions->begin(); iter != g_blueStaffMinions->end(); ++iter) {
-				CommonInfo* minionStat{ (*iter)->GetCommonStatus() };
-				g_MinionStat->maxHP += 10;
-				g_MinionStat->Atk += 3;
-				(*iter)->SetCommonStatus(g_MinionStat);
+				(*iter)->SetCommonStatus(g_StaffMinionStat);
 			}
 			for (auto iter = g_redBowMinions->begin(); iter != g_redBowMinions->end(); ++iter) {
-				CommonInfo* minionStat{ (*iter)->GetCommonStatus() };
-				g_MinionStat->maxHP += 15;
-				g_MinionStat->Atk += 2;
-				g_MinionStat->Def += 1;
-				(*iter)->SetCommonStatus(g_MinionStat);
+				(*iter)->SetCommonStatus(g_BowMinionStat);
 			}
 			for (auto iter = g_redSwordMinions->begin(); iter != g_redSwordMinions->end(); ++iter) {
-				CommonInfo* minionStat{ (*iter)->GetCommonStatus() };
-				g_MinionStat->maxHP += 20;
-				g_MinionStat->Atk += 1;
-				g_MinionStat->Def += 2;
-				(*iter)->SetCommonStatus(g_MinionStat);
+				(*iter)->SetCommonStatus(g_SwordMinionStat);
 			}
 			for (auto iter = g_redStaffMinions->begin(); iter != g_redStaffMinions->end(); ++iter) {
-				CommonInfo* minionStat{ (*iter)->GetCommonStatus() };
-				g_MinionStat->maxHP += 10;
-				g_MinionStat->Atk += 3;
-				(*iter)->SetCommonStatus(g_MinionStat);
+				(*iter)->SetCommonStatus(g_StaffMinionStat);
 			}
 
 		}

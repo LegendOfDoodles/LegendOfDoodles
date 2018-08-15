@@ -203,6 +203,11 @@ struct PlayerInfo
 	float ESkillCoolTime{ 1.0f };
 	float RSkillCoolTime{ 1.0f };
 
+	float QSkillPower{ 1.0f };
+	float WSkillPower{ 1.0f };
+	float ESkillPower{ 1.0f };
+	float RSkillPower{ 1.0f };
+
 	//0. ¸ùµÕÀÌ	1. °Ë	2. ¸¶¹ý	3.	È°
 	UINT Weapon{ 0 };
 
