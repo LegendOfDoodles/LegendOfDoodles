@@ -34,7 +34,7 @@ void CSkillShader::UpdateShaderVariables(int opt)
 	for (int i = 0; i < m_nObjects; i++)
 	{
 		CB_GAUGE_INFO *pMappedObject = (CB_GAUGE_INFO *)(m_pMappedObjects + (i * elementBytes));
-		if (i >= 4 ) pMappedObject->m_fCurrentHP = static_cast<CSkillObject*>(m_ppObjects[i])->GetCoolTime();	// Color
+		if (i >= 4) pMappedObject->m_fCurrentHP = static_cast<CSkillObject*>(m_ppObjects[i])->GetCoolTime();	// Color
 		else		 pMappedObject->m_fCurrentHP = 1.0f;	// Grey
 		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
 			XMMatrixTranspose(XMLoadFloat4x4(m_ppObjects[i]->GetWorldMatrix())));
@@ -75,38 +75,39 @@ void CSkillShader::Render(CCamera * pCamera)
 		int GrayIcon = WeaponType * 2;
 		int ColorIcon = GrayIcon + 1;
 
+		if (j == 0)
+		{
+			CShader::Render(pCamera, GrayIcon);
+		}
+		else if (j == 4)
+		{
+			CShader::Render(pCamera, ColorIcon);
+		}
+
 		switch (type)
 		{
 		case GrayQSkill:
-			CShader::Render(pCamera, GrayIcon);
 			m_ppMaterials[GrayIcon]->UpdateShaderVariable(0);
 			break;
 		case GrayWSkill:
-			CShader::Render(pCamera, GrayIcon);
 			m_ppMaterials[GrayIcon]->UpdateShaderVariable(1);
 			break;
 		case GrayESkill:
-			CShader::Render(pCamera, GrayIcon);
 			m_ppMaterials[GrayIcon]->UpdateShaderVariable(2);
 			break;
 		case GrayRSkill:
-			CShader::Render(pCamera, GrayIcon);
 			m_ppMaterials[GrayIcon]->UpdateShaderVariable(3);
 			break;
 		case QSkill:
-			CShader::Render(pCamera, ColorIcon);
 			m_ppMaterials[ColorIcon]->UpdateShaderVariable(0);
 			break;
 		case WSkill:
-			CShader::Render(pCamera, ColorIcon);
 			m_ppMaterials[ColorIcon]->UpdateShaderVariable(1);
 			break;
 		case ESkill:
-			CShader::Render(pCamera, ColorIcon);
 			m_ppMaterials[ColorIcon]->UpdateShaderVariable(2);
 			break;
 		case RSkill:
-			CShader::Render(pCamera, ColorIcon);
 			m_ppMaterials[ColorIcon]->UpdateShaderVariable(3);
 			break;
 		default:
@@ -114,15 +115,6 @@ void CSkillShader::Render(CCamera * pCamera)
 		}
 
 		m_ppObjects[j]->Render(pCamera);
-	}
-}
-
-void CSkillShader::SetCamera(CCamera * pCamera)
-{
-	m_pCamera = pCamera;
-
-	for (int i = 0; i < m_nObjects; ++i) {
-		static_cast<CSkillObject*>(m_ppObjects[i])->SetCamera(m_pCamera);
 	}
 }
 
@@ -278,8 +270,8 @@ void CSkillShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pConte
 	CreateShaderVariables(pCreateMgr, ncbElementBytes, m_nObjects);
 	
 	for (int i = 0; i < m_nHeaps; ++i) {
-		CreateCbvAndSrvDescriptorHeaps(pCreateMgr, m_nObjects, 4, i);
-		CreateConstantBufferViews(pCreateMgr, m_nObjects, m_pConstBuffer.Get(), ncbElementBytes, 0, i);
+		CreateCbvAndSrvDescriptorHeaps(pCreateMgr, m_nObjects / 2, 4, i);
+		CreateConstantBufferViews(pCreateMgr, m_nObjects / 2, m_pConstBuffer.Get(), ncbElementBytes, (i % 2) * (m_nObjects / 2), i);
 	}
 	
 	UINT incrementSize{ pCreateMgr->GetCbvSrvDescriptorIncrementSize() };
@@ -310,14 +302,14 @@ void CSkillShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pConte
 		if (i < 4)
 		{
 			pUIObject->SetObject(m_pPlayer);
-			pUIObject->SetDistance(FRAME_BUFFER_WIDTH / 128.0128f);
+			pUIObject->SetDistance(FRAME_BUFFER_WIDTH / 128.0128f);	// distance 9.99f
 			pUIObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * i));
 		}
-		else 
+		else
 		{
 			pUIObject->SetObject(m_pPlayer);
-			pUIObject->SetDistance(FRAME_BUFFER_WIDTH / 128.6432f);	 // distance 10	
-			pUIObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[1].ptr + (incrementSize * i));
+			pUIObject->SetDistance(FRAME_BUFFER_WIDTH / 128.6432f);	 // distance 9.95f	
+			pUIObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[1].ptr + (incrementSize * (i - 4)));
 		}
 
 		m_ppObjects[i] = pUIObject;

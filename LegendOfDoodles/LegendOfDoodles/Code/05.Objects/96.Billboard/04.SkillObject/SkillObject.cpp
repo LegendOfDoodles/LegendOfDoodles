@@ -25,7 +25,7 @@ CSkillObject::CSkillObject(shared_ptr<CCreateMgr> pCreateMgr, SkillUIType type) 
 	case GrayWSkill:
 	case GrayESkill:
 	case GrayRSkill:
-		pRectMesh = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 711.1f, FRAME_BUFFER_HEIGHT / 400.f, 0.f);
+		pRectMesh = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 800.f, FRAME_BUFFER_HEIGHT / 450.f, 0.f);
 		SetMesh(0, pRectMesh);
 		break;
 	case QSkill:
