@@ -35,7 +35,7 @@ void CharacterFrameGaugeShader::UpdateShaderVariables(int opt)
 	{
 		CB_GAUGE_INFO *pMappedObject = (CB_GAUGE_INFO *)(m_pMappedObjects + (i * elementBytes));
 		
-		if (i == 0) pMappedObject->m_fCurrentHP = ((CUIFrameObject*)m_ppObjects[i])->GetCurrentHP();
+		if (i != 2) pMappedObject->m_fCurrentHP = ((CUIFrameObject*)m_ppObjects[i])->GetCurrentHP();
 		else pMappedObject->m_fCurrentHP = ((CUIFrameObject*)m_ppObjects[i])->GetCurrentExp();
 
 		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
@@ -53,12 +53,10 @@ void CharacterFrameGaugeShader::AnimateObjects(float timeElapsed)
 
 void CharacterFrameGaugeShader::Render(CCamera * pCamera)
 {	
-	CCollisionObject* master = ((CUIFrameObject*)m_ppObjects[m_pNetwork->m_myid])->GetMasterObject();
-
-	if (master->GetTeam() == TeamType::Blue)
+	if (m_pPlayer->GetTeam() == TeamType::Blue)
 	{
 		CShader::Render(pCamera, 0);
-		switch (master->GetType())
+		switch (m_pPlayer->GetType())
 		{
 		case ObjectType::StickPlayer:
 			m_ppMaterials[0]->UpdateShaderVariable(0);
@@ -73,12 +71,12 @@ void CharacterFrameGaugeShader::Render(CCamera * pCamera)
 			m_ppMaterials[0]->UpdateShaderVariable(2);
 			break;
 		}
-		if (m_ppObjects[m_pNetwork->m_myid]) m_ppObjects[m_pNetwork->m_myid]->Render(pCamera);
+		if (m_ppObjects[0]) m_ppObjects[0]->Render(pCamera);
 	}
-	else if (master->GetTeam() == TeamType::Red)
+	else if (m_pPlayer->GetTeam() == TeamType::Red)
 	{
 		CShader::Render(pCamera, 1);
-		switch (master->GetType())
+		switch (m_pPlayer->GetType())
 		{
 		case ObjectType::StickPlayer:
 			m_ppMaterials[1]->UpdateShaderVariable(0);
@@ -95,6 +93,7 @@ void CharacterFrameGaugeShader::Render(CCamera * pCamera)
 		}
 		if (m_ppObjects[1]) m_ppObjects[1]->Render(pCamera);
 	}
+
 	
 	CShader::Render(pCamera, 2);
 	m_ppMaterials[2]->UpdateShaderVariable(0);

@@ -343,9 +343,12 @@ void CRoider::GenerateSubPathToSpawnLocation(shared_ptr<CWayFinder> pWayFinder)
 	m_subPath = pWayFinder->GetPathToPosition(
 		GetPosition(),
 		m_spawnLocation);
-	m_subDestination = m_subPath->front().To();
-	m_subPath->pop_front();
-	LookAt(m_subDestination);
+	if (m_subPath)
+	{
+		m_subDestination = m_subPath->front().To();
+		m_subPath->pop_front();
+		LookAt(m_subDestination);
+	}
 }
 
 bool CRoider::FarFromSpawnLocation()
