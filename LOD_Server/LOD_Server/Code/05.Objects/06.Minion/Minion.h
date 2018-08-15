@@ -19,7 +19,7 @@ public:	// 외부 함수
 	virtual void PlayChase(float timeElapsed, shared_ptr<CWayFinder> pWayFinder);
 	virtual void PlayAttack(float timeElapsed, shared_ptr<CWayFinder> pWayFinder);
 
-	virtual void ReceiveDamage(float damage);
+	virtual void ReceiveDamage(float damage, CCollisionObject * pCol);
 
 	virtual CommonInfo* GetCommonStatus() { return &m_StatusInfo; };
 	virtual void SetCommonStatus(CommonInfo* status);

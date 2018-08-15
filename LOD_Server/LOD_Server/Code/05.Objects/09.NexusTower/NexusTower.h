@@ -20,7 +20,7 @@ public:	// 외부 함수
 
 	virtual void SetMaster(CCollisionObject* masterObject);
 
-	virtual void ReceiveDamage(float damage);
+	virtual void ReceiveDamage(float damage, CCollisionObject * pCol);
 
 	virtual StaticInfo* GetNexusAndTowerStatus() { return &m_StatusInfo; }
 

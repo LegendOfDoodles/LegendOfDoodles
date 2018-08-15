@@ -28,7 +28,7 @@ public:	// 외부 함수
 		m_redNexusLoc = redPos;
 	}
 
-	virtual void ReceiveDamage(float damage);
+	virtual void ReceiveDamage(float damage, CCollisionObject * pCol);
 
 	virtual void NotifyDamager(CCollisionObject* other) { m_pDamager = other; }
 	virtual void NotifyDamageTeam(TeamType type) { m_lastDamageTeam = type; }

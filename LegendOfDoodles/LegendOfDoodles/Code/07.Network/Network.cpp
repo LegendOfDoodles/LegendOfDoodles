@@ -7,6 +7,7 @@
 #include "05.Objects\09.NexusTower\NexusTower.h"
 #include "03.Scenes/00.BaseScene/Scene.h"
 #include "04.Shaders/04.AniShader/MinionShader.h"
+#include "00.Global/01.Utility/08.EffectManager/EffectManager.h"
 
 CNetwork::CNetwork()
 {
@@ -244,6 +245,21 @@ void CNetwork::ProcessPacket(char *ptr)
 			SC_Msg_Hp_Sync* my_packet = reinterpret_cast<SC_Msg_Hp_Sync*>(ptr);
 			CCollisionObject* Target{ m_pColManager->RequestObjectByTag(my_packet->Target_Tag) };
 			
+			if ((ObjectType)my_packet->Object_Type == ObjectType::FlyingObject)
+			{
+				if ((FlyingObjectType)my_packet->Flying_Type == FlyingObjectType::BlueTower_Attack
+					|| (FlyingObjectType)my_packet->Flying_Type == FlyingObjectType::RedTower_Attack
+					|| (FlyingObjectType)my_packet->Flying_Type == FlyingObjectType::Player_ArrowSkill_Q
+					|| (FlyingObjectType)my_packet->Flying_Type == FlyingObjectType::Player_Magic)
+				{
+					m_pEffectMgr->RequestSpawn(Target->GetPosition(), Target->GetLook(), 10, EffectObjectType::Player_ArrowAndFireBall_HitPosition_Effect);
+				}
+			}
+			else
+			{
+				m_pEffectMgr->RequestSpawn(Target->GetPosition(), Target->GetLook(), 10, EffectObjectType::NormallHit_Effect);
+			}
+
 			if (Target && Target->GetUpdateTime() <= my_packet->updatetime)
 			{
 				Target->SetUpdateTime(my_packet->updatetime);

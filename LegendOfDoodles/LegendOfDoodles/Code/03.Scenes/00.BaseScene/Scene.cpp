@@ -458,6 +458,8 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	m_pFSMMgr = shared_ptr<CFSMMgr>(new CFSMMgr(m_pWayFinder));
 	((CMinimapShader*)Minimap_Shader)->SetWayFinder(m_pWayFinder);
 	
+	m_pNetwork->SetEffectManager(m_pEffectMgr);
+
 	m_pCollisionManager->SetEffectManager(m_pEffectMgr);
 
 	m_pSoundManager = shared_ptr<CSoundManager>(new CSoundManager(m_pCamera));	// Fmod System Init

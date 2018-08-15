@@ -7,6 +7,7 @@ class CMinionShader;
 class CPlayer;
 class CWayFinder;
 class CCollisionManager;
+class CEffectMgr;
 
 #pragma once
 
@@ -40,6 +41,7 @@ protected:
 
 	shared_ptr<CWayFinder> m_pWayFinder;
 	shared_ptr<CCollisionManager> m_pColManager;
+	shared_ptr<CEffectMgr> m_pEffectMgr;
 	shared_ptr<CScene> m_pScene;
 
 	CAnimatedObject ** m_ppPlayer{ NULL };
@@ -67,6 +69,7 @@ public:
 	void PrepareData();
 
 	void SetCollisionManager(shared_ptr<CCollisionManager> pColmanager) { m_pColManager = pColmanager; }
+	void SetEffectManager(shared_ptr<CEffectMgr> pManager) { m_pEffectMgr = pManager; }
 	void SetWayfinder(shared_ptr<CWayFinder> pWayFinder) { m_pWayFinder = pWayFinder; }
 	void SetPlayers(CCollisionObject** player) { m_ppPlayer = (CAnimatedObject**)player; }
 	void SetNexusTowers(CBaseObject** nexus) { m_ppNexusTower = nexus; }

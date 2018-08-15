@@ -309,7 +309,7 @@ void CGolem::SaveCurrentState()
 	m_spawnLocation = GetPosition();
 }
 
-void CGolem::ReceiveDamage(float damage)
+void CGolem::ReceiveDamage(float damage, CCollisionObject * pCol)
 {
 	// 이미 사망한 상태인 경우 데미지 처리를 하지 않는다.
 	if (m_curState == States::Die || m_curState == States::Remove) { return; }
@@ -356,6 +356,8 @@ void CGolem::ReceiveDamage(float damage)
 		hpPacket.size = sizeof(hpPacket);
 		hpPacket.type = SC_HP_SYNC;
 		hpPacket.Target_Tag = (short)m_tag;
+		hpPacket.Object_Type = (short)pCol->GetType();
+		hpPacket.Flying_Type = (short)pCol->GetFlyingObjectsType();
 		hpPacket.updatetime = g_GameTime;
 		for (int j = 0; j < MAX_USER; ++j) {
 			if (g_clients[j].m_isconnected == true) {

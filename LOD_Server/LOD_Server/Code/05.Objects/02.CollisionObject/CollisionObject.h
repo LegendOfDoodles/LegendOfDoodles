@@ -28,7 +28,7 @@ public: // 공개 함수
 	virtual void SetCollisionSize(float size) { m_fCollisionSize = size; }
 	virtual float GetCollisionSize() const { return m_fCollisionSize; }
 	virtual XMFLOAT2 GetCollisionLevel() { return m_xmf2CollisionLevel; }
-	virtual void ReceiveDamage(float Damage) { Damage; }
+	virtual void ReceiveDamage(float Damage, CCollisionObject * pCol) { Damage; pCol; }
 	virtual void NotifyDamager(CCollisionObject* other) { other; }
 	virtual void NotifyDamageTeam(TeamType type) { type; }
 
