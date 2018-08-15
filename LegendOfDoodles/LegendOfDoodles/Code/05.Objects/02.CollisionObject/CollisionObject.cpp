@@ -41,3 +41,39 @@ bool CCollisionObject::AttackableFarRange(CCollisionObject * other)
 	float dstSqr = Vector3::DistanceSquare(GetPosition(), other->GetPosition());
 	return (dstSqr < m_farAttackRange * m_farAttackRange);
 }
+
+void CCollisionObject::LevelUP(CCollisionObject* player)
+{
+	PlayerInfo* PlayerStatus{ player->GetPlayerStatus() };
+	PlayerStatus->Level++;
+	if (PlayerStatus->Level == 7 || PlayerStatus->Level == 12 || PlayerStatus->Level == 17 || PlayerStatus->Level == 21) {
+		PlayerStatus->SpecialPoint += 1;
+	}
+	if (PlayerStatus->Weapon == 1)
+	{
+		PlayerStatus->maxHP += 84;
+		PlayerStatus->maxMP += 30;
+		PlayerStatus->HP = PlayerStatus->maxHP;
+		PlayerStatus->MP = PlayerStatus->maxMP;
+		PlayerStatus->Atk += 4.5;
+		PlayerStatus->Def += 3;
+	}
+	else if (PlayerStatus->Weapon == 2)
+	{
+		PlayerStatus->maxHP += 90;
+		PlayerStatus->maxMP += 60;
+		PlayerStatus->HP = PlayerStatus->maxHP;
+		PlayerStatus->MP = PlayerStatus->maxMP;
+		PlayerStatus->Atk += 2.9;
+		PlayerStatus->Def += 3.4;
+	}
+	else if (PlayerStatus->Weapon == 3)
+	{
+		PlayerStatus->maxHP += 82;
+		PlayerStatus->maxMP += 50;
+		PlayerStatus->HP = PlayerStatus->maxHP;
+		PlayerStatus->MP = PlayerStatus->maxMP;
+		PlayerStatus->Atk += 2.41;
+		PlayerStatus->Def += 3.25;
+	}
+}

@@ -111,6 +111,12 @@ void CNetwork::ProcessPacket(char *ptr)
 			}
 			break;
 		}
+		case SC_CHANGE_WEAPON:
+		{
+			SC_Msg_BroadCast_Change_Weapon *my_packet = reinterpret_cast<SC_Msg_BroadCast_Change_Weapon *>(ptr);
+			m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->Weapon = my_packet->WeaponNum;
+			break;
+		}
 		case SC_PERMIT_USE_SKILL:
 		{
 			SC_Msg_Permit_Use_Skill *my_packet = reinterpret_cast<SC_Msg_Permit_Use_Skill *>(ptr);
@@ -264,6 +270,24 @@ void CNetwork::ProcessPacket(char *ptr)
 			Building->AttackEnemy();
 			break;
 		}
+		case SC_EXP_UP:
+		{
+			SC_Msg_Exp_Up* my_packet = reinterpret_cast<SC_Msg_Exp_Up*>(ptr);
+			CCollisionObject* Player{ m_pColManager->RequestObjectByTag(my_packet->Target_Tag) };
+			PlayerInfo* status{ Player->GetPlayerStatus() };
+			status->Exp += my_packet->exp;
+			break;
+		}
+		case SC_LEVEL_UP:
+		{
+			SC_Msg_Level_Up* my_packet = reinterpret_cast<SC_Msg_Level_Up*>(ptr);
+			CCollisionObject* Player{ m_pColManager->RequestObjectByTag(my_packet->Target_Tag) };
+			PlayerInfo* status{ Player->GetPlayerStatus() };
+			status->Exp -= status->Level * 110 + 170;
+			Player->LevelUP(Player);
+			break;
+		}
+
 		default:
 			printf("Unknown PACKET type [%d]\n", ptr[1]);
 			break;

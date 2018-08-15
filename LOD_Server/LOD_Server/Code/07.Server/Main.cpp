@@ -138,6 +138,7 @@ void ProcessPacket(int id, char *packet)
 	//클라로부터 오는 패킷 종류들
 	CS_MsgChMove* MovePacket = reinterpret_cast<CS_MsgChMove*>(packet);
 	CS_Msg_Demand_Use_Skill* CSkillPacket = reinterpret_cast<CS_Msg_Demand_Use_Skill*>(packet);
+	CS_Msg_Change_Weapon* WeaponPacket = reinterpret_cast<CS_Msg_Change_Weapon*>(packet);
 	//서버에서 클라로 보내줘야할 패킷들
 	switch (MovePacket->type)
 	{
@@ -159,6 +160,24 @@ void ProcessPacket(int id, char *packet)
 				p.location = g_clients[MovePacket->Character_id].m_targetlocation;
 				p.size = sizeof(p);
 				p.type = SC_CHANGE_TARGET;
+				SendPacket(i, &p);
+			}
+		}
+		break;
+	}
+	case CS_CHANGE_WEAPON:
+	{
+		g_ppPlayer[WeaponPacket->Character_id]->GetPlayerStatus()->Weapon = WeaponPacket->WeaponNum;
+		
+		for (int i = 0; i < MAX_USER; ++i)
+		{
+			if (g_clients[i].m_isconnected) {
+				if (i == WeaponPacket->Character_id) continue;
+				SC_Msg_BroadCast_Change_Weapon p;
+				p.Character_id = WeaponPacket->Character_id;
+				p.WeaponNum = WeaponPacket->WeaponNum;
+				p.size = sizeof(p);
+				p.type = SC_CHANGE_WEAPON;
 				SendPacket(i, &p);
 			}
 		}

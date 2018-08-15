@@ -50,6 +50,17 @@ struct CS_MsgChMove :public Packet
 	float x;
 	float y;
 };
+struct CS_Msg_Change_Weapon : public Packet
+{
+	BYTE Character_id;
+	BYTE WeaponNum;
+};
+
+struct SC_Msg_BroadCast_Change_Weapon :public Packet
+{
+	BYTE Character_id;
+	BYTE WeaponNum;
+};
 struct SC_Msg_Remove_Character : public Packet
 {
 	BYTE Character_id;
@@ -166,6 +177,19 @@ struct SC_Msg_Building_Attack_Enemy : public Packet
 	short Building_Tag;
 };
 
+struct SC_Msg_Exp_Up : public Packet
+{
+	short exp;
+	short Target_Tag;
+};
+
+struct SC_Msg_Level_Up : public Packet
+{
+	short level;
+	short Target_Tag;
+};
+
+
 #pragma pack(pop)
 
 #define MAX_BUFF_SIZE 4000
@@ -206,11 +230,15 @@ struct SC_Msg_Building_Attack_Enemy : public Packet
 #define SC_BUILDING_SET_ENEMY	  120
 #define SC_GAME_OVER			  121
 #define SC_BUILDING_ATTACK		  122
+#define SC_EXP_UP				  123
+#define SC_LEVEL_UP				  124
+#define SC_CHANGE_WEAPON		  125
 
 //Client->Server
 #define CS_ACTION				  201
 #define CS_MOVE_PLAYER			  202
 #define CS_DEMAND_USE_SKILL		  203
+#define CS_CHANGE_WEAPON		  204
 
 
 

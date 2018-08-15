@@ -73,6 +73,8 @@ public: // 공개 함수
 	void MakeMortal() { m_bImmortal = false; }
 	void MakeImmortal() { m_bImmortal = true; }
 
+	void LevelUP(CCollisionObject* player);
+
 protected: // 내부 함수
 
 protected: // 변수

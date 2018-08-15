@@ -95,6 +95,8 @@ public: // 공개 함수
 
 	virtual void AttackEnemy() {};
 
+	void LevelUP(CCollisionObject* player);
+
 protected: // 내부 함수
 
 protected: // 변수

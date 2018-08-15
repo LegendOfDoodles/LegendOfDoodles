@@ -48,6 +48,7 @@ void CFlyingShader::AnimateObjects(float timeElapsed)
 	m_magicList.remove_if(removeFunc);
 }
 
+
 void CFlyingShader::SpawnFlyingObject(const XMFLOAT3& position, const XMFLOAT3& direction, TeamType teamType, FlyingObjectType objectType)
 {
 	int idx{ GetPossibleIndex(objectType) };
