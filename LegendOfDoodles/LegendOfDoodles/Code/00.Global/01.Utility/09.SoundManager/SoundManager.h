@@ -10,16 +10,19 @@ using namespace FMOD;
 enum class SOUND {
 	Back_Ground,
 
+	Player_Sword_Attack_Sound,
 	Player_Sword_Q_Sound,
 	Player_Sword_W_Sound,
 	Player_Sword_E_Sound,
 	Player_Sword_R_Sound,
 
+	Player_Staff_Attack_Sound,
 	Player_Staff_Q_Sound,
 	Player_Staff_W_Sound,
 	Player_Staff_E_Sound,
 	Player_Staff_R_Sound,
 
+	Player_Arrow_Attack_Sound,
 	Player_Arrow_Q_Sound,
 	Player_Arrow_W_Sound,
 	Player_Arrow_E_Sound,

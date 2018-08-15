@@ -45,6 +45,12 @@ CSoundManager::~CSoundManager()
 void CSoundManager::loading()
 {
 	// 3D Sounds
+	// Sword A Attack
+	m_Result = m_pFmod->createSound("./Resource/Sound/Player/Sword/Sword_Attack.mp3", FMOD_3D | FMOD_3D_LINEARSQUAREROLLOFF, NULL, &m_Sound[SOUND::Player_Sword_Attack_Sound]);
+	m_Result = m_Sound[SOUND::Player_Sword_Attack_Sound]->set3DMinMaxDistance(SOUND_MIN_DISTANCE, SOUND_MAX_DISTANCE);
+	m_Result = m_Sound[SOUND::Player_Sword_Attack_Sound]->setMode(FMOD_DEFAULT);
+	ErrorCheck(m_Result);
+
 	// Sword Q
 	m_Result = m_pFmod->createSound("./Resource/Sound/Player/Sword/Sword_Q.mp3", FMOD_3D | FMOD_3D_LINEARSQUAREROLLOFF, NULL, &m_Sound[SOUND::Player_Sword_Q_Sound]);
 	m_Result = m_Sound[SOUND::Player_Sword_Q_Sound]->set3DMinMaxDistance(SOUND_MIN_DISTANCE, SOUND_MAX_DISTANCE);
@@ -66,6 +72,12 @@ void CSoundManager::loading()
 	m_Result = m_pFmod->createSound("./Resource/Sound/Player/Sword/Sword_R.mp3", FMOD_3D | FMOD_3D_LINEARSQUAREROLLOFF, NULL, &m_Sound[SOUND::Player_Sword_R_Sound]);
 	m_Result = m_Sound[SOUND::Player_Sword_R_Sound]->set3DMinMaxDistance(SOUND_MIN_DISTANCE, SOUND_MAX_DISTANCE);
 	m_Result = m_Sound[SOUND::Player_Sword_R_Sound]->setMode(FMOD_DEFAULT);
+	ErrorCheck(m_Result);
+
+	// Staff A Attack
+	m_Result = m_pFmod->createSound("./Resource/Sound/Player/Staff/Staff_Attack.mp3", FMOD_3D | FMOD_3D_LINEARSQUAREROLLOFF, NULL, &m_Sound[SOUND::Player_Staff_Attack_Sound]);
+	m_Result = m_Sound[SOUND::Player_Staff_Attack_Sound]->set3DMinMaxDistance(SOUND_MIN_DISTANCE, SOUND_MAX_DISTANCE);
+	m_Result = m_Sound[SOUND::Player_Staff_Attack_Sound]->setMode(FMOD_DEFAULT);
 	ErrorCheck(m_Result);
 
 	// Staff Q
@@ -90,6 +102,12 @@ void CSoundManager::loading()
 	m_Result = m_pFmod->createSound("./Resource/Sound/Player/Staff/Staff_R.wav", FMOD_3D | FMOD_3D_LINEARSQUAREROLLOFF, NULL, &m_Sound[SOUND::Player_Staff_R_Sound]);
 	m_Result = m_Sound[SOUND::Player_Staff_R_Sound]->set3DMinMaxDistance(SOUND_MIN_DISTANCE, SOUND_MAX_DISTANCE);
 	m_Result = m_Sound[SOUND::Player_Staff_R_Sound]->setMode(FMOD_DEFAULT);
+	ErrorCheck(m_Result);
+
+	// Bow A Attack
+	m_Result = m_pFmod->createSound("./Resource/Sound/Player/Bow/Bow_Attack.mp3", FMOD_3D | FMOD_3D_LINEARSQUAREROLLOFF, NULL, &m_Sound[SOUND::Player_Arrow_Attack_Sound]);
+	m_Result = m_Sound[SOUND::Player_Arrow_Attack_Sound]->set3DMinMaxDistance(SOUND_MIN_DISTANCE, SOUND_MAX_DISTANCE);
+	m_Result = m_Sound[SOUND::Player_Arrow_Attack_Sound]->setMode(FMOD_DEFAULT);
 	ErrorCheck(m_Result);
 
 	// Bow Q
