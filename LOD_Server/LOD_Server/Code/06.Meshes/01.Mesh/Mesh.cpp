@@ -163,14 +163,27 @@ bool CCollisionMapImage::GetCollision(float fx, float fz)
 	//높이 맵의 좌표의 정수 부분과 소수 부분을 계산한다.
 	int x = (int)fx;
 	int z = (int)fz;
+	float fxPercent = fx - x;
+	float fzPercent = fz - z;
 
-	float fBottomLeft = (float)m_pCollisionMapPixels[x + (z*m_nWidth)];
-	float fBottomRight = (float)m_pCollisionMapPixels[(x + 1) + (z*m_nWidth)];
-	float fTopLeft = (float)m_pCollisionMapPixels[x + ((z + 1)*m_nWidth)];
-	float fTopRight = (float)m_pCollisionMapPixels[(x + 1) + ((z + 1)*m_nWidth)];
+	if (m_pCollisionMapPixels[(x - 1) + ((z + 1) * m_nWidth)] > 250) return true;
 
-	//사각형의 네 점 중 두개 이상이 충돌 지역인 경우 충돌하는 것으로 가정한다.
-	float sumValue = fBottomLeft + fBottomRight + fTopLeft + fTopRight;
+	float sum{};
+	for (int i = -1; i < 1; ++i)
+	{
+		for (int j = -1; j < 1; ++j)
+		{
+			float fBottomLeft{ (float)m_pCollisionMapPixels[(x + i) + ((z + j) * m_nWidth)] };
+			float fBottomRight{ (float)m_pCollisionMapPixels[(x + i + 1) + ((z + j) * m_nWidth)] };
+			float fTopLeft{ (float)m_pCollisionMapPixels[(x + i) + ((z + j + 1) * m_nWidth)] };
+			float fTopRight{ (float)m_pCollisionMapPixels[(x + i + 1) + ((z + j + 1) * m_nWidth)] };
 
-	return(sumValue >= 510);
+			float xUpCenter{ fTopLeft * fxPercent + fTopRight * (1 - fxPercent) };
+			float xDownCenter{ fBottomLeft * fxPercent + fBottomRight * (1 - fxPercent) };
+
+			sum += xUpCenter * fzPercent + xDownCenter * (1 - fzPercent);
+		}
+	}
+
+	return sum > 1000.0f;
 }
