@@ -4,6 +4,7 @@
 #include "05.Objects/99.Material/Material.h"
 #include "05.Objects/96.Billboard/01.FrameObject/UIFrameObject.h"
 #include "05.Objects/08.Player/Player.h"
+#include "07.Network/Network.h"
 
 /// <summary>
 /// 목적: 선택된 특성
@@ -157,14 +158,19 @@ bool CSpecialSelectShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 				// 빈곳 찾아서 넣기
 				for (int i = 0; i < 4; ++i) {
 					if (m_pPlayer->GetPlayerStatus()->Special[i] == (SpecialType::NoSelected)) {
-						m_pPlayer->GetPlayerStatus()->Special[i] = (SpecialType::AttackSpecial);
+						//m_pPlayer->GetPlayerStatus()->Special[i] = (SpecialType::AttackSpecial);
+						CS_Msg_Set_Speacial_Point p;
+						p.Ability_Type = (BYTE)SpecialType::AttackSpecial;
+						p.Character_id = m_pNetwork->m_myid;
+						p.size = sizeof(p);
+						p.type = CS_SET_ABILITY_POINT;
+						m_pNetwork->SendPacket(&p);
 
 						break;
 					};
 				}
 
 				// 특성 포인트 사용
-				m_pPlayer->GetPlayerStatus()->SpecialPoint = m_pPlayer->GetPlayerStatus()->SpecialPoint - 1;
 
 				// 특성창 닫기
 				ShowWindow[1] = false;
@@ -180,13 +186,17 @@ bool CSpecialSelectShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 				// 빈곳 찾아서 넣기
 				for (int i = 0; i < 4; ++i) {
 					if (m_pPlayer->GetPlayerStatus()->Special[i] == (SpecialType::NoSelected)) {
-						m_pPlayer->GetPlayerStatus()->Special[i] = (SpecialType::DefenceSpecial);
+						CS_Msg_Set_Speacial_Point p;
+						p.Ability_Type = (BYTE)SpecialType::DefenceSpecial;
+						p.Character_id = m_pNetwork->m_myid;
+						p.size = sizeof(p);
+						p.type = CS_SET_ABILITY_POINT;
+						m_pNetwork->SendPacket(&p);
 						break;
 					};
 				}
 
 				// 특성 포인트 사용
-				m_pPlayer->GetPlayerStatus()->SpecialPoint = m_pPlayer->GetPlayerStatus()->SpecialPoint - 1;
 
 				// 특성창 닫기
 				ShowWindow[1] = false;
@@ -202,13 +212,18 @@ bool CSpecialSelectShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 				// 빈곳 찾아서 넣기
 				for (int i = 0; i < 4; ++i) {
 					if (m_pPlayer->GetPlayerStatus()->Special[i] == (SpecialType::NoSelected)) {
-						m_pPlayer->GetPlayerStatus()->Special[i] = (SpecialType::TechnicSpecial);
+						CS_Msg_Set_Speacial_Point p;
+						p.Ability_Type = (BYTE)SpecialType::TechnicSpecial;
+						p.Character_id = m_pNetwork->m_myid;
+						p.size = sizeof(p);
+						p.type = CS_SET_ABILITY_POINT;
+						m_pNetwork->SendPacket(&p);
 						break;
 					};
 				}
 
 				// 특성 포인트 사용
-				m_pPlayer->GetPlayerStatus()->SpecialPoint = m_pPlayer->GetPlayerStatus()->SpecialPoint - 1;
+				
 
 				// 특성창 닫기
 				ShowWindow[1] = false;

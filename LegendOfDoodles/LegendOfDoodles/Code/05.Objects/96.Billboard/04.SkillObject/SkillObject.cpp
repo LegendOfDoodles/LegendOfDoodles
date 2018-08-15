@@ -128,5 +128,22 @@ void CSkillObject::Render(CCamera * pCamera, UINT istanceCnt)
 
 float CSkillObject::GetCoolTime()
 {
+	switch (m_type)
+	{
+	case QSkill:
+		return m_pMasterObject->GetPlayerStatus()->QSkillCoolTime;
+		break;
+	case WSkill:
+		return m_pMasterObject->GetPlayerStatus()->WSkillCoolTime;
+		break;
+	case ESkill:
+		return m_pMasterObject->GetPlayerStatus()->ESkillCoolTime;
+		break;
+	case RSkill:
+		return m_pMasterObject->GetPlayerStatus()->RSkillCoolTime;
+		break;
+	default:
+		break;
+	}
 	return 0.0f;
 }

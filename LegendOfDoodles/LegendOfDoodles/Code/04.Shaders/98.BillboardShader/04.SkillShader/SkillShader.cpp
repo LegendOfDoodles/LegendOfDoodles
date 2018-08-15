@@ -4,6 +4,7 @@
 #include "02.Framework/01.CreateMgr/CreateMgr.h"
 #include "05.Objects/99.Material/Material.h"
 #include "05.Objects/08.Player/Player.h"
+#include "07.Network/Network.h"
 
 /// <summary>
 /// 格利: Skill UI Icon Shader (撇父 积己)
@@ -33,7 +34,7 @@ void CSkillShader::UpdateShaderVariables(int opt)
 	for (int i = 0; i < m_nObjects; i++)
 	{
 		CB_GAUGE_INFO *pMappedObject = (CB_GAUGE_INFO *)(m_pMappedObjects + (i * elementBytes));
-		if (i >= 4 ) pMappedObject->m_fCurrentHP = 1.0f;	// Color
+		if (i >= 4 ) pMappedObject->m_fCurrentHP = static_cast<CSkillObject*>(m_ppObjects[i])->GetCoolTime();	// Color
 		else		 pMappedObject->m_fCurrentHP = 1.0f;	// Grey
 		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
 			XMMatrixTranspose(XMLoadFloat4x4(m_ppObjects[i]->GetWorldMatrix())));
@@ -144,19 +145,39 @@ bool CSkillShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 		if (cursorPos.y > SKILL_MINIMUM_Y && cursorPos.y < SKILL_MAXIMUM_Y) {
 		
 			if ((cursorPos.x > QSKILL_MINIMUM_X  && cursorPos.x < QSKILL_MAXIMUM_X)) {
-				m_pPlayer->ActiveSkill(AnimationsType::SkillQ);
+				CS_Msg_Demand_Use_Skill p;
+				p.Character_id = (BYTE)m_pNetwork->m_myid;
+				p.size = sizeof(p);
+				p.type = CS_DEMAND_USE_SKILL;
+				p.skilltype = AnimationsType::SkillQ;
+				m_pNetwork->SendPacket(&p);
 				return false;
 			}
 			if ((cursorPos.x > WSKILL_MINIMUM_X  && cursorPos.x < WSKILL_MAXIMUM_X)) {
-				m_pPlayer->ActiveSkill(AnimationsType::SkillW);
+				CS_Msg_Demand_Use_Skill p;
+				p.Character_id = (BYTE)m_pNetwork->m_myid;
+				p.size = sizeof(p);
+				p.type = CS_DEMAND_USE_SKILL;
+				p.skilltype = AnimationsType::SkillW;
+				m_pNetwork->SendPacket(&p);
 				return false;
 			}
 			if ((cursorPos.x > ESKILL_MINIMUM_X  && cursorPos.x < ESKILL_MAXIMUM_X)) {
-				m_pPlayer->ActiveSkill(AnimationsType::SkillE);
+				CS_Msg_Demand_Use_Skill p;
+				p.Character_id = (BYTE)m_pNetwork->m_myid;
+				p.size = sizeof(p);
+				p.type = CS_DEMAND_USE_SKILL;
+				p.skilltype = AnimationsType::SkillE;
+				m_pNetwork->SendPacket(&p);
 				return false;
 			}
 			if ((cursorPos.x > RSKILL_MINIMUM_X  && cursorPos.x < RSKILL_MAXIMUM_X)) {
-				m_pPlayer->ActiveSkill(AnimationsType::SkillR);
+				CS_Msg_Demand_Use_Skill p;
+				p.Character_id = (BYTE)m_pNetwork->m_myid;
+				p.size = sizeof(p);
+				p.type = CS_DEMAND_USE_SKILL;
+				p.skilltype = AnimationsType::SkillR;
+				m_pNetwork->SendPacket(&p);
 				return false;
 			}
 		}
@@ -288,11 +309,13 @@ void CSkillShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pConte
 		pUIObject->SetCamera(m_pCamera);
 		if (i < 4)
 		{
+			pUIObject->SetObject(m_pPlayer);
 			pUIObject->SetDistance(FRAME_BUFFER_WIDTH / 128.0128f);
 			pUIObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * i));
 		}
 		else 
 		{
+			pUIObject->SetObject(m_pPlayer);
 			pUIObject->SetDistance(FRAME_BUFFER_WIDTH / 128.6432f);	 // distance 10	
 			pUIObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[1].ptr + (incrementSize * i));
 		}

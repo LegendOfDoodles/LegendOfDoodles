@@ -5,6 +5,7 @@ class CBillboardObject;
 class CMaterial;
 class CPlayer;
 
+
 class CSpecialSelectShader : public CBillboardShader
 {
 public: // 持失切, 社瑚切

@@ -140,6 +140,7 @@ void ProcessPacket(int id, char *packet)
 	CS_MsgChMove* MovePacket = reinterpret_cast<CS_MsgChMove*>(packet);
 	CS_Msg_Demand_Use_Skill* CSkillPacket = reinterpret_cast<CS_Msg_Demand_Use_Skill*>(packet);
 	CS_Msg_Change_Weapon* WeaponPacket = reinterpret_cast<CS_Msg_Change_Weapon*>(packet);
+	CS_Msg_Set_Speacial_Point* SpeacialPacket = reinterpret_cast<CS_Msg_Set_Speacial_Point*>(packet);
 	//서버에서 클라로 보내줘야할 패킷들
 	switch (MovePacket->type)
 	{
@@ -173,7 +174,6 @@ void ProcessPacket(int id, char *packet)
 		for (int i = 0; i < MAX_USER; ++i)
 		{
 			if (g_clients[i].m_isconnected) {
-				if (i == WeaponPacket->Character_id) continue;
 				SC_Msg_BroadCast_Change_Weapon p;
 				p.Character_id = WeaponPacket->Character_id;
 				p.WeaponNum = WeaponPacket->WeaponNum;
@@ -182,6 +182,31 @@ void ProcessPacket(int id, char *packet)
 				SendPacket(i, &p);
 			}
 		}
+		break;
+	}
+	case CS_SET_ABILITY_POINT:
+	{
+		int idx{};
+		for (int i = 0; i < 4; ++i) {
+			if (g_ppPlayer[SpeacialPacket->Character_id]->GetPlayerStatus()->Special[i] == (SpecialType::NoSelected)) {
+				g_ppPlayer[SpeacialPacket->Character_id]->GetPlayerStatus()->Special[i] = (SpecialType)SpeacialPacket->Ability_Type;
+				idx = i;
+				break;
+			}
+		}
+		for (int i = 0; i < MAX_USER; ++i)
+		{
+			if (g_clients[i].m_isconnected) {
+				SC_Msg_Set_Speacial_Point p;
+				p.Ability_Type = SpeacialPacket->Ability_Type;
+				p.Character_id = SpeacialPacket->Character_id;
+				p.idx = (BYTE)idx;
+				p.size = sizeof(p);
+				p.type = SC_SET_ABILITY_POINT;
+				SendPacket(i, &p);
+			}
+		}
+		
 		break;
 	}
 	case CS_DEMAND_USE_SKILL:

@@ -98,6 +98,11 @@ void CNetwork::ProcessPacket(char *ptr)
 					//m_ppPlayer[id]->SyncAnimation((AnimationsType)my_packet->state, my_packet->frameTime);
 					m_ppPlayer[id]->SetUpdateTime(my_packet->updatetime);
 					m_ppPlayer[id]->SetLevel(my_packet->level, my_packet->maxexp, my_packet->exp);
+					min(m_ppPlayer[id]->GetPlayerStatus()->QSkillCoolTime += 0.2f, 1.f);
+					min(m_ppPlayer[id]->GetPlayerStatus()->WSkillCoolTime += 0.2f, 1.f);
+					min(m_ppPlayer[id]->GetPlayerStatus()->ESkillCoolTime += 0.2f, 1.f);
+					min(m_ppPlayer[id]->GetPlayerStatus()->RSkillCoolTime += 0.2f, 1.f);
+
 				}
 			}
 			else if (id < NPC_START) { 
@@ -120,7 +125,22 @@ void CNetwork::ProcessPacket(char *ptr)
 		case SC_PERMIT_USE_SKILL:
 		{
 			SC_Msg_Permit_Use_Skill *my_packet = reinterpret_cast<SC_Msg_Permit_Use_Skill *>(ptr);
-			m_ppPlayer[my_packet->Character_id]->ActiveSkill((AnimationsType)my_packet->skilltype);
+			if ((AnimationsType)my_packet->skilltype == AnimationsType::SkillQ && m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->QSkillCoolTime >= 1) {
+				m_ppPlayer[my_packet->Character_id]->ActiveSkill((AnimationsType)my_packet->skilltype);
+				m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->QSkillCoolTime = 0;
+			}
+			if ((AnimationsType)my_packet->skilltype == AnimationsType::SkillW && m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->WSkillCoolTime >= 1) {
+				m_ppPlayer[my_packet->Character_id]->ActiveSkill((AnimationsType)my_packet->skilltype);
+				m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->WSkillCoolTime = 0;
+			}
+			if ((AnimationsType)my_packet->skilltype == AnimationsType::SkillE && m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->ESkillCoolTime >= 1) {
+				m_ppPlayer[my_packet->Character_id]->ActiveSkill((AnimationsType)my_packet->skilltype);
+				m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->ESkillCoolTime = 0;
+			}
+			if ((AnimationsType)my_packet->skilltype == AnimationsType::SkillR && m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->RSkillCoolTime >= 1) {
+				m_ppPlayer[my_packet->Character_id]->ActiveSkill((AnimationsType)my_packet->skilltype);
+				m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->RSkillCoolTime = 0;
+			}
 			break;
 		}
 		case SC_CHANGE_TARGET:
@@ -292,6 +312,16 @@ void CNetwork::ProcessPacket(char *ptr)
 			SC_Msg_Update_Golem_Stat* my_packet = reinterpret_cast<SC_Msg_Update_Golem_Stat*>(ptr);
 			CCollisionObject* Golem{ m_pColManager->RequestNeutralByTag(my_packet->Monster_Tag) };
 			Golem->SetCommonStatus(my_packet->maxHP, my_packet->atk, my_packet->def);
+			break;
+		}
+		case SC_SET_ABILITY_POINT:
+		{
+			SC_Msg_Set_Speacial_Point* my_packet = reinterpret_cast<SC_Msg_Set_Speacial_Point*>(ptr);
+
+			m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->Special[my_packet->idx] = (SpecialType)my_packet->Ability_Type;
+			printf("%d\n", my_packet->idx);
+			if(my_packet->Character_id == m_myid)
+				m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->SpecialPoint = m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->SpecialPoint - 1;
 			break;
 		}
 		default:

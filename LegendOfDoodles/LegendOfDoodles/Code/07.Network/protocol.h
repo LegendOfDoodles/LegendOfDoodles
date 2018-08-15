@@ -56,6 +56,18 @@ struct CS_Msg_Change_Weapon : public Packet
 	BYTE WeaponNum;
 };
 
+struct CS_Msg_Set_Speacial_Point : public Packet
+{
+	BYTE Character_id;
+	BYTE Ability_Type;
+};
+struct SC_Msg_Set_Speacial_Point : public Packet
+{
+	BYTE Character_id;
+	BYTE Ability_Type;
+	BYTE idx;
+};
+
 struct SC_Msg_BroadCast_Change_Weapon :public Packet
 {
 	BYTE Character_id;
@@ -200,6 +212,7 @@ struct SC_Msg_Level_Up : public Packet
 };
 
 
+
 #pragma pack(pop)
 
 #define MAX_BUFF_SIZE 4000
@@ -244,13 +257,13 @@ struct SC_Msg_Level_Up : public Packet
 #define SC_LEVEL_UP				  124
 #define SC_CHANGE_WEAPON		  125
 #define SC_UPDATE_GOLEM_STAT	  126
-
+#define SC_SET_ABILITY_POINT      127
 //Client->Server
 #define CS_ACTION				  201
 #define CS_MOVE_PLAYER			  202
 #define CS_DEMAND_USE_SKILL		  203
 #define CS_CHANGE_WEAPON		  204
-
+#define CS_SET_ABILITY_POINT      205
 
 
 

@@ -259,7 +259,7 @@ void CRoider::ReceiveDamage(float damage)
 	m_StatusInfo.HP -= damage * Compute_Defence(m_StatusInfo.Def);
 	if (m_StatusInfo.HP <= 0) {
 		SetState(States::Die);
-		m_pEnemy = m_pColManager->RequestNearObject(this, m_detectRange);
+		m_pEnemy = m_pColManager->RequestNearObject(this, m_detectRange,m_TeamType);
 	}
 	if (m_StatusInfo.HP <= 0 && m_pEnemy) {
 		PlayerInfo* PlayerStatus{ m_pEnemy->GetPlayerStatus() };
