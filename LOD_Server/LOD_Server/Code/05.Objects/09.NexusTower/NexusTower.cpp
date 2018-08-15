@@ -111,7 +111,10 @@ void CNexusTower::PlayAttack(float timeElapsed, shared_ptr<CWayFinder> pWayFinde
 			XMFLOAT3 curPos{ GetPosition() };
 			curPos.y += m_fCollisionSize * 2;
 			m_atkCoolTime = COOLTIME_TOWER_ATTACK;
-			m_pThrowingMgr->RequestSpawn(curPos, Vector3::Subtract(m_pEnemy->GetPosition(), curPos, true), m_TeamType, FlyingObjectType::Roider_Dumbel, m_StatusInfo.Atk);
+			if (m_TeamType == TeamType::Blue)
+				m_pThrowingMgr->RequestSpawn(curPos, Vector3::Subtract(m_pEnemy->GetPosition(), curPos, true), m_TeamType, FlyingObjectType::BlueTower_Attack, m_StatusInfo.Atk);
+			else if (m_TeamType == TeamType::Red)
+				m_pThrowingMgr->RequestSpawn(curPos, Vector3::Subtract(m_pEnemy->GetPosition(), curPos, true), m_TeamType, FlyingObjectType::RedTower_Attack, m_StatusInfo.Atk);
 			for (int i = 0; i < MAX_USER; ++i)
 			{
 				if (g_clients[i].m_isconnected)

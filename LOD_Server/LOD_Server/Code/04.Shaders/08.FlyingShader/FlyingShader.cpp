@@ -142,7 +142,7 @@ void CFlyingShader::SetColManagerToObject(shared_ptr<CCollisionManager> manager)
 // 내부 함수
 void CFlyingShader::BuildObjects(void *pContext)
 {
-	UNREFERENCED_PARAMETER(pContext);
+	if (pContext) m_pTerrain = (CHeightMapTerrain*)pContext;
 
 	CTransformImporter monsterTransformImporter;
 	monsterTransformImporter.LoadMeshData("Resource//Data//MonsterSetting.txt");
