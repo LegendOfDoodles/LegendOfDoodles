@@ -232,16 +232,13 @@ void ProcessPacket(int id, char *packet)
 	}
 	case CS_PREPARE_DATA:
 	{
-		printf("패킷 받음\n");
+		printf("패킷 받음 %d\n", PreparePacket->Character_id);
 		g_clients[PreparePacket->Character_id].m_isconnected = true;
 		
 		SC_Msg_Put_Character p;
 		p.Character_id = (BYTE)PreparePacket->Character_id;
 		p.size = sizeof(p);
 		p.type = SC_PUT_PLAYER;
-		p.x = (short)g_ppPlayer[PreparePacket->Character_id]->GetPosition().x;
-		p.y = (short)g_ppPlayer[PreparePacket->Character_id]->GetPosition().z;
-		SendPacket(PreparePacket->Character_id, &p);
 
 
 		//지금 연결된 애한테 4명 어디있는지 
@@ -399,9 +396,13 @@ void accept_thread()	//새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 		g_loaded[id] = true;
 		StartRecv(id);
 
-		
-
-		
+		SC_Msg_Put_Character p;
+		p.Character_id = (BYTE)id;
+		p.size = sizeof(p);
+		p.type = SC_PUT_PLAYER;
+		p.x = (short)g_ppPlayer[id]->GetPosition().x;
+		p.y = (short)g_ppPlayer[id]->GetPosition().z;
+		SendPacket(id, &p);
 	}
 }
 

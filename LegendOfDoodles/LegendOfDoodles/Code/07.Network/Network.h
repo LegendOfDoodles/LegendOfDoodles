@@ -31,6 +31,7 @@ public:
 	int		m_saved_packet_size = 0;
 	int		m_myid;
 	int		m_minon_index;
+	bool	m_idSet{ false };
 
 
 	CBaseObject * m_pSelectedObject{ NULL };

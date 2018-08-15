@@ -50,8 +50,6 @@ void CNetwork::Finalize()
 
 void CNetwork::ProcessPacket(char *ptr)
 {
-	static bool first_time = true;
-
  	if (ptr[1] != 0) {
 		switch (ptr[1])
 		{
@@ -59,9 +57,9 @@ void CNetwork::ProcessPacket(char *ptr)
 		{
 			SC_Msg_Put_Character *my_packet = reinterpret_cast<SC_Msg_Put_Character *>(ptr);
 			int id = my_packet->Character_id;
-			if (first_time) {
-				first_time = false;
+			if (!m_idSet) {
 				m_myid = id;
+				m_idSet = true;
 			}
 			break;
 		}
@@ -79,10 +77,6 @@ void CNetwork::ProcessPacket(char *ptr)
 			SC_Msg_Pos_Character *my_packet = reinterpret_cast<SC_Msg_Pos_Character *>(ptr);
 			printf("%d\n", my_packet->Character_id);
 			int id = my_packet->Character_id;
-			if (first_time) {
-				first_time = false;
-				m_myid = id;
-			}
 			if (id == m_myid) {
 				if (m_ppPlayer[id]->GetUpdateTime() <= my_packet->updatetime)
 				{
