@@ -25,6 +25,7 @@ public:
 	~CCollisionManager();
 	int(*GetFoW(void))[NODE_HEIGHT];
 
+	void SetMyTeam(TeamType team) { m_User = team; }
 
 	float GetnodeSize() { return nodeSize; }
 	int GetEnemyCout() {

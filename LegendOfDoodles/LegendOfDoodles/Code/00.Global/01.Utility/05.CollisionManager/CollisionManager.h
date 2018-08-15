@@ -33,6 +33,8 @@ public:
 	CCollisionObject* RequestPlayerByTag(short tag);
 	~CCollisionManager();
 	int(*GetFoW(void))[NODE_HEIGHT];
+
+	void SetMyTeam(TeamType team) { m_User = team; }
 	
 	void SetEffectManager(shared_ptr<CEffectMgr> manager) { m_pEffectMgr = manager; }
 

@@ -170,13 +170,15 @@ void ProcessPacket(int id, char *packet)
 	case CS_CHANGE_WEAPON:
 	{
 		g_ppPlayer[WeaponPacket->Character_id]->GetPlayerStatus()->Weapon = WeaponPacket->WeaponNum;
-		
+		g_ppPlayer[WeaponPacket->Character_id]->SetType((ObjectType)WeaponPacket->ObjectType);
+
 		for (int i = 0; i < MAX_USER; ++i)
 		{
 			if (g_clients[i].m_isconnected) {
 				SC_Msg_BroadCast_Change_Weapon p;
 				p.Character_id = WeaponPacket->Character_id;
 				p.WeaponNum = WeaponPacket->WeaponNum;
+				p.ObjectType = WeaponPacket->ObjectType;
 				p.size = sizeof(p);
 				p.type = SC_CHANGE_WEAPON;
 				SendPacket(i, &p);

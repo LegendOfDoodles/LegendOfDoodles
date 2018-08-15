@@ -54,6 +54,7 @@ struct CS_Msg_Change_Weapon : public Packet
 {
 	BYTE Character_id;
 	BYTE WeaponNum;
+	short ObjectType;
 };
 
 struct CS_Msg_Set_Speacial_Point : public Packet
@@ -72,6 +73,7 @@ struct SC_Msg_BroadCast_Change_Weapon :public Packet
 {
 	BYTE Character_id;
 	BYTE WeaponNum;
+	short ObjectType;
 };
 struct SC_Msg_Remove_Character : public Packet
 {
@@ -211,6 +213,16 @@ struct SC_Msg_Level_Up : public Packet
 	short Target_Tag;
 };
 
+struct SC_Msg_Player_Respawn : public Packet
+{
+	short Target_Tag;
+};
+
+struct SC_Msg_Player_Missile : public Packet
+{
+	short Target_Tag;
+	short Missile_Type;
+};
 
 
 #pragma pack(pop)
@@ -230,6 +242,9 @@ struct SC_Msg_Level_Up : public Packet
 
 //enum class Type : BYTE { Connect, Create, Delete, Move, Attack, Hit };
 //Server-> Client
+#define SC_PLAYER_RESPAWN		  1
+#define SC_PLAYER_MISSILE		  2
+
 #define SC_CONNECT_PLAYER		  101
 #define SC_PUT_PLAYER			  102
 #define SC_REMOVE_PLAYER		  103

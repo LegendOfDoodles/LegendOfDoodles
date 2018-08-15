@@ -274,7 +274,6 @@ void CPlayer::ActiveSkill(AnimationsType act)
 		m_curState = States::Attack;
 		m_nCurrAnimation = act;
 		m_fFrameTime = 0;
-		printf("스킬 사용\n");
 	}
 }
 
@@ -438,7 +437,7 @@ void CPlayer::SendMissilePacket(FlyingObjectType type)
 	p.size = sizeof(p);
 	p.type = SC_PLAYER_MISSILE;
 	p.Target_Tag = (short)m_tag;
-	p.Missile_Type = (BYTE)type;
+	p.Missile_Type = (short)type;
 	for (int j = 0; j < MAX_USER; ++j) {
 		if (g_clients[j].m_isconnected == true) {
 			SendPacket(j, &p);

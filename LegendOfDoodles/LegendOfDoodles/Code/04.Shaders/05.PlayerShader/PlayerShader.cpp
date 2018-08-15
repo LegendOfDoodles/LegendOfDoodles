@@ -83,6 +83,7 @@ void CPlayerShader::AnimateObjects(float timeElapsed)
 
 				
 				p.Character_id = m_pNetwork->m_myid;
+				p.ObjectType = (short)ObjectType::SwordPlayer;
 				p.size = sizeof(p);
 				p.WeaponNum = 1;
 				p.type = CS_CHANGE_WEAPON;
@@ -98,6 +99,7 @@ void CPlayerShader::AnimateObjects(float timeElapsed)
 				static_cast<CPlayer*>(m_ppObjects[j])->SetWeaponChangeTriger(false);
 
 				p.Character_id = m_pNetwork->m_myid;
+				p.ObjectType = (short)ObjectType::StaffPlayer;
 				p.size = sizeof(p);
 				p.WeaponNum = 2;
 				p.type = CS_CHANGE_WEAPON;
@@ -113,6 +115,7 @@ void CPlayerShader::AnimateObjects(float timeElapsed)
 				static_cast<CPlayer*>(m_ppObjects[j])->SetWeaponChangeTriger(false);
 
 				p.Character_id = m_pNetwork->m_myid;
+				p.ObjectType = (short)ObjectType::BowPlayer;
 				p.size = sizeof(p);
 				p.WeaponNum = 3;
 				p.type = CS_CHANGE_WEAPON;

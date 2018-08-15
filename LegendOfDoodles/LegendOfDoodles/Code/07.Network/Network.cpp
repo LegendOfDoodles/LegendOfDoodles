@@ -120,11 +120,15 @@ void CNetwork::ProcessPacket(char *ptr)
 		{
 			SC_Msg_BroadCast_Change_Weapon *my_packet = reinterpret_cast<SC_Msg_BroadCast_Change_Weapon *>(ptr);
 			m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->Weapon = my_packet->WeaponNum;
+			m_ppPlayer[my_packet->Character_id]->SetType((ObjectType)my_packet->ObjectType);
 			break;
 		}
 		case SC_PERMIT_USE_SKILL:
 		{
 			SC_Msg_Permit_Use_Skill *my_packet = reinterpret_cast<SC_Msg_Permit_Use_Skill *>(ptr);
+			if ((AnimationsType)my_packet->skilltype == AnimationsType::Attack1) {
+				m_ppPlayer[my_packet->Character_id]->ActiveSkill((AnimationsType)my_packet->skilltype);
+			}
 			if ((AnimationsType)my_packet->skilltype == AnimationsType::SkillQ && m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->QSkillCoolTime >= 1) {
 				m_ppPlayer[my_packet->Character_id]->ActiveSkill((AnimationsType)my_packet->skilltype);
 				m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->QSkillCoolTime = 0;
@@ -319,9 +323,22 @@ void CNetwork::ProcessPacket(char *ptr)
 			SC_Msg_Set_Speacial_Point* my_packet = reinterpret_cast<SC_Msg_Set_Speacial_Point*>(ptr);
 
 			m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->Special[my_packet->idx] = (SpecialType)my_packet->Ability_Type;
-			printf("%d\n", my_packet->idx);
 			if(my_packet->Character_id == m_myid)
 				m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->SpecialPoint = m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->SpecialPoint - 1;
+			break;
+		}
+		case SC_PLAYER_RESPAWN:
+		{
+			SC_Msg_Player_Respawn* my_packet = reinterpret_cast<SC_Msg_Player_Respawn*>(ptr);
+			CCollisionObject* Player{ m_pColManager->RequestPlayerByTag(my_packet->Target_Tag) };
+			Player->Respawn();
+			break;
+		}
+		case SC_PLAYER_MISSILE:
+		{
+			SC_Msg_Player_Missile* my_packet = reinterpret_cast<SC_Msg_Player_Missile*>(ptr);
+			CCollisionObject* Player{ m_pColManager->RequestPlayerByTag(my_packet->Target_Tag) };
+			Player->RequestSpawnMissile((FlyingObjectType)my_packet->Missile_Type);
 			break;
 		}
 		default:

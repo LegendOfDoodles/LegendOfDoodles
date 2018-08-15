@@ -386,6 +386,9 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	Eeffect_Shader = new CEffectShader(pCreateMgr);
 	SpecialSelect_Shader = new CSpecialSelectShader(pCreateMgr);
 
+	m_pCollisionManager = shared_ptr<CCollisionManager>(new CCollisionManager());
+	//m_pCollisionManager->SetMyTeam((TeamType)(m_pNetwork->m_myid % 2));
+
 	for (int i = 0; i < 2; ++i)
 	{
 		m_ppShaders[i]->Initialize(pCreateMgr);
@@ -447,7 +450,6 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 
 	//Managere Initialize
 	m_pWayFinder = shared_ptr<CWayFinder>(new CWayFinder());
-	m_pCollisionManager = shared_ptr<CCollisionManager>(new CCollisionManager());
 	m_pUIObjectsManager = shared_ptr<CUIObjectManager>(new CUIObjectManager());
 	m_pThrowingMgr = shared_ptr<CThrowingMgr>(new CThrowingMgr());
 	m_pThrowingMgr->SetFlyingShader(static_cast<CFlyingShader*>(m_ppShaders[7]));

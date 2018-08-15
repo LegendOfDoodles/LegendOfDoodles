@@ -50,7 +50,7 @@ void CCollisionManager::SetNodeMap(std::vector<NodeMap> map, float size, XMFLOAT
 void CCollisionManager::AddCollider(CCollisionObject* pcol)
 {
 	if (pcol) {
-		if (pcol->GetTeam() == TeamType::Blue)
+		if (pcol->GetTeam() == m_User)
 			pcol->SetDetected(true);
 		else
 			pcol->SetDetected(false);
@@ -92,6 +92,9 @@ void CCollisionManager::Update(shared_ptr<CWayFinder> pWayFinder)
 				m_RedSight[i][j].Detected = false;
 			}
 		}
+
+		m_lstRedSight.clear();
+		m_lstBlueSight.clear();
 
 		for (auto i = m_lstColliders.begin(); i != m_lstColliders.end(); ++i)
 		{
