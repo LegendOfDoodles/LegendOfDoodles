@@ -141,6 +141,34 @@ namespace Materials
 		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
 		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
 
+	CMaterial* CreateBlueTowerAtkMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+
+	CMaterial* CreateRedTowerAtkMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+
+	CMaterial* CreatePlayerArrowMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+
+	CMaterial* CreatePlayerMagicSkillQMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+
+	CMaterial* CreatePlayerArrowSkillWMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+
+	CMaterial* CreatePlayerMagicSkillRMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+
+	CMaterial* CreatePlayerMagicMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+
 	// Sketch Effect
 	CMaterial* CreateSketchMaterial(shared_ptr<CCreateMgr> pCreateMgr,
 		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
@@ -268,6 +296,7 @@ namespace Materials
 		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
 
 	// Effect
+
 	CMaterial* CreatePlayerSkillEffectMaterial(shared_ptr<CCreateMgr> pCreateMgr,
 		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
 		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
@@ -283,12 +312,125 @@ namespace Materials
 	CMaterial* CreateFlyingObjectEffectMaterial(shared_ptr<CCreateMgr> pCreateMgr,
 		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
 		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
-	
+
 	CMaterial* CreateHitEffectMaterial(shared_ptr<CCreateMgr> pCreateMgr,
 		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
 		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
 
 	CMaterial* CreateGolemAttackEffectMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+
+	/////////////////////////////////////////////////////////////////////////////
+	//Equipment
+	CMaterial* CreateStickMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+	//검
+	CMaterial* CreateSwordMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+
+	CMaterial* CreateMaceMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+
+	CMaterial* CreateBFSwordMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+
+	CMaterial* CreateSawMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+
+	CMaterial* CreateSabreMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+	//마법
+	CMaterial* CreateStaffMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+	CMaterial* CreateEraserPenMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+	CMaterial* CreateLightingMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+	CMaterial* CreateWatchMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+	CMaterial* CreateLolipopMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+	//활
+	CMaterial* CreateBowMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+	CMaterial* CreateFlightMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+	CMaterial* CreateCompoundMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+	CMaterial* CreateBananaMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+	CMaterial* CreateBattleMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+	//검 방어구
+	CMaterial* CreateShoulderMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+	CMaterial* CreateBulletJaketMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+	CMaterial* CreateNikeMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+	CMaterial* CreateMedicBoxMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+	//마법 방어구
+	CMaterial* CreateShaShackMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+	CMaterial* CreateMosMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+	CMaterial* CreateSpringMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+	CMaterial* CreateBloodPackMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+	//활 방어구
+
+
+	CMaterial* CreateMufflerMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+	CMaterial* CreateLinkClothMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+	CMaterial* Create3DidasMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+	CMaterial* CreateCrossHairMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+
+	//특수 장비
+	CMaterial* CreateGlassesMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+	CMaterial* CreateSunGlassesMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+	CMaterial* CreateWinderMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+	CMaterial* CreateIcecreamMaterial(shared_ptr<CCreateMgr> pCreateMgr,
 		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
 		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
 
