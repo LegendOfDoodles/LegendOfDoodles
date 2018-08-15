@@ -80,6 +80,9 @@
 // 최대 최소
 #define MAX_QSKILL 4
 
+// Animation Speed
+#define ANIMATION_SPEED 30
+
 // 최대, 최소 속도
 #define MIN_CAMERA_SPEED 100.0f
 #define MAX_CAMERA_SPEED 3000.0f
@@ -213,6 +216,7 @@
 
 // 쿨타임 정보
 // 플레이어 관련
+#define COOLTIME_SPAWN_PLAYER 10.0f
 
 // 몬스터 관련
 #define COOLTIME_SPAWN_ROIDER 10.0f

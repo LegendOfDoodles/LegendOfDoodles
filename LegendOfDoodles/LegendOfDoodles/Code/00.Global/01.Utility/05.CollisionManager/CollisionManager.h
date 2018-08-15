@@ -24,11 +24,13 @@ public:
 	void SetNodeMap(std::vector<NodeMap> map,float size, XMFLOAT2 wh);
 	void AddCollider(CCollisionObject* pcol);
 	void AddNeutralCollider(CCollisionObject* pcol);
+	void AddPlayerCollider(CCollisionObject* pcol);
 	void Update(shared_ptr<CWayFinder> pWayFinder);
 	void RequestCollide(CollisionType type, CCollisionObject* pCol, float data1 = 0, float data2 = 0,float damage=0);
 	CCollisionObject* RequestNearObject(CCollisionObject* pCol, float lengh, TeamType type, bool player = false);
 	CCollisionObject* RequestObjectByTag(short tag);
 	CCollisionObject* RequestNeutralByTag(short tag);
+	CCollisionObject* RequestPlayerByTag(short tag);
 	~CCollisionManager();
 	int(*GetFoW(void))[NODE_HEIGHT];
 	
@@ -72,5 +74,6 @@ protected:
 	CollisionObjectList m_lstRedSight;
 
 	CollisionObjectList m_neutralList;
+	CollisionObjectList m_playerList;
 };
 

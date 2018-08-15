@@ -98,6 +98,7 @@ void CScene::BuildObjects()
 		m_pCollisionManager->AddCollider((pPlayerS->GetCollisionObjects())[i]);
 	}
 	pPlayerS->SetColManagerToObject(m_pCollisionManager);
+	pPlayerS->SetThrowingManagerToObject(m_pThrowingMgr);
 
 	// 중립 몬스터에 충돌체 부여
 	CNeutralityShader* pNetral = (CNeutralityShader *)m_ppShaders[2];

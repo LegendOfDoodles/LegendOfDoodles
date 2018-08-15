@@ -482,6 +482,7 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 		m_pCollisionManager->AddCollider((pPlayerS->GetCollisionObjects())[i]);
 	}
 	pPlayerS->SetColManagerToObject(m_pCollisionManager);
+	pPlayerS->SetThrowingManagerToObject(m_pThrowingMgr);
 	pPlayerS->SetEffectManagerToObject(m_pEffectMgr);
 	pPlayerS->SetSoundManagerToObject(m_pSoundManager);
 
@@ -619,6 +620,7 @@ void CScene::PickObjectPointedByCursor(WPARAM wParam, LPARAM lParam)
 void CScene::GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, XMFLOAT4X4&	 xmf4x4View)
 {
 	if (m_pCollisionManager->IsGameOver()) return;
+	if (!m_pMyPlayer || m_pMyPlayer->GetState() == States::Die || m_pMyPlayer->GetState() == States::Remove) return;
 
 	XMFLOAT4X4  inverseArr = Matrix4x4::Inverse(xmf4x4View);
 	XMFLOAT3 camPosition = m_pCamera->GetPosition();

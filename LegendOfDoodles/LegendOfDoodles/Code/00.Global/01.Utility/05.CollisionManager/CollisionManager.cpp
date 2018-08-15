@@ -66,6 +66,13 @@ void CCollisionManager::AddNeutralCollider(CCollisionObject * pcol)
 	}
 }
 
+void CCollisionManager::AddPlayerCollider(CCollisionObject * pcol)
+{
+	if (pcol) {
+		m_playerList.push_back(pcol);
+	}
+}
+
 
 void CCollisionManager::Update(shared_ptr<CWayFinder> pWayFinder)
 {
@@ -337,6 +344,20 @@ CCollisionObject * CCollisionManager::RequestNeutralByTag(short tag)
 	if (m_Winner != TeamType::None) return NULL;
 
 	for (auto i = m_neutralList.begin(); i != m_neutralList.end(); ++i)
+	{
+		if ((*i)->GetTag() == tag)
+		{
+			return (*i);
+		}
+	}
+	return nullptr;
+}
+
+CCollisionObject * CCollisionManager::RequestPlayerByTag(short tag)
+{
+	if (m_Winner != TeamType::None) return NULL;
+
+	for (auto i = m_playerList.begin(); i != m_playerList.end(); ++i)
 	{
 		if ((*i)->GetTag() == tag)
 		{
