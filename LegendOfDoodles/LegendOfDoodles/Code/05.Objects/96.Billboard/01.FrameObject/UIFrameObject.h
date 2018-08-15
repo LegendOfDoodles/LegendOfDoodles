@@ -14,7 +14,7 @@ public: // 공개함수
 
 	virtual int GetType() { return m_type; }
 	virtual float GetCurrentHP();
-	virtual float GetCurrentMP();
+	virtual float GetCurrentExp();
 
 	virtual void SetDistance(float x) {
 		m_xmf4x4World = Matrix4x4::Identity();
