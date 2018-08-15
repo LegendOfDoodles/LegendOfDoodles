@@ -436,7 +436,8 @@ void CEquipShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pContex
 
 	m_pBow = new CSkinnedMesh*[m_nBow];
 	m_pBow[0] = new CSkinnedMesh(pCreateMgr, "Resource//3D//Player//Mesh//Bow//Player_Bow_Basic.meshinfo");
-	m_pBow[1] = new CSkinnedMesh(pCreateMgr, "Resource//3D//Player//Mesh//Bow//CompoundBow.meshinfo");
+	m_pBow[1] = new CSkinnedMesh(pCreateMgr, "Resource//3D//Player//Mesh//Bow//Player_Bow_Basic.meshinfo");
+	//m_pBow[1] = new CSkinnedMesh(pCreateMgr, "Resource//3D//Player//Mesh//Bow//CompoundBow.meshinfo");
 	m_pBow[2] = new CSkinnedMesh(pCreateMgr, "Resource//3D//Player//Mesh//Bow//Player_Bow_Flight.meshinfo");
 	m_pBow[3] = new CSkinnedMesh(pCreateMgr, "Resource//3D//Player//Mesh//Bow//Banana.meshinfo");
 	m_pBow[4] = new CSkinnedMesh(pCreateMgr, "Resource//3D//Player//Mesh//Bow//Player_Bow_Battle.meshinfo");
