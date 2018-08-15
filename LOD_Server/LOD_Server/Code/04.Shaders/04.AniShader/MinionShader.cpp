@@ -89,7 +89,7 @@ void CMinionShader::AnimateObjects(float timeElapsed)
 			}
 			m_preSpawnTime = m_spawnTime;
 		}
-		if (m_curSpawnCount >= 1)
+		if (m_curSpawnCount >= 20)
 		{
 			m_bSpawning = false;
 			m_neverSpawn = true;
@@ -297,22 +297,22 @@ void CMinionShader::SpawnMinion()
 
 	int wayKind{ 0 };
 
-	m_kind = ObjectType::BowMinion;
+	//m_kind = ObjectType::BowMinion;
 
-	//// 전체 생성되는 수의 절반은 근접 미니언
-	//if (m_curSpawnCount < 10)
-	//{
-	//	m_kind = ObjectType::SwordMinion;
-	//}
-	//// 나머지 절반 마법 / 원기리 미니언
-	//else if (m_curSpawnCount < 15)
-	//{
-	//	m_kind = ObjectType::StaffMinion;
-	//}
-	//else
-	//{
-	//	m_kind = ObjectType::BowMinion;
-	//}
+	// 전체 생성되는 수의 절반은 근접 미니언
+	if (m_curSpawnCount < 10)
+	{
+		m_kind = ObjectType::SwordMinion;
+	}
+	// 나머지 절반 마법 / 원기리 미니언
+	else if (m_curSpawnCount < 15)
+	{
+		m_kind = ObjectType::StaffMinion;
+	}
+	else
+	{
+		m_kind = ObjectType::BowMinion;
+	}
 
 	CollisionObjectList objectAdder;
 	for (; wayKind < 4; ++wayKind)

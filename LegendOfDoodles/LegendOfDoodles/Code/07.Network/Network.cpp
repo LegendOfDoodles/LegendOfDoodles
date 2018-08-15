@@ -202,7 +202,7 @@ void CNetwork::ProcessPacket(char *ptr)
 			SC_Msg_Enemy_Tag* my_packet = reinterpret_cast<SC_Msg_Enemy_Tag*>(ptr);
 			
 			CCollisionObject* target{ m_pColManager->RequestObjectByTag(my_packet->Minion_Tag) };
-			target->SetEnemyByTag(my_packet->Enemy_Tag);
+			if(target) target->SetEnemyByTag(my_packet->Enemy_Tag);
 			break;
 		}
 		case SC_MONSTER_SET_ENEMY:
@@ -243,12 +243,12 @@ void CNetwork::ProcessPacket(char *ptr)
 					|| (FlyingObjectType)my_packet->Flying_Type == FlyingObjectType::Player_ArrowSkill_Q
 					|| (FlyingObjectType)my_packet->Flying_Type == FlyingObjectType::Player_Magic)
 				{
-					m_pEffectMgr->RequestSpawn(Target->GetPosition(), Target->GetLook(), 10, EffectObjectType::Player_ArrowAndFireBall_HitPosition_Effect);
+					if(Target) m_pEffectMgr->RequestSpawn(Target->GetPosition(), Target->GetLook(), 10, EffectObjectType::Player_ArrowAndFireBall_HitPosition_Effect);
 				}
 			}
 			else
 			{
-				m_pEffectMgr->RequestSpawn(Target->GetPosition(), Target->GetLook(), 10, EffectObjectType::NormallHit_Effect);
+				if (Target) m_pEffectMgr->RequestSpawn(Target->GetPosition(), Target->GetLook(), 10, EffectObjectType::NormallHit_Effect);
 			}
 
 			if (Target && Target->GetUpdateTime() <= my_packet->updatetime)
@@ -270,7 +270,7 @@ void CNetwork::ProcessPacket(char *ptr)
 			SC_Msg_Enemy_Tag_Nexus* my_packet = reinterpret_cast<SC_Msg_Enemy_Tag_Nexus*>(ptr);
 
 			CCollisionObject* target{ m_pColManager->RequestObjectByTag(my_packet->Building_Tag) };
-			target->SetEnemyByTag(my_packet->Enemy_Tag);
+			if (target) target->SetEnemyByTag(my_packet->Enemy_Tag);
 			break;
 		}
 		case SC_GAME_OVER:
@@ -284,13 +284,13 @@ void CNetwork::ProcessPacket(char *ptr)
 		{
 			SC_Msg_Building_Attack_Enemy* my_packet = reinterpret_cast<SC_Msg_Building_Attack_Enemy*>(ptr);
 			CCollisionObject* Building{ m_pColManager->RequestObjectByTag(my_packet->Building_Tag) };
-			Building->AttackEnemy();
+			if(Building) Building->AttackEnemy();
 			break;
 		}
 		case SC_EXP_UP:
 		{
 			SC_Msg_Exp_Up* my_packet = reinterpret_cast<SC_Msg_Exp_Up*>(ptr);
-			CCollisionObject* Player{ m_pColManager->RequestObjectByTag(my_packet->Target_Tag) };
+			CCollisionObject* Player{ m_pColManager->RequestPlayerByTag(my_packet->Target_Tag) };
 			PlayerInfo* status{ Player->GetPlayerStatus() };
 			status->Exp += my_packet->exp;
 			break;
@@ -298,7 +298,7 @@ void CNetwork::ProcessPacket(char *ptr)
 		case SC_LEVEL_UP:
 		{
 			SC_Msg_Level_Up* my_packet = reinterpret_cast<SC_Msg_Level_Up*>(ptr);
-			CCollisionObject* Player{ m_pColManager->RequestObjectByTag(my_packet->Target_Tag) };
+			CCollisionObject* Player{ m_pColManager->RequestPlayerByTag(my_packet->Target_Tag) };
 			PlayerInfo* status{ Player->GetPlayerStatus() };
 			status->Exp -= status->Level * 110 + 170;
 			Player->LevelUP(Player);
