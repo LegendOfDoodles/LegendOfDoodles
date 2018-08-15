@@ -19,7 +19,6 @@ public: // 공개 함수
 
 	virtual void Render(CCamera *pCamera);
 
-	virtual void SetCamera(CCamera *pCamera);
 	virtual void SetPlayer(CBaseObject *pPlayer) { m_pPlayer = (CPlayer*)pPlayer; };
 	void SetChangeWeapon(bool change) { m_Change = change; };
 

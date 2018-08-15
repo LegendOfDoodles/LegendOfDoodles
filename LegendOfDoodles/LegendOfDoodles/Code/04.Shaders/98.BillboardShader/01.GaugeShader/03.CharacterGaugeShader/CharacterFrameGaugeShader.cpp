@@ -34,7 +34,7 @@ void CharacterFrameGaugeShader::UpdateShaderVariables(int opt)
 	{
 		CB_GAUGE_INFO *pMappedObject = (CB_GAUGE_INFO *)(m_pMappedObjects + (i * elementBytes));
 		
-		if (i == 0 ) pMappedObject->m_fCurrentHP = ((CUIFrameObject*)m_ppObjects[i])->GetCurrentHP();
+		if (i == 0) pMappedObject->m_fCurrentHP = ((CUIFrameObject*)m_ppObjects[i])->GetCurrentHP();
 		else pMappedObject->m_fCurrentHP = ((CUIFrameObject*)m_ppObjects[i])->GetCurrentExp();
 
 		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
