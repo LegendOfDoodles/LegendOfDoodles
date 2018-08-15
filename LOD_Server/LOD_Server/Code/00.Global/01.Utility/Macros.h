@@ -71,6 +71,11 @@
 #define MAX_MINION 300
 #define MAX_ARROW 70
 #define MAX_MAGIC 70
+#define MAX_HIT 100
+#define MAX_EACH_TOWER_ATK 6	// 각 팀당 타워 6개
+#define MAX_PLAYER_ARROW_ATK 30
+#define MAX_PLAYER_MAGIC_ATK 30
+#define MAX_PLAYER_SKILL 4
 
 // 최대 최소
 #define MAX_QSKILL 4

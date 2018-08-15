@@ -120,7 +120,8 @@ void CScene::ProcessInput()
 			m_pMyPlayer->GetPosition(),
 			m_pMyPlayer->GetLook(),
 			m_pMyPlayer->GetTeam(),
-			FlyingObjectType::Minion_Magic);
+			FlyingObjectType::Minion_Magic,
+			1000.0f);
 	}
 }
 

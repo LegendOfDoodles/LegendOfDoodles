@@ -300,7 +300,7 @@ void CRoider::AnimateByCurState()
 		{
 			if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f
 				&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f) {
-				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Roider_Dumbel);
+				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Roider_Dumbel, m_StatusInfo.Atk);
 			}
 		}
 		

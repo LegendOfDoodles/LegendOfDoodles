@@ -26,7 +26,7 @@ public:
 	void AddNeutralCollider(CCollisionObject* pcol);
 	void Update(shared_ptr<CWayFinder> pWayFinder);
 	void RequestCollide(CollisionType type, CCollisionObject* pCol, float data1 = 0, float data2 = 0,float damage=0);
-	CCollisionObject* RequestNearObject(CCollisionObject* pCol,float lengh);
+	CCollisionObject* RequestNearObject(CCollisionObject* pCol, float lengh, TeamType type, bool player = false);
 	CCollisionObject* RequestObjectByTag(short tag);
 	CCollisionObject* RequestNeutralByTag(short tag);
 	~CCollisionManager();

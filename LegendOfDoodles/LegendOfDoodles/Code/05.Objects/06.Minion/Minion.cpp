@@ -265,7 +265,7 @@ void CMagicMinion::Animate(float timeElapsed)
 		}
 		if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f
 			&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f) {
-			m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Minion_Magic);
+			m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Minion_Magic, m_StatusInfo.Atk);
 			m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Minion_StaffAttack_Effect);
 		}
 		if (m_nCurrAnimation == Animations::Attack1) {
@@ -346,7 +346,7 @@ void CBowMinion::Animate(float timeElapsed)
 		}
 		if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f
 			&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f) {
-			m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Minion_Arrow);
+			m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Minion_Arrow, m_StatusInfo.Atk);
 			m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Minion_ArrowAttack_Effect);
 		}
 		if (m_nCurrAnimation == Animations::Attack1)
