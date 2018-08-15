@@ -31,6 +31,7 @@ public: // 공개 함수
 
 	void SetColManagerToObject(shared_ptr<CCollisionManager> manager);
 	void SetEffectManagerToObject(shared_ptr<CEffectMgr> manager);
+	void SetSoundManagerToObject(shared_ptr<CSoundManager> manager);
 
 	void Pause() { m_Paused = true; }
 	void Resume() { m_Paused = false; };

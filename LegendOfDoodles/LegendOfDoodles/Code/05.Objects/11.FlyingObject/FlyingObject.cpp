@@ -31,6 +31,14 @@ void CFlyingObject::Animate(float timeElapsed)
 	{
 		m_distance += timeElapsed * m_speed;
 		MoveToDirection(timeElapsed * m_speed);
+
+		if (m_SoundTrigier &&
+			(m_flyingObjectType == FlyingObjectType::Player_Arrow ||
+				m_flyingObjectType == FlyingObjectType::Player_ArrowSkill_W))
+		{
+			m_pSoundMgr->play(SOUND::Flying_PlayerArrow_Sound, GetPosition());
+			m_SoundTrigier = false;
+		}
 		
 		if (m_flyingObjectType == FlyingObjectType::Minion_Arrow  && m_EffectTriger)
 		{

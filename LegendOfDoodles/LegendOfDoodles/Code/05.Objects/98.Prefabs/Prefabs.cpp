@@ -1240,7 +1240,47 @@ CMaterial * Materials::CreateFlyingObjectEffectMaterial(shared_ptr<CCreateMgr> p
 	pTexture->LoadTextureFromFile(pCreateMgr, L"./Resource/Textures/Effect/FlyingObjectEffect/Minion_Arrow.dds", 0);
 	pTexture->LoadTextureFromFile(pCreateMgr, L"./Resource/Textures/Effect/FlyingObjectEffect/Player_Arrow.dds", 1);
 	pTexture->LoadTextureFromFile(pCreateMgr, L"./Resource/Textures/Effect/FlyingObjectEffect/Player_FireBall.dds", 2);
-	pTexture->LoadTextureFromFile(pCreateMgr, L"./Resource/Textures/Effect/FlyingObjectEffect/Explosion.dds", 3);
+	pTexture->LoadTextureFromFile(pCreateMgr, L"./Resource/Textures/Effect/FlyingObjectEffect/TowerAttackExplosion.dds", 3);
+
+	CreateShaderResourceViews(
+		pCreateMgr, pTexture,
+		2, false,
+		pSrvCPUDescriptorStartHandle,
+		pSrvGPUDescriptorStartHandle);
+
+	pMaterial->Initialize(pCreateMgr);
+	pMaterial->SetTexture(pTexture);
+
+	return pMaterial;
+}
+
+
+CMaterial * Materials::CreateHitEffectMaterial(shared_ptr<CCreateMgr> pCreateMgr, D3D12_CPU_DESCRIPTOR_HANDLE * pSrvCPUDescriptorStartHandle, D3D12_GPU_DESCRIPTOR_HANDLE * pSrvGPUDescriptorStartHandle)
+{
+	CMaterial *pMaterial{ new CMaterial(pCreateMgr) };
+	CTexture *pTexture{ new CTexture(2, RESOURCE_TEXTURE_2D, 0) };
+	pTexture->LoadTextureFromFile(pCreateMgr, L"./Resource/Textures/Effect/HitEffect/Explosion.dds", 0);
+	pTexture->LoadTextureFromFile(pCreateMgr, L"./Resource/Textures/Effect/HitEffect/NomalHit.dds", 1);
+
+	CreateShaderResourceViews(
+		pCreateMgr, pTexture,
+		2, false,
+		pSrvCPUDescriptorStartHandle,
+		pSrvGPUDescriptorStartHandle);
+
+	pMaterial->Initialize(pCreateMgr);
+	pMaterial->SetTexture(pTexture);
+
+	return pMaterial;
+}
+
+CMaterial * Materials::CreateGolemAttackEffectMaterial(shared_ptr<CCreateMgr> pCreateMgr, D3D12_CPU_DESCRIPTOR_HANDLE * pSrvCPUDescriptorStartHandle, D3D12_GPU_DESCRIPTOR_HANDLE * pSrvGPUDescriptorStartHandle)
+{
+	CMaterial *pMaterial{ new CMaterial(pCreateMgr) };
+	CTexture *pTexture{ new CTexture(3, RESOURCE_TEXTURE_2D, 0) };
+	pTexture->LoadTextureFromFile(pCreateMgr, L"./Resource/Textures/Effect/GolemAttackEffect/Standard.dds", 0);
+	pTexture->LoadTextureFromFile(pCreateMgr, L"./Resource/Textures/Effect/GolemAttackEffect/Stump.dds", 1);
+	pTexture->LoadTextureFromFile(pCreateMgr, L"./Resource/Textures/Effect/GolemAttackEffect/Special.dds", 2);
 
 	CreateShaderResourceViews(
 		pCreateMgr, pTexture,

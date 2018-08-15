@@ -67,6 +67,14 @@ void CEffectShader::UpdateShaderVariables(int opt)
 		beg = UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2];
 		end = UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3];
 		break;
+	case 4:
+		beg = UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3];
+		end = UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4];
+		break;
+	case 5:
+		beg = UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4];
+		end = UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4] + UseMatrialNumToObjectCnt[5];
+		break;
 	}
 
 	for (int i = beg; i < end; ++i)
@@ -118,7 +126,14 @@ void CEffectShader::AnimateObjects(float timeElapsed)
 	m_MinionArrow_EffectList.remove_if(removeFunc);
 	m_PlayerArrow_EffectList.remove_if(removeFunc);
 	m_PlayerFireBall_EffectList.remove_if(removeFunc);
+	m_TowerAttack_EffectList.remove_if(removeFunc);
+
 	m_PlayerArrowAndFireBall_HitPosition_EffectList.remove_if(removeFunc);
+	m_NormalHit_Effect.remove_if(removeFunc);
+
+	m_GolemStandardAttack_EffectList.remove_if(removeFunc);
+	m_GolemStumpAttack_EffectList.remove_if(removeFunc);
+	m_GolemSpecialAttack_EffectList.remove_if(removeFunc);
 }
 
 void CEffectShader::Render(CCamera * pCamera)
@@ -253,15 +268,58 @@ void CEffectShader::Render(CCamera * pCamera)
 			(*iter)->Render(pCamera);
 		}
 	}
-	if (!m_PlayerArrowAndFireBall_HitPosition_EffectList.empty())
+	if (!m_TowerAttack_EffectList.empty())
 	{
 		m_ppMaterials[3]->UpdateShaderVariable(3);
-		for (auto iter = m_PlayerArrowAndFireBall_HitPosition_EffectList.begin(); iter != m_PlayerArrowAndFireBall_HitPosition_EffectList.end(); ++iter)
+		for (auto iter = m_TowerAttack_EffectList.begin(); iter != m_TowerAttack_EffectList.end(); ++iter)
 		{
 			(*iter)->Render(pCamera);
 		}
 	}
 
+	CShader::Render(pCamera, 4);
+	if (!m_PlayerArrowAndFireBall_HitPosition_EffectList.empty())
+	{
+		m_ppMaterials[4]->UpdateShaderVariable(0);
+		for (auto iter = m_PlayerArrowAndFireBall_HitPosition_EffectList.begin(); iter != m_PlayerArrowAndFireBall_HitPosition_EffectList.end(); ++iter)
+		{
+			(*iter)->Render(pCamera);
+		}
+	}
+	if (!m_NormalHit_Effect.empty())
+	{
+		m_ppMaterials[4]->UpdateShaderVariable(1);
+		for (auto iter = m_NormalHit_Effect.begin(); iter != m_NormalHit_Effect.end(); ++iter)
+		{
+			(*iter)->Render(pCamera);
+		}
+	}
+
+	CShader::Render(pCamera, 5);
+	if (!m_GolemStandardAttack_EffectList.empty())
+	{
+		m_ppMaterials[5]->UpdateShaderVariable(0);
+		for (auto iter = m_GolemStandardAttack_EffectList.begin(); iter != m_GolemStandardAttack_EffectList.end(); ++iter)
+		{
+			(*iter)->Render(pCamera);
+		}
+	}
+	if (!m_GolemStumpAttack_EffectList.empty())
+	{
+		m_ppMaterials[5]->UpdateShaderVariable(1);
+		for (auto iter = m_GolemStumpAttack_EffectList.begin(); iter != m_GolemStumpAttack_EffectList.end(); ++iter)
+		{
+			(*iter)->Render(pCamera);
+		}
+	}
+	if (!m_GolemSpecialAttack_EffectList.empty())
+	{
+		m_ppMaterials[5]->UpdateShaderVariable(2);
+		for (auto iter = m_GolemSpecialAttack_EffectList.begin(); iter != m_GolemSpecialAttack_EffectList.end(); ++iter)
+		{
+			(*iter)->Render(pCamera);
+		}
+	}
 
 }
 
@@ -391,8 +449,8 @@ void CEffectShader::SpawnEffectObject(const XMFLOAT3 & position, const XMFLOAT3 
 		}
 		else if (objectType == EffectObjectType::Flying_PlayerArrow_Effect)
 		{
-			m_ppObjects[idx]->SetMesh(0, m_ppMesh[0]);
-			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + 4.f, position.z));
+			m_ppObjects[idx]->SetMesh(0, m_ppMesh[1]);
+			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x - (CONVERT_PaperUnit_to_InG(3) * direction.x), position.y + 4.f, position.z - (CONVERT_PaperUnit_to_InG(3) * direction.z)));
 			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[3].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2]))));
 			m_PlayerArrow_EffectList.emplace_back(m_ppObjects[idx]);
 		}
@@ -403,12 +461,51 @@ void CEffectShader::SpawnEffectObject(const XMFLOAT3 & position, const XMFLOAT3 
 			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[3].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2]))));
 			m_PlayerFireBall_EffectList.emplace_back(m_ppObjects[idx]);
 		}
+		else if (objectType == EffectObjectType::Tower_Attack_Explosion_Effect)
+		{
+			m_ppObjects[idx]->SetMesh(0, m_ppMesh[5]);
+			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y, position.z));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[3].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2]))));
+			m_TowerAttack_EffectList.emplace_back(m_ppObjects[idx]);
+		}
+
+		// HIt Effect
 		else if (objectType == EffectObjectType::Player_ArrowAndFireBall_HitPosition_Effect)
 		{
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[1]);
-			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + 50.f, position.z - CONVERT_PaperUnit_to_InG(2)));
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[3].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2]))));
+			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y, position.z));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[4].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3]))));
 			m_PlayerArrowAndFireBall_HitPosition_EffectList.emplace_back(m_ppObjects[idx]);
+		}
+		else if (objectType == EffectObjectType::NormallHit_Effect)
+		{
+			m_ppObjects[idx]->SetMesh(0, m_ppMesh[1]);
+			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + CONVERT_PaperUnit_to_InG(4), position.z));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[4].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3]))));
+			m_NormalHit_Effect.emplace_back(m_ppObjects[idx]);
+		}
+
+		// Golem Attack Effect
+		else if (objectType == EffectObjectType::Golem_StandardAttack_Effect)
+		{
+			m_ppObjects[idx]->SetMesh(0, m_ppMesh[5]);
+			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x + (CONVERT_PaperUnit_to_InG(20) * direction.x), position.y + (CONVERT_PaperUnit_to_InG(2)), position.z + (CONVERT_PaperUnit_to_InG(20) * direction.z)));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[5].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4]))));
+			m_GolemStandardAttack_EffectList.emplace_back(m_ppObjects[idx]);
+		}
+		else if (objectType == EffectObjectType::Golem_StumpAttack_Effect)
+		{
+			m_ppObjects[idx]->SetMesh(0, m_ppMesh[5]);
+			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + (CONVERT_PaperUnit_to_InG(2)), position.z));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[5].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4]))));
+			m_GolemStumpAttack_EffectList.emplace_back(m_ppObjects[idx]);
+		}
+		else if (objectType == EffectObjectType::Golem_SpecialAttack_Effect)
+		{
+			m_ppObjects[idx]->SetMesh(0, m_ppMesh[5]);
+			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + (CONVERT_PaperUnit_to_InG(2)), position.z));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[5].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4]))));
+			m_GolemSpecialAttack_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 	}
 }
@@ -517,7 +614,14 @@ void CEffectShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pCont
 		EffectObjectType::Flying_MinionArrow_Effect,
 		EffectObjectType::Flying_PlayerArrow_Effect,
 		EffectObjectType::Flying_PlayerFireBall_Effect,
+		EffectObjectType::Tower_Attack_Explosion_Effect,
+
 		EffectObjectType::Player_ArrowAndFireBall_HitPosition_Effect,
+		EffectObjectType::NormallHit_Effect,
+
+		EffectObjectType::Golem_StandardAttack_Effect,
+		EffectObjectType::Golem_StumpAttack_Effect,
+		EffectObjectType::Golem_SpecialAttack_Effect,
 	};
 
 	// 각 오브젝트의 최대 개수 설정
@@ -546,9 +650,20 @@ void CEffectShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pCont
 	m_nObjects += m_objectsMaxCount[EffectObjectType::Flying_MinionArrow_Effect] = MAX_ARROW;
 	m_nObjects += m_objectsMaxCount[EffectObjectType::Flying_PlayerArrow_Effect] = MAX_ARROW;
 	m_nObjects += m_objectsMaxCount[EffectObjectType::Flying_PlayerFireBall_Effect] = MAX_MAGIC;
-	m_nObjects += m_objectsMaxCount[EffectObjectType::Player_ArrowAndFireBall_HitPosition_Effect] = MAX_HIT;
+	m_nObjects += m_objectsMaxCount[EffectObjectType::Tower_Attack_Explosion_Effect] = MAX_EACH_TOWER_ATK;
 	// 3번 Matrial을 사용하는 Obejct 갯수
 	UseMatrialNumToObjectCnt[3] = (m_nObjects - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2]));
+
+	m_nObjects += m_objectsMaxCount[EffectObjectType::Player_ArrowAndFireBall_HitPosition_Effect] = MAX_HIT;
+	m_nObjects += m_objectsMaxCount[EffectObjectType::NormallHit_Effect] = MAX_HIT;
+	// 4번 Matrial을 사용하는 Obejct 갯수
+	UseMatrialNumToObjectCnt[4] = (m_nObjects - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3]));
+
+	m_nObjects += m_objectsMaxCount[EffectObjectType::Golem_StandardAttack_Effect] = 1;
+	m_nObjects += m_objectsMaxCount[EffectObjectType::Golem_StumpAttack_Effect] = 1;
+	m_nObjects += m_objectsMaxCount[EffectObjectType::Golem_SpecialAttack_Effect] = 1;
+	// 5번 Matrial을 사용하는 Obejct 갯수
+	UseMatrialNumToObjectCnt[5] = (m_nObjects - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4]));
 
 	// 각 오브젝트 개수 만큼 Possible Index 생성
 	m_objectsPossibleIndices = std::unique_ptr<bool[]>(new bool[m_nObjects]);
@@ -576,6 +691,12 @@ void CEffectShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pCont
 	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, UseMatrialNumToObjectCnt[3], 4, 3);
 	CreateConstantBufferViews(pCreateMgr, UseMatrialNumToObjectCnt[3], m_pConstBuffer.Get(), ncbElementBytes, UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2], 3);
 
+	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, UseMatrialNumToObjectCnt[4], 2, 4);
+	CreateConstantBufferViews(pCreateMgr, UseMatrialNumToObjectCnt[4], m_pConstBuffer.Get(), ncbElementBytes, UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3], 4);
+
+	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, UseMatrialNumToObjectCnt[5], 3, 5);
+	CreateConstantBufferViews(pCreateMgr, UseMatrialNumToObjectCnt[5], m_pConstBuffer.Get(), ncbElementBytes, UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4], 5);
+
 	// 오브젝트 Index
 	for (int i = 0; i < EffectObjectTime_Max_COUNT; ++i) {
 		m_objectsIndices[objectOrder[i]] = EffectObjectIndices();
@@ -586,22 +707,20 @@ void CEffectShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pCont
 
 	m_nMaterials = m_nHeaps;
 	m_ppMaterials = new CMaterial*[m_nMaterials];
-	// Effect Image
-	/*
-	이미지 순서
-	0.
-	1.
-	2. Minion Magic Effect
-	*/
+
 	m_ppMaterials[0] = Materials::CreatePlayerSkillEffectMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[0], &m_psrvGPUDescriptorStartHandle[0]);
 	m_ppMaterials[1] = Materials::CreatePlayerAttackEffectMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[1], &m_psrvGPUDescriptorStartHandle[1]);
 	m_ppMaterials[2] = Materials::CreateMinionAttackEffectMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[2], &m_psrvGPUDescriptorStartHandle[2]);
 	m_ppMaterials[3] = Materials::CreateFlyingObjectEffectMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[3], &m_psrvGPUDescriptorStartHandle[3]);
+	m_ppMaterials[4] = Materials::CreateHitEffectMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[4], &m_psrvGPUDescriptorStartHandle[4]);
+	m_ppMaterials[5] = Materials::CreateGolemAttackEffectMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[5], &m_psrvGPUDescriptorStartHandle[5]);
 
 	m_ppMesh[0] = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 25.6f, FRAME_BUFFER_HEIGHT / 14.4f, 0.f);		// 50 x 50
 	m_ppMesh[1] = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 12.8f, FRAME_BUFFER_HEIGHT / 7.2f, 0.f);		// 100 x 100
 	m_ppMesh[2] = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 8.53f, FRAME_BUFFER_HEIGHT / 4.8f, 0.f);		// 150 x 150
 	m_ppMesh[3] = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 6.4f, FRAME_BUFFER_HEIGHT / 3.6f, 0.f);		// 200 x 200
+	m_ppMesh[4] = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 5.12f, FRAME_BUFFER_HEIGHT / 2.88f, 0.f);		// 250 x 250
+	m_ppMesh[5] = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 4.26f, FRAME_BUFFER_HEIGHT / 2.4f, 0.f);		// 300 x 300
 
 	for (int i = 0; i < m_nMesh; ++i)
 	{
@@ -643,7 +762,14 @@ void CEffectShader::ReleaseObjects()
 	if (!m_MinionArrow_EffectList.empty()) m_MinionArrow_EffectList.clear();
 	if (!m_PlayerArrow_EffectList.empty()) m_PlayerArrow_EffectList.clear();
 	if (!m_PlayerFireBall_EffectList.empty()) m_PlayerFireBall_EffectList.clear();
+	if (!m_TowerAttack_EffectList.empty()) m_TowerAttack_EffectList.clear();
+
 	if (!m_PlayerArrowAndFireBall_HitPosition_EffectList.empty()) m_PlayerArrowAndFireBall_HitPosition_EffectList.clear();
+	if (!m_NormalHit_Effect.empty()) m_NormalHit_Effect.clear();
+
+	if (!m_GolemStandardAttack_EffectList.empty()) m_GolemStandardAttack_EffectList.clear();
+	if (!m_GolemStumpAttack_EffectList.empty()) m_GolemStumpAttack_EffectList.clear();
+	if (!m_GolemSpecialAttack_EffectList.empty()) m_GolemSpecialAttack_EffectList.clear();
 
 	if (m_ppObjects)
 	{
