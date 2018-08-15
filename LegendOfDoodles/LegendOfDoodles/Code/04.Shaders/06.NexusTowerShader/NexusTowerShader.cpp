@@ -109,12 +109,6 @@ void CNexusTowerShader::RenderShadow(CCamera * pCamera)
 bool CNexusTowerShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 {
 	UNREFERENCED_PARAMETER(pKeyBuffer);
-
-	if (GetAsyncKeyState('U') & 0x0001)
-	{
-		m_ppObjects[0]->SetState(States::Die);
-
-	}
 	return true;
 }
 

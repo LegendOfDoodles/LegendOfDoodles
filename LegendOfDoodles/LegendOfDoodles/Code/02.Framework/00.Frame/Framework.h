@@ -16,6 +16,8 @@ public: // 공개 함수
 	void Finalize();
 	void FrameAdvance(float timeElapsed);
 
+	void BuildObjects();
+
 	// Message Process
 	LRESULT CALLBACK OnProcessingWindowMessage(HWND hWnd, UINT nMessageID,
 		WPARAM wParam, LPARAM lParam);
@@ -23,7 +25,6 @@ public: // 공개 함수
 	bool IsRunning() { return m_running; }
 
 private: // 내부 함수
-	void BuildObjects();
 	void ReleaseObjects();
 
 private: // 변수

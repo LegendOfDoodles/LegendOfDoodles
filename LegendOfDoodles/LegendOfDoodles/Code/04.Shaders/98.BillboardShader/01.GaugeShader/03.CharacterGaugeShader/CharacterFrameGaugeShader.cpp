@@ -5,6 +5,7 @@
 #include "05.Objects/02.CollisionObject/CollisionObject.h"
 #include "05.Objects/96.Billboard/02.GaugeObject/GaugeObject.h"
 #include "05.Objects/96.Billboard/01.FrameObject/UIFrameObject.h"
+#include "07.Network/Network.h"
 
 /// <summary>
 /// ¸ñÀû: Character Frame UI HP, MP Gauge ½¦ÀÌ´õ
@@ -52,7 +53,7 @@ void CharacterFrameGaugeShader::AnimateObjects(float timeElapsed)
 
 void CharacterFrameGaugeShader::Render(CCamera * pCamera)
 {	
-	CCollisionObject* master = ((CUIFrameObject*)m_ppObjects[0])->GetMasterObject();
+	CCollisionObject* master = ((CUIFrameObject*)m_ppObjects[m_pNetwork->m_myid])->GetMasterObject();
 
 	if (master->GetTeam() == TeamType::Blue)
 	{
@@ -72,7 +73,7 @@ void CharacterFrameGaugeShader::Render(CCamera * pCamera)
 			m_ppMaterials[0]->UpdateShaderVariable(2);
 			break;
 		}
-		if (m_ppObjects[0]) m_ppObjects[0]->Render(pCamera);
+		if (m_ppObjects[m_pNetwork->m_myid]) m_ppObjects[m_pNetwork->m_myid]->Render(pCamera);
 	}
 	else if (master->GetTeam() == TeamType::Red)
 	{

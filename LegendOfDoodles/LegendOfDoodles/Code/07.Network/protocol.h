@@ -90,6 +90,11 @@ struct CS_Msg_Demand_Pos_Character : public Packet
 	float y;
 };
 
+struct CS_Msg_Prepare_Data : public Packet
+{
+	BYTE Character_id;
+};
+
 struct CS_Msg_Demand_Use_Skill : public Packet
 {
 	BYTE Character_id;
@@ -279,6 +284,7 @@ struct SC_Msg_Player_Missile : public Packet
 #define CS_DEMAND_USE_SKILL		  203
 #define CS_CHANGE_WEAPON		  204
 #define CS_SET_ABILITY_POINT      205
+#define CS_PREPARE_DATA			  206
 
 
 

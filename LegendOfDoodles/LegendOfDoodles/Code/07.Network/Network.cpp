@@ -30,7 +30,7 @@ void CNetwork::Initialize(HWND hWnd)
 	ZeroMemory(&ServerAddr, sizeof(SOCKADDR_IN));
 	ServerAddr.sin_family = AF_INET;
 	ServerAddr.sin_port = htons(MY_SERVER_PORT);
-	ServerAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	ServerAddr.sin_addr.s_addr = inet_addr("192.168.0.101");
 
 	int Result = WSAConnect(m_mysocket, (sockaddr *)&ServerAddr, sizeof(ServerAddr), NULL, NULL, NULL, NULL);
 	if (Result)WSAGetLastError();
@@ -63,14 +63,6 @@ void CNetwork::ProcessPacket(char *ptr)
 				first_time = false;
 				m_myid = id;
 			}
-			if (id == m_myid) {
-				//자기 아이디 처리
-				m_ppPlayer[id]->CBaseObject::SetPosition(my_packet->x, my_packet->y);
-			}
-			else if (id < NPC_START) { //다른플레이어에게 알려줄때 쓰는거
-				//딴 아이디 처리
-				m_ppPlayer[id]->CBaseObject::SetPosition(my_packet->x, my_packet->y);
-			}
 			break;
 		}
 		/*case SC_PACKET:
@@ -85,7 +77,7 @@ void CNetwork::ProcessPacket(char *ptr)
 		case SC_POS:
 		{
 			SC_Msg_Pos_Character *my_packet = reinterpret_cast<SC_Msg_Pos_Character *>(ptr);
-			//printf("%d\n", my_packet->Character_id);
+			printf("%d\n", my_packet->Character_id);
 			int id = my_packet->Character_id;
 			if (first_time) {
 				first_time = false;
@@ -416,6 +408,13 @@ void CNetwork::SetScene(shared_ptr<CScene> pScene)
 void CNetwork::PrepareData()
 {
 	m_pMinionShader = (CMinionShader*)m_pScene->GetShader(2);
+
+	CS_Msg_Prepare_Data p;
+	p.Character_id = (BYTE)m_myid;
+	p.size = sizeof(p);
+	p.type = CS_PREPARE_DATA;
+	SendPacket(&p);
+	printf("패킷 보냄\n");
 }
 //
 //void  CNetwork::err_display(char* msg)

@@ -31,10 +31,6 @@ bool CFramework::Initialize(HINSTANCE hInstance, HWND hWnd, shared_ptr<CNetwork>
 
 	m_pNetwork = pNetwork;
 
-	BuildObjects();
-
-
-
 	return(true);
 }
 
@@ -80,8 +76,6 @@ LRESULT CALLBACK CFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMessageI
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////////
-// 내부 함수
 void CFramework::BuildObjects()
 {
 	m_pRenderMgr->ResetCommandList();
@@ -94,6 +88,8 @@ void CFramework::BuildObjects()
 	m_pScene->ReleaseUploadBuffers();
 }
 
+////////////////////////////////////////////////////////////////////////
+// 내부 함수
 void CFramework::ReleaseObjects()
 {
 	if (m_pScene)

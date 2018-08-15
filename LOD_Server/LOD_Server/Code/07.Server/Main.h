@@ -125,6 +125,7 @@ public:
 extern HANDLE gh_iocp;
 
 extern array <Client, MAX_USER> g_clients;
+extern array <bool, MAX_USER> g_loaded;
 extern array <NexusTower, 14> g_nexustowers;
 
 //CScene* g_pScene{ NULL };

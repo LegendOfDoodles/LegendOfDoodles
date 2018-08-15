@@ -200,9 +200,6 @@
     <ClInclude Include="Code\04.Shaders\06.NexusTowerShader\NexusTowerShader.h">
       <Filter>소스 파일\04.Shaders\06.NexusTowerShader</Filter>
     </ClInclude>
-    <ClInclude Include="Code\05.Objects\00.BaseObject\BaseObject.h">
-      <Filter>소스 파일\05.Objects\00.BaseObject</Filter>
-    </ClInclude>
     <ClInclude Include="Code\05.Objects\02.CollisionObject\CollisionObject.h">
       <Filter>소스 파일\05.Objects\02.CollisionObject</Filter>
     </ClInclude>
@@ -253,6 +250,9 @@
     </ClInclude>
     <ClInclude Include="Code\07.Server\Main.h">
       <Filter>소스 파일\07.Server</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\05.Objects\00.BaseObject\BaseObject.h">
+      <Filter>소스 파일\05.Objects\00.BaseObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

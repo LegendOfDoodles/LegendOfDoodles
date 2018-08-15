@@ -13,6 +13,7 @@
 HANDLE gh_iocp;
 
 array <Client, MAX_USER> g_clients;
+array <bool, MAX_USER> g_loaded;
 array <NexusTower, 14> g_nexustowers;
 
 //CScene* g_pScene{ NULL };
@@ -41,6 +42,8 @@ bool g_Clientsync = false;
 
 float g_GameTime{ 0.0f };
 CommonInfo* g_MinionStat{ NULL };
+
+
 
 void error_display(const char *msg, int err_no)
 {
@@ -141,6 +144,7 @@ void ProcessPacket(int id, char *packet)
 	CS_Msg_Demand_Use_Skill* CSkillPacket = reinterpret_cast<CS_Msg_Demand_Use_Skill*>(packet);
 	CS_Msg_Change_Weapon* WeaponPacket = reinterpret_cast<CS_Msg_Change_Weapon*>(packet);
 	CS_Msg_Set_Speacial_Point* SpeacialPacket = reinterpret_cast<CS_Msg_Set_Speacial_Point*>(packet);
+	CS_Msg_Prepare_Data* PreparePacket = reinterpret_cast<CS_Msg_Prepare_Data*>(packet);
 	//서버에서 클라로 보내줘야할 패킷들
 	switch (MovePacket->type)
 	{
@@ -226,6 +230,33 @@ void ProcessPacket(int id, char *packet)
 		g_ppPlayer[CSkillPacket->Character_id]->ActiveSkill((AnimationsType)CSkillPacket->skilltype);
 		break;
 	}
+	case CS_PREPARE_DATA:
+	{
+		printf("패킷 받음\n");
+		g_clients[PreparePacket->Character_id].m_isconnected = true;
+		
+		SC_Msg_Put_Character p;
+		p.Character_id = (BYTE)PreparePacket->Character_id;
+		p.size = sizeof(p);
+		p.type = SC_PUT_PLAYER;
+		p.x = (short)g_ppPlayer[PreparePacket->Character_id]->GetPosition().x;
+		p.y = (short)g_ppPlayer[PreparePacket->Character_id]->GetPosition().z;
+		SendPacket(PreparePacket->Character_id, &p);
+
+
+		//지금 연결된 애한테 4명 어디있는지 
+		for (int i = 0; i < MAX_USER; ++i)
+		{
+			if (i == id) continue;
+			p.Character_id = (BYTE)i;
+			p.x = (short)g_ppPlayer[i]->GetPosition().x;
+			p.y = (short)g_ppPlayer[i]->GetPosition().z;
+
+			SendPacket(id, &p);
+
+		}
+		break;
+	}
 	default:
 		cout << "Unkown Packet Type from Client [" << id << "]\n";
 		return;
@@ -256,6 +287,7 @@ void DisconnectPlayer(int id)
 	g_clients[id].m_viewlist.clear();
 	g_clients[id].m_mvl.unlock();
 	g_clients[id].m_isconnected = false;
+	g_loaded[id] = false;
 }
 
 void worker_thread()
@@ -348,7 +380,7 @@ void accept_thread()	//새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 		}
 		int id = -1;
 		for (int i = 0; i < MAX_USER; ++i)
-			if (false == g_clients[i].m_isconnected) {
+			if (false == g_loaded[i]) {
 				id = i;
 				break;
 			}
@@ -364,36 +396,12 @@ void accept_thread()	//새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 		g_clients[id].m_viewlist.clear();
 
 		CreateIoCompletionPort(reinterpret_cast<HANDLE>(cs), gh_iocp, id, 0);
-		g_clients[id].m_isconnected = true;
+		g_loaded[id] = true;
 		StartRecv(id);
 
-		g_clients[id].m_login = system_clock::now();
-		SC_Msg_Put_Character p;
-		p.Character_id = (BYTE)id;
-		p.size = sizeof(p);
-		p.type = SC_PUT_PLAYER;
-		p.x = (short)g_ppPlayer[id]->GetPosition().x;
-		p.y = (short)g_ppPlayer[id]->GetPosition().z;
-		SendPacket(id, &p);
-		//for (int i = 0; i < MAX_USER; ++i)
-		//{
-		//	//연결된 애들한테 4개 플레이어 패킷 다 보냄
-		//	if (g_clients[i].m_isconnected) {
-		//		SendPacket(i, &p);
-		//	}
-		//}
+		
 
-		//지금 연결된 애한테 4명 어디있는지 
-		for (int i = 0; i < MAX_USER; ++i)
-		{
-			if (i == id) continue;
-			p.Character_id = (BYTE)i;
-			p.x = (short)g_ppPlayer[i]->GetPosition().x;
-			p.y = (short)g_ppPlayer[i]->GetPosition().z;
-
-			SendPacket(id, &p);
-
-		}
+		
 	}
 }
 
