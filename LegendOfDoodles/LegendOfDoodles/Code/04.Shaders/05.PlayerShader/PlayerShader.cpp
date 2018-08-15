@@ -204,6 +204,13 @@ void CPlayerShader::SetEffectManagerToObject(shared_ptr<CEffectMgr> manager)
 	}
 }
 
+void CPlayerShader::SetSoundManagerToObject(shared_ptr<CSoundManager> manager)
+{
+	for (int i = 0; i < 4; ++i) {
+		m_ppObjects[i]->SetSoundManager(manager);
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////
 // 내부 함수
 D3D12_INPUT_LAYOUT_DESC CPlayerShader::CreateInputLayout()

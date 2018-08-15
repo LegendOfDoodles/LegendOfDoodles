@@ -101,7 +101,7 @@
 
 // Flying Object Spped
 #define MINION_ARROW_SPEED CONVERT_cm_to_InG(1.805f)
-
+#define PLAYER_ESKILL_ARROW_SPEED CONVERT_cm_to_InG(7.22f);
 
 // 경험치 증가량
 #define INCREASE_STATICOBJECT_EXP 5

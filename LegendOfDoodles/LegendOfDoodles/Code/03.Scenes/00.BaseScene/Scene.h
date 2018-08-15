@@ -13,6 +13,7 @@ class CThrowingMgr;
 class CEffectMgr;
 class CFSMMgr;
 class CNetwork;
+class CSoundManager;
 
 struct LIGHT
 {
@@ -136,6 +137,8 @@ protected: // º¯¼ö
 	shared_ptr<CThrowingMgr> m_pThrowingMgr;
 	shared_ptr<CEffectMgr> m_pEffectMgr;
 	shared_ptr<CFSMMgr> m_pFSMMgr;
+	shared_ptr<CSoundManager> m_pSoundManager;
+
 
 	const int	m_nHeaps{ 2 };
 	std::vector<ComPtr<ID3D12DescriptorHeap>>	m_pCbvSrvDescriptorHeaps;

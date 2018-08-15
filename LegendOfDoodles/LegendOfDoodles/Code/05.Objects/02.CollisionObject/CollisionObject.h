@@ -3,6 +3,8 @@
 #include "00.Global/01.Utility/05.CollisionManager/CollisionManager.h"
 #include "00.Global/01.Utility/07.ThrowingManager/ThrowingMgr.h"
 #include "00.Global\01.Utility/08.EffectManager/EffectManager.h"
+#include "00.Global/01.Utility/09.SoundManager/SoundManager.h"
+
 
 class CWayFinder;
 
@@ -51,6 +53,7 @@ public: // 공개 함수
 
 	void SetThrowingManager(shared_ptr<CThrowingMgr> manager) { m_pThrowingMgr = manager; }
 	void SetEffectManager(shared_ptr<CEffectMgr> manager) { m_pEffectMgr = manager; }
+	void SetSoundManager(shared_ptr<CSoundManager> manager) { m_pSoundMgr = manager; }
 
 	void SetStatic(StaticType type) { m_StaticType = type; }
 	StaticType GetStaticType() { return m_StaticType; }
@@ -118,7 +121,8 @@ protected: // 변수
 	shared_ptr<CCollisionManager> m_pColManager;
 	shared_ptr<CThrowingMgr> m_pThrowingMgr;
 	shared_ptr<CEffectMgr> m_pEffectMgr;
-
+	shared_ptr<CSoundManager> m_pSoundMgr;
+	
 	bool m_GameOver{ false };
 
 	bool m_Activated{ false };

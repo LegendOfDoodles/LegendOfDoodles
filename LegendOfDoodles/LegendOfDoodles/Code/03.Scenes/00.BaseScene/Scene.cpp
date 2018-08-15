@@ -32,6 +32,7 @@
 #include "00.Global/01.Utility/07.ThrowingManager/ThrowingMgr.h"
 #include "00.Global/01.Utility/08.EffectManager/EffectManager.h"
 #include "00.Global/02.AI/00.FSMMgr/FSMMgr.h"
+#include "00.Global/01.Utility/09.SoundManager/SoundManager.h"
 
 /// <summary>
 /// 목적: 기본 씬, 인터페이스 용
@@ -456,6 +457,9 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	
 	m_pCollisionManager->SetEffectManager(m_pEffectMgr);
 
+	m_pSoundManager = shared_ptr<CSoundManager>(new CSoundManager(m_pCamera));	// Fmod System Init
+	m_pSoundManager->loading();													// Sound File Load
+
 	//Manager Shaders Setting
 	CMinionShader* pMinionS = (CMinionShader *)m_ppShaders[2];
 
@@ -478,6 +482,7 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	}
 	pPlayerS->SetColManagerToObject(m_pCollisionManager);
 	pPlayerS->SetEffectManagerToObject(m_pEffectMgr);
+	pPlayerS->SetSoundManagerToObject(m_pSoundManager);
 
 	// 중립 몬스터에 충돌체 부여
 	CNeutralityShader* pNetral = (CNeutralityShader *)m_ppShaders[4];
@@ -489,6 +494,8 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	pNetral->SetColManagerToObject(m_pCollisionManager);
 	pNetral->SetFSMManager(m_pFSMMgr);
 	pNetral->SetThrowingManagerToObject(m_pThrowingMgr);
+	pNetral->SetEffectManagerToObject(m_pEffectMgr);
+	pNetral->SetSoundManagerToObject(m_pSoundManager);
 
 	CNexusTowerShader* pNTS = (CNexusTowerShader *)m_ppShaders[5];
 	nColliderObject = pNTS->GetObjectCount();
@@ -503,11 +510,14 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	CFlyingShader* pFS = (CFlyingShader*)m_ppShaders[7];
 	pFS->SetColManagerToObject(m_pCollisionManager);
 	pFS->SetEffectManagerToObject(m_pEffectMgr);
+	pFS->SetSoundManagerToObject(m_pSoundManager);
 
 	BuildLights();
 
 	m_pNetwork->SetWayfinder(m_pWayFinder);
 	m_pNetwork->SetCollisionManager(m_pCollisionManager);
+
+	m_pSoundManager->play(SOUND::Back_Ground, XMFLOAT3(0, 0, 0));
 }
 
 void CScene::SetPlayer()
