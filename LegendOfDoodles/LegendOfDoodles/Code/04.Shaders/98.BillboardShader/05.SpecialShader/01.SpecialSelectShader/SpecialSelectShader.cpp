@@ -93,9 +93,23 @@ bool CSpecialSelectShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 			&& (cursorPos.y > SPECIAL_MINIMUM_Y && cursorPos.y < SPECIAL_MAXIMUM_Y))
 		{
 			if (m_pPlayer->GetPlayerStatus()->Weapon == 0)
-				ShowWindow[0] = true;
-			else
-				ShowWindow[1] = true;
+			{
+				if (ShowWindow[0] == true)
+				{
+					ShowWindow[0] = false;
+					isRendering = false;
+				}
+				else ShowWindow[0] = true;
+			}
+			else if (m_pPlayer->GetPlayerStatus()->SpecialPoint >= 1)
+			{
+				if (ShowWindow[1] == true)
+				{
+					ShowWindow[1] = false;
+					isRendering = false;
+				}
+				else ShowWindow[1] = true;
+			}
 
 			return false;
 		}

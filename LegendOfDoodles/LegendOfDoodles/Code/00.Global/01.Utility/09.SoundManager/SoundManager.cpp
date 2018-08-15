@@ -87,7 +87,7 @@ void CSoundManager::loading()
 	ErrorCheck(m_Result);
 
 	// Staff R
-	m_Result = m_pFmod->createSound("./Resource/Sound/Player/Staff/Staff_R.mp3", FMOD_3D | FMOD_3D_LINEARSQUAREROLLOFF, NULL, &m_Sound[SOUND::Player_Staff_R_Sound]);
+	m_Result = m_pFmod->createSound("./Resource/Sound/Player/Staff/Staff_R.wav", FMOD_3D | FMOD_3D_LINEARSQUAREROLLOFF, NULL, &m_Sound[SOUND::Player_Staff_R_Sound]);
 	m_Result = m_Sound[SOUND::Player_Staff_R_Sound]->set3DMinMaxDistance(SOUND_MIN_DISTANCE, SOUND_MAX_DISTANCE);
 	m_Result = m_Sound[SOUND::Player_Staff_R_Sound]->setMode(FMOD_DEFAULT);
 	ErrorCheck(m_Result);
