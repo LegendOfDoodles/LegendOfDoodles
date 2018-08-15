@@ -70,7 +70,7 @@ void CNexusTower::PlayIdle(float timeElapsed)
 
 	if (m_ObjectType == ObjectType::FirstTower)
 	{
-		CCollisionObject* enemy{ m_pColManager->RequestNearObject(this, m_detectRange) };
+		CCollisionObject* enemy{ m_pColManager->RequestNearObject(this, m_detectRange, m_TeamType) };
 
 		if (!enemy) return;
 
@@ -111,7 +111,7 @@ void CNexusTower::PlayAttack(float timeElapsed, shared_ptr<CWayFinder> pWayFinde
 			XMFLOAT3 curPos{ GetPosition() };
 			curPos.y += m_fCollisionSize * 2;
 			m_atkCoolTime = COOLTIME_TOWER_ATTACK;
-			m_pThrowingMgr->RequestSpawn(curPos, Vector3::Subtract(m_pEnemy->GetPosition(), curPos, true), m_TeamType, FlyingObjectType::Roider_Dumbel);
+			m_pThrowingMgr->RequestSpawn(curPos, Vector3::Subtract(m_pEnemy->GetPosition(), curPos, true), m_TeamType, FlyingObjectType::Roider_Dumbel, m_StatusInfo.Atk);
 			for (int i = 0; i < MAX_USER; ++i)
 			{
 				if (g_clients[i].m_isconnected)

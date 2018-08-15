@@ -73,7 +73,7 @@ void CNexusTower::AttackEnemy()
 {
 	XMFLOAT3 curPos{ GetPosition() };
 	curPos.y += m_fCollisionSize * 2;
-	m_pThrowingMgr->RequestSpawn(curPos, Vector3::Subtract(m_pEnemy->GetPosition(), curPos, true), m_TeamType, FlyingObjectType::Roider_Dumbel);
+	m_pThrowingMgr->RequestSpawn(curPos, Vector3::Subtract(m_pEnemy->GetPosition(), curPos, true), m_TeamType, FlyingObjectType::Roider_Dumbel, m_StatusInfo.Atk);
 }
 
 ////////////////////////////////////////////////////////////////////////
