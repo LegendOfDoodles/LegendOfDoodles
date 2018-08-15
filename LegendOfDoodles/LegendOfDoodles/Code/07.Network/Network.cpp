@@ -201,7 +201,6 @@ void CNetwork::ProcessPacket(char *ptr)
 			
 			CCollisionObject* target{ m_pColManager->RequestObjectByTag(my_packet->Minion_Tag) };
 			target->SetEnemyByTag(my_packet->Enemy_Tag);
-			
 			break;
 		}
 		case SC_MONSTER_SET_ENEMY:
@@ -210,6 +209,7 @@ void CNetwork::ProcessPacket(char *ptr)
 
 			CCollisionObject* target{ m_pColManager->RequestNeutralByTag(my_packet->Monster_Tag) };
 			target->SetEnemyByTag(my_packet->Enemy_Tag);
+			
 			break;
 		}
 
@@ -287,7 +287,13 @@ void CNetwork::ProcessPacket(char *ptr)
 			Player->LevelUP(Player);
 			break;
 		}
-
+		case SC_UPDATE_GOLEM_STAT:
+		{
+			SC_Msg_Update_Golem_Stat* my_packet = reinterpret_cast<SC_Msg_Update_Golem_Stat*>(ptr);
+			CCollisionObject* Golem{ m_pColManager->RequestNeutralByTag(my_packet->Monster_Tag) };
+			Golem->SetCommonStatus(my_packet->maxHP, my_packet->atk, my_packet->def);
+			break;
+		}
 		default:
 			printf("Unknown PACKET type [%d]\n", ptr[1]);
 			break;

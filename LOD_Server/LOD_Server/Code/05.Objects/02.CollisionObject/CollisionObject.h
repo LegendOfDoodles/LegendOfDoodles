@@ -51,6 +51,7 @@ public: // 공개 함수
 
 	virtual PlayerInfo* GetPlayerStatus() { return NULL; }
 	virtual CommonInfo* GetCommonStatus() { return NULL; }
+	virtual void SetCommonStatus(CommonInfo* status) {status;};
 	virtual StaticInfo* GetNexusAndTowerStatus() { return NULL; }
 	virtual void SetFlyingObjectsType(FlyingObjectType type) { type; }
 	virtual void SetDirection(const XMFLOAT3& direction) { direction; }

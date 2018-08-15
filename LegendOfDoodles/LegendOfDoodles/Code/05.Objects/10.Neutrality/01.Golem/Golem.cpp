@@ -157,6 +157,13 @@ void CGolem::SaveCurrentState()
 	m_spawnLocation = GetPosition();
 }
 
+void CGolem::SetCommonStatus(float maxhp, float atk, float def)
+{
+	m_StatusInfo.maxHP = maxhp;
+	m_StatusInfo.Atk = atk;
+	m_StatusInfo.Def = def;
+}
+
 void CGolem::BuildSelf(shared_ptr<CCreateMgr> pCreateMgr)
 {
 	CSkinnedMesh *pGolemMesh = new CSkinnedMesh(pCreateMgr, "Resource//3D//Golem//Mesh//GuardGolem.meshinfo");

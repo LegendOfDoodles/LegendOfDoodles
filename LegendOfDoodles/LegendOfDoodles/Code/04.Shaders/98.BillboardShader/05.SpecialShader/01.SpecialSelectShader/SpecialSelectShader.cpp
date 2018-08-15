@@ -158,6 +158,7 @@ bool CSpecialSelectShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 				for (int i = 0; i < 4; ++i) {
 					if (m_pPlayer->GetPlayerStatus()->Special[i] == (SpecialType::NoSelected)) {
 						m_pPlayer->GetPlayerStatus()->Special[i] = (SpecialType::AttackSpecial);
+
 						break;
 					};
 				}

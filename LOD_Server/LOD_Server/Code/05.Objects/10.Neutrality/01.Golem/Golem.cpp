@@ -178,6 +178,22 @@ void CGolem::PlayIdle(float timeElapsed)
 		}
 		else SetState(States::Chase);
 	}
+	if ((int)g_GameTime % 60000 == 0)
+	{
+		m_StatusInfo.maxHP += 180;
+		m_StatusInfo.Atk += 8;
+		m_StatusInfo.Def += 2;
+		SC_Msg_Update_Golem_Stat p;
+		p.Monster_Tag = (short)m_tag;
+		p.maxHP = m_StatusInfo.maxHP;
+		p.atk = m_StatusInfo.Atk;
+		p.def = m_StatusInfo.Def;
+		p.size = sizeof(p);
+		p.type = SC_UPDATE_GOLEM_STAT;
+		for (int i = 0; i < MAX_USER; ++i) {
+			if (g_clients[i].m_isconnected) SendPacket(i, &p);
+		}
+	}
 }
 
 void CGolem::PlayWalk(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)

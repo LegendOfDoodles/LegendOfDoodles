@@ -22,6 +22,7 @@ public:	// 외부 함수
 	virtual void ReceiveDamage(float damage);
 
 	virtual CommonInfo* GetCommonStatus() { return &m_StatusInfo; };
+	virtual void SetCommonStatus(CommonInfo* status);
 
 protected:	// 내부 함수
 	virtual void AdjustAnimationIndex();

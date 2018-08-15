@@ -156,6 +156,38 @@ void CNexusTower::ReceiveDamage(float damage)
 
 	m_StatusInfo.HP -= damage * Compute_Defence(m_StatusInfo.Def);
 
+	if (m_StatusInfo.HP <= 0 && m_pEnemy) {
+		PlayerInfo* PlayerStatus{ m_pEnemy->GetPlayerStatus() };
+		if (m_pEnemy->GetTag() >= 10000 && m_pEnemy->GetTag() < 20000)
+		{
+			PlayerStatus->Exp += 100 + (g_GameTime / 60000) * 5;
+			if (PlayerStatus->Level * 110 + 170 <= PlayerStatus->Exp) {
+				PlayerStatus->Exp -= PlayerStatus->Level * 110 + 170;
+				m_pEnemy->LevelUP(m_pEnemy);
+				SC_Msg_Level_Up p;
+				p.Target_Tag = m_pEnemy->GetTag();
+				p.level = PlayerStatus->Level;
+				p.size = sizeof(p);
+				p.type = SC_LEVEL_UP;
+				for (int j = 0; j < MAX_USER; ++j) {
+					if (g_clients[j].m_isconnected == true) {
+						SendPacket(j, &p);
+					}
+				}
+			}
+			SC_Msg_Exp_Up p;
+			p.Target_Tag = m_pEnemy->GetTag();
+			p.exp = 100 + (g_GameTime / 60000) * 5;
+			p.size = sizeof(p);
+			p.type = SC_EXP_UP;
+			for (int j = 0; j < MAX_USER; ++j) {
+				if (g_clients[j].m_isconnected == true) {
+					SendPacket(j, &p);
+				}
+			}
+		}
+	}
+
 	if (m_hpSyncCoolTime > COOLTIME_HP_SYNC)
 	{
 		SC_Msg_Hp_Sync hpPacket;

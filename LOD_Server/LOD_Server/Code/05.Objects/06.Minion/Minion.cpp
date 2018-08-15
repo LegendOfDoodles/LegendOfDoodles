@@ -172,6 +172,10 @@ void CMinion::ReceiveDamage(float damage)
 	if (m_curState == States::Die || m_curState == States::Remove) { return; }
 
 	m_StatusInfo.HP -= damage * Compute_Defence(m_StatusInfo.Def);
+
+	if (m_StatusInfo.HP <= 0) {
+		SetState(States::Die);
+	}
 	if (m_StatusInfo.HP <= 0 && m_pEnemy) {
 		PlayerInfo* PlayerStatus{ m_pEnemy->GetPlayerStatus() };
 		if (m_pEnemy->GetTag() >= 10000 && m_pEnemy->GetTag() < 20000)
@@ -221,9 +225,14 @@ void CMinion::ReceiveDamage(float damage)
 		m_hpSyncCoolTime = 0.0f;
 	}
 
-	if (m_StatusInfo.HP <= 0) {
-		SetState(States::Die);
-	}
+	
+}
+
+void CMinion::SetCommonStatus(CommonInfo * status)
+{
+	m_StatusInfo.maxHP = status->maxHP;
+	m_StatusInfo.Atk = status->Atk;
+	m_StatusInfo.Def = status->Def;
 }
 
 ////////////////////////////////////////////////////////////////////////

@@ -40,6 +40,7 @@ float g_PacketCoolTime = 0;
 bool g_Clientsync = false;
 
 float g_GameTime{ 0.0f };
+CommonInfo* g_MinionStat{ NULL };
 
 void error_display(const char *msg, int err_no)
 {
@@ -378,6 +379,48 @@ void timer_thread()
 	{
 		Sleep(10);
 		g_PacketCoolTime += 10;
+		if ((int)g_GameTime % 60000 == 0)
+		{
+			for (auto iter = g_blueBowMinions->begin(); iter != g_blueBowMinions->end(); ++iter) {
+				g_MinionStat->maxHP += 15;
+				g_MinionStat->Atk += 2;
+				g_MinionStat->Def += 1;
+				(*iter)->SetCommonStatus(g_MinionStat);
+			}
+			for (auto iter = g_blueSwordMinions->begin(); iter != g_blueSwordMinions->end(); ++iter) {
+				g_MinionStat->maxHP += 20;
+				g_MinionStat->Atk += 1;
+				g_MinionStat->Def += 2;
+				(*iter)->SetCommonStatus(g_MinionStat);
+			}
+			for (auto iter = g_blueStaffMinions->begin(); iter != g_blueStaffMinions->end(); ++iter) {
+				CommonInfo* minionStat{ (*iter)->GetCommonStatus() };
+				g_MinionStat->maxHP += 10;
+				g_MinionStat->Atk += 3;
+				(*iter)->SetCommonStatus(g_MinionStat);
+			}
+			for (auto iter = g_redBowMinions->begin(); iter != g_redBowMinions->end(); ++iter) {
+				CommonInfo* minionStat{ (*iter)->GetCommonStatus() };
+				g_MinionStat->maxHP += 15;
+				g_MinionStat->Atk += 2;
+				g_MinionStat->Def += 1;
+				(*iter)->SetCommonStatus(g_MinionStat);
+			}
+			for (auto iter = g_redSwordMinions->begin(); iter != g_redSwordMinions->end(); ++iter) {
+				CommonInfo* minionStat{ (*iter)->GetCommonStatus() };
+				g_MinionStat->maxHP += 20;
+				g_MinionStat->Atk += 1;
+				g_MinionStat->Def += 2;
+				(*iter)->SetCommonStatus(g_MinionStat);
+			}
+			for (auto iter = g_redStaffMinions->begin(); iter != g_redStaffMinions->end(); ++iter) {
+				CommonInfo* minionStat{ (*iter)->GetCommonStatus() };
+				g_MinionStat->maxHP += 10;
+				g_MinionStat->Atk += 3;
+				(*iter)->SetCommonStatus(g_MinionStat);
+			}
+
+		}
 		if (g_PacketCoolTime >= 1000)
 		{
 			g_PacketCoolTime = 0;
@@ -423,10 +466,13 @@ void timer_thread()
 			//Send Every User Blue Sword Minion Packet
 			for (auto iter = g_blueSwordMinions->begin(); iter != g_blueSwordMinions->end(); ++iter) {
 				XMFLOAT3 MinionPos{ (*iter)->GetPosition() };
+				CommonInfo* MinionStat{ (*iter)->GetCommonStatus() };
 				SC_Msg_Pos_Minion p;
 				p.size = sizeof(p);
 				p.x = MinionPos.x;
 				p.y = MinionPos.z;
+				p.atk = MinionStat->Atk;
+				p.def = MinionStat->Def;
 				p.Minion_Tag = (short)(*iter)->GetTag();
 				p.updatetime = g_GameTime;
 				p.type = SC_POS_MINION;
@@ -439,10 +485,13 @@ void timer_thread()
 			//Send Every User Blue Bow Minion Packet
 			for (auto iter = g_blueBowMinions->begin(); iter != g_blueBowMinions->end(); ++iter) {
 				XMFLOAT3 MinionPos{ (*iter)->GetPosition() };
+				CommonInfo* MinionStat{ (*iter)->GetCommonStatus() };
 				SC_Msg_Pos_Minion p;
 				p.size = sizeof(p);
 				p.x = MinionPos.x;
 				p.y = MinionPos.z;
+				p.atk = MinionStat->Atk;
+				p.def = MinionStat->Def;
 				p.Minion_Tag = (short)(*iter)->GetTag();
 				p.updatetime = g_GameTime;
 				p.type = SC_POS_MINION;
@@ -455,10 +504,13 @@ void timer_thread()
 			//Send Every User Blue Staff Minion Packet
 			for (auto iter = g_blueStaffMinions->begin(); iter != g_blueStaffMinions->end(); ++iter) {
 				XMFLOAT3 MinionPos{ (*iter)->GetPosition() };
+				CommonInfo* MinionStat{ (*iter)->GetCommonStatus() };
 				SC_Msg_Pos_Minion p;
 				p.size = sizeof(p);
 				p.x = MinionPos.x;
 				p.y = MinionPos.z;
+				p.atk = MinionStat->Atk;
+				p.def = MinionStat->Def;
 				p.Minion_Tag = (short)(*iter)->GetTag();
 				p.updatetime = g_GameTime;
 				p.type = SC_POS_MINION;
@@ -471,10 +523,13 @@ void timer_thread()
 			//Send Every User Red Sword Minion Packet
 			for (auto iter = g_redSwordMinions->begin(); iter != g_redSwordMinions->end(); ++iter) {
 				XMFLOAT3 MinionPos{ (*iter)->GetPosition() };
+				CommonInfo* MinionStat{ (*iter)->GetCommonStatus() };
 				SC_Msg_Pos_Minion p;
 				p.size = sizeof(p);
 				p.x = MinionPos.x;
 				p.y = MinionPos.z;
+				p.atk = MinionStat->Atk;
+				p.def = MinionStat->Def;
 				p.Minion_Tag = (short)(*iter)->GetTag();
 				p.updatetime = g_GameTime;
 				p.type = SC_POS_MINION;
@@ -487,10 +542,13 @@ void timer_thread()
 			//Send Every User Red Bow Minion Packet
 			for (auto iter = g_redBowMinions->begin(); iter != g_redBowMinions->end(); ++iter) {
 				XMFLOAT3 MinionPos{ (*iter)->GetPosition() };
+				CommonInfo* MinionStat{ (*iter)->GetCommonStatus() };
 				SC_Msg_Pos_Minion p;
 				p.size = sizeof(p);
 				p.x = MinionPos.x;
 				p.y = MinionPos.z;
+				p.atk = MinionStat->Atk;
+				p.def = MinionStat->Def;
 				p.Minion_Tag = (short)(*iter)->GetTag();
 				p.updatetime = g_GameTime;
 				p.type = SC_POS_MINION;
@@ -503,10 +561,13 @@ void timer_thread()
 			//Send Every User Red Staff Minion Packet
 			for (auto iter = g_redStaffMinions->begin(); iter != g_redStaffMinions->end(); ++iter) {
 				XMFLOAT3 MinionPos{ (*iter)->GetPosition() };
+				CommonInfo* MinionStat{ (*iter)->GetCommonStatus() };
 				SC_Msg_Pos_Minion p;
 				p.size = sizeof(p);
 				p.x = MinionPos.x;
 				p.y = MinionPos.z;
+				p.atk = MinionStat->Atk;
+				p.def = MinionStat->Def;
 				p.Minion_Tag = (short)(*iter)->GetTag();
 				p.updatetime = g_GameTime;
 				p.type = SC_POS_MINION;

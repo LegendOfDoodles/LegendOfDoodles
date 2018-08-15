@@ -255,8 +255,12 @@ void CRoider::ReceiveDamage(float damage)
 {
 	// 이미 사망한 상태인 경우 대미지 처리를 하지 않는다.
 	if (m_curState == States::Die || m_curState == States::Remove) { return; }
-
+	
 	m_StatusInfo.HP -= damage * Compute_Defence(m_StatusInfo.Def);
+	if (m_StatusInfo.HP <= 0) {
+		SetState(States::Die);
+		m_pEnemy = m_pColManager->RequestNearObject(this, m_detectRange);
+	}
 	if (m_StatusInfo.HP <= 0 && m_pEnemy) {
 		PlayerInfo* PlayerStatus{ m_pEnemy->GetPlayerStatus() };
 		if (m_pEnemy->GetTag() >= 10000 && m_pEnemy->GetTag() < 20000)
@@ -305,9 +309,7 @@ void CRoider::ReceiveDamage(float damage)
 		m_hpSyncCoolTime = 0.0f;
 	}
 
-	if (m_StatusInfo.HP <= 0) {
-		SetState(States::Die);
-	}
+	
 	m_activated = true;
 }
 

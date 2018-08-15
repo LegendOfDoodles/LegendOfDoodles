@@ -123,6 +123,8 @@ struct SC_Msg_Pos_Minion : public Packet
 	short Minion_Tag;
 	float x;
 	float y;
+	float atk;
+	float def;
 	float updatetime;
 	XMFLOAT3 vLook;
 };
@@ -140,6 +142,14 @@ struct SC_Msg_Enemy_Tag : public Packet
 {
 	short Minion_Tag;
 	short Enemy_Tag;
+};
+
+struct SC_Msg_Update_Golem_Stat : public Packet
+{
+	short Monster_Tag;
+	float maxHP;
+	float atk;
+	float def;
 };
 
 struct SC_Msg_Enemy_Tag_Neutral : public Packet
@@ -233,6 +243,7 @@ struct SC_Msg_Level_Up : public Packet
 #define SC_EXP_UP				  123
 #define SC_LEVEL_UP				  124
 #define SC_CHANGE_WEAPON		  125
+#define SC_UPDATE_GOLEM_STAT	  126
 
 //Client->Server
 #define CS_ACTION				  201

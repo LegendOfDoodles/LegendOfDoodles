@@ -64,6 +64,8 @@ public: // 공개 함수
 	virtual CommonInfo* GetCommonStatus() { return NULL; }
 	virtual StaticInfo* GetNexusAndTowerStatus() { return NULL; }
 
+	virtual void SetCommonStatus(float maxHP, float atk, float def) { maxHP; atk; def; };
+
 	virtual void SetFlyingObjectsType(FlyingObjectType type) { type; }
 	virtual void SetEffectObjectsType(EffectObjectType type) { type; }
 
