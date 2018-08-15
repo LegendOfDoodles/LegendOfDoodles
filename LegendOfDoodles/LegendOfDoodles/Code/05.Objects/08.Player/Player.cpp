@@ -36,18 +36,33 @@ void CPlayer::Animate(float timeElapsed)
 		{
 			SetState(States::Idle);
 		}
-		if (m_fFrameTime >= m_nAniLength[m_nAniIndex] - 1)
+		else if (GetType() == ObjectType::StickPlayer)
 		{
-			SetState(States::Idle);
+			if (m_nCurrAnimation == Animations::Attack1 &&
+				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
+				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
+			{
+				//// EffectMgr
+				//m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_SwordSkill_Q_Effect);
+				//m_pSoundMgr->play(SOUND::Player_Sword_Q_Sound, GetPosition());
+			}
 		}
 		else if (GetType() == ObjectType::SwordPlayer)
 		{
-			if (m_nCurrAnimation == Animations::SkillQ &&
+			if (m_nCurrAnimation == Animations::Attack1 &&
+				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
+				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
+			{
+				//// EffectMgr
+				//m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_SwordSkill_Q_Effect);
+				//m_pSoundMgr->play(SOUND::Player_Sword_Q_Sound, GetPosition());
+			}
+			else if (m_nCurrAnimation == Animations::SkillQ &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
 				// CoolTime 초기화
-				//m_StatusInfo.QSkillCoolTime = 0.0f;
+				m_StatusInfo.QSkillCoolTime = 0.0f;
 
 				// EffectMgr
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_SwordSkill_Q_Effect);
@@ -57,7 +72,7 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				//m_StatusInfo.WSkillCoolTime = 0.0f;
+				m_StatusInfo.WSkillCoolTime = 0.0f;
 
 				// EffectMgr
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_SwordSkill_W_Effect);
@@ -67,7 +82,7 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				//m_StatusInfo.ESkillCoolTime = 0.0f;
+				m_StatusInfo.ESkillCoolTime = 0.0f;
 
 				// EffectMgr
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_SwordSkill_E_Effect);
@@ -77,7 +92,7 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.666f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.666f)
 			{
-				//m_StatusInfo.RSkillCoolTime = 0.0f;
+				m_StatusInfo.RSkillCoolTime = 0.0f;
 
 				// EffectMgr
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_SwordSkill_R_Effect);
@@ -86,14 +101,20 @@ void CPlayer::Animate(float timeElapsed)
 		}
 		else if (GetType() == ObjectType::StaffPlayer)
 		{
-			if (m_nCurrAnimation == Animations::SkillQ &&
+			if (m_nCurrAnimation == Animations::Attack1 &&
+				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
+				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
+			{
+				//// EffectMgr
+				//m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_SwordSkill_Q_Effect);
+				//m_pSoundMgr->play(SOUND::Player_Sword_Q_Sound, GetPosition());
+			}
+			else if (m_nCurrAnimation == Animations::SkillQ &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
 				// CoolTime 초기화
-				//m_StatusInfo.QSkillCoolTime = 0.0f;
-
-				//m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_MagicSkill_Q, 100);
+				m_StatusInfo.QSkillCoolTime = 0.0f;
 
 				// EffectMgr
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_StaffQSkill_Effect);
@@ -103,8 +124,7 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				//m_StatusInfo.WSkillCoolTime = 0.0f;
-				
+				m_StatusInfo.WSkillCoolTime = 0.0f;
 				// EffectMgr
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_StaffAttack_Effect);
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_StaffSkill_W_Effect);
@@ -114,7 +134,7 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				//m_StatusInfo.ESkillCoolTime = 0.0f;
+				m_StatusInfo.ESkillCoolTime = 0.0f;
 
 				// EffectMgr
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_StaffESkill_Effect);
@@ -125,9 +145,7 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.666f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.666f)
 			{
-				//m_StatusInfo.RSkillCoolTime = 0.0f;
-
-				//m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_MagicSkill_R, 100);
+				m_StatusInfo.RSkillCoolTime = 0.0f;
 
 				// EffectMgr
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_StaffAttack_Effect);
@@ -135,14 +153,20 @@ void CPlayer::Animate(float timeElapsed)
 		}
 		else if (GetType() == ObjectType::BowPlayer)
 		{
-			if (m_nCurrAnimation == Animations::SkillQ &&
+			if (m_nCurrAnimation == Animations::Attack1 &&
+				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
+				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
+			{
+				//// EffectMgr
+				//m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_SwordSkill_Q_Effect);
+				//m_pSoundMgr->play(SOUND::Player_Sword_Q_Sound, GetPosition());
+			}
+			else if (m_nCurrAnimation == Animations::SkillQ &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
 				// CoolTime 초기화
-				//m_StatusInfo.QSkillCoolTime = 0.0f;
-
-				//m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_ArrowSkill_Q, 100);
+				m_StatusInfo.QSkillCoolTime = 0.0f;
 
 				// EffectMgr
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_ArrowAttack_Effect);
@@ -152,9 +176,7 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				//m_StatusInfo.WSkillCoolTime = 0.0f;
-
-				//m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_ArrowSkill_W, 100);
+				m_StatusInfo.WSkillCoolTime = 0.0f;
 
 				// EffectMgr
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_ArrowAttack_Effect);
@@ -164,9 +186,7 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				//m_StatusInfo.ESkillCoolTime = 0.0f;
-
-				//m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_ArrowSkill_E, 100);
+				m_StatusInfo.ESkillCoolTime = 0.0f;
 
 				// EffectMgr
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_ArrowAttack_Effect);
@@ -176,9 +196,7 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.666f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.666f)
 			{
-				//m_StatusInfo.RSkillCoolTime = 0.0f;
-
-				//m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_ArrowSkill_R, 100);
+				m_StatusInfo.RSkillCoolTime = 0.0f;
 
 				// EffectMgr
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_ArrowAttack_Effect);
@@ -186,6 +204,7 @@ void CPlayer::Animate(float timeElapsed)
 			}
 		}
 		break;
+
 	case States::Walk:
 		if (m_nCurrAnimation != Animations::StartWalk&&
 			m_nCurrAnimation != Animations::Walking)
@@ -200,13 +219,19 @@ void CPlayer::Animate(float timeElapsed)
 		}
 		break;
 	case States::Die:
-		if (m_nCurrAnimation != Animations::Die) m_nCurrAnimation = Animations::Die;
 		if (GetAnimTimeRemainRatio() < 0.05)
 		{
-			m_curState = States::Remove;
+			SetState(States::Remove);
 		}
 		break;
+	case States::Win:
+		if (m_nCurrAnimation != Animations::Win) m_nCurrAnimation = Animations::Win;
+		break;
 	case States::Defeat:
+		if (m_nCurrAnimation != Animations::Defeat&&
+			m_nCurrAnimation != Animations::Defeat2)
+			m_nCurrAnimation = Animations::Defeat;
+
 		if (m_nCurrAnimation == Animations::Defeat) {
 			if (m_fFrameTime >= m_nAniLength[m_nAniIndex] - 1)
 			{
@@ -215,12 +240,23 @@ void CPlayer::Animate(float timeElapsed)
 			}
 		}
 		break;
+	case States::Remove:
+		break;
 	default:
 		break;
 	}
 
-	m_fPreFrameTime = m_fFrameTime;
-	m_fFrameTime += 30 * timeElapsed;
+	if (m_curState != States::Remove)
+	{
+		m_fPreFrameTime = m_fFrameTime;
+		m_fFrameTime += ANIMATION_SPEED * timeElapsed;
+	}
+
+	m_StatusInfo.QSkillCoolTime = min(m_StatusInfo.QSkillCoolTime += timeElapsed * 0.1f, 1.f);
+	m_StatusInfo.WSkillCoolTime = min(m_StatusInfo.WSkillCoolTime += timeElapsed * 0.1f, 1.f);
+	m_StatusInfo.ESkillCoolTime = min(m_StatusInfo.ESkillCoolTime += timeElapsed * 0.1f, 1.f);
+	m_StatusInfo.RSkillCoolTime = min(m_StatusInfo.RSkillCoolTime += timeElapsed * 0.1f, 1.f);
+
 
 	AdjustAnimationIndex();
 
@@ -229,7 +265,7 @@ void CPlayer::Animate(float timeElapsed)
 			m_fFrameTime -= m_nAniLength[m_nAniIndex];
 	}
 
-	if(MoveToDestination(timeElapsed) == States::Done) SetState(States::Idle);
+	if (MoveToDestination(timeElapsed) == States::Done) SetState(States::Idle);
 
 	CAnimatedObject::Animate(timeElapsed);
 }
@@ -324,13 +360,52 @@ void CPlayer::SetState(StatesType newState, shared_ptr<CWayFinder> pWayFinder)
 	}
 }
 
+void CPlayer::SetHP(float maxHP, float curHP)
+{
+	m_StatusInfo.maxHP = maxHP; 
+	m_StatusInfo.HP = curHP;
+
+	if (m_StatusInfo.HP <= 0)
+	{
+		SetState(States::Die);
+	}
+}
+
 void CPlayer::ChangeSkillSet(CSkeleton ** ppskill)
 {
-	for (int j = 0; j < 7; j++)
+	for (int j = 0; j < 8; j++)
 	{
-		m_nAniLength[j + 3] = ppskill[j]->GetAnimationLength();
-		m_pSkeleton[j + 3] = *ppskill[j];
+		m_nAniLength[j + 4] = ppskill[j]->GetAnimationLength();
+		m_pSkeleton[j + 4] = *ppskill[j];
 	}
+}
+
+void CPlayer::SaveCurrentState()
+{
+	m_xmf4x4SpawnWorld = m_xmf4x4World;
+	m_spawnLocation = GetPosition();
+}
+
+void CPlayer::Respawn()
+{
+	SetState(StatesType::Idle);
+
+	m_StatusInfo.HP = m_StatusInfo.maxHP;
+
+	m_pColManager->AddCollider(this);
+
+	m_xmf4x4World = m_xmf4x4SpawnWorld;
+}
+
+void CPlayer::SetCollisionManager(shared_ptr<CCollisionManager> manager)
+{
+	m_pColManager = manager;
+	m_pColManager->AddPlayerCollider(this);
+}
+
+void CPlayer::RequestSpawnMissile(FlyingObjectType type)
+{
+	m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, type, m_StatusInfo.Atk);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -348,26 +423,32 @@ void CPlayer::AdjustAnimationIndex()
 	case Animations::Defeat2:
 		m_nAniIndex = 2;
 		break;
-	case Animations::Idle:
+	case Animations::Die:
 		m_nAniIndex = 3;
 		break;
-	case Animations::StartWalk:
+	case Animations::Idle:
 		m_nAniIndex = 4;
 		break;
-	case Animations::Walking:
+	case Animations::StartWalk:
 		m_nAniIndex = 5;
 		break;
-	case Animations::SkillQ:
+	case Animations::Walking:
 		m_nAniIndex = 6;
 		break;
-	case Animations::SkillW:
+	case Animations::SkillQ:
 		m_nAniIndex = 7;
 		break;
-	case Animations::SkillE:
+	case Animations::SkillW:
 		m_nAniIndex = 8;
 		break;
-	case Animations::SkillR:
+	case Animations::SkillE:
 		m_nAniIndex = 9;
+		break;
+	case Animations::SkillR:
+		m_nAniIndex = 10;
+		break;
+	case Animations::Attack1:
+		m_nAniIndex = 11;
 		break;
 	}
 }

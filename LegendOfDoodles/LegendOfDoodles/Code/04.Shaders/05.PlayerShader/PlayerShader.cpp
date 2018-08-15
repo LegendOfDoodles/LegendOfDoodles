@@ -160,9 +160,20 @@ void CPlayerShader::RenderShadow(CCamera * pCamera)
 
 bool CPlayerShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 {
+	if (m_ppObjects[m_pNetwork->m_myid]->GetState() == States::Die || m_ppObjects[m_pNetwork->m_myid]->GetState() == States::Remove) return true;
+
 	UNREFERENCED_PARAMETER(pKeyBuffer);
 	
-	if (GetAsyncKeyState('Q') & 0x0001)
+	if (GetAsyncKeyState('A') & 0x0001)
+	{
+		CS_Msg_Demand_Use_Skill p;
+		p.Character_id = (BYTE)m_pNetwork->m_myid;
+		p.size = sizeof(p);
+		p.type = CS_DEMAND_USE_SKILL;
+		p.skilltype = AnimationsType::Attack1;
+		m_pNetwork->SendPacket(&p);
+	}
+	else if (GetAsyncKeyState('Q') & 0x0001)
 	{
 		CS_Msg_Demand_Use_Skill p;
 		p.Character_id = (BYTE)m_pNetwork->m_myid;
@@ -206,6 +217,14 @@ void CPlayerShader::SetColManagerToObject(shared_ptr<CCollisionManager> manager)
 {
 	for (int i = 0; i < 4; ++i) {
 		m_ppObjects[i]->SetCollisionManager(manager);
+	}
+}
+
+void CPlayerShader::SetThrowingManagerToObject(shared_ptr<CThrowingMgr> manager)
+{
+	for (int i = 0; i < m_nObjects; ++i)
+	{
+		m_ppObjects[i]->SetThrowingManager(manager);
 	}
 }
 
@@ -385,8 +404,9 @@ void CPlayerShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pConte
 	CSkeleton *pWin = new CSkeleton("Resource//3D//Player//Animation//Player_Win.aniinfo");
 	CSkeleton *pDefeat = new CSkeleton("Resource//3D//Player//Animation//Player_Defeat.aniinfo");
 	CSkeleton *pDefeat2 = new CSkeleton("Resource//3D//Player//Animation//Player_Defeat2.aniinfo");
+	CSkeleton *pDie = new CSkeleton("Resource//3D//Player//Animation//Player_Die.aniinfo");
 
-	m_ppSwordAni = new CSkeleton*[7];
+	m_ppSwordAni = new CSkeleton*[8];
 
 	m_ppSwordAni[0] = new CSkeleton("Resource//3D//Player//Animation//Sword//Player_Sword_Idle.aniinfo");
 	m_ppSwordAni[1] = new CSkeleton("Resource//3D//Player//Animation//Sword//Player_Sword_Start_Walk.aniinfo");
@@ -395,8 +415,9 @@ void CPlayerShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pConte
 	m_ppSwordAni[4] = new CSkeleton("Resource//3D//Player//Animation//Sword//Player_Sword_Slash.aniinfo");
 	m_ppSwordAni[5] = new CSkeleton("Resource//3D//Player//Animation//Sword//Player_Sword_Dash.aniinfo");
 	m_ppSwordAni[6] = new CSkeleton("Resource//3D//Player//Animation//Sword//Player_Sword_Dispute.aniinfo");
+	m_ppSwordAni[7] = new CSkeleton("Resource//3D//Player//Animation//Sword//Player_Sword_Attack.aniinfo");
 
-	m_ppStaffAni = new CSkeleton*[7];
+	m_ppStaffAni = new CSkeleton*[8];
 
 	m_ppStaffAni[0] = new CSkeleton("Resource//3D//Player//Animation//Staff//Player_Staff_Idle.aniinfo");
 	//임시
@@ -408,15 +429,16 @@ void CPlayerShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pConte
 	m_ppStaffAni[4] = new CSkeleton("Resource//3D//Player//Animation//Staff//Player_Staff_SkillB.aniinfo");
 	m_ppStaffAni[5] = new CSkeleton("Resource//3D//Player//Animation//Staff//Player_Staff_SkillC.aniinfo");
 	m_ppStaffAni[6] = new CSkeleton("Resource//3D//Player//Animation//Staff//Player_Staff_SkillD.aniinfo");
+	m_ppStaffAni[7] = new CSkeleton("Resource//3D//Player//Animation//Staff//Player_Staff_Attack.aniinfo");
 
-	m_ppBowAni = new CSkeleton*[7];
+	m_ppBowAni = new CSkeleton*[8];
 
 	m_ppBowAni[0] = new CSkeleton("Resource//3D//Player//Animation//Bow//Player_Bow_Idle.aniinfo");
 	m_ppBowAni[1] = new CSkeleton("Resource//3D//Player//Animation//Bow//Player_Bow_Start_Walk.aniinfo");
 	m_ppBowAni[2] = new CSkeleton("Resource//3D//Player//Animation//Bow//Player_Bow_Walk.aniinfo");
 	m_ppBowAni[3] = new CSkeleton("Resource//3D//Player//Animation//Bow//Player_Bow_Attack.aniinfo");
 
-	for (int j = 4; j < 7; ++j) {
+	for (int j = 4; j < 8; ++j) {
 		m_ppBowAni[j] = m_ppBowAni[3];
 	}
 
@@ -468,6 +490,7 @@ void CPlayerShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pConte
 			pPlayer->SetSkeleton(pWin);
 			pPlayer->SetSkeleton(pDefeat);
 			pPlayer->SetSkeleton(pDefeat2);
+			pPlayer->SetSkeleton(pDie);
 
 			pPlayer->SetSkeleton(m_ppSwordAni[0]);
 			pPlayer->SetSkeleton(m_ppSwordAni[1]);
@@ -477,6 +500,7 @@ void CPlayerShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pConte
 			pPlayer->SetSkeleton(m_ppSwordAni[4]);
 			pPlayer->SetSkeleton(m_ppSwordAni[5]);
 			pPlayer->SetSkeleton(m_ppSwordAni[6]);
+			pPlayer->SetSkeleton(m_ppSwordAni[7]);
 
 			pPlayer->SetTerrain(m_pTerrain);
 
@@ -485,6 +509,8 @@ void CPlayerShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pConte
 
 			pPlayer->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * i));
 			pPlayer->SetCbvGPUDescriptorHandlePtrForBB(m_pcbvGPUDescriptorStartHandle[1].ptr + (incrementSize * i));
+
+			pPlayer->SaveCurrentState();
 			m_ppObjects[i++] = pPlayer;
 		}
 	}
@@ -503,13 +529,13 @@ void CPlayerShader::ReleaseObjects()
 		Safe_Delete_Array(m_ppObjects);
 	}
 	//애니메이션 
-	for (UINT j = 0; j < 7; j++)
+	for (UINT j = 0; j < 8; j++)
 	{
 		delete m_ppSwordAni[j];
 	}
 	Safe_Delete_Array(m_ppSwordAni);
 
-	for (UINT j = 0; j < 7; j++)
+	for (UINT j = 0; j < 8; j++)
 	{
 		delete m_ppStaffAni[j];
 	}

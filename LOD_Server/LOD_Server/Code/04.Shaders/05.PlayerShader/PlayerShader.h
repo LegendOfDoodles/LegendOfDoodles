@@ -3,6 +3,7 @@
 
 class CHeightMapTerrain;
 class CCollisionManager;
+class CThrowingMgr;
 class CSkeleton;
 
 class CPlayerShader : public CShader
@@ -14,11 +15,10 @@ public:
 public: // 공개 함수
 	virtual void Initialize(void *pContext = NULL);
 
-
 	virtual void AnimateObjects(float timeElapsed);
 
 	void SetColManagerToObject(shared_ptr<CCollisionManager> manager);
-	bool GetChangeWeapon() { return m_ChangeWeapon; }
+	void SetThrowingManagerToObject(shared_ptr<CThrowingMgr> manager);
 
 protected: // 내부 함수
 
@@ -38,7 +38,4 @@ protected: // 변수
 	CSkeleton** m_ppBowAni{ NULL };
 
 	CHeightMapTerrain * m_pTerrain{ NULL };
-
-	bool m_ChangeWeapon{ false };
-
 };

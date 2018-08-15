@@ -40,6 +40,8 @@ public: // 공개 함수
 
 	virtual void SetDamage(float dmg) { dmg; }
 
+	virtual void RequestSpawnMissile(FlyingObjectType type) { type; }
+
 	StatesType GetState() { return m_curState; }
 	virtual void SetState(StatesType newState, shared_ptr<CWayFinder> pWayFinder = nullptr) { m_curState = newState; }
 

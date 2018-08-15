@@ -198,6 +198,11 @@ struct PlayerInfo
 	float Atk{ 50 };
 	float Def{ 20 };
 
+	float QSkillCoolTime{ 1.0f };
+	float WSkillCoolTime{ 1.0f };
+	float ESkillCoolTime{ 1.0f };
+	float RSkillCoolTime{ 1.0f };
+
 	//0. ¸ùµÕÀÌ	1. °Ë	2. ¸¶¹ý	3.	È°
 	UINT Weapon{ 0 };
 

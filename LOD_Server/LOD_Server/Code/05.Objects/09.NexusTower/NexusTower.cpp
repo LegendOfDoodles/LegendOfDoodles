@@ -15,7 +15,7 @@ CNexusTower::CNexusTower() : CCollisionObject()
 {
 	m_StatusInfo.maxHP = 1000;
 	m_StatusInfo.HP = 1000;
-	m_StatusInfo.Atk = 0;
+	m_StatusInfo.Atk = 1000;
 	m_StatusInfo.Def = 0;
 	m_StatusInfo.Exp = 0;
 	m_sightRange = CONVERT_PaperUnit_to_InG(160.0f);
@@ -105,8 +105,7 @@ void CNexusTower::PlayAttack(float timeElapsed, shared_ptr<CWayFinder> pWayFinde
 			SetEnemy(NULL);
 			SetState(States::Idle);
 		}
-
-		if (m_atkCoolTime < 0.0f)
+		else if (m_atkCoolTime < 0.0f)
 		{
 			XMFLOAT3 curPos{ GetPosition() };
 			curPos.y += m_fCollisionSize * 2;

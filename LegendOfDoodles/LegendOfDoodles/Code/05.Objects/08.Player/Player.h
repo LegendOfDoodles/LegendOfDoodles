@@ -19,9 +19,16 @@ public:	// 외부 함수
 	virtual void ActiveSkill(AnimationsType act);
 
 	virtual void SetState(StatesType newState, shared_ptr<CWayFinder> pWayFinder = nullptr);
-	virtual void SetHP(float maxHP, float curHP) { m_StatusInfo.maxHP = maxHP; m_StatusInfo.HP = curHP; }
+	virtual void SetHP(float maxHP, float curHP);
 	virtual void SetLevel(int level, int maxexp, int exp) { m_StatusInfo.Level = level; m_StatusInfo.MaxExp = maxexp; m_StatusInfo.Exp = exp;}
 	virtual void ChangeSkillSet(CSkeleton** ppskill);
+
+	void SaveCurrentState();
+	virtual void Respawn();
+
+	virtual void SetCollisionManager(shared_ptr<CCollisionManager> manager);
+
+	virtual void RequestSpawnMissile(FlyingObjectType type);
 
 	virtual PlayerInfo* GetPlayerStatus() { return &m_StatusInfo; }
 
@@ -29,12 +36,7 @@ public:	// 외부 함수
 	bool GetWeaponChangeTriger() { return m_ChangeWeapon; }
 	
 	//virtual void SetObjectType(ObjectType type) { m_StatusInfo.WeaponType = type; };
-	virtual void ReceiveDamage(float damage)
-	{
-		// 이미 사망한 상태인 경우 대미지 처리를 하지 않는다.
-		if (m_curState == States::Die || m_curState == States::Remove) { return; }
-		m_StatusInfo.HP -= damage * Compute_Defence(m_StatusInfo.Def);
-	}
+	
 	//virtual void ReceiveDamage(float damage) { m_StatusInfo.HP -= damage * Compute_Defence(m_StatusInfo.Def); }
 	UINT GetWeaponType() { return m_StatusInfo.Weapon; }
 	UINT GetWeaponNum() { return m_StatusInfo.WeaponNum; }
@@ -58,5 +60,9 @@ protected: // 내부 함수
 protected: // 변수
 	PlayerInfo m_StatusInfo;
 	bool m_ChangeWeapon{ false };
+	UINT m_nEquipIndex[4];
+
+	XMFLOAT4X4 m_xmf4x4SpawnWorld;	// 생성시 월드 변환 행렬
+	XMFLOAT3 m_spawnLocation;	// 생성 위치
 };
 

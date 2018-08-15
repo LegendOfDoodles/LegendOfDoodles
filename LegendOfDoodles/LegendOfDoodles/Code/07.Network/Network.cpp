@@ -273,7 +273,7 @@ void CNetwork::ProcessPacket(char *ptr)
 		case SC_EXP_UP:
 		{
 			SC_Msg_Exp_Up* my_packet = reinterpret_cast<SC_Msg_Exp_Up*>(ptr);
-			CCollisionObject* Player{ m_pColManager->RequestObjectByTag(my_packet->Target_Tag) };
+			CCollisionObject* Player{ m_pColManager->RequestPlayerByTag(my_packet->Target_Tag) };
 			PlayerInfo* status{ Player->GetPlayerStatus() };
 			status->Exp += my_packet->exp;
 			break;
@@ -281,7 +281,7 @@ void CNetwork::ProcessPacket(char *ptr)
 		case SC_LEVEL_UP:
 		{
 			SC_Msg_Level_Up* my_packet = reinterpret_cast<SC_Msg_Level_Up*>(ptr);
-			CCollisionObject* Player{ m_pColManager->RequestObjectByTag(my_packet->Target_Tag) };
+			CCollisionObject* Player{ m_pColManager->RequestPlayerByTag(my_packet->Target_Tag) };
 			PlayerInfo* status{ Player->GetPlayerStatus() };
 			status->Exp -= status->Level * 110 + 170;
 			Player->LevelUP(Player);
@@ -292,6 +292,25 @@ void CNetwork::ProcessPacket(char *ptr)
 			SC_Msg_Update_Golem_Stat* my_packet = reinterpret_cast<SC_Msg_Update_Golem_Stat*>(ptr);
 			CCollisionObject* Golem{ m_pColManager->RequestNeutralByTag(my_packet->Monster_Tag) };
 			Golem->SetCommonStatus(my_packet->maxHP, my_packet->atk, my_packet->def);
+			break;
+		}
+
+
+
+
+
+		case SC_PLAYER_RESPAWN:
+		{
+			SC_Msg_Player_Respawn* my_packet = reinterpret_cast<SC_Msg_Player_Respawn*>(ptr);
+			CCollisionObject* Player{ m_pColManager->RequestPlayerByTag(my_packet->Target_Tag) };
+			Player->Respawn();
+			break;
+		}
+		case SC_PLAYER_MISSILE:
+		{
+			SC_Msg_Player_Missile* my_packet = reinterpret_cast<SC_Msg_Player_Missile*>(ptr);
+			CCollisionObject* Player{ m_pColManager->RequestPlayerByTag(my_packet->Target_Tag) };
+			Player->RequestSpawnMissile((FlyingObjectType)my_packet->type);
 			break;
 		}
 		default:

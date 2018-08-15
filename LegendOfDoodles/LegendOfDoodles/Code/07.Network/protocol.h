@@ -200,6 +200,21 @@ struct SC_Msg_Level_Up : public Packet
 };
 
 
+
+
+
+
+struct SC_Msg_Player_Respawn : public Packet
+{
+	short Target_Tag;
+};
+
+struct SC_Msg_Player_Missile : public Packet
+{
+	short Target_Tag;
+	BYTE Missile_Type;
+};
+
 #pragma pack(pop)
 
 #define MAX_BUFF_SIZE 4000
@@ -245,6 +260,8 @@ struct SC_Msg_Level_Up : public Packet
 #define SC_CHANGE_WEAPON		  125
 #define SC_UPDATE_GOLEM_STAT	  126
 
+#define SC_PLAYER_RESPAWN		  1
+#define SC_PLAYER_MISSILE		  2
 //Client->Server
 #define CS_ACTION				  201
 #define CS_MOVE_PLAYER			  202
