@@ -55,6 +55,8 @@ public: // 공개 함수
 	void SetEffectManager(shared_ptr<CEffectMgr> manager) { m_pEffectMgr = manager; }
 	void SetSoundManager(shared_ptr<CSoundManager> manager) { m_pSoundMgr = manager; }
 
+	shared_ptr<CEffectMgr> GetEffectManager() { return m_pEffectMgr; }
+	
 	void SetStatic(StaticType type) { m_StaticType = type; }
 	StaticType GetStaticType() { return m_StaticType; }
 
