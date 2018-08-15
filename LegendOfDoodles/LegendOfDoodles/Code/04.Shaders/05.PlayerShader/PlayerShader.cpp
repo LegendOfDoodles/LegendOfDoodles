@@ -176,6 +176,7 @@ bool CPlayerShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 		p.type = CS_DEMAND_USE_SKILL;
 		p.skilltype = AnimationsType::Attack1;
 		m_pNetwork->SendPacket(&p);
+		m_ppObjects[m_pNetwork->m_myid]->OnSkill();
 	}
 	else if (GetAsyncKeyState('Q') & 0x0001)
 	{

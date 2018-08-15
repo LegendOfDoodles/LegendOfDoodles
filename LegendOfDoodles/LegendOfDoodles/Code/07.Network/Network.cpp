@@ -314,7 +314,7 @@ void CNetwork::ProcessPacket(char *ptr)
 		{
 			SC_Msg_Update_Tower_Stat* my_packet = reinterpret_cast<SC_Msg_Update_Tower_Stat*>(ptr);
 			CCollisionObject* Tower{ m_pColManager->RequestObjectByTag(my_packet->Tower_Tag) };
-			if(Tower) Tower->SetCommonStatus(Tower->GetCommonStatus()->maxHP, my_packet->atk, my_packet->def);
+			if(Tower) Tower->SetCommonStatus(Tower->GetNexusAndTowerStatus()->maxHP, my_packet->atk, my_packet->def);
 			break;
 		}
 		case SC_SET_ABILITY_POINT:
@@ -349,6 +349,20 @@ void CNetwork::ProcessPacket(char *ptr)
 			Player->GetPlayerStatus()->WSkillCoolTime = my_packet->WPercentage;
 			Player->GetPlayerStatus()->ESkillCoolTime = my_packet->EPercentage;
 			Player->GetPlayerStatus()->RSkillCoolTime = my_packet->RPercentage;
+			break;
+		}
+		case SC_CHANGE_SPEED:
+		{
+			SC_Msg_Change_Speed* my_packet = reinterpret_cast<SC_Msg_Change_Speed*>(ptr);
+			CCollisionObject* Player{ m_pColManager->RequestPlayerByTag(my_packet->Target_Tag) };
+			if ((SpeedType)my_packet->Speed_Type == SpeedType::WalkSpeed)
+			{
+				Player->GetPlayerStatus()->WalkSpeed = my_packet->Changed_Speed;
+			}
+			else if ((SpeedType)my_packet->Speed_Type == SpeedType::AttackSpeed)
+			{
+				Player->GetPlayerStatus()->AtkSpeed = my_packet->Changed_Speed;
+			}
 			break;
 		}
 		default:

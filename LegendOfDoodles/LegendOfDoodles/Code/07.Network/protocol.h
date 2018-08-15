@@ -248,7 +248,12 @@ struct SC_Msg_Cooltime_Percent : public Packet
 	float RPercentage;
 };
 
-
+struct SC_Msg_Change_Speed : public Packet
+{
+	short Target_Tag;
+	BYTE Speed_Type;
+	float Changed_Speed;
+};
 
 #pragma pack(pop)
 
@@ -271,6 +276,7 @@ struct SC_Msg_Cooltime_Percent : public Packet
 #define SC_PLAYER_MISSILE		  2
 #define SC_UPDATE_TOWER_STAT	  3
 #define SC_COOLTIME				  4
+#define SC_CHANGE_SPEED			  5
 
 #define SC_CONNECT_PLAYER		  101
 #define SC_PUT_PLAYER			  102

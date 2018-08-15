@@ -23,7 +23,7 @@ public: // 공개 함수
 
 	virtual void AnimateObjects(float timeElapsed);
 
-	void SpawnFlyingObject(const XMFLOAT3& position, const XMFLOAT3& direction, TeamType teamType, FlyingObjectType objectType, float damage);
+	void SpawnFlyingObject(const XMFLOAT3& position, const XMFLOAT3& direction, TeamType teamType, FlyingObjectType objectType, float damage, float rangeAdj = 1.f);
 
 	void SetColManagerToObject(shared_ptr<CCollisionManager> manager);
 

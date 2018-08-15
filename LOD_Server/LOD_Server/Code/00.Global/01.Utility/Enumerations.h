@@ -186,6 +186,10 @@ enum SpecialType {
 	NoSelected
 };
 
+enum SpeedType {
+	WalkSpeed,
+	AttackSpeed
+};
 
 struct PlayerInfo
 {
@@ -207,6 +211,15 @@ struct PlayerInfo
 	float WSkillPower{ 1.0f };
 	float ESkillPower{ 1.0f };
 	float RSkillPower{ 1.0f };
+
+	float AtkSpeed{ 1.0f };
+	float WalkSpeed{ 1.0f };
+
+	float AtkRange{ 1.0f };
+	float QSkillRange{ 1.0f };
+	float WSkillRange{ 1.0f };
+	float ESkillRange{ 1.0f };
+	float RSkillRange{ 1.0f };
 
 	//0. ¸ùµÕÀÌ	1. °Ë	2. ¸¶¹ý	3.	È°
 	UINT Weapon{ 0 };

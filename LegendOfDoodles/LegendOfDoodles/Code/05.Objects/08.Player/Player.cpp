@@ -161,14 +161,16 @@ void CPlayer::Animate(float timeElapsed)
 				m_pSoundMgr->play(SOUND::Player_Arrow_E_Sound, GetPosition());
 			}
 			else if (m_nCurrAnimation == Animations::SkillR &&
-				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.666f &&
-				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.666f)
+				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
+				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
 				// EffectMgr
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_ArrowAttack_Effect);
 				m_pSoundMgr->play(SOUND::Player_Arrow_R_Sound, GetPosition());
 			}
 		}
+		m_fPreFrameTime = m_fFrameTime;
+		m_fFrameTime += ANIMATION_SPEED * timeElapsed * m_StatusInfo.AtkSpeed;
 		break;
 
 	case States::Walk:
@@ -183,6 +185,8 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime = 0;
 			}
 		}
+		m_fPreFrameTime = m_fFrameTime;
+		m_fFrameTime += ANIMATION_SPEED * timeElapsed * m_StatusInfo.WalkSpeed;
 		break;
 	case States::Die:
 		if (GetAnimTimeRemainRatio() < 0.05)
@@ -212,7 +216,9 @@ void CPlayer::Animate(float timeElapsed)
 		break;
 	}
 
-	if (m_curState != States::Remove)
+	if (m_curState != States::Remove &&
+		m_curState != States::Walk &&
+		m_curState != States::Attack)
 	{
 		m_fPreFrameTime = m_fFrameTime;
 		m_fFrameTime += ANIMATION_SPEED * timeElapsed;

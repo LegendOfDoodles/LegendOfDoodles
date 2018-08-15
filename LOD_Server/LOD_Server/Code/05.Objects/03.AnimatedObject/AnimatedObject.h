@@ -60,6 +60,7 @@ public: // 공개 함수
 	float GetAnimTimeRemainRatio() { return (m_nAniLength[m_nAniIndex] - m_fFrameTime) / (float)m_nAniLength[m_nAniIndex]; }
 
 	virtual void SendCoolTime(int id) { id; }
+	virtual void ApplySpecialStat(SpecialType curSP) { curSP; }
 
 protected: // 내부 함수
 	bool IsArrive(float dst, PathType type = PathType::Main);

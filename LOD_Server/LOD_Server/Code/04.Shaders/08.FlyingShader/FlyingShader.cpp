@@ -46,7 +46,7 @@ void CFlyingShader::AnimateObjects(float timeElapsed)
 	m_spawnList.remove_if(removeFunc);
 }
 
-void CFlyingShader::SpawnFlyingObject(const XMFLOAT3& position, const XMFLOAT3& direction, TeamType teamType, FlyingObjectType objectType, float damage)
+void CFlyingShader::SpawnFlyingObject(const XMFLOAT3& position, const XMFLOAT3& direction, TeamType teamType, FlyingObjectType objectType, float damage, float rangeAdj)
 {
 	FlyingObjectType adjObjectType{ objectType };
 
@@ -61,6 +61,7 @@ void CFlyingShader::SpawnFlyingObject(const XMFLOAT3& position, const XMFLOAT3& 
 
 	if (idx != NONE)
 	{
+		m_ppObjects[idx]->ApplyAtkRange(rangeAdj);
 		m_ppObjects[idx]->ResetWorldMatrix();
 		m_ppObjects[idx]->SaveIndex(idx);
 		m_ppObjects[idx]->SetTeam(teamType);

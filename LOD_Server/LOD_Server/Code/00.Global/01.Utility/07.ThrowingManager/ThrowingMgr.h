@@ -8,7 +8,7 @@ public: // 생성자, 소멸자
 	virtual ~CThrowingMgr();
 
 public: // 공개 함수
-	void RequestSpawn(const XMFLOAT3& position, const XMFLOAT3& direction, TeamType teamType, FlyingObjectType objectType, float damage);
+	void RequestSpawn(const XMFLOAT3& position, const XMFLOAT3& direction, TeamType teamType, FlyingObjectType objectType, float damage, float rangeAdj = 1.f);
 
 	void RequestPause();
 	void RequestResume();

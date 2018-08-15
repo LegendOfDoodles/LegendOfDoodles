@@ -270,8 +270,8 @@ void CRoider::ReceiveDamage(float damage, CCollisionObject * pCol)
 				PlayerStatus->Exp -= PlayerStatus->Level * 110 + 170;
 				m_pEnemy->LevelUP(m_pEnemy);
 				SC_Msg_Level_Up p;
-				p.Target_Tag = m_pEnemy->GetTag();
-				p.level = PlayerStatus->Level;
+				p.Target_Tag = (short)m_pEnemy->GetTag();
+				p.level = (short)PlayerStatus->Level;
 				p.size = sizeof(p);
 				p.type = SC_LEVEL_UP;
 				for (int j = 0; j < MAX_USER; ++j) {
@@ -281,7 +281,7 @@ void CRoider::ReceiveDamage(float damage, CCollisionObject * pCol)
 				}
 			}
 			SC_Msg_Exp_Up p;
-			p.Target_Tag = m_pEnemy->GetTag();
+			p.Target_Tag = (short)m_pEnemy->GetTag();
 			p.exp = 153;
 			p.size = sizeof(p);
 			p.type = SC_EXP_UP;

@@ -224,6 +224,10 @@ enum SpecialType {
 	NoSelected
 };
 
+enum SpeedType {
+	WalkSpeed,
+	AttackSpeed
+};
 
 struct PlayerInfo
 {
@@ -240,6 +244,9 @@ struct PlayerInfo
 	float WSkillCoolTime{ 1.0f };
 	float ESkillCoolTime{ 1.0f };
 	float RSkillCoolTime{ 1.0f };
+
+	float AtkSpeed{ 1.0f };
+	float WalkSpeed{ 1.0f };
 
 	//0. ¸ùµÕÀÌ	1. °Ë	2. ¸¶¹ý	3.	È°
 	UINT Weapon{ 0 };

@@ -180,13 +180,13 @@ void CMinion::ReceiveDamage(float damage, CCollisionObject * pCol)
 		PlayerInfo* PlayerStatus{ m_pEnemy->GetPlayerStatus() };
 		if (m_pEnemy->GetTag() >= 10000 && m_pEnemy->GetTag() < 20000)
 		{
-			PlayerStatus->Exp += 64 + (g_GameTime / 60000) * 5;
+			PlayerStatus->Exp += 64 + (short)(g_GameTime / 60) * 5;
 			if (PlayerStatus->Level * 110 + 170 <= PlayerStatus->Exp) {
 				PlayerStatus->Exp -= PlayerStatus->Level * 110 + 170;
 				m_pEnemy->LevelUP(m_pEnemy);
 				SC_Msg_Level_Up p;
-				p.Target_Tag = m_pEnemy->GetTag();
-				p.level = PlayerStatus->Level;
+				p.Target_Tag = (short)m_pEnemy->GetTag();
+				p.level = (short)PlayerStatus->Level;
 				p.size = sizeof(p);
 				p.type = SC_LEVEL_UP;
 				for (int j = 0; j < MAX_USER; ++j) {
@@ -196,8 +196,8 @@ void CMinion::ReceiveDamage(float damage, CCollisionObject * pCol)
 				}
 			}
 			SC_Msg_Exp_Up p;
-			p.Target_Tag = m_pEnemy->GetTag();
-			p.exp = 64 + (g_GameTime / 60000) * 5;
+			p.Target_Tag = (short)m_pEnemy->GetTag();
+			p.exp = 64 + (short)(g_GameTime / 60) * 5;
 			p.size = sizeof(p);
 			p.type = SC_EXP_UP;
 			for (int j = 0; j < MAX_USER; ++j) {

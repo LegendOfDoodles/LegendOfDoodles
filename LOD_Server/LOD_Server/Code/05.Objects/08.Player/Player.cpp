@@ -70,7 +70,7 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_pColManager->RequestCollide(CollisionType::SECTERFORM, this, CONVERT_PaperUnit_to_InG(24), 180, m_StatusInfo.Atk * m_StatusInfo.WSkillPower);
+				m_pColManager->RequestCollide(CollisionType::SECTERFORM, this, CONVERT_PaperUnit_to_InG(24) * m_StatusInfo.WSkillRange, 180, m_StatusInfo.Atk * m_StatusInfo.WSkillPower);
 			}
 			else if (m_nCurrAnimation == Animations::SkillE &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
@@ -105,13 +105,13 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_pColManager->RequestCollide(CollisionType::SPHERE, this, CONVERT_PaperUnit_to_InG(8), CONVERT_PaperUnit_to_InG(8), m_StatusInfo.Atk * m_StatusInfo.WSkillPower);
+				m_pColManager->RequestCollide(CollisionType::SPHERE, this, CONVERT_PaperUnit_to_InG(8) * m_StatusInfo.WSkillRange, CONVERT_PaperUnit_to_InG(8), m_StatusInfo.Atk * m_StatusInfo.WSkillPower);
 			}
 			else if (m_nCurrAnimation == Animations::SkillE &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_pColManager->RequestCollide(CollisionType::SECTERFORM, this, CONVERT_PaperUnit_to_InG(15), 90, m_StatusInfo.Atk * m_StatusInfo.ESkillPower);
+				m_pColManager->RequestCollide(CollisionType::SECTERFORM, this, CONVERT_PaperUnit_to_InG(15) * m_StatusInfo.ESkillRange, 90, m_StatusInfo.Atk * m_StatusInfo.ESkillPower);
 			}
 			else if (m_nCurrAnimation == Animations::SkillR &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.666f &&
@@ -152,13 +152,15 @@ void CPlayer::Animate(float timeElapsed)
 				SendMissilePacket(FlyingObjectType::Player_ArrowSkill_E);
 			}
 			else if (m_nCurrAnimation == Animations::SkillR &&
-				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.666f &&
-				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.666f)
+				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
+				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
 				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_ArrowSkill_R, m_StatusInfo.Atk * m_StatusInfo.RSkillPower);
 				SendMissilePacket(FlyingObjectType::Player_ArrowSkill_R);
 			}
 		}
+		m_fPreFrameTime = m_fFrameTime;
+		m_fFrameTime += ANIMATION_SPEED * timeElapsed *m_StatusInfo.AtkSpeed;
 		break;
 
 	case States::Walk:
@@ -173,6 +175,8 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime = 0;
 			}
 		}
+		m_fPreFrameTime = m_fFrameTime;
+		m_fFrameTime += ANIMATION_SPEED * timeElapsed * m_StatusInfo.WalkSpeed;
 		break;
 	case States::Die:
 		if (GetAnimTimeRemainRatio() < 0.05)
@@ -207,7 +211,9 @@ void CPlayer::Animate(float timeElapsed)
 		break;
 	}
 
-	if (m_curState != States::Remove)
+	if (m_curState != States::Remove &&
+		m_curState != States::Walk &&
+		m_curState != States::Attack)
 	{
 		m_fPreFrameTime = m_fFrameTime;
 		m_fFrameTime += ANIMATION_SPEED * timeElapsed;
@@ -427,6 +433,288 @@ void CPlayer::ReceiveDamage(float damage, CCollisionObject * pCol)
 			}
 		}
 		m_hpSyncCoolTime = 0.0f;
+	}
+}
+
+void CPlayer::ApplySpecialStat(SpecialType curSP)
+{
+	if (m_ObjectType == ObjectType::SwordPlayer)
+	{
+		ApplySwordSP(curSP);
+	}
+	else if (m_ObjectType == ObjectType::StaffPlayer)
+	{
+		ApplyStaffSP(curSP);
+	}
+	else if (m_ObjectType == ObjectType::BowPlayer)
+	{
+		ApplyBowSP(curSP);
+	}
+}
+
+void CPlayer::ApplySwordSP(SpecialType curSP)
+{
+	static int index{ 0 };
+	
+	if (index == 0)
+	{
+		if (curSP == SpecialType::AttackSpecial)
+		{
+			m_StatusInfo.QSkillPower *= 1.3f;
+		}
+		else if (curSP == SpecialType::DefenceSpecial)
+		{
+			m_StatusInfo.Def *= 1.3f;
+		}
+		else if (curSP == SpecialType::TechnicSpecial)
+		{
+			m_detectRange *= 1.15f;
+			m_sightRange *= 1.15f;
+		}
+	}
+	else if (index == 1)
+	{
+		if (curSP == SpecialType::AttackSpecial)
+		{
+			m_StatusInfo.Atk *= 1.5f;
+		}
+		else if (curSP == SpecialType::DefenceSpecial)
+		{
+			m_StatusInfo.Def *= 1.25f;
+		}
+		else if (curSP == SpecialType::TechnicSpecial)
+		{
+			m_StatusInfo.WSkillRange *= 1.5f;
+		}
+	}
+	else if (index == 2)
+	{
+		if (curSP == SpecialType::AttackSpecial)
+		{
+			m_StatusInfo.WSkillPower;
+		}
+		else if (curSP == SpecialType::DefenceSpecial)
+		{
+			m_StatusInfo.WalkSpeed *= 1.3f;
+			SendSpeedPacket(SpeedType::WalkSpeed);
+		}
+		else if (curSP == SpecialType::TechnicSpecial)
+		{
+			m_StatusInfo.RSkillCoolTime *= 0.5f;
+		}
+	}
+	else if (index == 3)
+	{
+		if (curSP == SpecialType::AttackSpecial)
+		{
+			m_StatusInfo.Atk *= 1.5f;
+			m_StatusInfo.QSkillPower *= 1.5f;
+			m_StatusInfo.WSkillPower *= 1.5f;
+			m_StatusInfo.ESkillPower *= 1.5f;
+			m_StatusInfo.RSkillPower *= 1.5f;
+		}
+		else if (curSP == SpecialType::DefenceSpecial)
+		{
+			float hpPercent{ m_StatusInfo.HP / m_StatusInfo.maxHP };
+			m_StatusInfo.maxHP *= 2.0f;
+			m_StatusInfo.HP = m_StatusInfo.maxHP * hpPercent;
+		}
+		else if (curSP == SpecialType::TechnicSpecial)
+		{
+			m_StatusInfo.WSkillCoolTime *= 0.1f;
+			m_StatusInfo.WSkillPower *= 0.4f;
+		}
+	}
+
+	index++;
+}
+
+void CPlayer::ApplyStaffSP(SpecialType curSP)
+{
+	static int index{ 0 };
+
+	if (index == 0)
+	{
+		if (curSP == SpecialType::AttackSpecial)
+		{
+			m_StatusInfo.Atk *= 1.1f;
+		}
+		else if (curSP == SpecialType::DefenceSpecial)
+		{
+			m_StatusInfo.WalkSpeed *= 1.15f;
+			SendSpeedPacket(SpeedType::WalkSpeed);
+
+		}
+		else if (curSP == SpecialType::TechnicSpecial)
+		{
+			m_detectRange *= 1.15f;
+			m_sightRange *= 1.15f;
+		}
+	}
+	else if (index == 1)
+	{
+		if (curSP == SpecialType::AttackSpecial)
+		{
+			m_StatusInfo.Atk *= 1.05f;
+			m_StatusInfo.AtkSpeed *= 1.1f;
+			SendSpeedPacket(SpeedType::AttackSpeed);
+		}
+		else if (curSP == SpecialType::DefenceSpecial)
+		{
+			m_StatusInfo.WalkSpeed *= 1.25f;
+			SendSpeedPacket(SpeedType::WalkSpeed);
+		}
+		else if (curSP == SpecialType::TechnicSpecial)
+		{
+			m_StatusInfo.WSkillPower *= 1.3f;
+		}
+	}
+	else if (index == 2)
+	{
+		if (curSP == SpecialType::AttackSpecial)
+		{
+			m_StatusInfo.AtkSpeed *= 1.13f;
+			SendSpeedPacket(SpeedType::AttackSpeed);
+		}
+		else if (curSP == SpecialType::DefenceSpecial)
+		{
+			m_StatusInfo.WalkSpeed *= 1.25f;
+			SendSpeedPacket(SpeedType::WalkSpeed);
+		}
+		else if (curSP == SpecialType::TechnicSpecial)
+		{
+			m_StatusInfo.RSkillCoolTime *= 0.5f;
+		}
+	}
+	else if (index == 3)
+	{
+		if (curSP == SpecialType::AttackSpecial)
+		{
+			m_StatusInfo.AtkSpeed *= 1.1f;
+			m_StatusInfo.Atk *= 1.1f;
+			float hpPercent{ m_StatusInfo.HP / m_StatusInfo.maxHP };
+			m_StatusInfo.maxHP *= 0.7f;
+			m_StatusInfo.HP = m_StatusInfo.maxHP * hpPercent;
+			SendSpeedPacket(SpeedType::AttackSpeed);
+		}
+		else if (curSP == SpecialType::DefenceSpecial)
+		{
+			m_StatusInfo.AtkSpeed *= 1.2f;
+			float hpPercent{ m_StatusInfo.HP / m_StatusInfo.maxHP };
+			m_StatusInfo.maxHP *= 0.6f;
+			m_StatusInfo.HP = m_StatusInfo.maxHP * hpPercent;
+			SendSpeedPacket(SpeedType::AttackSpeed);
+		}
+		else if (curSP == SpecialType::TechnicSpecial)
+		{
+			m_StatusInfo.WSkillCoolTime *= 0.1f;
+			m_StatusInfo.WSkillPower *= 0.4f;
+		}
+	}
+
+	index++;
+}
+
+void CPlayer::ApplyBowSP(SpecialType curSP)
+{
+	static int index{ 0 };
+
+	if (index == 0)
+	{
+		if (curSP == SpecialType::AttackSpecial)
+		{
+			m_StatusInfo.QSkillPower *= 1.3f;
+		}
+		else if (curSP == SpecialType::DefenceSpecial)
+		{
+			m_StatusInfo.Def *= 1.2f;
+		}
+		else if (curSP == SpecialType::TechnicSpecial)
+		{
+			m_detectRange *= 1.15f;
+			m_sightRange *= 1.15f;
+		}
+	}
+	else if (index == 1)
+	{
+		if (curSP == SpecialType::AttackSpecial)
+		{
+			m_StatusInfo.ESkillRange *= 1.4f;
+		}
+		else if (curSP == SpecialType::DefenceSpecial)
+		{
+			m_StatusInfo.Def *= 1.1f;
+			float hpPercent{ m_StatusInfo.HP / m_StatusInfo.maxHP };
+			m_StatusInfo.maxHP *= 1.2f;
+			m_StatusInfo.HP = m_StatusInfo.maxHP * hpPercent;
+		}
+		else if (curSP == SpecialType::TechnicSpecial)
+		{
+			m_StatusInfo.WSkillPower *= 1.5f;
+		}
+	}
+	else if (index == 2)
+	{
+		if (curSP == SpecialType::AttackSpecial)
+		{
+			m_StatusInfo.QSkillPower *= 1.25f;
+		}
+		else if (curSP == SpecialType::DefenceSpecial)
+		{
+			m_StatusInfo.WalkSpeed *= 1.3f;
+			SendSpeedPacket(SpeedType::WalkSpeed);
+		}
+		else if (curSP == SpecialType::TechnicSpecial)
+		{
+			m_StatusInfo.WSkillCoolTime *= 0.5f;
+		}
+	}
+	else if (index == 3)
+	{
+		if (curSP == SpecialType::AttackSpecial)
+		{
+			m_StatusInfo.WSkillRange *= 1.5f;
+			m_StatusInfo.ESkillRange *= 1.5f;
+			float hpPercent{ m_StatusInfo.HP / m_StatusInfo.maxHP };
+			m_StatusInfo.maxHP *= 0.6f;
+			m_StatusInfo.HP = m_StatusInfo.maxHP * hpPercent;
+		}
+		else if (curSP == SpecialType::DefenceSpecial)
+		{
+			m_StatusInfo.Def *= 2.0f;
+			float hpPercent{ m_StatusInfo.HP / m_StatusInfo.maxHP };
+			m_StatusInfo.maxHP *= 0.7f;
+			m_StatusInfo.HP = m_StatusInfo.maxHP * hpPercent;
+		}
+		else if (curSP == SpecialType::TechnicSpecial)
+		{
+			m_StatusInfo.WSkillCoolTime *= 0.1f;
+			m_StatusInfo.WSkillPower *= 0.4f;
+		}
+	}
+
+	index++;
+}
+
+void CPlayer::SendSpeedPacket(SpeedType type)
+{
+	SC_Msg_Change_Speed p;
+	p.size = sizeof(p);
+	p.type = SC_CHANGE_SPEED;
+	p.Target_Tag = (short)m_tag;
+	p.Speed_Type = (short)type;
+	if (type == SpeedType::WalkSpeed)
+	{
+		p.Changed_Speed = m_StatusInfo.WalkSpeed;
+	}
+	else if (type == SpeedType::AttackSpeed)
+	{
+		p.Changed_Speed = m_StatusInfo.AtkSpeed;
+	}
+	for (int j = 0; j < MAX_USER; ++j) {
+		if (g_clients[j].m_isconnected == true) {
+			SendPacket(j, &p);
+		}
 	}
 }
 
