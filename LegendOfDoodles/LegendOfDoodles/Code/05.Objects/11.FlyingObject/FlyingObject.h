@@ -2,6 +2,7 @@
 #include "05.Objects/02.CollisionObject/CollisionObject.h"
 
 class CCollisionManager;
+class CHeightMapTerrain;
 
 class CFlyingObject : public CCollisionObject
 {
@@ -12,12 +13,17 @@ public:
 public:	// 외부 함수
 	virtual void Animate(float timeElapsed);
 
-	virtual void SetCollisionManager(shared_ptr<CCollisionManager> manager) { m_pColManager = manager; }
-
 	virtual void SetFlyingObjectsType(FlyingObjectType type);
 	virtual void SetDirection(const XMFLOAT3& direction);
 
+	virtual void SetCollisionManager(shared_ptr<CCollisionManager> manager) { m_pColManager = manager; }
+	virtual void SetEffectManager(shared_ptr<CEffectMgr> manager) { m_pEffectMgr = manager; }
+
 	virtual FlyingObjectType GetFlyingObjectsType() { return m_flyingObjectType; }
+
+	void SetTerrainImage(CHeightMapTerrain * pTerrain) { m_pTerrain = pTerrain; }
+
+	virtual void SetDamage(float dmg) { m_damage = dmg; }
 
 protected: // 내부 함수
 	void LookAt(XMFLOAT3 objPosition);
@@ -36,5 +42,7 @@ protected: // 변수
 	XMFLOAT3 m_direction{};
 
 	shared_ptr<CCollisionManager> m_pColManager{ NULL };
+
+	CHeightMapTerrain * m_pTerrain{ NULL };
 };
 

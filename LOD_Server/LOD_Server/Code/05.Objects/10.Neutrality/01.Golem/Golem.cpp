@@ -152,7 +152,7 @@ void CGolem::PlayIdle(float timeElapsed)
 	if (m_nCurrAnimation == Animations::Idle ||
 		m_curState == States::Walk)
 	{
-		CCollisionObject* enemy{ m_pColManager->RequestNearObject(this, m_detectRange) };
+		CCollisionObject* enemy{ m_pColManager->RequestNearObject(this, m_detectRange, m_TeamType) };
 
 		if (!enemy) return;
 		if (!Chaseable(enemy)) return;

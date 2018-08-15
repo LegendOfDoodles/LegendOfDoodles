@@ -32,6 +32,8 @@ public: // 공개 함수
 	virtual void NotifyDamager(CCollisionObject* other) { other; }
 	virtual void NotifyDamageTeam(TeamType type) { type; }
 
+	virtual void SetDamage(float dmg) { dmg; }
+
 	StatesType GetState() { return m_curState; }
 	virtual void SetState(StatesType newState) { m_curState = newState; }
 

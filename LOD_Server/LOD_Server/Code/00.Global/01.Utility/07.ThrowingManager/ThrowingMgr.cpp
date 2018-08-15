@@ -21,9 +21,9 @@ CThrowingMgr::~CThrowingMgr()
 
 ////////////////////////////////////////////////////////////////////////
 // 공개 함수
-void CThrowingMgr::RequestSpawn(const XMFLOAT3 & position, const XMFLOAT3 & direction, TeamType teamType, FlyingObjectType objectType)
+void CThrowingMgr::RequestSpawn(const XMFLOAT3 & position, const XMFLOAT3 & direction, TeamType teamType, FlyingObjectType objectType, float damage)
 {
-	m_pFlyingShader->SpawnFlyingObject(position, direction, teamType, objectType);
+	m_pFlyingShader->SpawnFlyingObject(position, direction, teamType, objectType, damage);
 }
 
 void CThrowingMgr::RequestPause()

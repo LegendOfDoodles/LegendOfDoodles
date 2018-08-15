@@ -245,39 +245,50 @@ void CCollisionManager::RequestCollide(CollisionType type, CCollisionObject * pC
 	}
 }
 
-CCollisionObject* CCollisionManager::RequestNearObject(CCollisionObject * pCol, float lengh)
+CCollisionObject* CCollisionManager::RequestNearObject(CCollisionObject * pCol, float lengh, TeamType type, bool player)
 {
 	if (m_Winner != TeamType::None) return NULL;
 
 	CCollisionObject* nearObject{ NULL };
 	float nearDistance = 0;
-	for (auto i = m_lstColliders.begin(); i != m_lstColliders.end(); ++i)
+	std::list<CCollisionObject*>::iterator i;
+	std::list<CCollisionObject*>* curList;
+	if (type == TeamType::Red)
 	{
+		curList = &m_lstRedSight;
+	}
+	else if (type == TeamType::Blue)
+	{
+		curList = &m_lstBlueSight;
+		int n = curList->size();
+	}
+	else
+		curList = &m_lstColliders;
 
-		if ((*i) != pCol && (*i)->GetTeam() != pCol->GetTeam()) {
-			if (NearLevel((*i)->GetCollisionLevel(), pCol->GetCollisionLevel()), true)
+	for (i = curList->begin(); i != curList->end(); ++i)
+	{
+		if ((*i)->GetTeam() == type) continue;
+		if (((*i)->GetType() < 4 && player) || !player)
+		{
+			XMFLOAT2 apos = XMFLOAT2((*i)->GetPosition().x, (*i)->GetPosition().z);
+			XMFLOAT2 bpos = XMFLOAT2(pCol->GetPosition().x, pCol->GetPosition().z);
+			float distance = Vector2::Distance(apos, bpos);
+			if (distance <= lengh)
 			{
-				XMFLOAT2 apos = XMFLOAT2((*i)->GetPosition().x, (*i)->GetPosition().z);
-				XMFLOAT2 bpos = XMFLOAT2(pCol->GetPosition().x, pCol->GetPosition().z);
-				float distance = Vector2::Distance(apos, bpos);
-				if (distance <= lengh)
-				{
-					if (!nearObject) {
-						nearDistance = distance;
-						nearObject = (*i);
-					}
-					else if (nearDistance > distance) {
-						nearDistance = distance;
-						nearObject = (*i);
-						//std::cout << "col\n";
-					}
+				if (!nearObject) {
+					nearDistance = distance;
+					nearObject = (*i);
+				}
+				else if (nearDistance > distance) {
+					nearDistance = distance;
+					nearObject = (*i);
+					//std::cout << "col\n";
 				}
 			}
 		}
 	}
 	return nearObject;
 }
-
 /*
 1 0  7
 2 ¤± 6

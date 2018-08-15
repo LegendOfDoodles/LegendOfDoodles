@@ -5,6 +5,7 @@ typedef std::list<CCollisionObject*> CollisionObjectList;
 
 class CMaterial;
 class CCollisionManager;
+class CHeightMapTerrain;
 
 struct FlyingObjectIndices
 {
@@ -22,7 +23,7 @@ public: // 공개 함수
 
 	virtual void AnimateObjects(float timeElapsed);
 
-	void SpawnFlyingObject(const XMFLOAT3& position, const XMFLOAT3& direction, TeamType teamType, FlyingObjectType objectType);
+	void SpawnFlyingObject(const XMFLOAT3& position, const XMFLOAT3& direction, TeamType teamType, FlyingObjectType objectType, float damage);
 
 	void SetColManagerToObject(shared_ptr<CCollisionManager> manager);
 
@@ -39,15 +40,15 @@ protected: // 내부 함수
 	void ResetPossibleIndex(int idx) { m_objectsPossibleIndices[idx] = false; }
 
 protected: // 변수
-	static const int m_nMesh{ 3 };
+	static const int m_nMesh{ 8 };
 
 	std::unordered_map<FlyingObjectType, UINT> m_objectsMaxCount;
 	std::unordered_map<FlyingObjectType, FlyingObjectIndices> m_objectsIndices;
 	std::unique_ptr<bool[]> m_objectsPossibleIndices;
 
-	CollisionObjectList m_dumbelList;
-	CollisionObjectList m_arrowList;
-	CollisionObjectList m_magicList;
+	CollisionObjectList m_spawnList;
+
+	CHeightMapTerrain * m_pTerrain{ NULL };
 
 	bool m_Paused{ false };
 };

@@ -38,6 +38,8 @@ public: // 공개 함수
 	virtual void NotifyDamager(CCollisionObject* other) { other; }
 	virtual void NotifyDamageTeam(TeamType type) { type; }
 
+	virtual void SetDamage(float dmg) { dmg; }
+
 	StatesType GetState() { return m_curState; }
 	virtual void SetState(StatesType newState, shared_ptr<CWayFinder> pWayFinder = nullptr) { m_curState = newState; }
 
