@@ -100,6 +100,8 @@ void CScene::ReleaseUploadBuffers()
 
 void CScene::ProcessInput()
 {
+	if (m_pCollisionManager->IsGameOver()) return;
+
 	UCHAR pKeyBuffer[256];
 
 	GetKeyboardState(pKeyBuffer);
@@ -605,6 +607,8 @@ void CScene::PickObjectPointedByCursor(WPARAM wParam, LPARAM lParam)
 
 void CScene::GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, XMFLOAT4X4&	 xmf4x4View)
 {
+	if (m_pCollisionManager->IsGameOver()) return;
+
 	XMFLOAT4X4  inverseArr = Matrix4x4::Inverse(xmf4x4View);
 	XMFLOAT3 camPosition = m_pCamera->GetPosition();
 	XMFLOAT3 layWorldPosition = Vector3::TransformCoord(pickPosition, inverseArr);

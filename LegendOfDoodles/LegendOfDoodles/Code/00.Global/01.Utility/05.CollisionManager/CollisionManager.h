@@ -38,6 +38,9 @@ public:
 	int GetEnemyCout() {
 		return static_cast<int>(m_lstBlueSight.size());
 	}
+
+	bool IsGameOver() { return m_GameOver; }
+
 protected:
 	bool NearLevel(XMFLOAT2 a, XMFLOAT2 b,bool attack = false) {
 
@@ -51,6 +54,8 @@ protected:
 
 
 protected:
+	bool m_GameOver{ false };
+
 	TeamType m_Winner{ TeamType::None };
 	TeamType m_User{ TeamType::Blue };
 	NodeMap** m_BlueSight;

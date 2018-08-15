@@ -10,6 +10,8 @@ CCollisionManager::CCollisionManager()
 
 void CCollisionManager::GameOver(TeamType type)
 {
+	m_GameOver = true;
+
 	if (type == TeamType::Blue) {
 		m_Winner = TeamType::Red;
 	}

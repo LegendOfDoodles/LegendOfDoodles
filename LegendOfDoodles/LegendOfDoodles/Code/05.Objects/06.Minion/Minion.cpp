@@ -99,6 +99,7 @@ void CMinion::SetState(StatesType newState, shared_ptr<CWayFinder> pWayFinder)
 		break;
 	case States::Win:
 	case States::Defeat:
+		m_nCurrAnimation = Animations::Idle;
 		SetPathToGo(NULL);
 		break;
 	default:

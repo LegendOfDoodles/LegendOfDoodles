@@ -218,6 +218,7 @@ void CNetwork::ProcessPacket(char *ptr)
 		{
 			SC_Msg_Boss_Idle_Animation* my_packet = reinterpret_cast<SC_Msg_Boss_Idle_Animation*>(ptr);
 			CCollisionObject* Golem{ m_pColManager->RequestNeutralByTag(my_packet->Monster_Tag) };
+
 			Golem->SetNextAnimation((AnimationsType)my_packet->Animation);
 			break;
 		}
@@ -253,6 +254,7 @@ void CNetwork::ProcessPacket(char *ptr)
 		{
 			SC_Msg_Game_Over* my_packet = reinterpret_cast<SC_Msg_Game_Over*>(ptr);
 			m_pColManager->GameOver((TeamType)my_packet->Team_Type);
+
 			break;
 		}
 		case SC_BUILDING_ATTACK:

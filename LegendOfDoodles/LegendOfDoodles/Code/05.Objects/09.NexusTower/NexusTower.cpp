@@ -47,7 +47,10 @@ void CNexusTower::SetState(StatesType newState, shared_ptr<CWayFinder> pWayFinde
 		m_StatusInfo.HP = 0.f;
 	}
 
-	m_nextState = m_curState = newState;
+	if (newState == States::Defeat)
+		m_curState = States::Die;
+	else
+		m_nextState = m_curState = newState;
 }
 
 void CNexusTower::PlayDie(float timeElapsed)
