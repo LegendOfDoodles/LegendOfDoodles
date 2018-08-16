@@ -226,16 +226,16 @@ struct PlayerInfo
 
 	UINT WeaponNum{ 0 };
 
-	UINT Kill{ 10 };
-	UINT Death{ 2 };
-	UINT Assist{ 8 };
+	UINT Kill{ 0 };
+	UINT Death{ 0 };
+	UINT Assist{ 0 };
 
 	UINT Level{ 0 };
 
 	UINT MaxExp{ 170 };
 	UINT Exp{ 0 };
 
-	UINT SpecialPoint{ 4 };
+	UINT SpecialPoint{ 0 };
 
 	// Æ¯¼º 7 ~ 21 4°³
 	SpecialType Special[4] = { SpecialType::NoSelected, SpecialType::NoSelected, SpecialType::NoSelected, SpecialType::NoSelected };

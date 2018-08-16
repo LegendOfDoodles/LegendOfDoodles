@@ -22,15 +22,14 @@ public:
 	void Update(shared_ptr<CWayFinder> pWayFinder);
 	void RequestCollide(CollisionType type, CCollisionObject* pCol, float data1 = 0, float data2 = 0, float damage = 0);
 	CCollisionObject* RequestNearObject(CCollisionObject* pCol, float lengh, TeamType type, bool player = false);
+	void RequestIncreaseExp(CCollisionObject* pCol, float lengh, TeamType type, float exp);
 	~CCollisionManager();
 	int(*GetFoW(void))[NODE_HEIGHT];
 
 	void SetMyTeam(TeamType team) { m_User = team; }
 
 	float GetnodeSize() { return nodeSize; }
-	int GetEnemyCout() {
-		return static_cast<int>(m_lstBlueSight.size());
-	}
+	
 protected:
 	bool NearLevel(XMFLOAT2 a, XMFLOAT2 b, bool attack = false) {
 

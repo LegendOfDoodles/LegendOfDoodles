@@ -165,7 +165,7 @@ void CFlyingObject::SetFlyingObjectsType(FlyingObjectType type)
 		m_distance = 0.0f;
 		m_EffectTriger = true;
 		m_maxDistance = CONVERT_PaperUnit_to_InG(30);
-		m_speed = CONVERT_cm_to_InG(1.805f);
+		m_speed = CONVERT_cm_to_InG(3.355f);
 	}
 	else if (type == FlyingObjectType::Minion_Magic)
 	{
