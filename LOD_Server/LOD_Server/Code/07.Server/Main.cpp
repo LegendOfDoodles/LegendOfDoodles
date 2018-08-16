@@ -145,6 +145,7 @@ void ProcessPacket(int id, char *packet)
 	CS_Msg_Change_Weapon* WeaponPacket = reinterpret_cast<CS_Msg_Change_Weapon*>(packet);
 	CS_Msg_Set_Speacial_Point* SpeacialPacket = reinterpret_cast<CS_Msg_Set_Speacial_Point*>(packet);
 	CS_Msg_Prepare_Data* PreparePacket = reinterpret_cast<CS_Msg_Prepare_Data*>(packet);
+	CS_Msg_Demand_Level_Up* LevelupPacket = reinterpret_cast<CS_Msg_Demand_Level_Up*>(packet);
 	//서버에서 클라로 보내줘야할 패킷들
 	switch (MovePacket->type)
 	{
@@ -250,6 +251,19 @@ void ProcessPacket(int id, char *packet)
 
 			SendPacket(id, &p);
 
+		}
+		break;
+	}
+	case CS_DEMAND_LEVEL_UP:
+	{
+		SC_Msg_Level_Up p;
+		p.Target_Tag = g_ppPlayer[LevelupPacket->Character_id]->GetTag();
+		p.size = sizeof(p);
+		p.type = SC_LEVEL_UP;
+		for (int j = 0; j < MAX_USER; ++j) {
+			if (g_clients[j].m_isconnected == true) {
+				SendPacket(j, &p);
+			}
 		}
 		break;
 	}

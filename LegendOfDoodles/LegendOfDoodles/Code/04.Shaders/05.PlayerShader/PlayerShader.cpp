@@ -234,6 +234,15 @@ bool CPlayerShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 			m_ppObjects[m_pNetwork->m_myid]->OnSkill();
 		}
 	}
+	else if (GetAsyncKeyState('L') & 0x0001)
+	{
+		CS_Msg_Demand_Level_Up p;
+		p.Character_id = (BYTE)m_pNetwork->m_myid;
+		p.size = sizeof(p);
+		p.type = CS_DEMAND_LEVEL_UP;
+		m_pNetwork->SendPacket(&p);
+		
+	}
 
 	return true;
 }
