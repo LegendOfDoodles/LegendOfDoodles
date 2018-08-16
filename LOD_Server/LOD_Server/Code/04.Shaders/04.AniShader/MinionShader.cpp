@@ -92,7 +92,7 @@ void CMinionShader::AnimateObjects(float timeElapsed)
 		if (m_curSpawnCount >= 20)
 		{
 			m_bSpawning = false;
-			m_neverSpawn = true;
+			//m_neverSpawn = true;
 		}
 	}
 
