@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Camera.h"
 #include "02.Framework/01.CreateMgr/CreateMgr.h"
+#include "05.Objects/02.CollisionObject/CollisionObject.h"
 
 /// <summary>
 /// 목적: 기본 카메라 코드, 인터 페이스 용
@@ -198,6 +199,15 @@ void CCamera::SavePickedPos()
 	::GetCursorPos(&m_pickCursorPos);
 }
 
+void CCamera::SetMaster(CCollisionObject * master)
+{
+	m_pMaster = master;
+
+	XMFLOAT3 masterPos{ master->GetPosition() };
+
+	SetPosition(masterPos.x, masterPos.z);
+}
+
 bool CCamera::OnProcessMouseWheel(WPARAM wParam, LPARAM lParam)
 {
 	UNREFERENCED_PARAMETER(lParam);
@@ -281,10 +291,23 @@ bool CCamera::IsInFrustum(BoundingOrientedBox & xmBoundingBox)
 	return(m_xmFrustum.Intersects(xmBoundingBox));
 }
 
+void CCamera::GoToMaster()
+{
+	XMFLOAT3 masterPos{ m_pMaster->GetPosition() };
+
+	SetPosition(masterPos.x, masterPos.z);
+}
+
 void CCamera::SetPosition(float x, float y, float z)
 {
 	m_xmf3Position.x = x;
 	m_xmf3Position.y = y;
+	m_xmf3Position.z = z;
+}
+
+void CCamera::SetPosition(float x, float z)
+{
+	m_xmf3Position.x = x;
 	m_xmf3Position.z = z;
 }
 

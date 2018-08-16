@@ -220,5 +220,5 @@ float CUIFrameObject::GetCurrentHP()
 
 float CUIFrameObject::GetCurrentExp()
 {
-	return (m_pMasterObject->GetPlayerStatus()->Exp / m_pMasterObject->GetPlayerStatus()->MaxExp);
+	return ((float)m_pMasterObject->GetPlayerStatus()->Exp / m_pMasterObject->GetPlayerStatus()->MaxExp);
 }

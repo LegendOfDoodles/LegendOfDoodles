@@ -413,6 +413,20 @@ void CPlayer::ReceiveDamage(float damage, CCollisionObject * pCol)
 
 	if (m_StatusInfo.HP <= 0)
 	{
+		if (pCol->GetTag() >= 10000 && pCol->GetTag() < 20000)
+		{
+			pCol->GetPlayerStatus()->Kill++;
+			for (int i = 0; i < MAX_USER; ++i)
+			{
+				if (g_clients[i].m_isconnected) {
+					SC_Msg_Set_Player_Kill p;
+					p.Killer_Tag = (short)pCol->GetTag();
+					p.size = sizeof(p);
+					p.type = SC_SET_PLAYER_KILL;
+					SendPacket(i, &p);
+				}
+			}
+		}
 		SetState(States::Die);
 		for (int i = 0; i < MAX_USER; ++i)
 		{
@@ -714,7 +728,7 @@ void CPlayer::SendSpeedPacket(SpeedType type)
 	p.size = sizeof(p);
 	p.type = SC_CHANGE_SPEED;
 	p.Target_Tag = (short)m_tag;
-	p.Speed_Type = (short)type;
+	p.Speed_Type = (BYTE)type;
 	if (type == SpeedType::WalkSpeed)
 	{
 		p.Changed_Speed = m_StatusInfo.WalkSpeed;

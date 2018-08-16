@@ -263,7 +263,6 @@ CCollisionObject* CCollisionManager::RequestNearObject(CCollisionObject * pCol, 
 	else if (type == TeamType::Blue)
 	{
 		curList = &m_lstBlueSight;
-		int n = curList->size();
 	}
 	else
 		curList = &m_lstColliders;

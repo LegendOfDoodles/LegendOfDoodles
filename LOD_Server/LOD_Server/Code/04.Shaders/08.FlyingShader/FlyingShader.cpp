@@ -70,7 +70,6 @@ void CFlyingShader::SpawnFlyingObject(const XMFLOAT3& position, const XMFLOAT3& 
 		m_ppObjects[idx]->SetDamage(damage);
 		m_ppObjects[idx]->ResetCollisionLevel();
 		m_ppObjects[idx]->Activate();
-		int adjIdx{ idx - m_objectsIndices[adjObjectType].m_begIndex };
 		if (objectType == FlyingObjectType::Roider_Dumbel)
 		{
 			m_ppObjects[idx]->SetPosition(Vector3::Add(XMFLOAT3(position.x, position.y + CONVERT_PaperUnit_to_InG(8), position.z), Vector3::ScalarProduct(direction, CONVERT_PaperUnit_to_InG(4), false)));

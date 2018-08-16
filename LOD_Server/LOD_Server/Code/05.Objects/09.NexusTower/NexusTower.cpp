@@ -167,6 +167,7 @@ void CNexusTower::SetMaster(CCollisionObject * masterObject)
 
 void CNexusTower::ReceiveDamage(float damage, CCollisionObject * pCol)
 {
+	UNREFERENCED_PARAMETER(pCol);
 	// 이미 사망한 상태인 경우 대미지 처리를 하지 않는다.
 	if (m_bImmortal || m_curState == States::Die || m_curState == States::Remove) { return; }
 
@@ -176,13 +177,13 @@ void CNexusTower::ReceiveDamage(float damage, CCollisionObject * pCol)
 		PlayerInfo* PlayerStatus{ m_pEnemy->GetPlayerStatus() };
 		if (m_pEnemy->GetTag() >= 10000 && m_pEnemy->GetTag() < 20000)
 		{
-			PlayerStatus->Exp += 100 + (g_GameTime / 60000) * 5;
+			PlayerStatus->Exp += (short)(100 + (g_GameTime / 60) * 5);
 			if (PlayerStatus->Level * 110 + 170 <= PlayerStatus->Exp) {
 				PlayerStatus->Exp -= PlayerStatus->Level * 110 + 170;
 				m_pEnemy->LevelUP(m_pEnemy);
 				SC_Msg_Level_Up p;
-				p.Target_Tag = m_pEnemy->GetTag();
-				p.level = PlayerStatus->Level;
+				p.Target_Tag = (short)m_pEnemy->GetTag();
+				p.level = (short)PlayerStatus->Level;
 				p.size = sizeof(p);
 				p.type = SC_LEVEL_UP;
 				for (int j = 0; j < MAX_USER; ++j) {
@@ -192,8 +193,8 @@ void CNexusTower::ReceiveDamage(float damage, CCollisionObject * pCol)
 				}
 			}
 			SC_Msg_Exp_Up p;
-			p.Target_Tag = m_pEnemy->GetTag();
-			p.exp = 100 + (g_GameTime / 60000) * 5;
+			p.Target_Tag = (short)m_pEnemy->GetTag();
+			p.exp = (short)(100 + (g_GameTime / 60) * 5);
 			p.size = sizeof(p);
 			p.type = SC_EXP_UP;
 			for (int j = 0; j < MAX_USER; ++j) {

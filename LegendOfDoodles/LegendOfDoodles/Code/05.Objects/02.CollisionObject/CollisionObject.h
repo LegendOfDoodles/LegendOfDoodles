@@ -64,7 +64,7 @@ public: // 공개 함수
 	void SetStatic(StaticType type) { m_StaticType = type; }
 	StaticType GetStaticType() { return m_StaticType; }
 
-	virtual void ReceiveSpecial(BYTE idx, SpecialType type, bool myid = false) {}
+	virtual void ReceiveSpecial(BYTE idx, SpecialType type, bool myid = false) { idx; type; myid; }
 	virtual PlayerInfo* GetPlayerStatus() { return NULL; }
 	virtual CommonInfo* GetCommonStatus() { return NULL; }
 	virtual StaticInfo* GetNexusAndTowerStatus() { return NULL; }

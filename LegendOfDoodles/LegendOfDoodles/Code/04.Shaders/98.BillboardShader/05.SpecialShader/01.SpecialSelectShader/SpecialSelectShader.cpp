@@ -177,7 +177,7 @@ bool CSpecialSelectShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 						//m_pPlayer->GetPlayerStatus()->Special[i] = (SpecialType::AttackSpecial);
 						CS_Msg_Set_Speacial_Point p;
 						p.Ability_Type = (BYTE)SpecialType::AttackSpecial;
-						p.Character_id = m_pNetwork->m_myid;
+						p.Character_id = (BYTE)m_pNetwork->m_myid;
 						p.size = sizeof(p);
 						p.type = CS_SET_ABILITY_POINT;
 						m_pNetwork->SendPacket(&p);
@@ -204,7 +204,7 @@ bool CSpecialSelectShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 					if (m_pPlayer->GetPlayerStatus()->Special[i] == (SpecialType::NoSelected)) {
 						CS_Msg_Set_Speacial_Point p;
 						p.Ability_Type = (BYTE)SpecialType::DefenceSpecial;
-						p.Character_id = m_pNetwork->m_myid;
+						p.Character_id = (BYTE)m_pNetwork->m_myid;
 						p.size = sizeof(p);
 						p.type = CS_SET_ABILITY_POINT;
 						m_pNetwork->SendPacket(&p);
@@ -230,7 +230,7 @@ bool CSpecialSelectShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 					if (m_pPlayer->GetPlayerStatus()->Special[i] == (SpecialType::NoSelected)) {
 						CS_Msg_Set_Speacial_Point p;
 						p.Ability_Type = (BYTE)SpecialType::TechnicSpecial;
-						p.Character_id = m_pNetwork->m_myid;
+						p.Character_id = (BYTE)m_pNetwork->m_myid;
 						p.size = sizeof(p);
 						p.type = CS_SET_ABILITY_POINT;
 						m_pNetwork->SendPacket(&p);

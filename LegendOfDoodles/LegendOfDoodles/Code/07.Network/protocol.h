@@ -262,6 +262,12 @@ struct SC_Msg_Change_Speed : public Packet
 	float Changed_Speed;
 };
 
+struct SC_Msg_Set_Player_Kill : public Packet
+{
+	short Killer_Tag;
+
+};
+
 #pragma pack(pop)
 
 #define MAX_BUFF_SIZE 4000
@@ -285,6 +291,7 @@ struct SC_Msg_Change_Speed : public Packet
 #define SC_COOLTIME				  4
 #define SC_CHANGE_SPEED			  5
 #define SC_SET_PLAYER_STATE		  6
+#define SC_SET_PLAYER_KILL		  7
 
 #define SC_CONNECT_PLAYER		  101
 #define SC_PUT_PLAYER			  102
