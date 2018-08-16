@@ -183,7 +183,6 @@ void CMinion::ReceiveDamage(float damage, CCollisionObject * pCol)
 		SC_Msg_Hp_Sync p;
 		p.curhp = m_StatusInfo.HP;
 		p.maxhp = m_StatusInfo.maxHP;
-		printf("%f\n", p.maxhp);
 		p.size = sizeof(p);
 		p.type = SC_HP_SYNC;
 		p.Target_Tag = (short)m_tag;

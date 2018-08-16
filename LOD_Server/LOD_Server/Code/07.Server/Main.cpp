@@ -415,7 +415,7 @@ void timer_thread()
 		Sleep(10);
 		g_PacketCoolTime += 10;
 		CoolTimeSync += 10;
-		if (static_cast<int>(g_GameTime) % 60 == 0)
+		if (g_GameTime > 10 && static_cast<int>(g_GameTime) % 60 == 0)
 		{
 			g_BowMinionStat.maxHP += 15;
 			g_BowMinionStat.Atk += 2;
