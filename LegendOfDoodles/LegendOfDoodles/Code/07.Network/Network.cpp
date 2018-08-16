@@ -31,7 +31,7 @@ void CNetwork::Initialize(HWND hWnd)
 	ZeroMemory(&ServerAddr, sizeof(SOCKADDR_IN));
 	ServerAddr.sin_family = AF_INET;
 	ServerAddr.sin_port = htons(MY_SERVER_PORT);
-	ServerAddr.sin_addr.s_addr = inet_addr("192.168.0.101");
+	ServerAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
 //	ServerAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
 	int Result = WSAConnect(m_mysocket, (sockaddr *)&ServerAddr, sizeof(ServerAddr), NULL, NULL, NULL, NULL);
@@ -364,6 +364,14 @@ void CNetwork::ProcessPacket(char *ptr)
 			{
 				Player->GetPlayerStatus()->AtkSpeed = my_packet->Changed_Speed;
 			}
+			break;
+		}
+		case SC_SET_PLAYER_STATE:
+		{
+			SC_Msg_Set_Player_State* my_packet = reinterpret_cast<SC_Msg_Set_Player_State*>(ptr);
+			CCollisionObject* Player{ m_pColManager->RequestPlayerByTag(my_packet->Player_Tag) };
+			if(Player) Player->SetState((StatesType)my_packet->Player_State);
+			printf("플레이어 뒤짐");
 			break;
 		}
 		default:

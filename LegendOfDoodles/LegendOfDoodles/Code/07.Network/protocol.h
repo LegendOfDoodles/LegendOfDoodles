@@ -157,6 +157,13 @@ struct SC_Msg_Set_Minion_State : public Packet
 	short Minion_Tag;
 	BYTE Minion_State;
 };
+
+struct SC_Msg_Set_Player_State : public Packet
+{
+	BYTE Player_State;
+	short Player_Tag;
+
+};
 struct SC_Msg_Enemy_Tag : public Packet
 {
 	short Minion_Tag;
@@ -277,6 +284,7 @@ struct SC_Msg_Change_Speed : public Packet
 #define SC_UPDATE_TOWER_STAT	  3
 #define SC_COOLTIME				  4
 #define SC_CHANGE_SPEED			  5
+#define SC_SET_PLAYER_STATE		  6
 
 #define SC_CONNECT_PLAYER		  101
 #define SC_PUT_PLAYER			  102

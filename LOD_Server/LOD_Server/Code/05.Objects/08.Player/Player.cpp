@@ -288,7 +288,7 @@ void CPlayer::ActiveSkill(AnimationsType act)
 void CPlayer::SetState(StatesType newState)
 {
 	m_curState = newState;
-
+	
 	switch (newState)
 	{
 	case States::Idle:
@@ -411,10 +411,22 @@ void CPlayer::ReceiveDamage(float damage, CCollisionObject * pCol)
 	if (m_curState == States::Die || m_curState == States::Remove) { return; }
 	m_StatusInfo.HP -= damage * Compute_Defence(m_StatusInfo.Def);
 
-	if (m_StatusInfo.HP <= 0) 
+	if (m_StatusInfo.HP <= 0)
 	{
 		SetState(States::Die);
+		for (int i = 0; i < MAX_USER; ++i)
+		{
+			if (g_clients[i].m_isconnected) {
+				SC_Msg_Set_Player_State p;
+				p.Player_State = (BYTE)StatesType::Die;
+				p.Player_Tag = (short)m_tag;
+				p.size = sizeof(p);
+				p.type = SC_SET_PLAYER_STATE;
+				SendPacket(i, &p);
+			}
+		}
 	}
+
 
 	if (m_hpSyncCoolTime > COOLTIME_HP_SYNC)
 	{
