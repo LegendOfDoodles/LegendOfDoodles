@@ -15,7 +15,7 @@ CNexusTower::CNexusTower() : CCollisionObject()
 {
 	m_StatusInfo.maxHP = 1000;
 	m_StatusInfo.HP = 1000;
-	m_StatusInfo.Atk = 1000;
+	m_StatusInfo.Atk = 100;
 	m_StatusInfo.Def = 0;
 	m_StatusInfo.Exp = 0;
 	m_sightRange = CONVERT_PaperUnit_to_InG(160.0f);

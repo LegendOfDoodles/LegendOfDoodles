@@ -193,14 +193,14 @@ enum SpeedType {
 
 struct PlayerInfo
 {
-	float maxHP{ 500 };
+	float maxHP{ 1500 };
 	float HP{ maxHP };
 
 	float maxMP{ 500 };
 	float MP{ 150 };
 
-	float Atk{ 50 };
-	float Def{ 20 };
+	float Atk{ 150 };
+	float Def{ 60 };
 
 	float QSkillCoolTime{ COOLTIME_SKILL_Q };
 	float WSkillCoolTime{ COOLTIME_SKILL_W };

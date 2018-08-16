@@ -14,7 +14,7 @@ CPlayer::CPlayer() : CAnimatedObject()
 {
 	m_detectRange = CONVERT_PaperUnit_to_InG(80.0f);
 	m_sightRange = CONVERT_PaperUnit_to_InG(80.0f);
-	SetSpeed(CONVERT_cm_to_InG(3.285f * 10));
+	SetSpeed(CONVERT_cm_to_InG(3.285f * 5));
 }
 
 
@@ -160,7 +160,7 @@ void CPlayer::Animate(float timeElapsed)
 			}
 		}
 		m_fPreFrameTime = m_fFrameTime;
-		m_fFrameTime += ANIMATION_SPEED * timeElapsed *m_StatusInfo.AtkSpeed;
+		m_fFrameTime += ANIMATION_SPEED *5* timeElapsed *m_StatusInfo.AtkSpeed;
 		break;
 
 	case States::Walk:
