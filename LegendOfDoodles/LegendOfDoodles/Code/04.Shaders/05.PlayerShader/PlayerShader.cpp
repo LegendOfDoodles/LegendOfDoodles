@@ -82,7 +82,7 @@ void CPlayerShader::AnimateObjects(float timeElapsed)
 				static_cast<CPlayer*>(m_ppObjects[j])->SetWeaponChangeTriger(false);
 
 				
-				p.Character_id = m_pNetwork->m_myid;
+				p.Character_id = (BYTE)m_pNetwork->m_myid;
 				p.ObjectType = (short)ObjectType::SwordPlayer;
 				p.size = sizeof(p);
 				p.WeaponNum = 1;
@@ -98,7 +98,7 @@ void CPlayerShader::AnimateObjects(float timeElapsed)
 				m_ChangeWeapon = true;
 				static_cast<CPlayer*>(m_ppObjects[j])->SetWeaponChangeTriger(false);
 
-				p.Character_id = m_pNetwork->m_myid;
+				p.Character_id = (BYTE)m_pNetwork->m_myid;
 				p.ObjectType = (short)ObjectType::StaffPlayer;
 				p.size = sizeof(p);
 				p.WeaponNum = 2;
@@ -114,7 +114,7 @@ void CPlayerShader::AnimateObjects(float timeElapsed)
 				m_ChangeWeapon = true;
 				static_cast<CPlayer*>(m_ppObjects[j])->SetWeaponChangeTriger(false);
 
-				p.Character_id = m_pNetwork->m_myid;
+				p.Character_id = (BYTE)m_pNetwork->m_myid;
 				p.ObjectType = (short)ObjectType::BowPlayer;
 				p.size = sizeof(p);
 				p.WeaponNum = 3;
@@ -178,6 +178,10 @@ bool CPlayerShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 		m_pNetwork->SendPacket(&p);
 		m_ppObjects[m_pNetwork->m_myid]->OnSkill();
 	}
+	else if (m_ppObjects[m_pNetwork->m_myid]->GetType() == ObjectType::StickPlayer)
+	{
+		return true;
+	}
 	else if (GetAsyncKeyState('Q') & 0x0001)
 	{
 		if (m_ppObjects[m_pNetwork->m_myid]->GetPlayerStatus()->QSkillCoolTime >= 1.f)
@@ -236,7 +240,7 @@ bool CPlayerShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 
 void CPlayerShader::SetColManagerToObject(shared_ptr<CCollisionManager> manager)
 {
-	for (int i = 0; i < 4; ++i) {
+	for (int i = 0; i < m_nObjects; ++i) {
 		m_ppObjects[i]->SetCollisionManager(manager);
 	}
 }
@@ -251,14 +255,14 @@ void CPlayerShader::SetThrowingManagerToObject(shared_ptr<CThrowingMgr> manager)
 
 void CPlayerShader::SetEffectManagerToObject(shared_ptr<CEffectMgr> manager)
 {
-	for (int i = 0; i < 4; ++i) {
+	for (int i = 0; i < m_nObjects; ++i) {
 		m_ppObjects[i]->SetEffectManager(manager);
 	}
 }
 
 void CPlayerShader::SetSoundManagerToObject(shared_ptr<CSoundManager> manager)
 {
-	for (int i = 0; i < 4; ++i) {
+	for (int i = 0; i < m_nObjects; ++i) {
 		m_ppObjects[i]->SetSoundManager(manager);
 	}
 }

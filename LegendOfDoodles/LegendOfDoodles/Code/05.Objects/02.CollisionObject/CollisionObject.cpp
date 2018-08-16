@@ -59,7 +59,7 @@ void CCollisionObject::LevelUP(CCollisionObject* player)
 		PlayerStatus->maxMP += 30;
 		PlayerStatus->HP = PlayerStatus->maxHP;
 		PlayerStatus->MP = PlayerStatus->maxMP;
-		PlayerStatus->Atk += 4.5;
+		PlayerStatus->Atk += 4.5f;
 		PlayerStatus->Def += 3;
 	}
 	else if (PlayerStatus->Weapon == 2)
@@ -68,8 +68,8 @@ void CCollisionObject::LevelUP(CCollisionObject* player)
 		PlayerStatus->maxMP += 60;
 		PlayerStatus->HP = PlayerStatus->maxHP;
 		PlayerStatus->MP = PlayerStatus->maxMP;
-		PlayerStatus->Atk += 2.9;
-		PlayerStatus->Def += 3.4;
+		PlayerStatus->Atk += 2.9f;
+		PlayerStatus->Def += 3.4f;
 	}
 	else if (PlayerStatus->Weapon == 3)
 	{
@@ -77,7 +77,7 @@ void CCollisionObject::LevelUP(CCollisionObject* player)
 		PlayerStatus->maxMP += 50;
 		PlayerStatus->HP = PlayerStatus->maxHP;
 		PlayerStatus->MP = PlayerStatus->maxMP;
-		PlayerStatus->Atk += 2.41;
-		PlayerStatus->Def += 3.25;
+		PlayerStatus->Atk += 2.41f;
+		PlayerStatus->Def += 3.25f;
 	}
 }

@@ -236,7 +236,7 @@ void CRoider::ReadyToAtk(shared_ptr<CWayFinder> pWayFinder)
 	}
 
 	SetPathToGo(newPath);
-	GenerateSubPathToPosition(pWayFinder, XMFLOAT3(pathBeg.To().x, curPos.y, pathBeg.To().y));
+	GenerateSubPathToMainPath(pWayFinder);
 }
 
 void CRoider::Respawn()

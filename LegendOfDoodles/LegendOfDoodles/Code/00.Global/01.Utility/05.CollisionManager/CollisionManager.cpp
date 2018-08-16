@@ -218,11 +218,11 @@ void CCollisionManager::RequestCollide(CollisionType type, CCollisionObject * pC
 										(pCol->GetFlyingObjectsType() == FlyingObjectType::Player_ArrowSkill_Q
 											|| pCol->GetFlyingObjectsType() == FlyingObjectType::Player_Magic))
 									{
-										m_pEffectMgr->RequestSpawn((*i)->GetPosition(), pCol->GetLook(), 10.f, EffectObjectType::Player_ArrowAndFireBall_HitPosition_Effect);
+										m_pEffectMgr->RequestSpawn((*i)->GetPosition(), pCol->GetLook(), 10, EffectObjectType::Player_ArrowAndFireBall_HitPosition_Effect);
 									}
 									else
 									{
-										m_pEffectMgr->RequestSpawn((*i)->GetPosition(), pCol->GetLook(), 10.f, EffectObjectType::NormallHit_Effect);
+										m_pEffectMgr->RequestSpawn((*i)->GetPosition(), pCol->GetLook(), 10, EffectObjectType::NormallHit_Effect);
 									}
 								}
 								(*i)->ReceiveDamage(damage);
@@ -293,7 +293,6 @@ CCollisionObject* CCollisionManager::RequestNearObject(CCollisionObject * pCol, 
 	else if (type == TeamType::Blue)
 	{
 		curList = &m_lstBlueSight;
-		int n = curList->size();
 	}
 	else
 		curList = &m_lstColliders;

@@ -158,6 +158,11 @@ bool CAOSCamera::OnProcessKeyInput(UCHAR * pKeyBuffer)
 		m_direction |= DIR_DOWN;
 	}
 
+	if (pKeyBuffer[VK_SPACE] & 0xF0)
+	{
+		GoToMaster();
+	}
+
 	return true;
 }
 
