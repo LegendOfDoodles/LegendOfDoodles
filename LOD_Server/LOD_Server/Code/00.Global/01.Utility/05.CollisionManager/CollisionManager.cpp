@@ -292,6 +292,56 @@ CCollisionObject* CCollisionManager::RequestNearObject(CCollisionObject * pCol, 
 	}
 	return nearObject;
 }
+void CCollisionManager::RequestIncreaseExp(CCollisionObject * pCol, float lengh, TeamType type, float exp)
+{
+	if (m_Winner == TeamType::None){
+		TeamType enemytype;
+		
+		if (type == TeamType::Blue)
+			enemytype = TeamType::Red;
+		else if (type == TeamType::Red)
+			enemytype = TeamType::Blue;
+
+
+		for (auto i = m_lstColliders.begin(); i != m_lstColliders.end(); ++i)
+		{
+			if ((*i)->GetTeam() == enemytype&&(*i)->GetTag() >= 10000 && (*i)->GetTag() < 20000) {
+				XMFLOAT2 apos = XMFLOAT2((*i)->GetPosition().x, (*i)->GetPosition().z);
+				XMFLOAT2 bpos = XMFLOAT2(pCol->GetPosition().x, pCol->GetPosition().z);
+				float distance = Vector2::Distance(apos, bpos);
+				if (distance <= lengh)
+				{
+					PlayerInfo* PlayerStatus{ (*i)->GetPlayerStatus() };
+						PlayerStatus->Exp += exp;
+						if (PlayerStatus->Level * 110 + 170 <= PlayerStatus->Exp) {
+							PlayerStatus->Exp -= PlayerStatus->Level * 110 + 170;
+							(*i)->LevelUP((*i));
+							SC_Msg_Level_Up p;
+							p.Target_Tag = (short)(*i)->GetTag();
+							p.level = (short)PlayerStatus->Level;
+							p.size = sizeof(p);
+							p.type = SC_LEVEL_UP;
+							for (int j = 0; j < MAX_USER; ++j) {
+								if (g_clients[j].m_isconnected == true) {
+									SendPacket(j, &p);
+								}
+							}
+						}
+						SC_Msg_Exp_Up p;
+						p.Target_Tag = (short)(*i)->GetTag();
+						p.exp = exp;
+						p.size = sizeof(p);
+						p.type = SC_EXP_UP;
+						for (int j = 0; j < MAX_USER; ++j) {
+							if (g_clients[j].m_isconnected == true) {
+								SendPacket(j, &p);
+							}
+						}
+				}
+			}
+		}
+	}
+}
 /*
 1 0  7
 2 ¤± 6
