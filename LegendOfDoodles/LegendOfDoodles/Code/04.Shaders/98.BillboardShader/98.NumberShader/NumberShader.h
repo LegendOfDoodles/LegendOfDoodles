@@ -67,6 +67,7 @@ protected: // º¯¼ö
 	int m_iTimerPositionalNum[2] = { 0 };
 	int m_iTimerSignificnatNum[2][2] = { 0 };
 
+
 	CCamera *m_pCamera;
 };
 

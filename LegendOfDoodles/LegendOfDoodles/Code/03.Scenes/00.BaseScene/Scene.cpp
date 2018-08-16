@@ -433,6 +433,11 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	((CNeutralityGaugeShader*)NeutralityHP_Shader)->SetRoiderCnt(((CNeutralityShader *)m_ppShaders[4])->GetObjectCount());
 	((CNeutralityGaugeShader*)NeutralityHP_Shader)->SetRoider(((CNeutralityShader *)m_ppShaders[4])->GetCollisionObjects());
 
+	for (int i = 8; i <= 21; ++i)
+	{
+		m_ppShaders[i]->SetNetwork(m_pNetwork);
+	}
+
 	UI_Shader->Initialize(pCreateMgr, m_pCamera);
 	PlayerHP_Shader->Initialize(pCreateMgr, m_pCamera);
 	MinionHP_Shader->Initialize(pCreateMgr, m_pCamera);
@@ -448,12 +453,7 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	Eeffect_Shader->Initialize(pCreateMgr, m_pCamera);
 	SpecialSelect_Shader->Initialize(pCreateMgr, m_pCamera);
 	m_ppShaders[22]->Initialize(pCreateMgr, m_pCamera);
-
-	for (int i = 8; i <= 21; ++i)
-	{
-		m_ppShaders[i]->SetNetwork(m_pNetwork);
-	}
-
+	
 	//Managere Initialize
 	m_pWayFinder = shared_ptr<CWayFinder>(new CWayFinder());
 	m_pUIObjectsManager = shared_ptr<CUIObjectManager>(new CUIObjectManager());

@@ -253,9 +253,9 @@ struct PlayerInfo
 
 	UINT WeaponNum{ 0 };
 
-	UINT Kill{ 10 };
-	UINT Death{ 2 };
-	UINT Assist{ 8 };
+	UINT Kill{ 0 };
+	UINT Death{ 0 };
+	UINT Assist{ 0 };
 
 	UINT Level{ 0 };
 

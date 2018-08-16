@@ -370,8 +370,19 @@ void CNetwork::ProcessPacket(char *ptr)
 		{
 			SC_Msg_Set_Player_State* my_packet = reinterpret_cast<SC_Msg_Set_Player_State*>(ptr);
 			CCollisionObject* Player{ m_pColManager->RequestPlayerByTag(my_packet->Player_Tag) };
-			if(Player) Player->SetState((StatesType)my_packet->Player_State);
-			printf("플레이어 뒤짐");
+			if (Player) {
+				Player->SetState((StatesType)my_packet->Player_State);
+				Player->GetPlayerStatus()->Death++;
+			}
+			break;
+		}
+		case SC_SET_PLAYER_KILL:
+		{
+			SC_Msg_Set_Player_Kill* my_packet = reinterpret_cast<SC_Msg_Set_Player_Kill*>(ptr);
+			CCollisionObject* Killer{ m_pColManager->RequestPlayerByTag(my_packet->Killer_Tag) };
+			if (Killer) {
+				Killer->GetPlayerStatus()->Kill++;
+			}
 			break;
 		}
 		default:
