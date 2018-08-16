@@ -212,7 +212,13 @@ void CRoider::PlayAttack(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)
 	if (!CheckEnemyState(m_pEnemy))
 	{
 		SetEnemy(NULL);
-		GenerateSubPathToMainPath(pWayFinder);
+		if (m_TeamType == TeamType::Neutral)
+		{
+			GenerateSubPathToSpawnLocation(pWayFinder);
+			m_returning = true;
+		}
+		else
+			GenerateSubPathToMainPath(pWayFinder);
 		SetState(States::Walk);
 	}
 	else if (Attackable(m_pEnemy))
@@ -463,7 +469,7 @@ void CRoider::ReadyToAtk(shared_ptr<CWayFinder> pWayFinder)
 	}
 	
 	SetPathToGo(newPath);
-	GenerateSubPathToPosition(pWayFinder, XMFLOAT3(pathBeg.To().x, curPos.y, pathBeg.To().y));
+	GenerateSubPathToMainPath(pWayFinder);
 	SetState(StatesType::Walk);
 	for (int i = 0; i < MAX_USER; ++i) {
 		if (g_clients[i].m_isconnected) {

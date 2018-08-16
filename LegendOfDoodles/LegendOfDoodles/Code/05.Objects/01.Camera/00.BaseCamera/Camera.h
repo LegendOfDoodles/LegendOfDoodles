@@ -18,6 +18,7 @@
 #define DIR_DOWN_FAST 0x21
 
 class CCreateMgr;
+class CCollisionObject;
 
 struct VS_CB_CAMERA_INFO
 {
@@ -65,6 +66,8 @@ public:	// 공개 함수
 
 	void SavePickedPos();
 
+	void SetMaster(CCollisionObject* master);
+
 	virtual bool OnProcessMouseWheel(WPARAM wParam, LPARAM lParam);
 
 	virtual bool OnProcessMouseInput(UCHAR* pKeyBuffer);
@@ -73,7 +76,10 @@ public:	// 공개 함수
 	void GenerateFrustum();
 	virtual bool IsInFrustum(BoundingOrientedBox& xmBoundingBox);
 
+	void GoToMaster();
+
 	void SetPosition(float x, float y, float z);
+	void SetPosition(float x, float z);
 
 	void SetMode(DWORD nMode) { m_nMode = nMode; }
 	DWORD GetMode() { return(m_nMode); }
@@ -150,5 +156,7 @@ protected: // 변수
 	ComPtr<ID3D12GraphicsCommandList> m_pCommandList;
 
 	BoundingFrustum m_xmFrustum;
+
+	CCollisionObject* m_pMaster{ NULL };
 };
 

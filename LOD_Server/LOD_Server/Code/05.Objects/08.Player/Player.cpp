@@ -728,7 +728,7 @@ void CPlayer::SendSpeedPacket(SpeedType type)
 	p.size = sizeof(p);
 	p.type = SC_CHANGE_SPEED;
 	p.Target_Tag = (short)m_tag;
-	p.Speed_Type = (short)type;
+	p.Speed_Type = (BYTE)type;
 	if (type == SpeedType::WalkSpeed)
 	{
 		p.Changed_Speed = m_StatusInfo.WalkSpeed;

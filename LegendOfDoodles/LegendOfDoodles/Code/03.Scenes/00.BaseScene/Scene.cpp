@@ -114,16 +114,6 @@ void CScene::ProcessInput()
 		if (continual)
 			continual = m_ppShaders[i]->OnProcessKeyInput(pKeyBuffer);
 	}
-	// Warning! 미니언 공격 테스트 용
-	if (m_pMyPlayer && GetAsyncKeyState('K') & 0x0001)
-	{
-		m_pThrowingMgr->RequestSpawn(
-			m_pMyPlayer->GetPosition(),
-			m_pMyPlayer->GetLook(),
-			m_pMyPlayer->GetTeam(),
-			FlyingObjectType::Minion_Magic,
-			1000.0f);
-	}
 }
 
 void CScene::AnimateObjects(float timeElapsed)
@@ -254,23 +244,26 @@ void CScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID,
 	case WM_LBUTTONDOWN:
 	case WM_RBUTTONDOWN:
 	{
-		::SetCapture(hWnd);
-		m_pCamera->SavePickedPos();
-		bool continual{ true };
-		for (int i = 0; i < m_nShaders; ++i)
-			if (continual) continual = m_ppShaders[i]->OnProcessMouseInput(wParam);
-		if (continual)
+		if (m_pCamera)
 		{
-			PickObjectPointedByCursor(wParam, lParam);
+			::SetCapture(hWnd);
+			m_pCamera->SavePickedPos();
+			bool continual{ true };
+			for (int i = 0; i < m_nShaders; ++i)
+				if (continual) continual = m_ppShaders[i]->OnProcessMouseInput(wParam);
+			if (continual)
+			{
+				PickObjectPointedByCursor(wParam, lParam);
+			}
+			break;
 		}
-		break;
 	}
 	case WM_LBUTTONUP:
 	case WM_RBUTTONUP:
 		::ReleaseCapture();
 		break;
 	case WM_MOUSEWHEEL:
-		m_pCamera->OnProcessMouseWheel(wParam, lParam);
+		if(m_pCamera) m_pCamera->OnProcessMouseWheel(wParam, lParam);
 		break;
 	default:
 		break;
@@ -542,6 +535,7 @@ void CScene::SetPlayer()
 	((CSelectedSpecialShader*)SpecialSelect_Shader)->SetPlayer(m_ppObjects[m_pNetwork->m_myid]);
 	
 	m_pCollisionManager->SetMyTeam(m_pMyPlayer->GetTeam());
+	m_pCamera->SetMaster(m_pMyPlayer);
 }
 
 void CScene::ReleaseObjects()
