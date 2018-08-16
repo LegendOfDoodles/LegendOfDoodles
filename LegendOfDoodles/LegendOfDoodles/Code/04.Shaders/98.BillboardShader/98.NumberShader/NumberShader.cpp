@@ -138,7 +138,6 @@ void CNumberShader::AnimateObjects(float timeElapsed)
 
 		if (((CNumberOjbect*)m_ppObjects[j])->GetType() == PersonalAssist) {
 
-			int checkNum = static_cast<int>(m_ppPlayers[m_pNetwork->m_myid]->GetPlayerStatus()->Level);		// 자리 수 확인에서 사용할 변수
 			m_iPlayerKDA[2] = static_cast<int>(m_ppPlayers[m_pNetwork->m_myid]->GetPlayerStatus()->Level);		// 자리 수 확인에서 사용할 변수
 
 			m_iKDAPositionalNum[2] = 2;
@@ -148,9 +147,9 @@ void CNumberShader::AnimateObjects(float timeElapsed)
 			// Num[0] 부터 1의 자리 10의 자리 순차적 증가 저장
 			// 30이면 0, 3 저장 (출력은 반대로 해야 함)
 			for (int j = 0; j < m_iKDAPositionalNum[2]; ++j) {
-				m_iKDASignificantNum[2][j] = checkNum % 10;
+				m_iKDASignificantNum[2][j] = m_iPlayerKDA[2] % 10;
 
-				checkNum /= 10;
+				m_iPlayerKDA[2] /= 10;
 			}
 			((CNumberOjbect*)m_ppObjects[j])->SetTexCoord(m_iKDASignificantNum[2][(m_iKDAPositionalNum[2] - 1) - nLevel]);
 			((CNumberOjbect*)m_ppObjects[j])->SetOffset(nLevel++);
