@@ -17,7 +17,7 @@ struct Bone {
 		if (m_Keyframe.size() == 0) {
 			return Matrix4x4::Identity();
 		}
-		return m_Keyframe.at(frame).m_m4x4FinalMatrix;
+		return m_Keyframe.at(min(frame, m_Keyframe.size() - 1)).m_m4x4FinalMatrix;
 	}
 };
 
