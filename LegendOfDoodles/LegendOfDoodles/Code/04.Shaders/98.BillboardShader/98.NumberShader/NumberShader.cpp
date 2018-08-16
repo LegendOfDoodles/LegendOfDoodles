@@ -153,7 +153,7 @@ void CNumberShader::AnimateObjects(float timeElapsed)
 				checkNum /= 10;
 			}
 			((CNumberOjbect*)m_ppObjects[j])->SetTexCoord(m_iKDASignificantNum[2][(m_iKDAPositionalNum[2] - 1) - nLevel]);
-			((CNumberOjbect*)m_ppObjects[j])->SetOffset(nLevel);
+			((CNumberOjbect*)m_ppObjects[j])->SetOffset(nLevel++);
 		}
 
 		if (((CNumberOjbect*)m_ppObjects[j])->GetType() == TeamKILL::BlueTeam) {
@@ -355,11 +355,6 @@ void CNumberShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pCont
 		int checkNum = m_iPlayerKDA[i];		// 자리 수 확인에서 사용할 변수
 
 		m_iKDAPositionalNum[i] = 2;
-
-		//if (checkNum == 0)
-		//	m_iKDAPositionalNum[i] = 1;		// 0 이면 자리수는 1개
-		//else
-		//	for (m_iKDAPositionalNum[i] = 0; checkNum > 0; checkNum /= 10, m_iKDAPositionalNum[i]++);
 
 		m_iKDASignificantNum[i] = new int[m_iKDAPositionalNum[i]];
 
