@@ -222,7 +222,7 @@ void CGolem::PlayChase(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)
 		if (m_TeamType == TeamType::Neutral)
 		{
 			GenerateSubPathToSpawnLocation(pWayFinder);
-			m_returning = true;
+			//m_returning = true;
 		}
 		else
 			GenerateSubPathToMainPath(pWayFinder);
