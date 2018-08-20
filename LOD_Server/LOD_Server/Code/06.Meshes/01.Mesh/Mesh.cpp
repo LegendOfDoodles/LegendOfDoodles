@@ -158,7 +158,7 @@ bool CCollisionMapImage::GetCollision(float fx, float fz)
 	fz = fz / m_xmf3Scale.z;
 
 	// 좌표를 벗어나면 항상 콜리전이 일어나도록 한다.
-	if ((fx < 0.0f) || (fz < 0.0f) || (fx >= m_nWidth) || (fz >= m_nLength)) return(true);
+	if ((fx <= 1.0f) || (fz <= 1.0f) || (fx >= m_nWidth - 1) || (fz >= m_nLength - 1)) return(true);
 
 	//높이 맵의 좌표의 정수 부분과 소수 부분을 계산한다.
 	int x = (int)fx;
