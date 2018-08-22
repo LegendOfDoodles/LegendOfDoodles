@@ -429,7 +429,7 @@ D3D12_SHADER_BYTECODE CShader::CreatePixelShader(ComPtr<ID3DBlob>& pShaderBlob)
 D3D12_SHADER_BYTECODE CShader::CreateBoundingBoxVertexShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		L"./code/04.Shaders/99.GraphicsShader/DefaultShader.hlsl",
 		"VSDiffused",
 		"vs_5_1",
 		pShaderBlob));
@@ -438,7 +438,7 @@ D3D12_SHADER_BYTECODE CShader::CreateBoundingBoxVertexShader(ComPtr<ID3DBlob>& p
 D3D12_SHADER_BYTECODE CShader::CreateBoundingBoxPixelShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		L"./code/04.Shaders/99.GraphicsShader/DefaultShader.hlsl",
 		"PSDiffused",
 		"ps_5_1",
 		pShaderBlob));

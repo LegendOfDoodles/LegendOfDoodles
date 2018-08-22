@@ -11,7 +11,7 @@
 /// 목적: Character Frame UI HP, MP Gauge 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  이용선, 김나단
-/// 최종 수정 날짜: 2018-07-03
+/// 최종 수정 날짜: 2018-08-22
 /// </summary>
 
 
@@ -178,7 +178,7 @@ D3D12_BLEND_DESC CharacterFrameGaugeShader::CreateBlendState()
 D3D12_SHADER_BYTECODE CharacterFrameGaugeShader::CreateVertexShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		L"./code/04.Shaders/99.GraphicsShader/UIShader.hlsl",
 		"VSTexturedGauge",
 		"vs_5_1",
 		pShaderBlob));
@@ -187,7 +187,7 @@ D3D12_SHADER_BYTECODE CharacterFrameGaugeShader::CreateVertexShader(ComPtr<ID3DB
 D3D12_SHADER_BYTECODE CharacterFrameGaugeShader::CreatePixelShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		L"./code/04.Shaders/99.GraphicsShader/UIShader.hlsl",
 		"PSTexturedIconGauge",
 		"ps_5_1",
 		pShaderBlob));

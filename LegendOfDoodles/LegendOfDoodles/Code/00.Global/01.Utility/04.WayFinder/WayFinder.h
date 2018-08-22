@@ -29,8 +29,8 @@ public: // 공개 함수
 	Path *GetPathToPosition(const XMFLOAT3 &source, const XMFLOAT3 &target);
 	Path *GetPathToPosition(const XMFLOAT3 &source, const XMFLOAT2 &target);
 
-	void SmoothPath(Path *path);
-	void SmoothPathDetail(Path *path);
+	bool SmoothPath(Path *path);
+	bool SmoothPathDetail(Path *path);
 
 	int FindClosestNodeIndexWithPosition(const XMFLOAT2 &position);
 

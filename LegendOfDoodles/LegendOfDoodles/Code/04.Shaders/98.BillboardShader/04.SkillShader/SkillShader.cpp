@@ -10,7 +10,7 @@
 /// 목적: Skill UI Icon Shader (틀만 생성)
 /// 최종 수정자:  김나단
 /// 수정자 목록:  이용선, 김나단
-/// 최종 수정 날짜: 2018-07-03
+/// 최종 수정 날짜: 2018-08-22
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -236,7 +236,7 @@ D3D12_BLEND_DESC CSkillShader::CreateBlendState()
 D3D12_SHADER_BYTECODE CSkillShader::CreateVertexShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		L"./code/04.Shaders/99.GraphicsShader/UIShader.hlsl",
 		"VSTexturedGauge",
 		"vs_5_1",
 		pShaderBlob));
@@ -245,7 +245,7 @@ D3D12_SHADER_BYTECODE CSkillShader::CreateVertexShader(ComPtr<ID3DBlob>& pShader
 D3D12_SHADER_BYTECODE CSkillShader::CreatePixelShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		L"./code/04.Shaders/99.GraphicsShader/UIShader.hlsl",
 		"PSTexturedIconGauge",
 		"ps_5_1",
 		pShaderBlob));

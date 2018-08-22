@@ -8,9 +8,9 @@
 
 /// <summary>
 /// 목적: 선택된 특성
-/// 최종 수정자:  이용선
-/// 수정자 목록:  이용선
-/// 최종 수정 날짜: 2018-07-11
+/// 최종 수정자:  김나단
+/// 수정자 목록:  이용선, 김나단
+/// 최종 수정 날짜: 2018-08-22
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -288,7 +288,7 @@ D3D12_SHADER_BYTECODE CSpecialSelectShader::CreateVertexShader(ComPtr<ID3DBlob>&
 {
 	//./Code/04.Shaders/99.GraphicsShader/
 	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		L"./code/04.Shaders/99.GraphicsShader/DefaultShader.hlsl",
 		"VSTextured",
 		"vs_5_1",
 		pShaderBlob));
@@ -297,7 +297,7 @@ D3D12_SHADER_BYTECODE CSpecialSelectShader::CreateVertexShader(ComPtr<ID3DBlob>&
 D3D12_SHADER_BYTECODE CSpecialSelectShader::CreatePixelShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		L"./code/04.Shaders/99.GraphicsShader/DefaultShader.hlsl",
 		"PSTextured",
 		"ps_5_1",
 		pShaderBlob));

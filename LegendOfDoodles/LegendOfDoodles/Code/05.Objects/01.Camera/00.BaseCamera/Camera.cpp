@@ -295,7 +295,7 @@ void CCamera::GoToMaster()
 {
 	XMFLOAT3 masterPos{ m_pMaster->GetPosition() };
 
-	SetPosition(masterPos.x, masterPos.z);
+	SetPosition(masterPos.x, masterPos.z - m_xmf3Position.y * 0.5f);
 }
 
 void CCamera::SetPosition(float x, float y, float z)

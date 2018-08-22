@@ -9,7 +9,7 @@
 /// 목적: 날아다니는(화살 등) 오브젝트 그리기 용도의 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-08-15
+/// 최종 수정 날짜: 2018-08-22
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -409,8 +409,8 @@ D3D12_INPUT_LAYOUT_DESC CFlyingShader::CreateInputLayout()
 D3D12_SHADER_BYTECODE CFlyingShader::CreateVertexShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
-		"VSTexturedLighting",
+		L"./code/04.Shaders/99.GraphicsShader/ThrowingShader.hlsl",
+		"VSThrowingObj",
 		"vs_5_1",
 		pShaderBlob));
 }
@@ -418,7 +418,7 @@ D3D12_SHADER_BYTECODE CFlyingShader::CreateVertexShader(ComPtr<ID3DBlob>& pShade
 D3D12_SHADER_BYTECODE CFlyingShader::CreatePixelShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		L"./code/04.Shaders/99.GraphicsShader/ThrowingShader.hlsl",
 		"PSThrowingObjEmissive",
 		"ps_5_1",
 		pShaderBlob));
@@ -427,7 +427,7 @@ D3D12_SHADER_BYTECODE CFlyingShader::CreatePixelShader(ComPtr<ID3DBlob>& pShader
 D3D12_SHADER_BYTECODE CFlyingShader::CreateNonEmissivePixelShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		L"./code/04.Shaders/99.GraphicsShader/ThrowingShader.hlsl",
 		"PSThrowingObj",
 		"ps_5_1",
 		pShaderBlob));

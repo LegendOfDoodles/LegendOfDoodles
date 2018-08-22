@@ -10,7 +10,7 @@
 /// 목적: 스테틱 오브젝트 그리기 용도의 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-07-03
+/// 최종 수정 날짜: 2018-08-22
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -163,7 +163,7 @@ D3D12_INPUT_LAYOUT_DESC CStaticObjectShader::CreateInputLayout()
 D3D12_SHADER_BYTECODE CStaticObjectShader::CreateVertexShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		L"./code/04.Shaders/99.GraphicsShader/StaticShader.hlsl",
 		"VSTexturedLighting",
 		"vs_5_1",
 		pShaderBlob));
@@ -172,7 +172,7 @@ D3D12_SHADER_BYTECODE CStaticObjectShader::CreateVertexShader(ComPtr<ID3DBlob>& 
 D3D12_SHADER_BYTECODE CStaticObjectShader::CreatePixelShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		L"./code/04.Shaders/99.GraphicsShader/StaticShader.hlsl",
 		"PSTexturedLightingDetail",
 		"ps_5_1",
 		pShaderBlob));

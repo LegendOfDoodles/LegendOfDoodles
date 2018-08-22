@@ -118,7 +118,7 @@ D3D12_DEPTH_STENCIL_DESC CSkyBoxShader::CreateDepthStencilState()
 D3D12_SHADER_BYTECODE CSkyBoxShader::CreateVertexShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		L"./code/04.Shaders/99.GraphicsShader/DefaultShader.hlsl",
 		"VSTextured",
 		"vs_5_1",
 		pShaderBlob));
@@ -127,7 +127,7 @@ D3D12_SHADER_BYTECODE CSkyBoxShader::CreateVertexShader(ComPtr<ID3DBlob>& pShade
 D3D12_SHADER_BYTECODE CSkyBoxShader::CreatePixelShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		L"./code/04.Shaders/99.GraphicsShader/DefaultShader.hlsl",
 		"PSTexturedRepeat",
 		"ps_5_1",
 		pShaderBlob));

@@ -9,7 +9,7 @@
 /// 목적: 미니맵 건물 Icon 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  이용선, 김나단
-/// 최종 수정 날짜: 2018-07-03
+/// 최종 수정 날짜: 2018-07-22
 /// </summary>
 
 CBuildingMinimapIconShader::CBuildingMinimapIconShader(shared_ptr<CCreateMgr> pCreateMgr)
@@ -175,7 +175,7 @@ D3D12_BLEND_DESC CBuildingMinimapIconShader::CreateBlendState()
 D3D12_SHADER_BYTECODE CBuildingMinimapIconShader::CreateVertexShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		L"./code/04.Shaders/99.GraphicsShader/UIShader.hlsl",
 		"VSTexturedGauge",
 		"vs_5_1",
 		pShaderBlob));
@@ -184,7 +184,7 @@ D3D12_SHADER_BYTECODE CBuildingMinimapIconShader::CreateVertexShader(ComPtr<ID3D
 D3D12_SHADER_BYTECODE CBuildingMinimapIconShader::CreatePixelShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		L"./code/04.Shaders/99.GraphicsShader/UIShader.hlsl",
 		"PSTexturedIconGauge",
 		"ps_5_1",
 		pShaderBlob));

@@ -574,7 +574,7 @@ D3D12_INPUT_LAYOUT_DESC CMinionShader::CreateInputLayout()
 D3D12_SHADER_BYTECODE CMinionShader::CreateVertexShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		L"./code/04.Shaders/99.GraphicsShader/BoneShader.hlsl",
 		"VSBone",
 		"vs_5_1",
 		pShaderBlob));
@@ -583,7 +583,7 @@ D3D12_SHADER_BYTECODE CMinionShader::CreateVertexShader(ComPtr<ID3DBlob>& pShade
 D3D12_SHADER_BYTECODE CMinionShader::CreatePixelShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		L"./code/04.Shaders/99.GraphicsShader/BoneShader.hlsl",
 		"PSBone",
 		"ps_5_1",
 		pShaderBlob));

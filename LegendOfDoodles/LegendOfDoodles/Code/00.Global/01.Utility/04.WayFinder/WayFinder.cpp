@@ -205,11 +205,11 @@ Path *CWayFinder::GetPathToPosition(const XMFLOAT2 &source, const XMFLOAT2 &targ
 				}
 			}
 		}
-	
+
 		m_pCurSearch.reset();
 	}
 
-	SmoothPathDetail(path);
+	if (!SmoothPathDetail(path)) return NULL;
 
 	if (adjSource.x > adjTarget.x)
 	{
@@ -230,8 +230,10 @@ Path * CWayFinder::GetPathToPosition(const XMFLOAT3 & source, const XMFLOAT2 & t
 	return GetPathToPosition(XMFLOAT2(source.x, source.z), target);
 }
 
-void CWayFinder::SmoothPath(Path *path)
+bool CWayFinder::SmoothPath(Path *path)
 {
+	if (!path) return false;
+
 	Path::iterator e1(path->begin()), e2(path->begin());
 
 	++e2;
@@ -249,11 +251,13 @@ void CWayFinder::SmoothPath(Path *path)
 			++e2;
 		}
 	}
+
+	return true;
 }
 
-void CWayFinder::SmoothPathDetail(Path * path)
+bool CWayFinder::SmoothPathDetail(Path * path)
 {
-	if (!path) return;
+	if (!path) return false;
 
 	Path::iterator e1(path->begin()), e2;
 
@@ -278,6 +282,8 @@ void CWayFinder::SmoothPathDetail(Path * path)
 		}
 		++e1;
 	}
+
+	return true;
 }
 
 int CWayFinder::FindClosestNodeIndexWithPosition(const XMFLOAT2 & position)

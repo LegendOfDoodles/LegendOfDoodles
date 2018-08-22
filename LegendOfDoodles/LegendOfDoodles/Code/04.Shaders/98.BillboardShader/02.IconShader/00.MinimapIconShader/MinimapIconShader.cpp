@@ -9,7 +9,7 @@
 /// 목적: 미니맵 Icon 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  이용선, 김나단
-/// 최종 수정 날짜: 2018-07-03
+/// 최종 수정 날짜: 2018-08-22
 /// </summary>
 
 CMinimapIconShader::CMinimapIconShader(shared_ptr<CCreateMgr> pCreateMgr)
@@ -305,7 +305,7 @@ D3D12_BLEND_DESC CMinimapIconShader::CreateBlendState()
 D3D12_SHADER_BYTECODE CMinimapIconShader::CreateVertexShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		L"./code/04.Shaders/99.GraphicsShader/DefaultShader.hlsl",
 		"VSTextured",
 		"vs_5_1",
 		pShaderBlob));
@@ -314,7 +314,7 @@ D3D12_SHADER_BYTECODE CMinimapIconShader::CreateVertexShader(ComPtr<ID3DBlob>& p
 D3D12_SHADER_BYTECODE CMinimapIconShader::CreatePixelShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		L"./code/04.Shaders/99.GraphicsShader/DefaultShader.hlsl",
 		"PSTextured",
 		"ps_5_1",
 		pShaderBlob));

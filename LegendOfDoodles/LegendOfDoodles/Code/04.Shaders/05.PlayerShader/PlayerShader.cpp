@@ -13,7 +13,7 @@
 /// 목적: 플레이어 관리 및 렌더링 용도
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-07-03
+/// 최종 수정 날짜: 2018-07-22
 /// </summary>
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -342,7 +342,7 @@ D3D12_INPUT_LAYOUT_DESC CPlayerShader::CreateInputLayout()
 D3D12_SHADER_BYTECODE CPlayerShader::CreateVertexShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		L"./code/04.Shaders/99.GraphicsShader/BoneShader.hlsl",
 		"VSBone",
 		"vs_5_1",
 		pShaderBlob));
@@ -351,7 +351,7 @@ D3D12_SHADER_BYTECODE CPlayerShader::CreateVertexShader(ComPtr<ID3DBlob>& pShade
 D3D12_SHADER_BYTECODE CPlayerShader::CreatePixelShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		L"./code/04.Shaders/99.GraphicsShader/BoneShader.hlsl",
 		"PSBone",
 		"ps_5_1",
 		pShaderBlob));

@@ -11,7 +11,7 @@
 /// 목적: Minimap Ui Shader (FrameShader와의 분리)
 /// 최종 수정자:  김나단
 /// 수정자 목록:  이용선, 김나단
-/// 최종 수정 날짜: 2018-07-03
+/// 최종 수정 날짜: 2018-08-22
 /// </summary>
 
 CMinimapShader::CMinimapShader(shared_ptr<CCreateMgr> pCreateMgr)
@@ -189,7 +189,7 @@ D3D12_SHADER_BYTECODE CMinimapShader::CreateVertexShader(ComPtr<ID3DBlob>& pShad
 {
 	//./Code/04.Shaders/99.GraphicsShader/
 	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		L"./code/04.Shaders/99.GraphicsShader/DefaultShader.hlsl",
 		"VSTextured",
 		"vs_5_1",
 		pShaderBlob));
@@ -198,7 +198,7 @@ D3D12_SHADER_BYTECODE CMinimapShader::CreateVertexShader(ComPtr<ID3DBlob>& pShad
 D3D12_SHADER_BYTECODE CMinimapShader::CreatePixelShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		L"./code/04.Shaders/99.GraphicsShader/DefaultShader.hlsl",
 		"PSTextured",
 		"ps_5_1",
 		pShaderBlob));

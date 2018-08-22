@@ -7,7 +7,7 @@
 /// 목적: 길찾기 알고리즘을 위한 클래스 작성
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-08-15
+/// 최종 수정 날짜: 2018-08-22
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -210,7 +210,8 @@ Path *CWayFinder::GetPathToPosition(const XMFLOAT2 &source, const XMFLOAT2 &targ
 	}
 
 	// 직선 상으로 갈 수 있는 길 돌아가지 않도록 설정
-	SmoothPathDetail(path);
+	// 길이 없는 경우 NULL 리턴
+	if(!SmoothPathDetail(path)) return NULL;
 
 	if (adjSource.x > adjTarget.x)
 	{
@@ -231,8 +232,10 @@ Path * CWayFinder::GetPathToPosition(const XMFLOAT3 & source, const XMFLOAT2 & t
 	return GetPathToPosition(XMFLOAT2(source.x, source.z), target);
 }
 
-void CWayFinder::SmoothPath(Path *path)
+bool CWayFinder::SmoothPath(Path *path)
 {
+	if (!path) return false;
+
 	Path::iterator e1(path->begin()), e2(path->begin());
 
 	++e2;
@@ -250,11 +253,13 @@ void CWayFinder::SmoothPath(Path *path)
 			++e2;
 		}
 	}
+
+	return true;
 }
 
-void CWayFinder::SmoothPathDetail(Path * path)
+bool CWayFinder::SmoothPathDetail(Path * path)
 {
-	if (!path) return;
+	if (!path) return false;
 
 	Path::iterator e1(path->begin()), e2;
 
@@ -279,6 +284,8 @@ void CWayFinder::SmoothPathDetail(Path * path)
 		}
 		++e1;
 	}
+
+	return true;
 }
 
 int CWayFinder::FindClosestNodeIndexWithPosition(const XMFLOAT2 & position)

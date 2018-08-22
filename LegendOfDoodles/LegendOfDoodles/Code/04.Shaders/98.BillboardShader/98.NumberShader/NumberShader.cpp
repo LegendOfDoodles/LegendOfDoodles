@@ -12,7 +12,7 @@
 /// 목적: Number Billboard 쉐이더 (시간, Kill Dead, Assist )
 /// 최종 수정자:  김나단
 /// 수정자 목록:  이용선, 김나단
-/// 최종 수정 날짜: 2018-07-03
+/// 최종 수정 날짜: 2018-08-22
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -106,8 +106,8 @@ void CNumberShader::AnimateObjects(float timeElapsed)
 
 			// Num[0] 부터 1의 자리 10의 자리 순차적 증가 저장
 			// 30이면 0, 3 저장 (출력은 반대로 해야 함)
-			for (int j = 0; j < m_iKDAPositionalNum[0]; ++j) {
-				m_iKDASignificantNum[0][j] = checkNum % 10;
+			for (int k = 0; k < m_iKDAPositionalNum[0]; ++k) {
+				m_iKDASignificantNum[0][k] = checkNum % 10;
 
 				checkNum /= 10;
 			}
@@ -118,7 +118,6 @@ void CNumberShader::AnimateObjects(float timeElapsed)
 
 		if (((CNumberOjbect*)m_ppObjects[j])->GetType() == PersonalDeath) {
 
-			int checkNum = static_cast<int>(m_ppPlayers[m_pNetwork->m_myid]->GetPlayerStatus()->Death);		// 자리 수 확인에서 사용할 변수
 			m_iPlayerKDA[1] = static_cast<int>(m_ppPlayers[m_pNetwork->m_myid]->GetPlayerStatus()->Death);		// 자리 수 확인에서 사용할 변수
 
 			m_iKDAPositionalNum[1] = 2;
@@ -127,8 +126,8 @@ void CNumberShader::AnimateObjects(float timeElapsed)
 
 			// Num[0] 부터 1의 자리 10의 자리 순차적 증가 저장
 			// 30이면 0, 3 저장 (출력은 반대로 해야 함)
-			for (int j = 0; j < m_iKDAPositionalNum[1]; ++j) {
-				m_iKDASignificantNum[1][j] = m_iPlayerKDA[1] % 10;
+			for (int k = 0; k < m_iKDAPositionalNum[1]; ++k) {
+				m_iKDASignificantNum[1][k] = m_iPlayerKDA[1] % 10;
 
 				m_iPlayerKDA[1] /= 10;
 			}
@@ -146,8 +145,8 @@ void CNumberShader::AnimateObjects(float timeElapsed)
 
 			// Num[0] 부터 1의 자리 10의 자리 순차적 증가 저장
 			// 30이면 0, 3 저장 (출력은 반대로 해야 함)
-			for (int j = 0; j < m_iKDAPositionalNum[2]; ++j) {
-				m_iKDASignificantNum[2][j] = m_iPlayerKDA[2] % 10;
+			for (int k = 0; k < m_iKDAPositionalNum[2]; ++k) {
+				m_iKDASignificantNum[2][k] = m_iPlayerKDA[2] % 10;
 
 				m_iPlayerKDA[2] /= 10;
 			}
@@ -165,16 +164,14 @@ void CNumberShader::AnimateObjects(float timeElapsed)
 					m_iTeamKill[TeamKILL::RedTeam] += m_ppPlayers[i]->GetPlayerStatus()->Kill;
 			}
 
-			int checkNum = m_iTeamKill[0];	// 자리 수 확인에서 사용할 변수
-
 			m_iTeamKillPositionalNum[0] = 2;		// 0 이면 자리수는 1개
 
 			m_iTeamKillSignificantNum[0] = new int[m_iTeamKillPositionalNum[0]];
 
 			// Num[0] 부터 1의 자리 10의 자리 순차적 증가 저장
 			// 30이면 0, 3 저장 (출력은 반대로 해야 함)
-			for (int j = 0; j < m_iTeamKillPositionalNum[0]; ++j) {
-				m_iTeamKillSignificantNum[0][j] = m_iTeamKill[0] % 10;
+			for (int k = 0; k < m_iTeamKillPositionalNum[0]; ++k) {
+				m_iTeamKillSignificantNum[0][k] = m_iTeamKill[0] % 10;
 
 				m_iTeamKill[0] /= 10;
 			}
@@ -192,16 +189,14 @@ void CNumberShader::AnimateObjects(float timeElapsed)
 					m_iTeamKill[TeamKILL::RedTeam] += m_ppPlayers[i]->GetPlayerStatus()->Kill;
 			}
 
-			int checkNum = m_iTeamKill[1];	// 자리 수 확인에서 사용할 변수
-			
 			m_iTeamKillPositionalNum[1] = 2;		// 0 이면 자리수는 1개
 
 			m_iTeamKillSignificantNum[1] = new int[m_iTeamKillPositionalNum[1]];
 
 			// Num[0] 부터 1의 자리 10의 자리 순차적 증가 저장
 			// 30이면 0, 3 저장 (출력은 반대로 해야 함)
-			for (int j = 0; j < m_iTeamKillPositionalNum[1]; ++j) {
-				m_iTeamKillSignificantNum[1][j] = m_iTeamKill[1] % 10;
+			for (int k = 0; k < m_iTeamKillPositionalNum[1]; ++k) {
+				m_iTeamKillSignificantNum[1][k] = m_iTeamKill[1] % 10;
 
 				m_iTeamKill[1] /= 10;
 			}
@@ -285,7 +280,7 @@ D3D12_SHADER_BYTECODE CNumberShader::CreateVertexShader(ComPtr<ID3DBlob>& pShade
 {
 	//./Code/04.Shaders/99.GraphicsShader/
 	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		L"./code/04.Shaders/99.GraphicsShader/UIShader.hlsl",
 		"VSTexturedGauge",
 		"vs_5_1",
 		pShaderBlob));
@@ -294,7 +289,7 @@ D3D12_SHADER_BYTECODE CNumberShader::CreateVertexShader(ComPtr<ID3DBlob>& pShade
 D3D12_SHADER_BYTECODE CNumberShader::CreatePixelShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/Shaders.hlsl",
+		L"./code/04.Shaders/99.GraphicsShader/UIShader.hlsl",
 		"PSTexturedNumber",
 		"ps_5_1",
 		pShaderBlob));
@@ -325,8 +320,6 @@ void CNumberShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pCont
 	}
 
 	for (int i = 0; i < TeamKILL::EnumCnt; ++i) {
-		int checkNum = m_iTeamKill[i];		// 자리 수 확인에서 사용할 변수
-
 		m_iTeamKillPositionalNum[i] = 2;
 
 		//if (checkNum == 0)
@@ -351,8 +344,6 @@ void CNumberShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pCont
 	m_iPlayerKDA[2] = m_ppPlayers[m_pNetwork->m_myid]->GetPlayerStatus()->Level;
 	
 	for (int i = 0; i < 3; ++i) {
-		int checkNum = m_iPlayerKDA[i];		// 자리 수 확인에서 사용할 변수
-
 		m_iKDAPositionalNum[i] = 2;
 
 		m_iKDASignificantNum[i] = new int[m_iKDAPositionalNum[i]];
