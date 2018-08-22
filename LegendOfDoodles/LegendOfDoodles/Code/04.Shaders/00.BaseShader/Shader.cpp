@@ -8,7 +8,7 @@
 /// 목적: 기본 쉐이터 코드, 인터페이스 용
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-08-05
+/// 최종 수정 날짜: 2018-08-22
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -674,12 +674,6 @@ void CShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pContext)
 
 void CShader::ReleaseShaderVariables()
 {
-	if (m_pInstanceBuffer.Get())
-	{
-		m_pInstanceBuffer->Unmap(0, NULL);
-		m_pInstanceBuffer.Reset();
-	}
-
 	if (m_pConstBuffer.Get())
 	{
 		m_pConstBuffer->Unmap(0, NULL);

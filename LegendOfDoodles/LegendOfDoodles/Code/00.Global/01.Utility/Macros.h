@@ -4,7 +4,7 @@
 /// 목적: 메크로 연산을 모아 보기쉽고 처리하기 쉽게 한다.
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-08-04
+/// 최종 수정 날짜: 2018-08-22
 /// </summary>
 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
@@ -58,7 +58,7 @@
 
 // 높이(Height) 관련
 #define REVISE_HEIGHT 100.0f
-#define REVISE_HEIGHT_FOR_OBJECT REVISE_HEIGHT + 7.0f
+#define REVISE_HEIGHT_FOR_OBJECT REVISE_HEIGHT + 6.3f
 
 // 노드(Node) 관련
 #define NODE_SIZE 41.4f

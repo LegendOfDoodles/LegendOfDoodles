@@ -13,7 +13,7 @@
 /// 목적: 플레이어 관리 및 렌더링 용도
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-07-22
+/// 최종 수정 날짜: 2018-08-22
 /// </summary>
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -41,9 +41,9 @@ void CPlayerShader::UpdateShaderVariables(int opt)
 	for (int i = 0; i < m_nObjects; i++)
 	{
 		CB_ANIOBJECT_INFO *pMappedObject = (CB_ANIOBJECT_INFO *)(m_pMappedObjects + (i * elementBytes));
-		XMFLOAT4X4 tmp[128];
-		memcpy(tmp, m_ppObjects[i]->GetFrameMatrix(), sizeof(XMFLOAT4X4) * 128);
-		memcpy(pMappedObject->m_xmf4x4Frame, tmp, sizeof(XMFLOAT4X4) * 128);
+		XMFLOAT4X4 tmp[31];
+		memcpy(tmp, m_ppObjects[i]->GetFrameMatrix(), sizeof(XMFLOAT4X4) * 31);
+		memcpy(pMappedObject->m_xmf4x4Frame, tmp, sizeof(XMFLOAT4X4) * 31);
 
 		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World0,
 			XMMatrixTranspose(XMLoadFloat4x4(m_ppObjects[i]->GetWorldMatrix())));

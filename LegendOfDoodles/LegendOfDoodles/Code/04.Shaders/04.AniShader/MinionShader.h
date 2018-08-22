@@ -67,6 +67,9 @@ protected: // 내부 함수
 	void ResetPossibleIndex(int idx) { m_indexArr[idx] = false; }
 
 protected: // 변수
+	static const int m_nMeshes{ 3 };
+	CSkinnedMesh *m_ppMinionMeshes[m_nMeshes]{};
+
 	CollisionObjectList m_blueSwordMinions;
 	CollisionObjectList m_blueStaffMinions;
 	CollisionObjectList m_blueBowMinions;

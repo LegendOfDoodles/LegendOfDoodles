@@ -809,30 +809,28 @@
     <CustomBuild Include="Code\04.Shaders\99.GraphicsShader\StaticShader.hlsl">
       <Filter>소스 파일\04.Shaders\99.GraphicsShader</Filter>
     </CustomBuild>
+    <CustomBuild Include="Code\04.Shaders\99.GraphicsShader\UIShader.hlsl">
+      <Filter>소스 파일\04.Shaders\99.GraphicsShader</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Code\04.Shaders\99.GraphicsShader\DefaultShader.hlsl">
+      <Filter>소스 파일\04.Shaders\99.GraphicsShader</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Code\04.Shaders\99.GraphicsShader\EffectShader.hlsl">
+      <Filter>소스 파일\04.Shaders\99.GraphicsShader</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Code\04.Shaders\99.GraphicsShader\TerrainShader.hlsl">
+      <Filter>소스 파일\04.Shaders\99.GraphicsShader</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Code\04.Shaders\99.GraphicsShader\ThrowingShader.hlsl">
+      <Filter>소스 파일\04.Shaders\99.GraphicsShader</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Code\04.Shaders\99.GraphicsShader\BoneShader.hlsl">
+      <Filter>소스 파일\04.Shaders\99.GraphicsShader</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource\LegendOfDoodles.rc">
       <Filter>리소스 파일</Filter>
     </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Code\04.Shaders\99.GraphicsShader\BoneShader.hlsl">
-      <Filter>소스 파일\04.Shaders\99.GraphicsShader</Filter>
-    </FxCompile>
-    <FxCompile Include="Code\04.Shaders\99.GraphicsShader\TerrainShader.hlsl">
-      <Filter>소스 파일\04.Shaders\99.GraphicsShader</Filter>
-    </FxCompile>
-    <FxCompile Include="Code\04.Shaders\99.GraphicsShader\DefaultShader.hlsl">
-      <Filter>소스 파일\04.Shaders\99.GraphicsShader</Filter>
-    </FxCompile>
-    <FxCompile Include="Code\04.Shaders\99.GraphicsShader\EffectShader.hlsl">
-      <Filter>소스 파일\04.Shaders\99.GraphicsShader</Filter>
-    </FxCompile>
-    <FxCompile Include="Code\04.Shaders\99.GraphicsShader\UIShader.hlsl">
-      <Filter>소스 파일\04.Shaders\99.GraphicsShader</Filter>
-    </FxCompile>
-    <FxCompile Include="Code\04.Shaders\99.GraphicsShader\ThrowingShader.hlsl">
-      <Filter>소스 파일\04.Shaders\99.GraphicsShader</Filter>
-    </FxCompile>
   </ItemGroup>
 </Project>

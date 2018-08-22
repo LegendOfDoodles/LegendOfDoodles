@@ -110,7 +110,6 @@ protected: // º¯¼ö
 	std::vector<ComPtr<ID3D12PipelineState>> m_ppPipelineStates;
 	int m_nPipelineStates{ 0 };
 
-	ComPtr<ID3D12Resource> m_pInstanceBuffer;
 	ComPtr<ID3D12Resource> m_pConstBuffer;
 	ComPtr<ID3D12Resource> m_pBoundingBoxBuffer;
 

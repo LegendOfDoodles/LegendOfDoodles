@@ -39,7 +39,7 @@ cbuffer cbGameObjectInfo : register(b1)
 cbuffer cbSkinnedInfo : register(b4)
 {
     float4x4 gmtxBoneWorld : packoffset(c0);
-    float4x4 gmtxBoneTransforms[128] : packoffset(c4);
+    float4x4 gmtxBoneTransforms[31] : packoffset(c4);
 };
 
 cbuffer cbGaugeObjectInfo : register(b5)
