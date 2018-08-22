@@ -110,15 +110,7 @@ namespace Materials
 		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
 
 	// Minion
-	CMaterial* CreateSwordMinionMaterial(shared_ptr<CCreateMgr> pCreateMgr,
-		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
-		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
-
-	CMaterial* CreateBowMinionMaterial(shared_ptr<CCreateMgr> pCreateMgr,
-		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
-		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
-
-	CMaterial* CreateStaffMinionMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+	CMaterial* CreateMinionMaterial(shared_ptr<CCreateMgr> pCreateMgr,
 		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
 		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
 

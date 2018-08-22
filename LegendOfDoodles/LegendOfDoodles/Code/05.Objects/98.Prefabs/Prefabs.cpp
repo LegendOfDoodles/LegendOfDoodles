@@ -6,7 +6,7 @@
 /// 목적: 사용하는 매터리얼 정리용
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단, 이용선
-/// 최종 수정 날짜: 2018-08-12
+/// 최종 수정 날짜: 2018-08-22
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -483,47 +483,11 @@ CMaterial * Materials::CreateBook4Material(shared_ptr<CCreateMgr> pCreateMgr, D3
 
 ////////////////////////////////////////////////////////////////////////
 // Minion
-CMaterial * Materials::CreateSwordMinionMaterial(shared_ptr<CCreateMgr> pCreateMgr, D3D12_CPU_DESCRIPTOR_HANDLE * pSrvCPUDescriptorStartHandle, D3D12_GPU_DESCRIPTOR_HANDLE * pSrvGPUDescriptorStartHandle)
+CMaterial * Materials::CreateMinionMaterial(shared_ptr<CCreateMgr> pCreateMgr, D3D12_CPU_DESCRIPTOR_HANDLE * pSrvCPUDescriptorStartHandle, D3D12_GPU_DESCRIPTOR_HANDLE * pSrvGPUDescriptorStartHandle)
 {
 	CMaterial *pMaterial{ new CMaterial(pCreateMgr) };
 	CTexture *pTexture{ new CTexture(1, RESOURCE_TEXTURE_2DARRAY, 0) };
-	pTexture->LoadTextureFromFile(pCreateMgr, L"./Resource/Textures/Minion/Sword/Textures.dds", 0);
-
-	CreateShaderResourceViews(
-		pCreateMgr, pTexture,
-		3, false,
-		pSrvCPUDescriptorStartHandle,
-		pSrvGPUDescriptorStartHandle);
-
-	pMaterial->Initialize(pCreateMgr);
-	pMaterial->SetTexture(pTexture);
-
-	return pMaterial;
-}
-
-CMaterial * Materials::CreateBowMinionMaterial(shared_ptr<CCreateMgr> pCreateMgr, D3D12_CPU_DESCRIPTOR_HANDLE * pSrvCPUDescriptorStartHandle, D3D12_GPU_DESCRIPTOR_HANDLE * pSrvGPUDescriptorStartHandle)
-{
-	CMaterial *pMaterial{ new CMaterial(pCreateMgr) };
-	CTexture *pTexture{ new CTexture(1, RESOURCE_TEXTURE_2DARRAY, 0) };
-	pTexture->LoadTextureFromFile(pCreateMgr, L"./Resource/Textures/Minion/Bow/Textures.dds", 0);
-
-	CreateShaderResourceViews(
-		pCreateMgr, pTexture,
-		3, false,
-		pSrvCPUDescriptorStartHandle,
-		pSrvGPUDescriptorStartHandle);
-
-	pMaterial->Initialize(pCreateMgr);
-	pMaterial->SetTexture(pTexture);
-
-	return pMaterial;
-}
-
-CMaterial * Materials::CreateStaffMinionMaterial(shared_ptr<CCreateMgr> pCreateMgr, D3D12_CPU_DESCRIPTOR_HANDLE * pSrvCPUDescriptorStartHandle, D3D12_GPU_DESCRIPTOR_HANDLE * pSrvGPUDescriptorStartHandle)
-{
-	CMaterial *pMaterial{ new CMaterial(pCreateMgr) };
-	CTexture *pTexture{ new CTexture(1, RESOURCE_TEXTURE_2DARRAY, 0) };
-	pTexture->LoadTextureFromFile(pCreateMgr, L"./Resource/Textures/Minion/Magic/Textures.dds", 0);
+	pTexture->LoadTextureFromFile(pCreateMgr, L"./Resource/Textures/Minion/Textures.dds", 0);
 
 	CreateShaderResourceViews(
 		pCreateMgr, pTexture,
