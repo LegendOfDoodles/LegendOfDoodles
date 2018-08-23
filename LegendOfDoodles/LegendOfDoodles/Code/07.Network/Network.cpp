@@ -346,10 +346,13 @@ void CNetwork::ProcessPacket(char *ptr)
 		{
 			SC_Msg_Cooltime_Percent* my_packet = reinterpret_cast<SC_Msg_Cooltime_Percent*>(ptr);
 			CCollisionObject* Player{ m_pColManager->RequestPlayerByTag(my_packet->Target_Tag) };
-			Player->GetPlayerStatus()->QSkillCoolTime = my_packet->QPercentage;
-			Player->GetPlayerStatus()->WSkillCoolTime = my_packet->WPercentage;
-			Player->GetPlayerStatus()->ESkillCoolTime = my_packet->EPercentage;
-			Player->GetPlayerStatus()->RSkillCoolTime = my_packet->RPercentage;
+			if (Player)
+			{
+				Player->GetPlayerStatus()->QSkillCoolTime = my_packet->QPercentage;
+				Player->GetPlayerStatus()->WSkillCoolTime = my_packet->WPercentage;
+				Player->GetPlayerStatus()->ESkillCoolTime = my_packet->EPercentage;
+				Player->GetPlayerStatus()->RSkillCoolTime = my_packet->RPercentage;
+			}
 			break;
 		}
 		case SC_CHANGE_SPEED:
