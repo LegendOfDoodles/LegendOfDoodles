@@ -68,8 +68,6 @@ void CNumberShader::AnimateObjects(float timeElapsed)
 
 			((CNumberOjbect*)m_ppObjects[j])->SetTexCoord(m_iTimerSignificnatNum[0][(m_iTimerPositionalNum[0] - 1) - nSec]);
 			((CNumberOjbect*)m_ppObjects[j])->SetOffset(nSec++);
-
-			m_ppObjects[j]->Animate(timeElapsed);
 		}
 
 		else if (((CNumberOjbect*)m_ppObjects[j])->GetType() == TimeMinute) {
@@ -85,9 +83,9 @@ void CNumberShader::AnimateObjects(float timeElapsed)
 
 			((CNumberOjbect*)m_ppObjects[j])->SetTexCoord(m_iTimerSignificnatNum[1][(m_iTimerPositionalNum[1] - 1) - nMin]);
 			((CNumberOjbect*)m_ppObjects[j])->SetOffset(nMin++);
-
-			m_ppObjects[j]->Animate(timeElapsed);
 		}
+
+		m_ppObjects[j]->Animate(timeElapsed);
 	}
 }
 
@@ -152,8 +150,6 @@ void CNumberShader::ApplyKill(CCollisionObject * pKiller)
 
 			((CNumberOjbect*)m_ppObjects[j])->SetTexCoord(m_iKDLSignificantNum[0][(m_iKDLPositionalNum[0] - 1) - nKill]);
 			((CNumberOjbect*)m_ppObjects[j])->SetOffset(nKill++);
-
-			m_ppObjects[j]->Animate();
 		}
 
 		else if (((CNumberOjbect*)m_ppObjects[j])->GetType() == TeamKILL::BlueTeam &&
@@ -178,8 +174,6 @@ void CNumberShader::ApplyKill(CCollisionObject * pKiller)
 			}
 			((CNumberOjbect*)m_ppObjects[j])->SetTexCoord(m_iTeamKillSignificantNum[TeamKILL::BlueTeam][(m_iTeamKillPositionalNum[TeamKILL::BlueTeam] - 1) - nBlueTeam]);
 			((CNumberOjbect*)m_ppObjects[j])->SetOffset(nBlueTeam++);
-
-			m_ppObjects[j]->Animate();
 		}
 
 		else if (((CNumberOjbect*)m_ppObjects[j])->GetType() == TeamKILL::RedTeam &&
@@ -204,8 +198,6 @@ void CNumberShader::ApplyKill(CCollisionObject * pKiller)
 			}
 			((CNumberOjbect*)m_ppObjects[j])->SetTexCoord(m_iTeamKillSignificantNum[TeamKILL::RedTeam][(m_iTeamKillPositionalNum[TeamKILL::RedTeam] - 1) - nRedTeam]);
 			((CNumberOjbect*)m_ppObjects[j])->SetOffset(nRedTeam++);
-
-			m_ppObjects[j]->Animate();
 		}
 	}
 }
@@ -235,8 +227,6 @@ void CNumberShader::ApplyDeath(CCollisionObject * pDumber)
 			}
 			((CNumberOjbect*)m_ppObjects[j])->SetTexCoord(m_iKDLSignificantNum[1][(m_iKDLPositionalNum[1] - 1) - nDeath]);
 			((CNumberOjbect*)m_ppObjects[j])->SetOffset(nDeath++);
-
-			m_ppObjects[j]->Animate();
 		}
 	}
 }
@@ -264,8 +254,6 @@ void CNumberShader::ApplyLevel()
 			}
 			((CNumberOjbect*)m_ppObjects[j])->SetTexCoord(m_iKDLSignificantNum[2][(m_iKDLPositionalNum[2] - 1) - nLevel]);
 			((CNumberOjbect*)m_ppObjects[j])->SetOffset(nLevel++);
-
-			m_ppObjects[j]->Animate();
 		}
 	}
 }
