@@ -45,7 +45,9 @@ bool CCollisionObject::AttackableFarRange(CCollisionObject * other)
 void CCollisionObject::LevelUP(CCollisionObject* player)
 {
 	PlayerInfo* PlayerStatus{ player->GetPlayerStatus() };
+	PlayerStatus->Exp -= PlayerStatus->Level * 110 + 170;
 	PlayerStatus->Level++;
+
 	if (PlayerStatus->Level == 7 || PlayerStatus->Level == 12 || PlayerStatus->Level == 17 || PlayerStatus->Level == 21) {
 		PlayerStatus->SpecialPoint += 1;
 	}

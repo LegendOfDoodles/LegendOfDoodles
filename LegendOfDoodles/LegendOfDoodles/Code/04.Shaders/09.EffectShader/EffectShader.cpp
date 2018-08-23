@@ -8,7 +8,7 @@
 /// 목적: Effect 그리기 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  이용선, 김나단
-/// 최종 수정 날짜: 2018-08-22
+/// 최종 수정 날짜: 2018-08-23
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -362,189 +362,213 @@ void CEffectShader::SpawnEffectObject(const XMFLOAT3 & position, const XMFLOAT3 
 		m_ppObjects[idx]->SetAnimationLength(aniLength);
 
 		m_ppObjects[idx]->Activate();
+		int adjIdx{ idx };
 		if (objectType == EffectObjectType::Player_SwordSkill_Q_Effect)
 		{
+			adjIdx -= m_objectsIndices[EffectObjectType::Player_SwordSkill_Q_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[3]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x + (CONVERT_PaperUnit_to_InG(8) * direction.x), position.y + CONVERT_PaperUnit_to_InG(2), position.z + (CONVERT_PaperUnit_to_InG(8) * direction.z)));
 
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (m_srvIncrementSize * idx));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (m_srvIncrementSize * adjIdx));
 			m_PlayerSwordSkill_Q_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::Player_SwordSkill_W_Effect)
 		{
+			adjIdx -= m_objectsIndices[EffectObjectType::Player_SwordSkill_Q_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[3]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + CONVERT_PaperUnit_to_InG(4), position.z));
 
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (m_srvIncrementSize * idx));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (m_srvIncrementSize * adjIdx));
 			m_PlayerSwordSkill_W_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::Player_SwordSkill_E_Effect)
 		{
+			adjIdx -= m_objectsIndices[EffectObjectType::Player_SwordSkill_Q_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[3]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x + (CONVERT_PaperUnit_to_InG(10) * direction.x), position.y + 50.f, position.z + (CONVERT_PaperUnit_to_InG(10) * direction.z)));
 
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (m_srvIncrementSize * idx));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (m_srvIncrementSize * adjIdx));
 			m_PlayerSwordSkill_E_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::Player_SwordSkill_R_Effect)
 		{
+			adjIdx -= m_objectsIndices[EffectObjectType::Player_SwordSkill_Q_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[3]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + CONVERT_PaperUnit_to_InG(2), position.z));
 
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (m_srvIncrementSize * idx));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (m_srvIncrementSize * adjIdx));
 			m_PlayerSwordSkill_R_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::Player_StaffSkill_W_Effect)
 		{
+			adjIdx -= m_objectsIndices[EffectObjectType::Player_SwordSkill_Q_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[3]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x + (CONVERT_PaperUnit_to_InG(8) * direction.x), position.y + 50.f, position.z + (CONVERT_PaperUnit_to_InG(8) * direction.z)));
 
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (m_srvIncrementSize * idx));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (m_srvIncrementSize * adjIdx));
 			m_PlayerStaffSkill_W_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::Player_StaffSkill_E_Effect)
 		{
+			adjIdx -= m_objectsIndices[EffectObjectType::Player_SwordSkill_Q_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[2]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x + (CONVERT_PaperUnit_to_InG(15) * direction.x), position.y + 50.f, position.z + (CONVERT_PaperUnit_to_InG(15) * direction.z)));
 
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (m_srvIncrementSize * idx));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (m_srvIncrementSize * adjIdx));
 			m_PlayerStaffSkill_E_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 
 		// Player Attack Motion Effect
 		else if (objectType == EffectObjectType::Player_ArrowAttack_Effect)
 		{
+			adjIdx -= m_objectsIndices[EffectObjectType::Player_ArrowAttack_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[2]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + 55.f, position.z));
 
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[1].ptr + (m_srvIncrementSize * (idx - UseMatrialNumToObjectCnt[0])));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[1].ptr + (m_srvIncrementSize * adjIdx));
 			m_PlayerArrowAttack_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::Player_StaffAttack_Effect)
 		{
+			adjIdx -= m_objectsIndices[EffectObjectType::Player_ArrowAttack_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[3]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + 55.f, position.z));
 
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[1].ptr + (m_srvIncrementSize * (idx - UseMatrialNumToObjectCnt[0])));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[1].ptr + (m_srvIncrementSize * adjIdx));
 			m_PlayerStaffAttack_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::Player_StaffQSkill_Effect)
 		{
+			adjIdx -= m_objectsIndices[EffectObjectType::Player_ArrowAttack_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[1]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + 50.f, position.z));
 
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[1].ptr + (m_srvIncrementSize *  (idx - UseMatrialNumToObjectCnt[0])));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[1].ptr + (m_srvIncrementSize * adjIdx));
 			m_PlayerStaffQSkill_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::Player_StaffESkill_Effect)
 		{
+			adjIdx -= m_objectsIndices[EffectObjectType::Player_ArrowAttack_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[1]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + 55.f, position.z));
 
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[1].ptr + (m_srvIncrementSize * (idx - UseMatrialNumToObjectCnt[0])));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[1].ptr + (m_srvIncrementSize * adjIdx));
 			m_PlayerStaffESkill_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 
 		// Minion Attack Motion Effect
 		else if (objectType == EffectObjectType::Minion_ArrowAttack_Effect)
 		{
+			adjIdx -= m_objectsIndices[EffectObjectType::Minion_ArrowAttack_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[1]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + 40.f, position.z - CONVERT_PaperUnit_to_InG(1)));
 
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[2].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1]))));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[2].ptr + (m_srvIncrementSize * adjIdx));
 			m_MinionArrowAttack_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::Minion_StaffAttack_Effect)
 		{
+			adjIdx -= m_objectsIndices[EffectObjectType::Minion_ArrowAttack_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[0]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x + (CONVERT_PaperUnit_to_InG(2) * direction.x), position.y + CONVERT_PaperUnit_to_InG(4), position.z + (CONVERT_PaperUnit_to_InG(4)  * direction.z)));
 
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[2].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1]))));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[2].ptr + (m_srvIncrementSize * adjIdx));
 			m_MinionStaffAttack_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 
 		// FollowingToFlyingObejct Effect
 		else if (objectType == EffectObjectType::Flying_MinionArrow_Effect)
 		{
+			adjIdx -= m_objectsIndices[EffectObjectType::Flying_MinionArrow_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[0]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + 4.f, position.z));
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[3].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2]))));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[3].ptr + (m_srvIncrementSize * adjIdx));
 			m_MinionArrow_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::Flying_PlayerArrow_Effect)
 		{
+			adjIdx -= m_objectsIndices[EffectObjectType::Flying_MinionArrow_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[1]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x - (CONVERT_PaperUnit_to_InG(3) * direction.x), position.y + 4.f, position.z - (CONVERT_PaperUnit_to_InG(3) * direction.z)));
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[3].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2]))));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[3].ptr + (m_srvIncrementSize * adjIdx));
 			m_PlayerArrow_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::Flying_PlayerFireBall_Effect)
 		{
+			adjIdx -= m_objectsIndices[EffectObjectType::Flying_MinionArrow_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[0]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + 4.f, position.z));
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[3].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2]))));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[3].ptr + (m_srvIncrementSize * adjIdx));
 			m_PlayerFireBall_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::Tower_Attack_Explosion_Effect)
 		{
+			adjIdx -= m_objectsIndices[EffectObjectType::Flying_MinionArrow_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[5]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y, position.z));
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[3].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2]))));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[3].ptr + (m_srvIncrementSize * adjIdx));
 			m_TowerAttack_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 
 		// HIt Effect
 		else if (objectType == EffectObjectType::Player_ArrowAndFireBall_HitPosition_Effect)
 		{
+			adjIdx -= m_objectsIndices[EffectObjectType::Player_ArrowAndFireBall_HitPosition_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[1]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y, position.z));
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[4].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3]))));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[4].ptr + (m_srvIncrementSize * adjIdx));
 			m_PlayerArrowAndFireBall_HitPosition_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::NormallHit_Effect)
 		{
+			adjIdx -= m_objectsIndices[EffectObjectType::Player_ArrowAndFireBall_HitPosition_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[1]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + CONVERT_PaperUnit_to_InG(4), position.z));
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[4].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3]))));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[4].ptr + (m_srvIncrementSize * adjIdx));
 			m_NormalHit_Effect.emplace_back(m_ppObjects[idx]);
 		}
 
 		// Golem Attack Effect
 		else if (objectType == EffectObjectType::Golem_StandardAttack_Effect)
 		{
+			adjIdx -= m_objectsIndices[EffectObjectType::Golem_StandardAttack_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[5]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x + (CONVERT_PaperUnit_to_InG(20) * direction.x), position.y + (CONVERT_PaperUnit_to_InG(2)), position.z + (CONVERT_PaperUnit_to_InG(20) * direction.z)));
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[5].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4]))));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[5].ptr + (m_srvIncrementSize * adjIdx));
 			m_GolemStandardAttack_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::Golem_StumpAttack_Effect)
 		{
+			adjIdx -= m_objectsIndices[EffectObjectType::Golem_StandardAttack_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[5]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + (CONVERT_PaperUnit_to_InG(2)), position.z));
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[5].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4]))));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[5].ptr + (m_srvIncrementSize * adjIdx));
 			m_GolemStumpAttack_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::Golem_SpecialAttack_Effect)
 		{
+			adjIdx -= m_objectsIndices[EffectObjectType::Golem_StandardAttack_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[5]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + (CONVERT_PaperUnit_to_InG(2)), position.z));
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[5].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4]))));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[5].ptr + (m_srvIncrementSize * adjIdx));
 			m_GolemSpecialAttack_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 
 		// Level Up Effect
 		else if (objectType == EffectObjectType::Player_LevelUp_CircleEffect)
 		{
+			adjIdx -= m_objectsIndices[EffectObjectType::Player_LevelUp_CircleEffect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[5]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + (CONVERT_PaperUnit_to_InG(2)), position.z));
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[6].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4] + UseMatrialNumToObjectCnt[5]))));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[6].ptr + (m_srvIncrementSize * adjIdx));
 			m_CircleLevelUp_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::Player_LevelUp_ArrowEffect)
 		{
+			adjIdx -= m_objectsIndices[EffectObjectType::Player_LevelUp_CircleEffect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[5]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + (CONVERT_PaperUnit_to_InG(4)), position.z));
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[5].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4] + UseMatrialNumToObjectCnt[5]))));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[6].ptr + (m_srvIncrementSize * adjIdx));
 			m_ArrowLevelUp_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 	}
@@ -722,7 +746,6 @@ void CEffectShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pCont
 	m_ppObjects = new CCollisionObject*[m_nObjects];
 
 	UINT ncbElementBytes = ((sizeof(CB_EFFECTOBJECT_INFO) + 255) & ~255);
-	int accCnt{ 0 };
 
 	CreateShaderVariables(pCreateMgr, ncbElementBytes, m_nObjects);
 
@@ -749,6 +772,7 @@ void CEffectShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pCont
 	CreateConstantBufferViews(pCreateMgr, UseMatrialNumToObjectCnt[6], m_pConstBuffer.Get(), ncbElementBytes, UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4] + UseMatrialNumToObjectCnt[5], 6);
 
 	// 오브젝트 Index
+	int accCnt{ 0 };
 	for (int i = 0; i < EffectObjectTime_Max_COUNT; ++i) {
 		m_objectsIndices[objectOrder[i]] = EffectObjectIndices();
 		m_objectsIndices[objectOrder[i]].m_begIndex = accCnt;

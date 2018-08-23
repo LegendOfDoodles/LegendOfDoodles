@@ -19,6 +19,8 @@ public: // 공개 함수
 	virtual bool Attackable(CCollisionObject* other);
 	virtual bool AttackableFarRange(CCollisionObject* other);
 
+	void LevelUP();
+
 	virtual void PlayIdle(float timeElapsed) { timeElapsed; }
 	virtual void PlayWalk(float timeElapsed, shared_ptr<CWayFinder> pWayFinder) { timeElapsed; pWayFinder; }
 	virtual void PlayChase(float timeElapsed, shared_ptr<CWayFinder> pWayFinder) { timeElapsed; pWayFinder; }
@@ -110,8 +112,6 @@ public: // 공개 함수
 	virtual void OnSkill() { }
 	virtual void OffSkill() { }
 	virtual bool SkillPossible() { return false; }
-
-	void LevelUP(CCollisionObject* player);
 
 protected: // 내부 함수
 

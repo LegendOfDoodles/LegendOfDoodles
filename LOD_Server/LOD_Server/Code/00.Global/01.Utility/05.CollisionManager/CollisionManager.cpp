@@ -313,11 +313,9 @@ void CCollisionManager::RequestIncreaseExp(CCollisionObject * pCol, float lengh,
 					PlayerInfo* PlayerStatus{ (*i)->GetPlayerStatus() };
 						PlayerStatus->Exp += exp;
 						if (PlayerStatus->Level * 110 + 170 <= PlayerStatus->Exp) {
-							PlayerStatus->Exp -= PlayerStatus->Level * 110 + 170;
 							(*i)->LevelUP((*i));
 							SC_Msg_Level_Up p;
 							p.Target_Tag = (short)(*i)->GetTag();
-							p.level = (short)PlayerStatus->Level;
 							p.size = sizeof(p);
 							p.type = SC_LEVEL_UP;
 							for (int j = 0; j < MAX_USER; ++j) {

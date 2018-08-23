@@ -13,7 +13,7 @@
 /// 목적: 플레이어 관리 및 렌더링 용도
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-08-22
+/// 최종 수정 날짜: 2018-08-23
 /// </summary>
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -233,15 +233,6 @@ bool CPlayerShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 			m_pNetwork->SendPacket(&p);
 			m_ppObjects[m_pNetwork->m_myid]->OnSkill();
 		}
-	}
-	else if (GetAsyncKeyState('L') & 0x0001)
-	{
-		CS_Msg_Demand_Level_Up p;
-		p.Character_id = (BYTE)m_pNetwork->m_myid;
-		p.size = sizeof(p);
-		p.type = CS_DEMAND_LEVEL_UP;
-		m_pNetwork->SendPacket(&p);
-		
 	}
 
 	return true;

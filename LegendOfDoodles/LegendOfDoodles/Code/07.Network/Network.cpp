@@ -300,7 +300,7 @@ void CNetwork::ProcessPacket(char *ptr)
 		{
 			SC_Msg_Level_Up* my_packet = reinterpret_cast<SC_Msg_Level_Up*>(ptr);
 			CCollisionObject* Player{ m_pColManager->RequestPlayerByTag(my_packet->Target_Tag) };
-			Player->LevelUP(Player);
+			Player->LevelUP();
 			m_pNumberShader->ApplyLevel();
 			break;
 		}

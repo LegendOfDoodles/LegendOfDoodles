@@ -183,7 +183,6 @@ void CNexusTower::ReceiveDamage(float damage, CCollisionObject * pCol)
 				m_pEnemy->LevelUP(m_pEnemy);
 				SC_Msg_Level_Up p;
 				p.Target_Tag = (short)m_pEnemy->GetTag();
-				p.level = (short)PlayerStatus->Level;
 				p.size = sizeof(p);
 				p.type = SC_LEVEL_UP;
 				for (int j = 0; j < MAX_USER; ++j) {

@@ -99,12 +99,7 @@ struct CS_Msg_Demand_Use_Skill : public Packet
 {
 	BYTE Character_id;
 	BYTE skilltype;
-};
-
-struct CS_Msg_Demand_Level_Up : public Packet
-{
-	BYTE Character_id;
-};
+}; 
 
 struct SC_Msg_Permit_Use_Skill : public Packet
 {
@@ -236,7 +231,6 @@ struct SC_Msg_Exp_Up : public Packet
 
 struct SC_Msg_Level_Up : public Packet
 {
-	short level;
 	short Target_Tag;
 };
 
@@ -339,7 +333,6 @@ struct SC_Msg_Sync_Time : public Packet
 #define CS_CHANGE_WEAPON		  204
 #define CS_SET_ABILITY_POINT      205
 #define CS_PREPARE_DATA			  206
-#define CS_DEMAND_LEVEL_UP		  207
 
 
 
