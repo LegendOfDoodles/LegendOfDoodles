@@ -110,6 +110,7 @@ void CNumberShader::SetCamera(CCamera * pCamera)
 void CNumberShader::SyncTime(float serverTime)
 {
 	m_iTimer[0] = serverTime;
+	m_iTimer[1] = 0.f;
 	while (m_iTimer[0] > 60.f)
 	{
 		m_iTimer[0] -= 60.0f;

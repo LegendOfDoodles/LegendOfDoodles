@@ -116,7 +116,7 @@ void SendPacket(int id, void *ptr)
 	if (0 != res) {
 		int err_no = WSAGetLastError();
 		if (WSA_IO_PENDING != err_no) error_display("Send Error! ", err_no);
-		cout << packet[1] << endl;
+		
 	}
 }
 void SendPutObjectPacket(int client, int object)
@@ -253,13 +253,14 @@ void ProcessPacket(int id, char *packet)
 			SendPacket(id, &p);
 
 		}
-
-		SC_Msg_Sync_Time p2;
-		p2.Game_Time = g_GameTime;
-		p2.size = sizeof(p2);
-		p2.type = SC_SYNC_TIME;
-		SendPacket((BYTE)PreparePacket->Character_id, &p2);
-
+		if (g_clients[(BYTE)PreparePacket->Character_id].m_isconnected)
+		{
+			SC_Msg_Sync_Time p2;
+			p2.Game_Time = g_GameTime;
+			p2.size = sizeof(p2);
+			p2.type = SC_SYNC_TIME;
+			SendPacket((BYTE)PreparePacket->Character_id, &p2);
+		}
 
 		break;
 	}
@@ -473,14 +474,15 @@ void timer_thread()
 		}
 		if (g_PacketCoolTime >= 1000)
 		{
-			GameTimeSync++;
-			if (GameTimeSync > 5) {
+			if (++GameTimeSync > 5) {
 				for (int i = 0; i < MAX_USER; ++i) {
-					SC_Msg_Sync_Time p2;
-					p2.Game_Time = g_GameTime;
-					p2.size = sizeof(p2);
-					p2.type = SC_SYNC_TIME;
-					SendPacket(i, &p2);
+					if (g_clients[i].m_isconnected) {
+						SC_Msg_Sync_Time p2;
+						p2.Game_Time = g_GameTime;
+						p2.size = sizeof(p2);
+						p2.type = SC_SYNC_TIME;
+						SendPacket(i, &p2);
+					}
 				}
 				GameTimeSync = 0;
 			}
