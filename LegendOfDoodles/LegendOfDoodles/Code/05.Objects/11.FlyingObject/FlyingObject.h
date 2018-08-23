@@ -11,7 +11,7 @@ public:
 	virtual ~CFlyingObject();
 
 public:	// 외부 함수
-	virtual void Animate(float timeElapsed);
+	virtual void Animate(float timeElapsed = 0.0f);
 
 	virtual void SetFlyingObjectsType(FlyingObjectType type);
 	virtual void SetDirection(const XMFLOAT3& direction);

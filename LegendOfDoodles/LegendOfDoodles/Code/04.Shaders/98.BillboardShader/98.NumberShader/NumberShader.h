@@ -26,6 +26,12 @@ public: // 공개 함수
 
 	virtual void SetCamera(CCamera *pCamera);
 
+	void SyncTime(float serverTime);
+
+	void ApplyKill(CCollisionObject* pKiller);
+	void ApplyDeath(CCollisionObject* pDumber);
+	void ApplyLevel();
+
 	virtual void SetPlayer(CBaseObject **ppPlayer) { m_ppPlayers = (CPlayer**)ppPlayer; };
 	virtual void SetPlayerCnt(int cnt) { m_nPlayer = cnt; };
 	
@@ -55,11 +61,11 @@ protected: // 변수
 	int m_iTeamKillPositionalNum[2] = { 0 };
 	int *m_iTeamKillSignificantNum[2] = { 0 };
 
-	// Personal KDA
-	/* KILL Death Assist */
-	int m_iPlayerKDA[3] = { 0 };
-	int m_iKDAPositionalNum[3] = { 0 };
-	int *m_iKDASignificantNum[3] = { 0 };
+	// Personal KDL
+	/* KILL Death Level */
+	int m_iPlayerKDL[3] = { 0 };
+	int m_iKDLPositionalNum[3] = { 0 };
+	int *m_iKDLSignificantNum[3] = { 0 };
 	
 	// Timer
 	/* Min Sec */

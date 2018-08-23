@@ -18,7 +18,7 @@ public:	// 생성자, 소멸자
 	virtual ~CBillboardObject();
 
 public: // 공개함수
-	virtual void Animate(float fTimeElapsed);
+	virtual void Animate(float fTimeElapsed = 0.0f);
 
 	void SetLookAt();
 	void SetCamera(CCamera *pCamera) { m_pCamera = pCamera; };

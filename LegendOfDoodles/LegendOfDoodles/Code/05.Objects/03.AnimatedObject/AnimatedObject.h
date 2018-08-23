@@ -21,7 +21,7 @@ public:	// 생성자, 소멸자
 	virtual ~CAnimatedObject();
 
 public: // 공개 함수
-	virtual void Animate(float timeElapsed);
+	virtual void Animate(float timeElapsed = 0.0f);
 	virtual void Render(CCamera *pCamera, UINT instanceCnt = 1);
 
 	void SetSkeleton(CSkeleton *skeleton);

@@ -10,7 +10,7 @@ public:
 	virtual ~CNexusTower();
 
 public:	// 외부 함수
-	virtual void Animate(float timeElapsed);
+	virtual void Animate(float timeElapsed = 0.0f);
 
 	virtual void SetState(StatesType newState, shared_ptr<CWayFinder> pWayFinder = nullptr);
 

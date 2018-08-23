@@ -28,7 +28,7 @@ CNumberOjbect::CNumberOjbect(shared_ptr<CCreateMgr> pCreateMgr, NumberType type)
 	case TimeSec:
 	case PersonalKill:
 	case PersonalDeath:
-	case PersonalAssist:
+	case PersonalLevel:
 		pRectMesh = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 1280.f, FRAME_BUFFER_HEIGHT / 720.f, 0.f);
 		SetMesh(0, pRectMesh);
 		break;
@@ -82,7 +82,7 @@ void CNumberOjbect::Animate(float fTimeElapsed)
 		UpVectorMoveWeight = (FRAME_BUFFER_HEIGHT / 75.78f);
 		RightVectorMoveWeight = (FRAME_BUFFER_WIDTH / 84.21f) + m_fOffset;
 		break;
-	case PersonalAssist:
+	case PersonalLevel:
 		UpVectorMoveWeight = (FRAME_BUFFER_HEIGHT / 75.78f);
 		RightVectorMoveWeight = (FRAME_BUFFER_WIDTH / 74.85f) + m_fOffset;
 		break;
@@ -124,7 +124,7 @@ void CNumberOjbect::Render(CCamera * pCamera, UINT istanceCnt)
 
 void CNumberOjbect::SetOffset(int cnt)
 {
-	if (m_type == NumberType::PersonalKill || m_type == NumberType::PersonalDeath || m_type == NumberType::PersonalAssist) {
+	if (m_type == NumberType::PersonalKill || m_type == NumberType::PersonalDeath || m_type == NumberType::PersonalLevel) {
 		m_fOffset = cnt * 0.4f;
 	}
 	else if ( m_type == NumberType::TimeMinute || m_type == NumberType::TimeSec) {

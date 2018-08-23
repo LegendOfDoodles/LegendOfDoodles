@@ -431,11 +431,10 @@ void CPlayer::ReceiveDamage(float damage, CCollisionObject * pCol)
 		for (int i = 0; i < MAX_USER; ++i)
 		{
 			if (g_clients[i].m_isconnected) {
-				SC_Msg_Set_Player_State p;
-				p.Player_State = (BYTE)StatesType::Die;
+				SC_Msg_Set_Player_Death p;
 				p.Player_Tag = (short)m_tag;
 				p.size = sizeof(p);
-				p.type = SC_SET_PLAYER_STATE;
+				p.type = SC_SET_PLAYER_DEATH;
 				SendPacket(i, &p);
 			}
 		}

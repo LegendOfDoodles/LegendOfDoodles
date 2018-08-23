@@ -116,6 +116,7 @@ void SendPacket(int id, void *ptr)
 	if (0 != res) {
 		int err_no = WSAGetLastError();
 		if (WSA_IO_PENDING != err_no) error_display("Send Error! ", err_no);
+		cout << packet[1] << endl;
 	}
 }
 void SendPutObjectPacket(int client, int object)
@@ -246,12 +247,20 @@ void ProcessPacket(int id, char *packet)
 		{
 			if (i == id) continue;
 			p.Character_id = (BYTE)i;
-			p.x = (short)g_ppPlayer[i]->GetPosition().x;
-			p.y = (short)g_ppPlayer[i]->GetPosition().z;
+			p.x = g_ppPlayer[i]->GetPosition().x;
+			p.y = g_ppPlayer[i]->GetPosition().z;
 
 			SendPacket(id, &p);
 
 		}
+
+		SC_Msg_Sync_Time p2;
+		p2.Game_Time = g_GameTime;
+		p2.size = sizeof(p2);
+		p2.type = SC_SYNC_TIME;
+		SendPacket((BYTE)PreparePacket->Character_id, &p2);
+
+
 		break;
 	}
 	case CS_DEMAND_LEVEL_UP:
@@ -413,8 +422,8 @@ void accept_thread()	//새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 		p.Character_id = (BYTE)id;
 		p.size = sizeof(p);
 		p.type = SC_PUT_PLAYER;
-		p.x = (short)g_ppPlayer[id]->GetPosition().x;
-		p.y = (short)g_ppPlayer[id]->GetPosition().z;
+		p.x = g_ppPlayer[id]->GetPosition().x;
+		p.y = g_ppPlayer[id]->GetPosition().z;
 		SendPacket(id, &p);
 	}
 }
@@ -422,7 +431,7 @@ void accept_thread()	//새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 void timer_thread()
 {
 	static int CoolTimeSync{ 0 };
-
+	static int GameTimeSync{ 0 };
 	//if (g_Clientsync)
 	while (1)
 	{
@@ -464,6 +473,17 @@ void timer_thread()
 		}
 		if (g_PacketCoolTime >= 1000)
 		{
+			GameTimeSync++;
+			if (GameTimeSync > 5) {
+				for (int i = 0; i < MAX_USER; ++i) {
+					SC_Msg_Sync_Time p2;
+					p2.Game_Time = g_GameTime;
+					p2.size = sizeof(p2);
+					p2.type = SC_SYNC_TIME;
+					SendPacket(i, &p2);
+				}
+				GameTimeSync = 0;
+			}
 			g_PacketCoolTime = 0;
 			//Sqva User's Information
 			for (int i = 0; i < MAX_USER; ++i) {

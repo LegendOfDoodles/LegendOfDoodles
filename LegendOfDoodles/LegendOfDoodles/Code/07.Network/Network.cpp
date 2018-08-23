@@ -7,6 +7,7 @@
 #include "05.Objects\09.NexusTower\NexusTower.h"
 #include "03.Scenes/00.BaseScene/Scene.h"
 #include "04.Shaders/04.AniShader/MinionShader.h"
+#include "04.Shaders/98.BillboardShader/98.NumberShader/NumberShader.h"
 #include "00.Global/01.Utility/08.EffectManager/EffectManager.h"
 
 CNetwork::CNetwork()
@@ -31,7 +32,7 @@ void CNetwork::Initialize(HWND hWnd)
 	ZeroMemory(&ServerAddr, sizeof(SOCKADDR_IN));
 	ServerAddr.sin_family = AF_INET;
 	ServerAddr.sin_port = htons(MY_SERVER_PORT);
-	//ServerAddr.sin_addr.s_addr = inet_addr("192.168.0.11");
+	//ServerAddr.sin_addr.s_addr = inet_addr("192.168.0.101");
 	ServerAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
 	int Result = WSAConnect(m_mysocket, (sockaddr *)&ServerAddr, sizeof(ServerAddr), NULL, NULL, NULL, NULL);
@@ -299,9 +300,8 @@ void CNetwork::ProcessPacket(char *ptr)
 		{
 			SC_Msg_Level_Up* my_packet = reinterpret_cast<SC_Msg_Level_Up*>(ptr);
 			CCollisionObject* Player{ m_pColManager->RequestPlayerByTag(my_packet->Target_Tag) };
-			PlayerInfo* status{ Player->GetPlayerStatus() };
-			status->Exp -= status->Level * 110 + 170;
 			Player->LevelUP(Player);
+			m_pNumberShader->ApplyLevel();
 			break;
 		}
 		case SC_UPDATE_GOLEM_STAT:
@@ -366,13 +366,12 @@ void CNetwork::ProcessPacket(char *ptr)
 			}
 			break;
 		}
-		case SC_SET_PLAYER_STATE:
+		case SC_SET_PLAYER_DEATH:
 		{
-			SC_Msg_Set_Player_State* my_packet = reinterpret_cast<SC_Msg_Set_Player_State*>(ptr);
+			SC_Msg_Set_Player_Death* my_packet = reinterpret_cast<SC_Msg_Set_Player_Death*>(ptr);
 			CCollisionObject* Player{ m_pColManager->RequestPlayerByTag(my_packet->Player_Tag) };
 			if (Player) {
-				Player->SetState((StatesType)my_packet->Player_State);
-				Player->GetPlayerStatus()->Death++;
+				m_pNumberShader->ApplyDeath(Player);
 			}
 			break;
 		}
@@ -381,8 +380,14 @@ void CNetwork::ProcessPacket(char *ptr)
 			SC_Msg_Set_Player_Kill* my_packet = reinterpret_cast<SC_Msg_Set_Player_Kill*>(ptr);
 			CCollisionObject* Killer{ m_pColManager->RequestPlayerByTag(my_packet->Killer_Tag) };
 			if (Killer) {
-				Killer->GetPlayerStatus()->Kill++;
+				m_pNumberShader->ApplyKill(Killer);
 			}
+			break;
+		}
+		case SC_SYNC_TIME:
+		{
+			SC_Msg_Sync_Time* my_packet = reinterpret_cast<SC_Msg_Sync_Time*>(ptr);
+			m_pNumberShader->SyncTime(my_packet->Game_Time);
 			break;
 		}
 		default:
@@ -460,6 +465,7 @@ void CNetwork::SetScene(shared_ptr<CScene> pScene)
 void CNetwork::PrepareData()
 {
 	m_pMinionShader = (CMinionShader*)m_pScene->GetShader(2);
+	m_pNumberShader = (CNumberShader*)m_pScene->GetShader(16);
 
 	CS_Msg_Prepare_Data p;
 	p.Character_id = (BYTE)m_myid;

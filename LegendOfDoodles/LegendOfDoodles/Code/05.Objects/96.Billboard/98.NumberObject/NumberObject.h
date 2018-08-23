@@ -9,7 +9,7 @@ public:
 	virtual ~CNumberOjbect();
 
 public: // 공개함수
-	virtual void Animate(float fTimeElapsed);
+	virtual void Animate(float fTimeElapsed = 0.0f);
 	virtual void Render(CCamera *pCamera, UINT istanceCnt = 1);
 
 

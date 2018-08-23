@@ -12,7 +12,7 @@
 /// 목적: Number Billboard 쉐이더 (시간, Kill Dead, Assist )
 /// 최종 수정자:  김나단
 /// 수정자 목록:  이용선, 김나단
-/// 최종 수정 날짜: 2018-08-22
+/// 최종 수정 날짜: 2018-08-23
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -52,11 +52,6 @@ void CNumberShader::AnimateObjects(float timeElapsed)
 
 	int nSec{ 0 };
 	int nMin{ 0 };
-	int nKill{ 0 };
-	int nDeath{ 0 };
-	int nLevel{ 0 };
-	int nBlueTeam{ 0 };
-	int nRedTeam{ 0 };
 
 	for (int j = 0; j < m_nObjects; j++)
 	{
@@ -73,9 +68,11 @@ void CNumberShader::AnimateObjects(float timeElapsed)
 
 			((CNumberOjbect*)m_ppObjects[j])->SetTexCoord(m_iTimerSignificnatNum[0][(m_iTimerPositionalNum[0] - 1) - nSec]);
 			((CNumberOjbect*)m_ppObjects[j])->SetOffset(nSec++);
+
+			m_ppObjects[j]->Animate(timeElapsed);
 		}
 
-		if (((CNumberOjbect*)m_ppObjects[j])->GetType() == TimeMinute) {
+		else if (((CNumberOjbect*)m_ppObjects[j])->GetType() == TimeMinute) {
 
 			int checkNum = static_cast<int>(m_iTimer[1]);		// 자리 수 확인에서 사용할 변수
 
@@ -88,123 +85,9 @@ void CNumberShader::AnimateObjects(float timeElapsed)
 
 			((CNumberOjbect*)m_ppObjects[j])->SetTexCoord(m_iTimerSignificnatNum[1][(m_iTimerPositionalNum[1] - 1) - nMin]);
 			((CNumberOjbect*)m_ppObjects[j])->SetOffset(nMin++);
+
+			m_ppObjects[j]->Animate(timeElapsed);
 		}
-
-		if (((CNumberOjbect*)m_ppObjects[j])->GetType() == PersonalKill) {
-
-			int checkNum = static_cast<int>(m_ppPlayers[m_pNetwork->m_myid]->GetPlayerStatus()->Kill);		// 자리 수 확인에서 사용할 변수
-			m_iPlayerKDA[0] = static_cast<int>(m_ppPlayers[m_pNetwork->m_myid]->GetPlayerStatus()->Kill);		// 자리 수 확인에서 사용할 변수
-
-			m_iKDAPositionalNum[0] = 2;
-
-			//if (checkNum == 0)
-			//	m_iKDAPositionalNum[0] = 1;		// 0 이면 자리수는 1개
-			//else
-			//	for (m_iKDAPositionalNum[0] = 0; checkNum > 0; checkNum /= 10, m_iKDAPositionalNum[0]++);
-
-			m_iKDASignificantNum[0] = new int[m_iKDAPositionalNum[0]];
-
-			// Num[0] 부터 1의 자리 10의 자리 순차적 증가 저장
-			// 30이면 0, 3 저장 (출력은 반대로 해야 함)
-			for (int k = 0; k < m_iKDAPositionalNum[0]; ++k) {
-				m_iKDASignificantNum[0][k] = checkNum % 10;
-
-				checkNum /= 10;
-			}
-
-			((CNumberOjbect*)m_ppObjects[j])->SetTexCoord(m_iKDASignificantNum[0][(m_iKDAPositionalNum[0] - 1) - nKill ]);
-			((CNumberOjbect*)m_ppObjects[j])->SetOffset(nKill++);
-		}
-
-		if (((CNumberOjbect*)m_ppObjects[j])->GetType() == PersonalDeath) {
-
-			m_iPlayerKDA[1] = static_cast<int>(m_ppPlayers[m_pNetwork->m_myid]->GetPlayerStatus()->Death);		// 자리 수 확인에서 사용할 변수
-
-			m_iKDAPositionalNum[1] = 2;
-
-			m_iKDASignificantNum[1] = new int[m_iKDAPositionalNum[1]];
-
-			// Num[0] 부터 1의 자리 10의 자리 순차적 증가 저장
-			// 30이면 0, 3 저장 (출력은 반대로 해야 함)
-			for (int k = 0; k < m_iKDAPositionalNum[1]; ++k) {
-				m_iKDASignificantNum[1][k] = m_iPlayerKDA[1] % 10;
-
-				m_iPlayerKDA[1] /= 10;
-			}
-			((CNumberOjbect*)m_ppObjects[j])->SetTexCoord(m_iKDASignificantNum[1][(m_iKDAPositionalNum[1] - 1) - nDeath]);
-			((CNumberOjbect*)m_ppObjects[j])->SetOffset(nDeath++);
-		}
-
-		if (((CNumberOjbect*)m_ppObjects[j])->GetType() == PersonalAssist) {
-
-			m_iPlayerKDA[2] = static_cast<int>(m_ppPlayers[m_pNetwork->m_myid]->GetPlayerStatus()->Level);		// 자리 수 확인에서 사용할 변수
-
-			m_iKDAPositionalNum[2] = 2;
-
-			m_iKDASignificantNum[2] = new int[m_iKDAPositionalNum[2]];
-
-			// Num[0] 부터 1의 자리 10의 자리 순차적 증가 저장
-			// 30이면 0, 3 저장 (출력은 반대로 해야 함)
-			for (int k = 0; k < m_iKDAPositionalNum[2]; ++k) {
-				m_iKDASignificantNum[2][k] = m_iPlayerKDA[2] % 10;
-
-				m_iPlayerKDA[2] /= 10;
-			}
-			((CNumberOjbect*)m_ppObjects[j])->SetTexCoord(m_iKDASignificantNum[2][(m_iKDAPositionalNum[2] - 1) - nLevel]);
-			((CNumberOjbect*)m_ppObjects[j])->SetOffset(nLevel++);
-		}
-
-		if (((CNumberOjbect*)m_ppObjects[j])->GetType() == TeamKILL::BlueTeam) {
-
-			for (int i = 0; i < m_nPlayer; ++i) {
-				// 플레이어의 스테이터스의 Kill을 팀별로 더한다.
-				if (m_ppPlayers[i]->GetTeam() == TeamType::Blue)
-					m_iTeamKill[TeamKILL::BlueTeam] += m_ppPlayers[i]->GetPlayerStatus()->Kill;
-				else if (m_ppPlayers[i]->GetTeam() == TeamType::Red)
-					m_iTeamKill[TeamKILL::RedTeam] += m_ppPlayers[i]->GetPlayerStatus()->Kill;
-			}
-
-			m_iTeamKillPositionalNum[0] = 2;		// 0 이면 자리수는 1개
-
-			m_iTeamKillSignificantNum[0] = new int[m_iTeamKillPositionalNum[0]];
-
-			// Num[0] 부터 1의 자리 10의 자리 순차적 증가 저장
-			// 30이면 0, 3 저장 (출력은 반대로 해야 함)
-			for (int k = 0; k < m_iTeamKillPositionalNum[0]; ++k) {
-				m_iTeamKillSignificantNum[0][k] = m_iTeamKill[0] % 10;
-
-				m_iTeamKill[0] /= 10;
-			}
-			((CNumberOjbect*)m_ppObjects[j])->SetTexCoord(m_iTeamKillSignificantNum[0][(m_iTeamKillPositionalNum[0] - 1) - nBlueTeam]);
-			((CNumberOjbect*)m_ppObjects[j])->SetOffset(nBlueTeam++);
-		}
-
-		if (((CNumberOjbect*)m_ppObjects[j])->GetType() == TeamKILL::RedTeam) {
-
-			for (int i = 0; i < m_nPlayer; ++i) {
-				// 플레이어의 스테이터스의 Kill을 팀별로 더한다.
-				if (m_ppPlayers[i]->GetTeam() == TeamType::Blue)
-					m_iTeamKill[TeamKILL::BlueTeam] += m_ppPlayers[i]->GetPlayerStatus()->Kill;
-				else if (m_ppPlayers[i]->GetTeam() == TeamType::Red)
-					m_iTeamKill[TeamKILL::RedTeam] += m_ppPlayers[i]->GetPlayerStatus()->Kill;
-			}
-
-			m_iTeamKillPositionalNum[1] = 2;		// 0 이면 자리수는 1개
-
-			m_iTeamKillSignificantNum[1] = new int[m_iTeamKillPositionalNum[1]];
-
-			// Num[0] 부터 1의 자리 10의 자리 순차적 증가 저장
-			// 30이면 0, 3 저장 (출력은 반대로 해야 함)
-			for (int k = 0; k < m_iTeamKillPositionalNum[1]; ++k) {
-				m_iTeamKillSignificantNum[1][k] = m_iTeamKill[1] % 10;
-
-				m_iTeamKill[1] /= 10;
-			}
-			((CNumberOjbect*)m_ppObjects[j])->SetTexCoord(m_iTeamKillSignificantNum[1][(m_iTeamKillPositionalNum[1] - 1) - nRedTeam]);
-			((CNumberOjbect*)m_ppObjects[j])->SetOffset(nRedTeam++);
-		}
-
-		m_ppObjects[j]->Animate(timeElapsed);
 	}
 }
 
@@ -222,6 +105,168 @@ void CNumberShader::Render(CCamera * pCamera)
 void CNumberShader::SetCamera(CCamera * pCamera)
 {
 	m_pCamera = pCamera;
+}
+
+void CNumberShader::SyncTime(float serverTime)
+{
+	m_iTimer[0] = serverTime;
+	while (m_iTimer[0] > 60.f)
+	{
+		m_iTimer[0] -= 60.0f;
+		m_iTimer[1] += 1.0f;
+	}
+}
+
+void CNumberShader::ApplyKill(CCollisionObject * pKiller)
+{
+	pKiller->GetPlayerStatus()->Kill++;
+
+	int nKill{ 0 };
+	int nBlueTeam{ 0 };
+	int nRedTeam{ 0 };
+
+	for (int j = 0; j < m_nObjects; j++)
+	{
+		if (((CNumberOjbect*)m_ppObjects[j])->GetType() == PersonalKill) {
+
+			int checkNum = static_cast<int>(m_ppPlayers[m_pNetwork->m_myid]->GetPlayerStatus()->Kill);		// 자리 수 확인에서 사용할 변수
+			m_iPlayerKDL[0] = static_cast<int>(m_ppPlayers[m_pNetwork->m_myid]->GetPlayerStatus()->Kill);		// 자리 수 확인에서 사용할 변수
+
+			m_iKDLPositionalNum[0] = 2;
+
+			//if (checkNum == 0)
+			//	m_iKDAPositionalNum[0] = 1;		// 0 이면 자리수는 1개
+			//else
+			//	for (m_iKDAPositionalNum[0] = 0; checkNum > 0; checkNum /= 10, m_iKDAPositionalNum[0]++);
+
+			m_iKDLSignificantNum[0] = new int[m_iKDLPositionalNum[0]];
+
+			// Num[0] 부터 1의 자리 10의 자리 순차적 증가 저장
+			// 30이면 0, 3 저장 (출력은 반대로 해야 함)
+			for (int k = 0; k < m_iKDLPositionalNum[0]; ++k) {
+				m_iKDLSignificantNum[0][k] = checkNum % 10;
+
+				checkNum /= 10;
+			}
+
+			((CNumberOjbect*)m_ppObjects[j])->SetTexCoord(m_iKDLSignificantNum[0][(m_iKDLPositionalNum[0] - 1) - nKill]);
+			((CNumberOjbect*)m_ppObjects[j])->SetOffset(nKill++);
+
+			m_ppObjects[j]->Animate();
+		}
+
+		else if (((CNumberOjbect*)m_ppObjects[j])->GetType() == TeamKILL::BlueTeam &&
+			pKiller->GetTeam() == TeamType::Blue) {
+
+			for (int i = 0; i < m_nPlayer; ++i) {
+				// 플레이어의 스테이터스의 Kill을 팀별로 더한다.
+				if (m_ppPlayers[i]->GetTeam() == TeamType::Blue)
+					m_iTeamKill[TeamKILL::BlueTeam] += m_ppPlayers[i]->GetPlayerStatus()->Kill;
+			}
+
+			m_iTeamKillPositionalNum[TeamKILL::BlueTeam] = 2;		// 0 이면 자리수는 1개
+
+			m_iTeamKillSignificantNum[TeamKILL::BlueTeam] = new int[m_iTeamKillPositionalNum[TeamKILL::BlueTeam]];
+
+			// Num[0] 부터 1의 자리 10의 자리 순차적 증가 저장
+			// 30이면 0, 3 저장 (출력은 반대로 해야 함)
+			for (int k = 0; k < m_iTeamKillPositionalNum[TeamKILL::BlueTeam]; ++k) {
+				m_iTeamKillSignificantNum[TeamKILL::BlueTeam][k] = m_iTeamKill[TeamKILL::BlueTeam] % 10;
+
+				m_iTeamKill[TeamKILL::BlueTeam] /= 10;
+			}
+			((CNumberOjbect*)m_ppObjects[j])->SetTexCoord(m_iTeamKillSignificantNum[TeamKILL::BlueTeam][(m_iTeamKillPositionalNum[TeamKILL::BlueTeam] - 1) - nBlueTeam]);
+			((CNumberOjbect*)m_ppObjects[j])->SetOffset(nBlueTeam++);
+
+			m_ppObjects[j]->Animate();
+		}
+
+		else if (((CNumberOjbect*)m_ppObjects[j])->GetType() == TeamKILL::RedTeam &&
+			pKiller->GetTeam() == TeamType::Red) {
+
+			for (int i = 0; i < m_nPlayer; ++i) {
+				// 플레이어의 스테이터스의 Kill을 팀별로 더한다.
+				if (m_ppPlayers[i]->GetTeam() == TeamType::Red)
+					m_iTeamKill[TeamKILL::RedTeam] += m_ppPlayers[i]->GetPlayerStatus()->Kill;
+			}
+
+			m_iTeamKillPositionalNum[TeamKILL::RedTeam] = 2;		// 0 이면 자리수는 1개
+
+			m_iTeamKillSignificantNum[TeamKILL::RedTeam] = new int[m_iTeamKillPositionalNum[TeamKILL::RedTeam]];
+
+			// Num[0] 부터 1의 자리 10의 자리 순차적 증가 저장
+			// 30이면 0, 3 저장 (출력은 반대로 해야 함)
+			for (int k = 0; k < m_iTeamKillPositionalNum[TeamKILL::RedTeam]; ++k) {
+				m_iTeamKillSignificantNum[TeamKILL::RedTeam][k] = m_iTeamKill[TeamKILL::RedTeam] % 10;
+
+				m_iTeamKill[TeamKILL::RedTeam] /= 10;
+			}
+			((CNumberOjbect*)m_ppObjects[j])->SetTexCoord(m_iTeamKillSignificantNum[TeamKILL::RedTeam][(m_iTeamKillPositionalNum[TeamKILL::RedTeam] - 1) - nRedTeam]);
+			((CNumberOjbect*)m_ppObjects[j])->SetOffset(nRedTeam++);
+
+			m_ppObjects[j]->Animate();
+		}
+	}
+}
+
+void CNumberShader::ApplyDeath(CCollisionObject * pDumber)
+{
+	pDumber->SetState(StatesType::Die);
+	pDumber->GetPlayerStatus()->Death++;
+
+	int nDeath{ 0 };
+	for (int j = 0; j < m_nObjects; j++)
+	{
+		if (((CNumberOjbect*)m_ppObjects[j])->GetType() == PersonalDeath) 
+		{
+			m_iPlayerKDL[1] = static_cast<int>(m_ppPlayers[m_pNetwork->m_myid]->GetPlayerStatus()->Death);		// 자리 수 확인에서 사용할 변수
+
+			m_iKDLPositionalNum[1] = 2;
+
+			m_iKDLSignificantNum[1] = new int[m_iKDLPositionalNum[1]];
+
+			// Num[0] 부터 1의 자리 10의 자리 순차적 증가 저장
+			// 30이면 0, 3 저장 (출력은 반대로 해야 함)
+			for (int k = 0; k < m_iKDLPositionalNum[1]; ++k) {
+				m_iKDLSignificantNum[1][k] = m_iPlayerKDL[1] % 10;
+
+				m_iPlayerKDL[1] /= 10;
+			}
+			((CNumberOjbect*)m_ppObjects[j])->SetTexCoord(m_iKDLSignificantNum[1][(m_iKDLPositionalNum[1] - 1) - nDeath]);
+			((CNumberOjbect*)m_ppObjects[j])->SetOffset(nDeath++);
+
+			m_ppObjects[j]->Animate();
+		}
+	}
+}
+
+void CNumberShader::ApplyLevel()
+{
+	int nLevel{ 0 };
+
+	for (int j = 0; j < m_nObjects; j++)
+	{
+		if (((CNumberOjbect*)m_ppObjects[j])->GetType() == PersonalLevel) {
+
+			m_iPlayerKDL[2] = static_cast<int>(m_ppPlayers[m_pNetwork->m_myid]->GetPlayerStatus()->Level);		// 자리 수 확인에서 사용할 변수
+
+			m_iKDLPositionalNum[2] = 2;
+
+			m_iKDLSignificantNum[2] = new int[m_iKDLPositionalNum[2]];
+
+			// Num[0] 부터 1의 자리 10의 자리 순차적 증가 저장
+			// 30이면 0, 3 저장 (출력은 반대로 해야 함)
+			for (int k = 0; k < m_iKDLPositionalNum[2]; ++k) {
+				m_iKDLSignificantNum[2][k] = m_iPlayerKDL[2] % 10;
+
+				m_iPlayerKDL[2] /= 10;
+			}
+			((CNumberOjbect*)m_ppObjects[j])->SetTexCoord(m_iKDLSignificantNum[2][(m_iKDLPositionalNum[2] - 1) - nLevel]);
+			((CNumberOjbect*)m_ppObjects[j])->SetOffset(nLevel++);
+
+			m_ppObjects[j]->Animate();
+		}
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -339,21 +384,21 @@ void CNumberShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pCont
 	}
 	
 	/* KDA */
-	m_iPlayerKDA[0] = m_ppPlayers[m_pNetwork->m_myid]->GetPlayerStatus()->Kill;
-	m_iPlayerKDA[1] = m_ppPlayers[m_pNetwork->m_myid]->GetPlayerStatus()->Death;
-	m_iPlayerKDA[2] = m_ppPlayers[m_pNetwork->m_myid]->GetPlayerStatus()->Level;
+	m_iPlayerKDL[0] = m_ppPlayers[m_pNetwork->m_myid]->GetPlayerStatus()->Kill;
+	m_iPlayerKDL[1] = m_ppPlayers[m_pNetwork->m_myid]->GetPlayerStatus()->Death;
+	m_iPlayerKDL[2] = m_ppPlayers[m_pNetwork->m_myid]->GetPlayerStatus()->Level;
 	
 	for (int i = 0; i < 3; ++i) {
-		m_iKDAPositionalNum[i] = 2;
+		m_iKDLPositionalNum[i] = 2;
 
-		m_iKDASignificantNum[i] = new int[m_iKDAPositionalNum[i]];
+		m_iKDLSignificantNum[i] = new int[m_iKDLPositionalNum[i]];
 
 		// Num[0] 부터 1의 자리 10의 자리 순차적 증가 저장
 		// 30이면 0, 3 저장 (출력은 반대로 해야 함)
-		for (int j = 0; j < m_iKDAPositionalNum[i]; ++j) {
-			m_iKDASignificantNum[i][j] = m_iPlayerKDA[i] % 10;
+		for (int j = 0; j < m_iKDLPositionalNum[i]; ++j) {
+			m_iKDLSignificantNum[i][j] = m_iPlayerKDL[i] % 10;
 
-			m_iPlayerKDA[i] /= 10;
+			m_iPlayerKDL[i] /= 10;
 		}
 	}
 
@@ -371,7 +416,7 @@ void CNumberShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pCont
 	}
 
 	for (int i = 0; i < 2; ++i) m_nObjects += m_iTeamKillPositionalNum[i];
-	for (int i = 0; i < 3; ++i) m_nObjects += m_iKDAPositionalNum[i];
+	for (int i = 0; i < 3; ++i) m_nObjects += m_iKDLPositionalNum[i];
 	for (int i = 0; i < 2; ++i) m_nObjects += m_iTimerPositionalNum[i];
 
 	m_ppObjects = new CBaseObject*[m_nObjects];
@@ -410,12 +455,12 @@ void CNumberShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pCont
 
 	/* Persoanl KDA */
 	for (int j = 0; j < 3; ++j) {
-		for (int i = 0; i < m_iKDAPositionalNum[j]; ++i)
+		for (int i = 0; i < m_iKDLPositionalNum[j]; ++i)
 		{
 			pNumber = new CNumberOjbect(pCreateMgr, NumberType(PersonalKill + j));
 			pNumber->SetCamera(m_pCamera);
 			pNumber->SetDistance(FRAME_BUFFER_WIDTH / 128);	 // distance 10
-			pNumber->SetTexCoord(m_iKDASignificantNum[j][(m_iKDAPositionalNum[j] - 1) - i]);
+			pNumber->SetTexCoord(m_iKDLSignificantNum[j][(m_iKDLPositionalNum[j] - 1) - i]);
 			pNumber->SetOffset(i);
 			
 			pNumber->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * (objectCnt)));

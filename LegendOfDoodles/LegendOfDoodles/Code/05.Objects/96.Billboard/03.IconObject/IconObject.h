@@ -9,7 +9,7 @@ public:
 	CIconObject(shared_ptr<CCreateMgr> pCreateMgr, IconUIType type);
 	virtual ~CIconObject();
 
-	virtual void Animate(float fTimeElapsed);
+	virtual void Animate(float fTimeElapsed = 0.0f);
 	virtual void Render(CCamera *pCamera, UINT istanceCnt = 1);
 
 	virtual float GetCurrentHP();

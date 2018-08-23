@@ -10,7 +10,7 @@ public: // 생성자, 소멸자
 	virtual ~CMinion();
 
 public:	// 외부 함수
-	virtual void Animate(float timeElapsed);
+	virtual void Animate(float timeElapsed = 0.0f);
 	virtual void Render(CCamera *pCamera, UINT instanceCnt = 1);
 
 	virtual void SetState(StatesType newState, shared_ptr<CWayFinder> pWayFinder = nullptr);
@@ -59,7 +59,7 @@ public: // 생성자, 소멸자
 	virtual ~CSwordMinion();
 
 public:	// 외부 함수
-	virtual void Animate(float timeElapsed);
+	virtual void Animate(float timeElapsed = 0.0f);
 	/*
 	0. Idle		1.Attack	2.Attack2	3.StartWalk		4.Walking	5.Die
 	*/
@@ -73,7 +73,7 @@ public: // 생성자, 소멸자
 	virtual ~CMagicMinion();
 
 public:	// 외부 함수
-	virtual void Animate(float timeElapsed);
+	virtual void Animate(float timeElapsed = 0.0f);
 	/*
 	0. Idle		1.Attack	2.Attack2	3.StartWalk		4.Walking	5.Die
 	*/
@@ -87,7 +87,7 @@ public: // 생성자, 소멸자
 	virtual ~CBowMinion();
 
 public:	// 외부 함수
-	virtual void Animate(float timeElapsed);
+	virtual void Animate(float timeElapsed = 0.0f);
 
 protected:	// 내부 함수
 	virtual void AdjustAnimationIndex();

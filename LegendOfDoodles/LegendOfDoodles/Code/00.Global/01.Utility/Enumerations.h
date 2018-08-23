@@ -276,7 +276,7 @@ enum NumberType {
 	TimeSec,
 	PersonalKill,
 	PersonalDeath,
-	PersonalAssist,
+	PersonalLevel,
 };
 
 enum SkillUIType {

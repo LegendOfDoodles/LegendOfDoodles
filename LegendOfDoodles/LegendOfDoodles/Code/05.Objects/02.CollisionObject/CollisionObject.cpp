@@ -45,6 +45,7 @@ bool CCollisionObject::AttackableFarRange(CCollisionObject * other)
 void CCollisionObject::LevelUP(CCollisionObject* player)
 {
 	PlayerInfo* PlayerStatus{ player->GetPlayerStatus() };
+	PlayerStatus->Exp -= PlayerStatus->Level * 110 + 170;
 	PlayerStatus->Level++;
 
 	player->GetEffectManager()->RequestSpawn(player->GetPosition(), player->GetLook(), 30, EffectObjectType::Player_LevelUp_CircleEffect);

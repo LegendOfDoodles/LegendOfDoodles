@@ -4,6 +4,7 @@
 class CAnimatedObject;
 class CScene;
 class CMinionShader;
+class CNumberShader;
 class CPlayer;
 class CWayFinder;
 class CCollisionManager;
@@ -46,6 +47,7 @@ protected:
 
 	CAnimatedObject ** m_ppPlayer{ NULL };
 	CMinionShader *m_pMinionShader{ NULL };
+	CNumberShader *m_pNumberShader{ NULL };
 	/*CollisionObjectList* m_pBlueSwordMinions;
 	CollisionObjectList* m_pBlueStaffMinions;
 	CollisionObjectList* m_pBlueBowMinions;

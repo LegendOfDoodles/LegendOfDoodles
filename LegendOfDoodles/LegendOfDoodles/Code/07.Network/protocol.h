@@ -164,9 +164,8 @@ struct SC_Msg_Set_Minion_State : public Packet
 	BYTE Minion_State;
 };
 
-struct SC_Msg_Set_Player_State : public Packet
+struct SC_Msg_Set_Player_Death : public Packet
 {
-	BYTE Player_State;
 	short Player_Tag;
 
 };
@@ -271,7 +270,11 @@ struct SC_Msg_Change_Speed : public Packet
 struct SC_Msg_Set_Player_Kill : public Packet
 {
 	short Killer_Tag;
+};
 
+struct SC_Msg_Sync_Time : public Packet
+{
+	float Game_Time;
 };
 
 #pragma pack(pop)
@@ -296,8 +299,9 @@ struct SC_Msg_Set_Player_Kill : public Packet
 #define SC_UPDATE_TOWER_STAT	  3
 #define SC_COOLTIME				  4
 #define SC_CHANGE_SPEED			  5
-#define SC_SET_PLAYER_STATE		  6
+#define SC_SET_PLAYER_DEATH		  6
 #define SC_SET_PLAYER_KILL		  7
+#define SC_SYNC_TIME			  8
 
 #define SC_CONNECT_PLAYER		  101
 #define SC_PUT_PLAYER			  102

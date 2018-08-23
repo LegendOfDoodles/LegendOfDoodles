@@ -35,7 +35,7 @@ public: // 공개 함수
 	void SetShader(CShader *pShader);
 	void SetMaterial(CMaterial *pMaterial);
 
-	virtual void Animate(float timeElapsed);
+	virtual void Animate(float timeElapsed = 0.0f);
 
 	virtual void Render(CCamera *pCamera, UINT istanceCnt = 1);
 	virtual void RenderBoundingBox(CCamera *pCamera, UINT istanceCnt = 1);
