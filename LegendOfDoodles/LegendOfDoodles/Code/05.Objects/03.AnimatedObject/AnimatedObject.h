@@ -11,7 +11,7 @@ class CWayFinder;
 struct CB_ANIOBJECT_INFO
 {
 	XMFLOAT4X4 m_xmf4x4World0;
-	XMFLOAT4X4 m_xmf4x4Frame[128];
+	XMFLOAT4X4 m_xmf4x4Frame[31];
 };
 
 class CAnimatedObject : public CCollisionObject
