@@ -488,6 +488,11 @@ void CNumberShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pCont
 		}
 	}
 
+
+	for (int j = 0; j < m_nObjects; j++)
+	{
+		m_ppObjects[j]->Animate();
+	}
 }
 
 void CNumberShader::ReleaseObjects()
