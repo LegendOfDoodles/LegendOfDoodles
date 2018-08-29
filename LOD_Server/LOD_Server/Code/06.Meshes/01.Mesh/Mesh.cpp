@@ -6,7 +6,7 @@
 /// 목적: 테스트 용 메쉬 클래스 생성
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-08-07
+/// 최종 수정 날짜: 2018-08-29
 /// </summary>
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -166,24 +166,15 @@ bool CCollisionMapImage::GetCollision(float fx, float fz)
 	float fxPercent = fx - x;
 	float fzPercent = fz - z;
 
-	if (m_pCollisionMapPixels[(x - 1) + ((z + 1) * m_nWidth)] > 250) return true;
+	// 정수부 기준으로 사각형을 짠다.
+	float fBottomLeft{ (float)m_pCollisionMapPixels[x + (z * m_nWidth)] };
+	float fBottomRight{ (float)m_pCollisionMapPixels[(x + 1) + (z * m_nWidth)] };
+	float fTopLeft{ (float)m_pCollisionMapPixels[x + ((z + 1) * m_nWidth)] };
+	float fTopRight{ (float)m_pCollisionMapPixels[(x + 1) + ((z + 1) * m_nWidth)] };
 
-	float sum{};
-	for (int i = -1; i < 1; ++i)
-	{
-		for (int j = -1; j < 1; ++j)
-		{
-			float fBottomLeft{ (float)m_pCollisionMapPixels[(x + i) + ((z + j) * m_nWidth)] };
-			float fBottomRight{ (float)m_pCollisionMapPixels[(x + i + 1) + ((z + j) * m_nWidth)] };
-			float fTopLeft{ (float)m_pCollisionMapPixels[(x + i) + ((z + j + 1) * m_nWidth)] };
-			float fTopRight{ (float)m_pCollisionMapPixels[(x + i + 1) + ((z + j + 1) * m_nWidth)] };
+	// 소수부 위치를 처리하기 위해 보간 처리 한다.
+	float xUpCenter{ fTopLeft * fxPercent + fTopRight * (1 - fxPercent) };
+	float xDownCenter{ fBottomLeft * fxPercent + fBottomRight * (1 - fxPercent) };
 
-			float xUpCenter{ fTopLeft * fxPercent + fTopRight * (1 - fxPercent) };
-			float xDownCenter{ fBottomLeft * fxPercent + fBottomRight * (1 - fxPercent) };
-
-			sum += xUpCenter * fzPercent + xDownCenter * (1 - fzPercent);
-		}
-	}
-
-	return sum > 1000.0f;
+	return xUpCenter * (1 - fzPercent) + xDownCenter * fzPercent > 250.f;
 }
