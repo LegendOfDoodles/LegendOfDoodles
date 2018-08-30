@@ -68,6 +68,9 @@ protected:
 	XMFLOAT2 nodeWH;
 	int Fow[NODE_WIDTH][NODE_HEIGHT];
 
+	int BlueFow[NODE_WIDTH][NODE_HEIGHT];
+	int RedFow[NODE_WIDTH][NODE_HEIGHT];
+
 	shared_ptr<CEffectMgr> m_pEffectMgr;
 	
 	CollisionObjectList m_lstColliders;

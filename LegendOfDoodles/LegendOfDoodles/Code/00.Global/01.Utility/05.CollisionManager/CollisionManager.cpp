@@ -128,15 +128,45 @@ void CCollisionManager::Update(shared_ptr<CWayFinder> pWayFinder)
 			}
 		}
 		//m_User
+
+
+		for (int i = 0; i < NODE_WIDTH; ++i) {
+			for (int j = 0; j < NODE_HEIGHT; ++j) {
+				BlueFow[i][j] = 0;
+				RedFow[i][j] = 0;
+			}
+		}
+
 		for (auto i = m_lstColliders.begin(); i != m_lstColliders.end(); ++i)
 		{
 			int x, y;
 			x = static_cast<int>(CLAMP((*i)->GetPosition().x / nodeSize, 0, nodeWH.x - 1));
 			y = static_cast<int>(CLAMP((*i)->GetPosition().z / nodeSize, 0, nodeWH.y - 1));
 			int startLength = static_cast<int>((*i)->GetSightRange() / nodeSize);
-			for (int dir = 0; dir < 8; ++dir) {
-				SearchSight(XMFLOAT2(static_cast<float>(x), static_cast<float>(y)),
-					dir, startLength, (*i)->GetTeam());
+			if ((*i)->GetTeam() == Blue) {
+				BlueFow[x][y] = static_cast<int>((*i)->GetSightRange() / nodeSize);
+			}
+			else if ((*i)->GetTeam() == Red) {
+				RedFow[x][y] = static_cast<int>((*i)->GetSightRange() / nodeSize);
+			}
+
+		}
+
+
+		for (int i = 0; i < NODE_WIDTH; ++i) {
+			for (int j = 0; j < NODE_HEIGHT; ++j) {
+				if (BlueFow[i][j] != 0) {
+					for (int dir = 0; dir < 8; ++dir) {
+						SearchSight(XMFLOAT2(i, j),
+							dir, BlueFow[i][j], Blue);
+					}
+				}
+				if (RedFow[i][j] != 0) {
+					for (int dir = 0; dir < 8; ++dir) {
+						SearchSight(XMFLOAT2(i, j),
+							dir, RedFow[i][j], Red);
+					}
+				}
 			}
 		}
 
