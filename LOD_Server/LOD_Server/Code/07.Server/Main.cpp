@@ -218,6 +218,8 @@ void ProcessPacket(int id, char *packet)
 	}
 	case CS_DEMAND_USE_SKILL:
 	{
+		g_ppPlayer[CSkillPacket->Character_id]->ActiveSkill((AnimationsType)CSkillPacket->skilltype);
+
 		for (int i = 0; i < MAX_USER; ++i) {
 			if (g_clients[i].m_isconnected) {
 				SC_Msg_Permit_Use_Skill p;
@@ -228,7 +230,6 @@ void ProcessPacket(int id, char *packet)
 				SendPacket(i, &p);
 			}
 		}
-		g_ppPlayer[CSkillPacket->Character_id]->ActiveSkill((AnimationsType)CSkillPacket->skilltype);
 		break;
 	}
 	case CS_PREPARE_DATA:

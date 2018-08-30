@@ -109,10 +109,6 @@ public: // 공개 함수
 
 	virtual void AttackEnemy() {};
 
-	virtual void OnSkill() { }
-	virtual void OffSkill() { }
-	virtual bool SkillPossible() { return false; }
-
 protected: // 내부 함수
 
 protected: // 변수

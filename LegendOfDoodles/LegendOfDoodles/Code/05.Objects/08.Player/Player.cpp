@@ -5,7 +5,7 @@
 /// 목적: 플레이어 관리 클래스
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-08-01
+/// 최종 수정 날짜: 2018-08-30
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -278,7 +278,6 @@ void CPlayer::ActiveSkill(AnimationsType act)
 		m_curState = States::Attack;
 		m_nCurrAnimation = act;
 		m_fFrameTime = 0;
-		m_skilling = false;
 	}
 }
 

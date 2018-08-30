@@ -5,7 +5,7 @@
 /// 목적: 플레이어 관리 클래스
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-08-01
+/// 최종 수정 날짜: 2018-08-30
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -160,7 +160,7 @@ void CPlayer::Animate(float timeElapsed)
 			}
 		}
 		m_fPreFrameTime = m_fFrameTime;
-		m_fFrameTime += ANIMATION_SPEED *5* timeElapsed *m_StatusInfo.AtkSpeed;
+		m_fFrameTime += ANIMATION_SPEED * timeElapsed *m_StatusInfo.AtkSpeed;
 		break;
 
 	case States::Walk:

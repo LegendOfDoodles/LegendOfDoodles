@@ -635,13 +635,7 @@ void CScene::GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, XMFLOAT4X4&	 xm
 
 	m_pickWorldPosition = Vector3::Add(camPosition, Vector3::ScalarProduct(layDirection, yDiff, false));
 
-	if (m_pMyPlayer)
-	{
-		m_pMyPlayer->SetPathToGo(m_pWayFinder->GetPathToPosition(
-			m_pMyPlayer->GetPosition(),
-			m_pickWorldPosition));
-	}
-
+	// 서버에 이동 요청
 	CS_Msg_Demand_Pos_Character p;
 	p.Character_id = (BYTE)m_pNetwork->m_myid;
 	p.size = sizeof(p);
@@ -649,6 +643,14 @@ void CScene::GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, XMFLOAT4X4&	 xm
 	p.x = m_pickWorldPosition.x;
 	p.y = m_pickWorldPosition.z;
 	m_pNetwork->SendPacket(&p);
+
+	// 클라이언트 이동 처리
+	if (m_pMyPlayer)
+	{
+		m_pMyPlayer->SetPathToGo(m_pWayFinder->GetPathToPosition(
+			m_pMyPlayer->GetPosition(),
+			m_pickWorldPosition));
+	}
 }
 
 // Process Keyboard Input

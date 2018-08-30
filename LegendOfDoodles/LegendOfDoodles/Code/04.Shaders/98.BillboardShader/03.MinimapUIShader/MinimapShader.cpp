@@ -111,12 +111,7 @@ bool CMinimapShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 			PlayerDestination.y = m_pCamera->GetPosition().y;
 			PlayerDestination.z = (MINIMAP_MAXIMUM_Y - cursorPos.y) * 1.736f * 20;
 
-			m_pPlayer->LookAt(PlayerDestination);
-			m_pPlayer->SetPathToGo(
-				m_pWayFinder->GetPathToPosition(
-					m_pPlayer->GetPosition(),
-					PlayerDestination));
-
+			// 서버에 이동 요청
 			CS_Msg_Demand_Pos_Character p;
 			p.Character_id = (BYTE)m_pNetwork->m_myid;
 			p.size = sizeof(p);
@@ -124,6 +119,13 @@ bool CMinimapShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 			p.x = PlayerDestination.x;
 			p.y = PlayerDestination.z;
 			m_pNetwork->SendPacket(&p);
+
+			// 클라이언트 이동 처리
+			m_pPlayer->LookAt(PlayerDestination);
+			m_pPlayer->SetPathToGo(
+				m_pWayFinder->GetPathToPosition(
+					m_pPlayer->GetPosition(),
+					PlayerDestination));
 
 			return false;
 		}
