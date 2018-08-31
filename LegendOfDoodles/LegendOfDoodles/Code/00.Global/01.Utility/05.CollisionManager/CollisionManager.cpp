@@ -142,7 +142,6 @@ void CCollisionManager::Update(shared_ptr<CWayFinder> pWayFinder)
 			int x, y;
 			x = static_cast<int>(CLAMP((*i)->GetPosition().x / nodeSize, 0, nodeWH.x - 1));
 			y = static_cast<int>(CLAMP((*i)->GetPosition().z / nodeSize, 0, nodeWH.y - 1));
-			int startLength = static_cast<int>((*i)->GetSightRange() / nodeSize);
 			if ((*i)->GetTeam() == Blue) {
 				BlueFow[x][y] = static_cast<int>((*i)->GetSightRange() / nodeSize);
 			}
@@ -157,13 +156,13 @@ void CCollisionManager::Update(shared_ptr<CWayFinder> pWayFinder)
 			for (int j = 0; j < NODE_HEIGHT; ++j) {
 				if (BlueFow[i][j] != 0) {
 					for (int dir = 0; dir < 8; ++dir) {
-						SearchSight(XMFLOAT2(i, j),
+						SearchSight(XMFLOAT2((float)i, (float)j),
 							dir, BlueFow[i][j], Blue);
 					}
 				}
 				if (RedFow[i][j] != 0) {
 					for (int dir = 0; dir < 8; ++dir) {
-						SearchSight(XMFLOAT2(i, j),
+						SearchSight(XMFLOAT2((float)i, (float)j),
 							dir, RedFow[i][j], Red);
 					}
 				}

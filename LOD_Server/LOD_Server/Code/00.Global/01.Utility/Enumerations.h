@@ -213,7 +213,7 @@ struct PlayerInfo
 	float RSkillPower{ 1.0f };
 
 	float AtkSpeed{ 1.0f };
-	float WalkSpeed{ 1.0f };
+	float WalkSpeed{ 5.0f };
 
 	float AtkRange{ 1.0f };
 	float QSkillRange{ 1.0f };

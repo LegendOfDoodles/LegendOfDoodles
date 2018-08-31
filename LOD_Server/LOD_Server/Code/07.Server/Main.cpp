@@ -160,8 +160,7 @@ void ProcessPacket(int id, char *packet)
 
 		for (int i = 0; i < MAX_USER; ++i)
 		{
-			if (g_clients[i].m_isconnected) {
-				if (i == MovePacket->Character_id) continue;
+			if (g_clients[i].m_isconnected && i != MovePacket->Character_id) {
 				SC_Msg_Target_Location p;
 				p.Character_id = MovePacket->Character_id;
 				p.location = g_clients[MovePacket->Character_id].m_targetlocation;

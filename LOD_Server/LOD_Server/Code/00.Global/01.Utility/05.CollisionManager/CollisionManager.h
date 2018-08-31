@@ -22,7 +22,7 @@ public:
 	void Update(shared_ptr<CWayFinder> pWayFinder);
 	void RequestCollide(CollisionType type, CCollisionObject* pCol, float data1 = 0, float data2 = 0, float damage = 0);
 	CCollisionObject* RequestNearObject(CCollisionObject* pCol, float lengh, TeamType type, bool player = false);
-	void RequestIncreaseExp(CCollisionObject* pCol, float lengh, TeamType type, float exp);
+	void RequestIncreaseExp(CCollisionObject* pCol, float lengh, TeamType type, UINT exp);
 	~CCollisionManager();
 	int(*GetFoW(void))[NODE_HEIGHT];
 

@@ -112,17 +112,21 @@ void CNetwork::ProcessPacket(char *ptr)
 			if ((AnimationsType)my_packet->skilltype == AnimationsType::Attack1) {
 				m_ppPlayer[my_packet->Character_id]->ActiveSkill((AnimationsType)my_packet->skilltype);
 			}
-			if ((AnimationsType)my_packet->skilltype == AnimationsType::SkillQ && m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->QSkillCoolTime >= 1) {
-				m_ppPlayer[my_packet->Character_id]->ActiveSkill((AnimationsType)my_packet->skilltype);
+			else if ((AnimationsType)my_packet->skilltype == AnimationsType::SkillQ) {
+				if(m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->QSkillCoolTime >= 1)
+					m_ppPlayer[my_packet->Character_id]->ActiveSkill((AnimationsType)my_packet->skilltype);
 			}
-			if ((AnimationsType)my_packet->skilltype == AnimationsType::SkillW && m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->WSkillCoolTime >= 1) {
-				m_ppPlayer[my_packet->Character_id]->ActiveSkill((AnimationsType)my_packet->skilltype);
+			else if ((AnimationsType)my_packet->skilltype == AnimationsType::SkillW) {
+				if(m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->WSkillCoolTime >= 1)
+					m_ppPlayer[my_packet->Character_id]->ActiveSkill((AnimationsType)my_packet->skilltype);
 			}
-			if ((AnimationsType)my_packet->skilltype == AnimationsType::SkillE && m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->ESkillCoolTime >= 1) {
-				m_ppPlayer[my_packet->Character_id]->ActiveSkill((AnimationsType)my_packet->skilltype);
+			else if ((AnimationsType)my_packet->skilltype == AnimationsType::SkillE) {
+				if(m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->ESkillCoolTime >= 1)
+					m_ppPlayer[my_packet->Character_id]->ActiveSkill((AnimationsType)my_packet->skilltype);
 			}
-			if ((AnimationsType)my_packet->skilltype == AnimationsType::SkillR && m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->RSkillCoolTime >= 1) {
-				m_ppPlayer[my_packet->Character_id]->ActiveSkill((AnimationsType)my_packet->skilltype);
+			else if ((AnimationsType)my_packet->skilltype == AnimationsType::SkillR) {
+				if(m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->RSkillCoolTime >= 1)
+					m_ppPlayer[my_packet->Character_id]->ActiveSkill((AnimationsType)my_packet->skilltype);
 			}
 			break;
 		}
@@ -333,13 +337,6 @@ void CNetwork::ProcessPacket(char *ptr)
 			SC_Msg_Player_Respawn* my_packet = reinterpret_cast<SC_Msg_Player_Respawn*>(ptr);
 			CCollisionObject* Player{ m_pColManager->RequestPlayerByTag(my_packet->Target_Tag) };
 			Player->Respawn();
-			break;
-		}
-		case SC_PLAYER_MISSILE:
-		{
-			SC_Msg_Player_Missile* my_packet = reinterpret_cast<SC_Msg_Player_Missile*>(ptr);
-			CCollisionObject* Player{ m_pColManager->RequestPlayerByTag(my_packet->Target_Tag) };
-			Player->RequestSpawnMissile((FlyingObjectType)my_packet->Missile_Type);
 			break;
 		}
 		case SC_COOLTIME:

@@ -239,12 +239,6 @@ struct SC_Msg_Player_Respawn : public Packet
 	short Target_Tag;
 };
 
-struct SC_Msg_Player_Missile : public Packet
-{
-	short Target_Tag;
-	short Missile_Type;
-};
-
 struct SC_Msg_Cooltime_Percent : public Packet
 {
 	short Target_Tag;
@@ -289,7 +283,6 @@ struct SC_Msg_Sync_Time : public Packet
 //enum class Type : BYTE { Connect, Create, Delete, Move, Attack, Hit };
 //Server-> Client
 #define SC_PLAYER_RESPAWN		  1
-#define SC_PLAYER_MISSILE		  2
 #define SC_UPDATE_TOWER_STAT	  3
 #define SC_COOLTIME				  4
 #define SC_CHANGE_SPEED			  5

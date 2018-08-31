@@ -1,11 +1,12 @@
 #include "stdafx.h"
 #include "Player.h"
+#include "00.Global/01.Utility/04.WayFinder/WayFinder.h"
 
 /// <summary>
 /// 목적: 플레이어 관리 클래스
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-08-30
+/// 최종 수정 날짜: 2018-08-31
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -14,7 +15,7 @@ CPlayer::CPlayer() : CAnimatedObject()
 {
 	m_detectRange = CONVERT_PaperUnit_to_InG(80.0f);
 	m_sightRange = CONVERT_PaperUnit_to_InG(80.0f);
-	SetSpeed(CONVERT_cm_to_InG(3.285f * 5));
+	SetSpeed(CONVERT_cm_to_InG(3.285f));
 }
 
 
@@ -39,11 +40,7 @@ void CPlayer::Animate(float timeElapsed)
 		if (m_mainPath) SetState(States::Walk);
 		break;
 	case States::Attack:
-		if (m_fFrameTime >= m_nAniLength[m_nAniIndex] - 1)
-		{
-			SetState(States::Idle);
-		}
-		else if (GetType() == ObjectType::StickPlayer)
+		if (GetType() == ObjectType::StickPlayer)
 		{
 			if (m_nCurrAnimation == Animations::Attack1 &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
@@ -92,14 +89,12 @@ void CPlayer::Animate(float timeElapsed)
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
 				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_Magic, m_StatusInfo.Atk);
-				SendMissilePacket(FlyingObjectType::Player_Magic);
 			}
 			else if (m_nCurrAnimation == Animations::SkillQ &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
 				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_MagicSkill_Q, m_StatusInfo.Atk * m_StatusInfo.QSkillPower);
-				SendMissilePacket(FlyingObjectType::Player_MagicSkill_Q);
 			}
 			else if (m_nCurrAnimation == Animations::SkillW &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
@@ -118,7 +113,6 @@ void CPlayer::Animate(float timeElapsed)
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.666f)
 			{
 				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_MagicSkill_R, m_StatusInfo.Atk * m_StatusInfo.RSkillPower);
-				SendMissilePacket(FlyingObjectType::Player_MagicSkill_R);
 			}
 		}
 		else if (GetType() == ObjectType::BowPlayer)
@@ -128,39 +122,39 @@ void CPlayer::Animate(float timeElapsed)
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
 				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_Arrow, m_StatusInfo.Atk);
-				SendMissilePacket(FlyingObjectType::Player_Arrow);
 			}
 			else if (m_nCurrAnimation == Animations::SkillQ &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
 				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_ArrowSkill_Q, m_StatusInfo.Atk * m_StatusInfo.QSkillPower);
-				SendMissilePacket(FlyingObjectType::Player_ArrowSkill_Q);
 			}
 			else if (m_nCurrAnimation == Animations::SkillW &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
 				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_ArrowSkill_W, m_StatusInfo.Atk * m_StatusInfo.WSkillPower);
-				SendMissilePacket(FlyingObjectType::Player_ArrowSkill_W);
 			}
 			else if (m_nCurrAnimation == Animations::SkillE &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
 				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_ArrowSkill_E, m_StatusInfo.Atk * m_StatusInfo.ESkillPower);
-				SendMissilePacket(FlyingObjectType::Player_ArrowSkill_E);
 			}
 			else if (m_nCurrAnimation == Animations::SkillR &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
 				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_ArrowSkill_R, m_StatusInfo.Atk * m_StatusInfo.RSkillPower);
-				SendMissilePacket(FlyingObjectType::Player_ArrowSkill_R);
 			}
 		}
 		m_fPreFrameTime = m_fFrameTime;
-		m_fFrameTime += ANIMATION_SPEED * timeElapsed *m_StatusInfo.AtkSpeed;
+		m_fFrameTime += ANIMATION_SPEED * timeElapsed * m_StatusInfo.AtkSpeed;
+
+		if (m_fFrameTime >= m_nAniLength[m_nAniIndex] - 1)
+		{
+			SetState(States::Idle);
+		}
 		break;
 
 	case States::Walk:
@@ -242,6 +236,81 @@ void CPlayer::LookAt(XMFLOAT2 objPosition)
 {
 	if (m_curState == States::Attack) return;
 	CAnimatedObject::LookAt(objPosition);
+}
+
+ProcessType CPlayer::MoveToDestination(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)
+{
+	if (m_curState != States::Walk) return States::Processing;
+	if (!m_mainPath) return States::Done;
+
+	if (NoneDestination() || IsArrive(m_speed * timeElapsed * m_StatusInfo.WalkSpeed))	//  도착 한 경우
+	{
+		if (m_mainPath->empty())
+		{
+			Safe_Delete(m_mainPath);
+			ResetDestination();
+			return States::Done;
+		}
+		else
+		{
+			m_destination = m_mainPath->front().To();
+			m_mainPath->pop_front();
+			LookAt(m_destination);
+		}
+	}
+	else  // 아직 도착하지 않은 경우
+	{
+		MoveForward(m_speed * timeElapsed * m_StatusInfo.WalkSpeed);
+		XMFLOAT3 position = GetPosition();
+		position.y = m_pTerrain->GetHeight(position.x, position.z);
+		CBaseObject::SetPosition(position);
+		CheckRightWay(PathType::Main, pWayFinder);
+	}
+	return States::Processing;
+}
+
+void CPlayer::MoveToSubDestination(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)
+{
+	if (pWayFinder != NULL)
+	{
+		m_availableTime -= timeElapsed;
+		if (m_availableTime <= 0.0f)
+		{
+			XMFLOAT3 myPos{ GetPosition() };
+			XMFLOAT3 enemyPos{ m_pEnemy->GetPosition() };
+			m_availableTime = TIME_AVAILABILITY_CHECK;
+			ResetSubPath();
+			m_subPath = pWayFinder->GetPathToPosition(
+				myPos,
+				enemyPos);
+			if (m_subPath)
+			{
+				m_subPath->push_back(CPathEdge(XMFLOAT2(enemyPos.x, enemyPos.z), Vector3::ToVector2(Vector3::Add(enemyPos, Vector3::Subtract(enemyPos, myPos)))));
+			}
+		}
+	}
+
+	if (NoneDestination(PathType::Sub) || IsArrive(m_speed * timeElapsed * m_StatusInfo.WalkSpeed, PathType::Sub))	//  도착 한 경우
+	{
+		if (m_subPath == NULL || m_subPath->empty())
+		{
+			Safe_Delete(m_subPath);
+			ResetDestination(PathType::Sub);
+			LookAt(m_destination);
+		}
+		else
+		{
+			m_subDestination = m_subPath->front().To();
+			m_subPath->pop_front();
+			LookAt(m_subDestination);
+		}
+	}
+
+	MoveForward(m_speed * timeElapsed * m_StatusInfo.WalkSpeed);
+	XMFLOAT3 position = GetPosition();
+	position.y = m_pTerrain->GetHeight(position.x, position.z);
+	CBaseObject::SetPosition(position);
+	CheckRightWay(PathType::Sub, pWayFinder);
 }
 
 void CPlayer::ActiveSkill(AnimationsType act)
@@ -785,19 +854,5 @@ void CPlayer::AdjustAnimationIndex()
 	case Animations::Attack1:
 		m_nAniIndex = 11;
 		break;
-	}
-}
-
-void CPlayer::SendMissilePacket(FlyingObjectType type)
-{
-	SC_Msg_Player_Missile p;
-	p.size = sizeof(p);
-	p.type = SC_PLAYER_MISSILE;
-	p.Target_Tag = (short)m_tag;
-	p.Missile_Type = (short)type;
-	for (int j = 0; j < MAX_USER; ++j) {
-		if (g_clients[j].m_isconnected == true) {
-			SendPacket(j, &p);
-		}
 	}
 }

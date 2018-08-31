@@ -37,8 +37,8 @@ public: // 공개 함수
 	virtual void SetPosition(float x, float z);
 
 	void SetPathToGo(Path *path);
-	ProcessType MoveToDestination(float timeElapsed, shared_ptr<CWayFinder> pWayFinder = NULL);
-	void MoveToSubDestination(float timeElapsed, shared_ptr<CWayFinder> pWayFinder = NULL);
+	virtual ProcessType MoveToDestination(float timeElapsed, shared_ptr<CWayFinder> pWayFinder = NULL);
+	virtual void MoveToSubDestination(float timeElapsed, shared_ptr<CWayFinder> pWayFinder = NULL);
 
 	void GenerateSubPathToMainPath(shared_ptr<CWayFinder> pWayFinder);
 	void GenerateSubPathToPosition(shared_ptr<CWayFinder> pWayFinder, XMFLOAT3 position);

@@ -16,7 +16,7 @@
 /// 목적: 기본 씬, 인터페이스 용
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-08-05
+/// 최종 수정 날짜: 2018-08-31
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -145,6 +145,6 @@ void CScene::GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, int id)
 	CAnimatedObject* pPlayer = ((CAnimatedObject * *)m_ppShaders[1]->GetCollisionObjects())[id];
 	pPlayer->LookAt(pickWorldPosition);
 	pPlayer->SetPathToGo(m_pWayFinder->GetPathToPosition(
-		XMFLOAT2(pPlayer->GetPosition().x, pPlayer->GetPosition().z),
-		XMFLOAT2(pickWorldPosition.x, pickWorldPosition.z)));
+		pPlayer->GetPosition(),
+		pickWorldPosition));
 }

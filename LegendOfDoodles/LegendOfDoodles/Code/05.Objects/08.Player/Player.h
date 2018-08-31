@@ -16,6 +16,9 @@ public:	// 외부 함수
 	virtual void LookAt(XMFLOAT3 objPosition);
 	virtual void LookAt(XMFLOAT2 objPosition);
 
+	virtual ProcessType MoveToDestination(float timeElapsed, shared_ptr<CWayFinder> pWayFinder = NULL);
+	virtual void MoveToSubDestination(float timeElapsed, shared_ptr<CWayFinder> pWayFinder = NULL);
+
 	virtual void ActiveSkill(AnimationsType act);
 
 	virtual void SetState(StatesType newState, shared_ptr<CWayFinder> pWayFinder = nullptr);

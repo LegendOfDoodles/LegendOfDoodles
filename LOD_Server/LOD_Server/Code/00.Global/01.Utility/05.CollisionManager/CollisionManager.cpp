@@ -291,7 +291,7 @@ CCollisionObject* CCollisionManager::RequestNearObject(CCollisionObject * pCol, 
 	}
 	return nearObject;
 }
-void CCollisionManager::RequestIncreaseExp(CCollisionObject * pCol, float lengh, TeamType type, float exp)
+void CCollisionManager::RequestIncreaseExp(CCollisionObject * pCol, float lengh, TeamType type, UINT exp)
 {
 	if (m_Winner == TeamType::None){
 		TeamType enemytype;
@@ -326,7 +326,7 @@ void CCollisionManager::RequestIncreaseExp(CCollisionObject * pCol, float lengh,
 						}
 						SC_Msg_Exp_Up p;
 						p.Target_Tag = (short)(*i)->GetTag();
-						p.exp = exp;
+						p.exp = (short)exp;
 						p.size = sizeof(p);
 						p.type = SC_EXP_UP;
 						for (int j = 0; j < MAX_USER; ++j) {
