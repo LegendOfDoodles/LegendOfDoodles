@@ -113,20 +113,16 @@ void CNetwork::ProcessPacket(char *ptr)
 				m_ppPlayer[my_packet->Character_id]->ActiveSkill((AnimationsType)my_packet->skilltype);
 			}
 			else if ((AnimationsType)my_packet->skilltype == AnimationsType::SkillQ) {
-				if(m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->QSkillCoolTime >= 1)
-					m_ppPlayer[my_packet->Character_id]->ActiveSkill((AnimationsType)my_packet->skilltype);
+				m_ppPlayer[my_packet->Character_id]->ActiveSkill((AnimationsType)my_packet->skilltype);
 			}
 			else if ((AnimationsType)my_packet->skilltype == AnimationsType::SkillW) {
-				if(m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->WSkillCoolTime >= 1)
-					m_ppPlayer[my_packet->Character_id]->ActiveSkill((AnimationsType)my_packet->skilltype);
+				m_ppPlayer[my_packet->Character_id]->ActiveSkill((AnimationsType)my_packet->skilltype);
 			}
 			else if ((AnimationsType)my_packet->skilltype == AnimationsType::SkillE) {
-				if(m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->ESkillCoolTime >= 1)
-					m_ppPlayer[my_packet->Character_id]->ActiveSkill((AnimationsType)my_packet->skilltype);
+				m_ppPlayer[my_packet->Character_id]->ActiveSkill((AnimationsType)my_packet->skilltype);
 			}
 			else if ((AnimationsType)my_packet->skilltype == AnimationsType::SkillR) {
-				if(m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->RSkillCoolTime >= 1)
-					m_ppPlayer[my_packet->Character_id]->ActiveSkill((AnimationsType)my_packet->skilltype);
+				m_ppPlayer[my_packet->Character_id]->ActiveSkill((AnimationsType)my_packet->skilltype);
 			}
 			break;
 		}

@@ -38,6 +38,19 @@ void CPlayerShader::AnimateObjects(float timeElapsed)
 	}
 }
 
+void CPlayerShader::SetPlayerAnimation(ObjectType type, int id)
+{
+	// Sword Player는 기본 세팅 값 사용
+	if (type == ObjectType::BowPlayer)
+	{
+		dynamic_cast<CPlayer*>(m_ppObjects[id])->ChangeSkillSet(m_ppBowAni);
+	}
+	else if (type == ObjectType::StaffPlayer)
+	{
+		dynamic_cast<CPlayer*>(m_ppObjects[id])->ChangeSkillSet(m_ppStaffAni);
+	}
+}
+
 void CPlayerShader::SetColManagerToObject(shared_ptr<CCollisionManager> manager)
 {
 	for (int i = 0; i < 4; ++i) {

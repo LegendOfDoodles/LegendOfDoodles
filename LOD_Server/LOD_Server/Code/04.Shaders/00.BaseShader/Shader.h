@@ -16,6 +16,8 @@ public: // 공개 함수
 	CCollisionObject **GetCollisionObjects() { return m_ppObjects; }
 	int GetObjectCount() { return m_nObjects; }
 
+	virtual void SetPlayerAnimation(ObjectType type, int id) { type; id; }
+
 	void AddRef() { m_nReferences++; }
 	void Release() { if (--m_nReferences <= 0) delete this; }
 

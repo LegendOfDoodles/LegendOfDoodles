@@ -136,43 +136,61 @@ bool CSkillShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 	ScreenToClient(m_pCamera->GetHwnd(), &cursorPos);
 
 	if (pKeyBuffer == MK_LBUTTON) {
+		if (m_pPlayer->GetState() == States::Die || m_pPlayer->GetState() == States::Remove
+			|| m_pPlayer->GetState() == States::Attack) return true;
 
 		if (cursorPos.y > SKILL_MINIMUM_Y && cursorPos.y < SKILL_MAXIMUM_Y) {
 		
 			if ((cursorPos.x > QSKILL_MINIMUM_X  && cursorPos.x < QSKILL_MAXIMUM_X)) {
-				CS_Msg_Demand_Use_Skill p;
-				p.Character_id = (BYTE)m_pNetwork->m_myid;
-				p.size = sizeof(p);
-				p.type = CS_DEMAND_USE_SKILL;
-				p.skilltype = AnimationsType::SkillQ;
-				m_pNetwork->SendPacket(&p);
+				if (m_pPlayer->GetPlayerStatus()->QSkillCoolTime >= 1.f)
+				{
+					CS_Msg_Demand_Use_Skill p;
+					p.Character_id = (BYTE)m_pNetwork->m_myid;
+					p.size = sizeof(p);
+					p.type = CS_DEMAND_USE_SKILL;
+					p.skilltype = AnimationsType::SkillQ;
+					m_pNetwork->SendPacket(&p);
+					m_ppObjects[m_pNetwork->m_myid]->ActiveSkill(AnimationsType::SkillQ);
+				}
 				return false;
 			}
-			if ((cursorPos.x > WSKILL_MINIMUM_X  && cursorPos.x < WSKILL_MAXIMUM_X)) {
-				CS_Msg_Demand_Use_Skill p;
-				p.Character_id = (BYTE)m_pNetwork->m_myid;
-				p.size = sizeof(p);
-				p.type = CS_DEMAND_USE_SKILL;
-				p.skilltype = AnimationsType::SkillW;
-				m_pNetwork->SendPacket(&p);
+			else if ((cursorPos.x > WSKILL_MINIMUM_X  && cursorPos.x < WSKILL_MAXIMUM_X)) {
+				if (m_pPlayer->GetPlayerStatus()->WSkillCoolTime >= 1.f)
+				{
+					CS_Msg_Demand_Use_Skill p;
+					p.Character_id = (BYTE)m_pNetwork->m_myid;
+					p.size = sizeof(p);
+					p.type = CS_DEMAND_USE_SKILL;
+					p.skilltype = AnimationsType::SkillW;
+					m_pNetwork->SendPacket(&p);
+					m_ppObjects[m_pNetwork->m_myid]->ActiveSkill(AnimationsType::SkillW);
+				}
 				return false;
 			}
-			if ((cursorPos.x > ESKILL_MINIMUM_X  && cursorPos.x < ESKILL_MAXIMUM_X)) {
-				CS_Msg_Demand_Use_Skill p;
-				p.Character_id = (BYTE)m_pNetwork->m_myid;
-				p.size = sizeof(p);
-				p.type = CS_DEMAND_USE_SKILL;
-				p.skilltype = AnimationsType::SkillE;
-				m_pNetwork->SendPacket(&p);
+			else if ((cursorPos.x > ESKILL_MINIMUM_X  && cursorPos.x < ESKILL_MAXIMUM_X)) {
+				if (m_pPlayer->GetPlayerStatus()->ESkillCoolTime >= 1.f)
+				{
+					CS_Msg_Demand_Use_Skill p;
+					p.Character_id = (BYTE)m_pNetwork->m_myid;
+					p.size = sizeof(p);
+					p.type = CS_DEMAND_USE_SKILL;
+					p.skilltype = AnimationsType::SkillE;
+					m_pNetwork->SendPacket(&p);
+					m_ppObjects[m_pNetwork->m_myid]->ActiveSkill(AnimationsType::SkillE);
+				}
 				return false;
 			}
-			if ((cursorPos.x > RSKILL_MINIMUM_X  && cursorPos.x < RSKILL_MAXIMUM_X)) {
-				CS_Msg_Demand_Use_Skill p;
-				p.Character_id = (BYTE)m_pNetwork->m_myid;
-				p.size = sizeof(p);
-				p.type = CS_DEMAND_USE_SKILL;
-				p.skilltype = AnimationsType::SkillR;
-				m_pNetwork->SendPacket(&p);
+			else if ((cursorPos.x > RSKILL_MINIMUM_X  && cursorPos.x < RSKILL_MAXIMUM_X)) {
+				if (m_pPlayer->GetPlayerStatus()->RSkillCoolTime >= 1.f)
+				{
+					CS_Msg_Demand_Use_Skill p;
+					p.Character_id = (BYTE)m_pNetwork->m_myid;
+					p.size = sizeof(p);
+					p.type = CS_DEMAND_USE_SKILL;
+					p.skilltype = AnimationsType::SkillR;
+					m_pNetwork->SendPacket(&p);
+					m_ppObjects[m_pNetwork->m_myid]->ActiveSkill(AnimationsType::SkillR);
+				}
 				return false;
 			}
 		}

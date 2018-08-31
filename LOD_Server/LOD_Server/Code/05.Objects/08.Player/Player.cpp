@@ -317,39 +317,24 @@ void CPlayer::ActiveSkill(AnimationsType act)
 {
 	if (m_curState != States::Attack) {
 		m_curState = States::Attack;
+		m_nCurrAnimation = act;
+		m_fFrameTime = 0;
 
-		if (act == Animations::SkillQ &&
-			m_skillCoolTimeQ >= m_StatusInfo.QSkillCoolTime)
+		if (act == Animations::SkillQ)
 		{
 			m_skillCoolTimeQ = 0;
-			m_nCurrAnimation = act;
-			m_fFrameTime = 0;
 		}
-		else if (act == Animations::SkillW &&
-			m_skillCoolTimeW >= m_StatusInfo.WSkillCoolTime)
+		else if (act == Animations::SkillW)
 		{
 			m_skillCoolTimeW = 0;
-			m_nCurrAnimation = act;
-			m_fFrameTime = 0;
 		}
-		else if (act == Animations::SkillE &&
-			m_skillCoolTimeE >= m_StatusInfo.ESkillCoolTime)
+		else if (act == Animations::SkillE)
 		{
 			m_skillCoolTimeE = 0;
-			m_nCurrAnimation = act;
-			m_fFrameTime = 0;
 		}
-		else if (act == Animations::SkillR &&
-			m_skillCoolTimeR >= m_StatusInfo.RSkillCoolTime)
+		else if (act == Animations::SkillR)
 		{
 			m_skillCoolTimeR = 0;
-			m_nCurrAnimation = act;
-			m_fFrameTime = 0;
-		}
-		else
-		{
-			m_nCurrAnimation = act;
-			m_fFrameTime = 0;
 		}
 	}
 }

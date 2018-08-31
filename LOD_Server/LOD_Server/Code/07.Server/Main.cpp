@@ -175,6 +175,7 @@ void ProcessPacket(int id, char *packet)
 	{
 		g_ppPlayer[WeaponPacket->Character_id]->GetPlayerStatus()->Weapon = WeaponPacket->WeaponNum;
 		g_ppPlayer[WeaponPacket->Character_id]->SetType((ObjectType)WeaponPacket->ObjectType);
+		g_pScene->GetShader(1)->SetPlayerAnimation((ObjectType)WeaponPacket->ObjectType, WeaponPacket->Character_id);
 
 		for (int i = 0; i < MAX_USER; ++i)
 		{

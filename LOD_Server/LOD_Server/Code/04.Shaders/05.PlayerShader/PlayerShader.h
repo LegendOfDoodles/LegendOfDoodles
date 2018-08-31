@@ -17,6 +17,8 @@ public: // 공개 함수
 
 	virtual void AnimateObjects(float timeElapsed);
 
+	virtual void SetPlayerAnimation(ObjectType type, int id);
+
 	void SetColManagerToObject(shared_ptr<CCollisionManager> manager);
 	void SetThrowingManagerToObject(shared_ptr<CThrowingMgr> manager);
 
