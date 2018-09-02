@@ -67,63 +67,6 @@ void CPlayerShader::AnimateObjects(float timeElapsed)
 {
 	for (int j = 0; j < m_nObjects; j++)
 	{
-		if (static_cast<CPlayer*>(m_ppObjects[j])->GetWeaponChangeTriger() == true)
-		{
-			CS_Msg_Change_Weapon p;
-			switch (m_ppObjects[j]->GetPlayerStatus()->Weapon)
-			{
-			case 1:
-				m_ppObjects[m_pNetwork->m_myid]->SetType((ObjectType)m_nWeaponState);
-				m_ppObjects[m_pNetwork->m_myid]->SetType(ObjectType::SwordPlayer);
-				dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->ChangeSkillSet(m_ppSwordAni);
-				dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->SetWeaponData(ObjectType::SwordPlayer, 0);
-
-				m_ChangeWeapon = true;
-				static_cast<CPlayer*>(m_ppObjects[j])->SetWeaponChangeTriger(false);
-
-				
-				p.Character_id = (BYTE)m_pNetwork->m_myid;
-				p.ObjectType = (short)ObjectType::SwordPlayer;
-				p.size = sizeof(p);
-				p.WeaponNum = 1;
-				p.type = CS_CHANGE_WEAPON;
-				m_pNetwork->SendPacket(&p);
-				break;
-			case 2:
-				m_ppObjects[m_pNetwork->m_myid]->SetType((ObjectType)m_nWeaponState);
-				m_ppObjects[m_pNetwork->m_myid]->SetType(ObjectType::StaffPlayer);
-				dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->ChangeSkillSet(m_ppStaffAni);
-				dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->SetWeaponData(ObjectType::StaffPlayer, 0);
-
-				m_ChangeWeapon = true;
-				static_cast<CPlayer*>(m_ppObjects[j])->SetWeaponChangeTriger(false);
-
-				p.Character_id = (BYTE)m_pNetwork->m_myid;
-				p.ObjectType = (short)ObjectType::StaffPlayer;
-				p.size = sizeof(p);
-				p.WeaponNum = 2;
-				p.type = CS_CHANGE_WEAPON;
-				m_pNetwork->SendPacket(&p);
-				break;
-			case 3:
-				m_ppObjects[m_pNetwork->m_myid]->SetType((ObjectType)m_nWeaponState);
-				m_ppObjects[m_pNetwork->m_myid]->SetType(ObjectType::BowPlayer);
-				dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->ChangeSkillSet(m_ppBowAni);
-				dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->SetWeaponData(ObjectType::BowPlayer, 0);
-
-				m_ChangeWeapon = true;
-				static_cast<CPlayer*>(m_ppObjects[j])->SetWeaponChangeTriger(false);
-
-				p.Character_id = (BYTE)m_pNetwork->m_myid;
-				p.ObjectType = (short)ObjectType::BowPlayer;
-				p.size = sizeof(p);
-				p.WeaponNum = 3;
-				p.type = CS_CHANGE_WEAPON;
-				m_pNetwork->SendPacket(&p);
-				break;
-			}
-		}
-
 		m_ppObjects[j]->Animate(timeElapsed);
 	}
 }
@@ -177,7 +120,7 @@ bool CPlayerShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 		m_ppObjects[m_pNetwork->m_myid]->ActiveSkill(AnimationsType::Attack1);
 		return false;
 	}
-	
+
 	// 스틱 들고 있을 때는 스킬 발동되면 안되므로 제한한다.
 	if (m_ppObjects[m_pNetwork->m_myid]->GetType() == ObjectType::StickPlayer)
 	{
@@ -270,6 +213,65 @@ void CPlayerShader::SetSoundManagerToObject(shared_ptr<CSoundManager> manager)
 {
 	for (int i = 0; i < m_nObjects; ++i) {
 		m_ppObjects[i]->SetSoundManager(manager);
+	}
+}
+
+void CPlayerShader::SetChangeWeapon(int id)
+{
+	if (static_cast<CPlayer*>(m_ppObjects[id])->GetWeaponChangeTriger() == true)
+	{
+		CS_Msg_Change_Weapon p;
+		switch (m_ppObjects[id]->GetPlayerStatus()->Weapon)
+		{
+		case 1:
+			m_ppObjects[m_pNetwork->m_myid]->SetType((ObjectType)m_nWeaponState);
+			m_ppObjects[m_pNetwork->m_myid]->SetType(ObjectType::SwordPlayer);
+			dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->ChangeSkillSet(m_ppSwordAni);
+			dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->SetWeaponData(ObjectType::SwordPlayer, 0);
+
+			m_ChangeWeapon = true;
+			static_cast<CPlayer*>(m_ppObjects[id])->SetWeaponChangeTriger(false);
+
+			p.Character_id = (BYTE)m_pNetwork->m_myid;
+			p.ObjectType = (short)ObjectType::SwordPlayer;
+			p.size = sizeof(p);
+			p.WeaponNum = 1;
+			p.type = CS_CHANGE_WEAPON;
+			m_pNetwork->SendPacket(&p);
+			break;
+		case 2:
+			m_ppObjects[m_pNetwork->m_myid]->SetType((ObjectType)m_nWeaponState);
+			m_ppObjects[m_pNetwork->m_myid]->SetType(ObjectType::StaffPlayer);
+			dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->ChangeSkillSet(m_ppStaffAni);
+			dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->SetWeaponData(ObjectType::StaffPlayer, 0);
+
+			m_ChangeWeapon = true;
+			static_cast<CPlayer*>(m_ppObjects[id])->SetWeaponChangeTriger(false);
+
+			p.Character_id = (BYTE)m_pNetwork->m_myid;
+			p.ObjectType = (short)ObjectType::StaffPlayer;
+			p.size = sizeof(p);
+			p.WeaponNum = 2;
+			p.type = CS_CHANGE_WEAPON;
+			m_pNetwork->SendPacket(&p);
+			break;
+		case 3:
+			m_ppObjects[m_pNetwork->m_myid]->SetType((ObjectType)m_nWeaponState);
+			m_ppObjects[m_pNetwork->m_myid]->SetType(ObjectType::BowPlayer);
+			dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->ChangeSkillSet(m_ppBowAni);
+			dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->SetWeaponData(ObjectType::BowPlayer, 0);
+
+			m_ChangeWeapon = true;
+			static_cast<CPlayer*>(m_ppObjects[id])->SetWeaponChangeTriger(false);
+
+			p.Character_id = (BYTE)m_pNetwork->m_myid;
+			p.ObjectType = (short)ObjectType::BowPlayer;
+			p.size = sizeof(p);
+			p.WeaponNum = 3;
+			p.type = CS_CHANGE_WEAPON;
+			m_pNetwork->SendPacket(&p);
+			break;
+		}
 	}
 }
 
@@ -404,7 +406,7 @@ void CPlayerShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pConte
 	CCubeMesh *pBoundingBoxMesh = new CCubeMesh(pCreateMgr,
 		CONVERT_PaperUnit_to_InG(2.0f), CONVERT_PaperUnit_to_InG(1.0f), CONVERT_PaperUnit_to_InG(10.0f),
 		0, 0, -CONVERT_PaperUnit_to_InG(6.5f));
-	
+
 	CSkeleton *pWin = new CSkeleton("Resource//3D//Player//Animation//Player_Win.aniinfo");
 	CSkeleton *pDefeat = new CSkeleton("Resource//3D//Player//Animation//Player_Defeat.aniinfo");
 	CSkeleton *pDefeat2 = new CSkeleton("Resource//3D//Player//Animation//Player_Defeat2.aniinfo");
@@ -458,7 +460,7 @@ void CPlayerShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pConte
 	for (int x = 0; x < m_nObjects / 2; ++x) {
 		for (int z = 0; z < m_nObjects / 2; ++z) {
 
-			pPlayer = new CPlayer(pCreateMgr,1);
+			pPlayer = new CPlayer(pCreateMgr, 1);
 
 			pPlayer->SetMesh(0, pPlayerMesh);
 

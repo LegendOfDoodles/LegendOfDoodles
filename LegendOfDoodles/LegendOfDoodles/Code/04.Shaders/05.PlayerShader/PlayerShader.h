@@ -32,6 +32,8 @@ public: // 공개 함수
 	void SetEffectManagerToObject(shared_ptr<CEffectMgr> manager);
 	void SetSoundManagerToObject(shared_ptr<CSoundManager> manager);
 
+	virtual void SetChangeWeapon(int id);
+
 	bool* GetChangeWeapon() { return &m_ChangeWeapon; }
 
 protected: // 내부 함수
@@ -49,9 +51,9 @@ protected: // 내부 함수
 	virtual void ReleaseObjects();
 
 protected: // 변수
-	
-	//애니메이션 정보
-	CSkeleton** m_ppSwordAni{ NULL };
+
+		   //애니메이션 정보
+	CSkeleton * * m_ppSwordAni{ NULL };
 	CSkeleton** m_ppStaffAni{ NULL };
 
 	CSkeleton** m_ppBowAni{ NULL };

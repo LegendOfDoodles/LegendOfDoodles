@@ -48,7 +48,7 @@ void CSkillShader::AnimateObjects(float timeElapsed)
 		m_ppObjects[j]->Animate(timeElapsed);
 	}
 
-	if (m_Change == true) {
+	if (*m_Change == true) {
 		int WeaponType = m_pPlayer->GetPlayerStatus()->Weapon;
 
 		int GrayIcon = WeaponType * 2;
@@ -60,7 +60,7 @@ void CSkillShader::AnimateObjects(float timeElapsed)
 			else	   m_ppObjects[i]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[ColorIcon].ptr + (m_incrementSize * (i - 4)));
 		}
 
-		m_Change = false;
+		*m_Change = false;
 	}
 }
 

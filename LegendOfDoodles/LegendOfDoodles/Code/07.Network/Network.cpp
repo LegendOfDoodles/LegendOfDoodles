@@ -104,6 +104,8 @@ void CNetwork::ProcessPacket(char *ptr)
 			SC_Msg_BroadCast_Change_Weapon *my_packet = reinterpret_cast<SC_Msg_BroadCast_Change_Weapon *>(ptr);
 			m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->Weapon = my_packet->WeaponNum;
 			m_ppPlayer[my_packet->Character_id]->SetType((ObjectType)my_packet->ObjectType);
+			
+			m_pScene->GetShader(3)->SetChangeWeapon(my_packet->Character_id);
 			break;
 		}
 		case SC_PERMIT_USE_SKILL:

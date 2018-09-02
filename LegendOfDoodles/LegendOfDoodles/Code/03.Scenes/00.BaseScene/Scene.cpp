@@ -263,7 +263,7 @@ void CScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID,
 		::ReleaseCapture();
 		break;
 	case WM_MOUSEWHEEL:
-		if(m_pCamera) m_pCamera->OnProcessMouseWheel(wParam, lParam);
+		if (m_pCamera) m_pCamera->OnProcessMouseWheel(wParam, lParam);
 		break;
 	default:
 		break;
@@ -416,7 +416,7 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	((CBuildingMinimapIconShader*)BuildingMapIco_Shader)->SetNexusAndTower(((CNexusTowerShader *)m_ppShaders[5])->GetCollisionObjects());
 
 	m_ppObjects = ((CPlayerShader *)m_ppShaders[3])->GetCollisionObjects();
-	
+
 	SetPlayer();
 
 	((CSkillShader*)Skill_Shader)->SetChangeWeapon(((CPlayerShader*)m_ppShaders[3])->GetChangeWeapon());
@@ -425,6 +425,8 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 
 	((CNeutralityGaugeShader*)NeutralityHP_Shader)->SetRoiderCnt(((CNeutralityShader *)m_ppShaders[4])->GetObjectCount());
 	((CNeutralityGaugeShader*)NeutralityHP_Shader)->SetRoider(((CNeutralityShader *)m_ppShaders[4])->GetCollisionObjects());
+
+	((CSpecialSelectShader*)SpecialSelect_Shader)->SetShader((CPlayerShader*)m_ppShaders[3]);
 
 	for (int i = 8; i <= 21; ++i)
 	{
@@ -446,7 +448,7 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	Eeffect_Shader->Initialize(pCreateMgr, m_pCamera);
 	SpecialSelect_Shader->Initialize(pCreateMgr, m_pCamera);
 	m_ppShaders[22]->Initialize(pCreateMgr, m_pCamera);
-	
+
 	//Managere Initialize
 	m_pWayFinder = shared_ptr<CWayFinder>(new CWayFinder());
 	m_pUIObjectsManager = shared_ptr<CUIObjectManager>(new CUIObjectManager());
@@ -456,7 +458,7 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	m_pEffectMgr->SetEffectShader(static_cast<CEffectShader*>(Eeffect_Shader));
 	m_pFSMMgr = shared_ptr<CFSMMgr>(new CFSMMgr(m_pWayFinder));
 	((CMinimapShader*)Minimap_Shader)->SetWayFinder(m_pWayFinder);
-	
+
 	m_pNetwork->SetEffectManager(m_pEffectMgr);
 
 	m_pCollisionManager->SetEffectManager(m_pEffectMgr);
@@ -464,7 +466,7 @@ void CScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	m_pSoundManager = shared_ptr<CSoundManager>(new CSoundManager(m_pCamera));	// Fmod System Init
 	m_pSoundManager->loading();													// Sound File Load
 
-	//Manager Shaders Setting
+																				//Manager Shaders Setting
 	CMinionShader* pMinionS = (CMinionShader *)m_ppShaders[2];
 
 	pMinionS->SetCollisionManager(m_pCollisionManager);
@@ -532,8 +534,8 @@ void CScene::SetPlayer()
 	((CMinimapShader*)Minimap_Shader)->SetPlayer(m_ppObjects[m_pNetwork->m_myid]);
 	((CharacterFrameGaugeShader*)CharFrame_Shader)->SetPlayer(m_ppObjects[m_pNetwork->m_myid]);
 	((CSelectedSpecialShader*)SelectedSpecial_Shader)->SetPlayer(m_ppObjects[m_pNetwork->m_myid]);
-	((CSelectedSpecialShader*)SpecialSelect_Shader)->SetPlayer(m_ppObjects[m_pNetwork->m_myid]);
-	
+	((CSpecialSelectShader*)SpecialSelect_Shader)->SetPlayer(m_ppObjects[m_pNetwork->m_myid]);
+
 	m_pCollisionManager->SetMyTeam(m_pMyPlayer->GetTeam());
 	m_pCamera->SetMaster(m_pMyPlayer);
 }
@@ -658,21 +660,21 @@ void CScene::OnProcessKeyUp(WPARAM wParam, LPARAM lParam)
 {
 	UNREFERENCED_PARAMETER(lParam);
 
-/*	if (wParam == VK_F1)
+	/*	if (wParam == VK_F1)
 	{
-		if (!m_bCurCamIsAOS)
-		{
-			m_bCurCamIsAOS = true;
-			m_bCamChanged = true;
-		}
+	if (!m_bCurCamIsAOS)
+	{
+	m_bCurCamIsAOS = true;
+	m_bCamChanged = true;
+	}
 	}
 	else if (wParam == VK_F2)
 	{
-		if (m_bCurCamIsAOS)
-		{
-			m_bCurCamIsAOS = false;
-			m_bCamChanged = true;
-		}
+	if (m_bCurCamIsAOS)
+	{
+	m_bCurCamIsAOS = false;
+	m_bCamChanged = true;
+	}
 	}
 	else */
 	if (wParam == VK_F3)

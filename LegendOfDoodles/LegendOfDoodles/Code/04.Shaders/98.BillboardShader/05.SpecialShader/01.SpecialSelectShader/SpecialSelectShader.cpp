@@ -4,6 +4,7 @@
 #include "05.Objects/99.Material/Material.h"
 #include "05.Objects/96.Billboard/01.FrameObject/UIFrameObject.h"
 #include "05.Objects/08.Player/Player.h"
+#include "04.Shaders/05.PlayerShader/PlayerShader.h"
 #include "07.Network/Network.h"
 
 /// <summary>
@@ -92,8 +93,8 @@ bool CSpecialSelectShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 		if ((cursorPos.x > SPECIAL_MINIMUM_X  && cursorPos.x < SPECIAL_MAXIMUM_X)
 			&& (cursorPos.y > SPECIAL_MINIMUM_Y && cursorPos.y < SPECIAL_MAXIMUM_Y))
 		{
-			if (m_pPlayer->GetPlayerStatus()->Weapon == 0 
-				&& m_pPlayer->GetPlayerStatus()->Level >= 2)
+			if (m_pPlayer->GetPlayerStatus()->Weapon == 0
+				&& m_pPlayer->GetPlayerStatus()->Level >= 0)
 			{
 				if (ShowWindow[0] == true)
 				{
@@ -102,7 +103,7 @@ bool CSpecialSelectShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 				}
 				else ShowWindow[0] = true;
 			}
-			else if (m_pPlayer->GetPlayerStatus()->SpecialPoint >= 1 
+			else if (m_pPlayer->GetPlayerStatus()->SpecialPoint >= 1
 				&& m_pPlayer->GetPlayerStatus()->Weapon != 0)
 			{
 				if (ShowWindow[1] == true)
@@ -124,6 +125,7 @@ bool CSpecialSelectShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 				// 무기 변경
 				m_pPlayer->GetPlayerStatus()->Weapon = 1;
 				m_pPlayer->SetWeaponChangeTriger(true);
+				m_pPlayerShader->SetChangeWeapon(m_pNetwork->m_myid);
 
 				// 무기 선택창 닫기
 				ShowWindow[0] = false;
@@ -139,6 +141,7 @@ bool CSpecialSelectShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 				// 무기 변경
 				m_pPlayer->GetPlayerStatus()->Weapon = 3;
 				m_pPlayer->SetWeaponChangeTriger(true);
+				m_pPlayerShader->SetChangeWeapon(m_pNetwork->m_myid);
 
 				// 무기 선택창 닫기
 				ShowWindow[0] = false;
@@ -154,6 +157,7 @@ bool CSpecialSelectShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 				// 무기 변경
 				m_pPlayer->GetPlayerStatus()->Weapon = 2;
 				m_pPlayer->SetWeaponChangeTriger(true);
+				m_pPlayerShader->SetChangeWeapon(m_pNetwork->m_myid);
 
 				// 무기 선택창 닫기
 				ShowWindow[0] = false;
@@ -239,7 +243,7 @@ bool CSpecialSelectShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 				}
 
 				// 특성 포인트 사용
-				
+
 
 				// 특성창 닫기
 				ShowWindow[1] = false;

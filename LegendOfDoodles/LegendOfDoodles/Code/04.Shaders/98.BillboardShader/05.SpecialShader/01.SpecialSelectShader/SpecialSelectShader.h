@@ -4,7 +4,7 @@
 class CBillboardObject;
 class CMaterial;
 class CPlayer;
-
+class CPlayerShader;
 
 class CSpecialSelectShader : public CBillboardShader
 {
@@ -16,13 +16,13 @@ public: // 공개 함수
 	virtual void UpdateShaderVariables(int opt = 0);
 
 	virtual void AnimateObjects(float timeElapsed);
-
 	virtual void Render(CCamera *pCamera);
-
-	virtual void SetPlayer(CBaseObject *pPlayer) { m_pPlayer = (CPlayer*)pPlayer; };
 
 	virtual bool OnProcessKeyInput(UCHAR* pKeyBuffer);
 	virtual bool OnProcessMouseInput(WPARAM pKeyBuffer);
+
+	virtual void SetPlayer(CBaseObject *pPlayer) { m_pPlayer = (CPlayer*)pPlayer; };
+	void SetShader(CPlayerShader* shader) { m_pPlayerShader = shader; }
 
 protected: // 내부 함수
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
@@ -38,6 +38,8 @@ protected: // 변수
 	CCamera * m_pCamera;
 
 	CPlayer *m_pPlayer;
+
+	CPlayerShader *m_pPlayerShader;
 
 	bool isRendering = false;
 	bool ShowWindow[2]{ false };
