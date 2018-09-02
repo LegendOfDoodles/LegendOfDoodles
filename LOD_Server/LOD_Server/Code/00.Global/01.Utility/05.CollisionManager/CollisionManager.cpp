@@ -29,16 +29,19 @@ void CCollisionManager::GameOver(TeamType type)
 
 void CCollisionManager::SetNodeMap(std::vector<NodeMap> map, float size, XMFLOAT2 wh)
 {
-	m_BlueSight = new NodeMap*[static_cast<int>(wh.x)];
-	m_RedSight = new NodeMap*[static_cast<int>(wh.x)];
-	for (int i = 0; i < wh.x; ++i) {
-		m_BlueSight[i] = new NodeMap[static_cast<int>(wh.y)];
-		m_RedSight[i] = new NodeMap[static_cast<int>(wh.y)];
+	int width{ (int)wh.x };
+	int height{ (int)wh.y };
+
+	m_BlueSight = new NodeMap*[width];
+	m_RedSight = new NodeMap*[width];
+	for (int i = 0; i < width; ++i) {
+		m_BlueSight[i] = new NodeMap[height];
+		m_RedSight[i] = new NodeMap[height];
 	}
-	for (int i = 0; i < wh.y; ++i) {
-		for (int j = 0; j < wh.x; ++j) {
-			m_BlueSight[j][i] = map[(int)((i*wh.x) + j)];
-			m_RedSight[j][i] = map[(int)((i*wh.x) + j)];
+	for (int i = 0; i < height; ++i) {
+		for (int j = 0; j < width; ++j) {
+			m_BlueSight[j][i] = map[(i * width) + j];
+			m_RedSight[j][i] = map[(i * width) + j];
 		}
 	}
 	nodeSize = size;
@@ -119,19 +122,18 @@ void CCollisionManager::Update(shared_ptr<CWayFinder> pWayFinder)
 			y = static_cast<int>(CLAMP((*i)->GetPosition().z / nodeSize, 0, nodeWH.y - 1));
 			int startLength = static_cast<int>((*i)->GetSightRange() / nodeSize);
 			for (int dir = 0; dir < 8; ++dir) {
-				SearchSight(XMFLOAT2(static_cast<float>(x), static_cast<float>(y)),
+				SearchSight(x, y,
 					dir, startLength, (*i)->GetTeam());
 			}
 		}
 
 		for (auto i = m_lstColliders.begin(); i != m_lstColliders.end(); ++i)
 		{
-			XMFLOAT2 pos;
-			pos.x = CLAMP((*i)->GetPosition().x / nodeSize, 0, nodeWH.x - 1);
-			pos.y = CLAMP((*i)->GetPosition().z / nodeSize, 0, nodeWH.y - 1);
+			int posX = (int)CLAMP((*i)->GetPosition().x / nodeSize, 0, nodeWH.x - 1);
+			int posY = (int)CLAMP((*i)->GetPosition().z / nodeSize, 0, nodeWH.y - 1);
 
 			if ((*i)->GetTeam() == Red) {
-				if (m_BlueSight[(int)pos.x][(int)pos.y].Detected) {
+				if (m_BlueSight[posX][posY].Detected) {
 					if (m_User == Blue) {
 						(*i)->SetDetected(true);
 					}
@@ -139,7 +141,7 @@ void CCollisionManager::Update(shared_ptr<CWayFinder> pWayFinder)
 				}
 			}
 			else if ((*i)->GetTeam() == Blue) {
-				if (m_RedSight[(int)pos.x][(int)pos.y].Detected) {
+				if (m_RedSight[posX][posY].Detected) {
 					if (m_User == Red) {
 						(*i)->SetDetected(true);
 					}
@@ -147,13 +149,13 @@ void CCollisionManager::Update(shared_ptr<CWayFinder> pWayFinder)
 				}
 			}
 			else {
-				if (m_BlueSight[(int)pos.x][(int)pos.y].Detected) {
+				if (m_BlueSight[posX][posY].Detected) {
 					if (m_User == Blue) {
 						(*i)->SetDetected(true);
 					}
 					m_lstBlueSight.push_back((*i));
 				}
-				if (m_RedSight[(int)pos.x][(int)pos.y].Detected) {
+				if (m_RedSight[posX][posY].Detected) {
 					if (m_User == Red) {
 						(*i)->SetDetected(true);
 					}
@@ -344,7 +346,7 @@ void CCollisionManager::RequestIncreaseExp(CCollisionObject * pCol, float lengh,
 2 ¤± 6
 3 4  5
 */
-void CCollisionManager::SearchSight(XMFLOAT2 startpos, int dir, int slength, TeamType team)
+void CCollisionManager::SearchSight(int startX, int startY, int dir, int slength, TeamType team)
 {
 	XMFLOAT2 result;
 	XMFLOAT2 direction;
@@ -392,14 +394,14 @@ void CCollisionManager::SearchSight(XMFLOAT2 startpos, int dir, int slength, Tea
 
 	if (team == Blue)
 	{
-		m_BlueSight[(int)startpos.x][(int)startpos.y].Detected = true;
-		if (m_BlueSight[(int)startpos.x][(int)startpos.y].Static == true) {
+		m_BlueSight[startX][startY].Detected = true;
+		if (m_BlueSight[startX][startY].Static == true) {
 			isBuilding = true;
 		}
 	}
 	else if (team == Red) {
-		m_RedSight[(int)startpos.x][(int)startpos.y].Detected = true;
-		if (m_RedSight[(int)startpos.x][(int)startpos.y].Static == true) {
+		m_RedSight[startX][startY].Detected = true;
+		if (m_RedSight[startX][startY].Static == true) {
 			isBuilding = true;
 		}
 	}
@@ -413,7 +415,7 @@ void CCollisionManager::SearchSight(XMFLOAT2 startpos, int dir, int slength, Tea
 			buildingout = true;
 
 		for (int j = 1; j < slength; ++j) {
-			result = startpos;
+			result = XMFLOAT2((float)startX, (float)startY);
 			if (next.x == 0) {
 				result.x += j * direction.x;
 				result.y += roundf((j* direction.x*nNext.y / nNext.x));
@@ -425,13 +427,15 @@ void CCollisionManager::SearchSight(XMFLOAT2 startpos, int dir, int slength, Tea
 
 			if (result.x < 0 || result.y < 0 || result.x >= nodeWH.x || result.y >= nodeWH.y)
 				break;
-			float dst = Vector2::Distance(startpos, result);
+			float dstSqr = (result.x - startX) * (result.x - startX) + (result.y - startY) * (result.y - startY);
 
-			if (dst <= slength) {
+			if (dstSqr <= slength * slength) {
+				int resultX{ (int)result.x };
+				int resultY{ (int)result.y };
 				if (team == Blue)
 				{
-					m_BlueSight[(int)result.x][(int)result.y].Detected = true;
-					if (m_BlueSight[(int)result.x][(int)result.y].Static == true) {
+					m_BlueSight[resultX][resultY].Detected = true;
+					if (m_BlueSight[resultX][resultY].Static == true) {
 						if (buildingout)
 						{
 							for (int x = -2; x < 3; ++x) {
@@ -440,29 +444,29 @@ void CCollisionManager::SearchSight(XMFLOAT2 startpos, int dir, int slength, Tea
 									{
 										continue;
 									}
-									else if (m_BlueSight[(int)result.x + x][(int)result.y + y].Static == true) {
-										m_BlueSight[(int)result.x + x][(int)result.y + y].Detected = true;
+									else if (m_BlueSight[resultX + x][resultY + y].Static == true) {
+										m_BlueSight[resultX + x][resultY + y].Detected = true;
 									}
 								}
 							}
 							break;
 						}
 					}
-					if (m_BlueSight[(int)result.x][(int)result.y].Static == false && buildingout == false) {
+					if (m_BlueSight[resultX][resultY].Static == false && buildingout == false) {
 						buildingout = true;
 					}
 				}
 				else if (team == Red) {
-					m_RedSight[(int)result.x][(int)result.y].Detected = true;
-					if (m_RedSight[(int)result.x][(int)result.y].Static == true) {
+					m_RedSight[resultX][resultY].Detected = true;
+					if (m_RedSight[resultX][resultY].Static == true) {
 						for (int x = -2; x < 3; ++x) {
 							for (int y = -2; y < 3; ++y) {
 								if (result.x + x < 0 || result.y + y < 0 || result.x + x >= nodeWH.x || result.y + y >= nodeWH.y)
 								{
 									continue;
 								}
-								else if (m_RedSight[(int)result.x + x][(int)result.y + y].Static == true) {
-									m_RedSight[(int)result.x + x][(int)result.y + y].Detected = true;
+								else if (m_RedSight[resultX + x][resultY + y].Static == true) {
+									m_RedSight[resultX + x][resultY + y].Detected = true;
 								}
 							}
 						}
