@@ -132,21 +132,26 @@ void CCollisionManager::Update(shared_ptr<CWayFinder> pWayFinder)
 
 		for (int i = 0; i < NODE_WIDTH; ++i) {
 			for (int j = 0; j < NODE_HEIGHT; ++j) {
-				BlueFow[i][j] = 0;
-				RedFow[i][j] = 0;
+				if (m_User == Blue)
+					BlueFow[i][j] = 0;
+				else if (m_User == Red)
+					RedFow[i][j] = 0;
 			}
 		}
 
 		for (auto i = m_lstColliders.begin(); i != m_lstColliders.end(); ++i)
 		{
-			int x, y;
-			x = static_cast<int>(CLAMP((*i)->GetPosition().x / nodeSize, 0, nodeWH.x - 1));
-			y = static_cast<int>(CLAMP((*i)->GetPosition().z / nodeSize, 0, nodeWH.y - 1));
-			if ((*i)->GetTeam() == Blue) {
-				BlueFow[x][y] = static_cast<int>((*i)->GetSightRange() / nodeSize);
-			}
-			else if ((*i)->GetTeam() == Red) {
-				RedFow[x][y] = static_cast<int>((*i)->GetSightRange() / nodeSize);
+			if ((*i)->GetTeam() == m_User) {
+
+				int x, y;
+				x = static_cast<int>(CLAMP((*i)->GetPosition().x / nodeSize, 0, nodeWH.x - 1));
+				y = static_cast<int>(CLAMP((*i)->GetPosition().z / nodeSize, 0, nodeWH.y - 1));
+				if ((*i)->GetTeam() == Blue) {
+					BlueFow[x][y] = static_cast<int>((*i)->GetSightRange() / nodeSize);
+				}
+				else if ((*i)->GetTeam() == Red) {
+					RedFow[x][y] = static_cast<int>((*i)->GetSightRange() / nodeSize);
+				}
 			}
 
 		}
@@ -154,16 +159,22 @@ void CCollisionManager::Update(shared_ptr<CWayFinder> pWayFinder)
 
 		for (int i = 0; i < NODE_WIDTH; ++i) {
 			for (int j = 0; j < NODE_HEIGHT; ++j) {
-				if (BlueFow[i][j] != 0) {
-					for (int dir = 0; dir < 8; ++dir) {
-						SearchSight(XMFLOAT2((float)i, (float)j),
-							dir, BlueFow[i][j], Blue);
+				if (m_User == Blue) {
+
+					if (BlueFow[i][j] != 0) {
+						for (int dir = 0; dir < 8; ++dir) {
+							SearchSight(XMFLOAT2((float)i, (float)j),
+								dir, BlueFow[i][j], Blue);
+						}
 					}
 				}
-				if (RedFow[i][j] != 0) {
-					for (int dir = 0; dir < 8; ++dir) {
-						SearchSight(XMFLOAT2((float)i, (float)j),
-							dir, RedFow[i][j], Red);
+				else if (m_User == Red) {
+
+					if (RedFow[i][j] != 0) {
+						for (int dir = 0; dir < 8; ++dir) {
+							SearchSight(XMFLOAT2((float)i, (float)j),
+								dir, RedFow[i][j], Red);
+						}
 					}
 				}
 			}
@@ -558,7 +569,7 @@ int(*CCollisionManager::GetFoW(TeamType type))[NODE_HEIGHT]
 		for (int j = 0; j < NODE_HEIGHT; ++j) {
 			if (type == TeamType::Blue) {
 				if (!m_BlueSight[i][j].Detected)
-				Fow[i][j] = 0;
+					Fow[i][j] = 0;
 				else
 					Fow[i][j] = 1;
 			}
