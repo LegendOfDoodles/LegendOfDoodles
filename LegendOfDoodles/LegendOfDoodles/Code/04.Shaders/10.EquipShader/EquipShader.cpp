@@ -60,9 +60,9 @@ void CEquipShader::AnimateObjects(float timeElapsed)
 			m_nPlayerWeaponNum[i] = m_pPlayer[i]->GetWeaponNum();
 			SetEquipMesh(i, 0, m_nPlayerWeaponNum[i], m_nPlayerWeaponType[i]);
 		}
-
+	
 		int equipcnt = m_pPlayer[i]->GetEquipCnt();
-
+	
 		if (m_nPlayerEquipments[i] != equipcnt + 1)
 		{
 			UINT* indexArray = m_pPlayer[i]->GetEquipIndex();
@@ -72,9 +72,6 @@ void CEquipShader::AnimateObjects(float timeElapsed)
 			}
 			m_nPlayerEquipments[i] = equipcnt + 1;
 		}
-
-
-
 	}
 }
 
@@ -336,78 +333,78 @@ void CEquipShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pContex
 	m_ppMaterials = new CMaterial*[m_nMaterials];
 	m_iEmissiveIndex = new int[m_nMaterials];
 	int matnum = 0;
-	m_ppMaterials[0] = Materials::CreateStickMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[0], &m_psrvGPUDescriptorStartHandle[0]);
+	m_ppMaterials[matnum] = Materials::CreateStickMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[0], &m_psrvGPUDescriptorStartHandle[0]);
 	m_iEmissiveIndex[matnum++] = 0;
 	//검 - 5
-	m_ppMaterials[1] = Materials::CreateSwordMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[1], &m_psrvGPUDescriptorStartHandle[1]);
+	m_ppMaterials[matnum] = Materials::CreateSwordMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[1], &m_psrvGPUDescriptorStartHandle[1]);
 	m_iEmissiveIndex[matnum++] = 0;
-	m_ppMaterials[2] = Materials::CreateMaceMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[2], &m_psrvGPUDescriptorStartHandle[2]);
+	m_ppMaterials[matnum] = Materials::CreateMaceMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[2], &m_psrvGPUDescriptorStartHandle[2]);
 	m_iEmissiveIndex[matnum++] = 0;
-	m_ppMaterials[3] = Materials::CreateBFSwordMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[3], &m_psrvGPUDescriptorStartHandle[3]);
+	m_ppMaterials[matnum] = Materials::CreateBFSwordMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[3], &m_psrvGPUDescriptorStartHandle[3]);
 	m_iEmissiveIndex[matnum++] = 0;
-	m_ppMaterials[4] = Materials::CreateSawMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[4], &m_psrvGPUDescriptorStartHandle[4]);
+	m_ppMaterials[matnum] = Materials::CreateSawMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[4], &m_psrvGPUDescriptorStartHandle[4]);
 	m_iEmissiveIndex[matnum++] = 0;
-	m_ppMaterials[5] = Materials::CreateSabreMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[5], &m_psrvGPUDescriptorStartHandle[5]);
+	m_ppMaterials[matnum] = Materials::CreateSabreMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[5], &m_psrvGPUDescriptorStartHandle[5]);
 	m_iEmissiveIndex[matnum++] = 0;
 	//마법 - 5
-	m_ppMaterials[6] = Materials::CreateStaffMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[6], &m_psrvGPUDescriptorStartHandle[6]);
+	m_ppMaterials[matnum] = Materials::CreateStaffMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[6], &m_psrvGPUDescriptorStartHandle[6]);
 	m_iEmissiveIndex[matnum++] = 0;
-	m_ppMaterials[7] = Materials::CreateEraserPenMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[7], &m_psrvGPUDescriptorStartHandle[7]);
+	m_ppMaterials[matnum] = Materials::CreateEraserPenMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[7], &m_psrvGPUDescriptorStartHandle[7]);
 	m_iEmissiveIndex[matnum++] = 0;
-	m_ppMaterials[8] = Materials::CreateLightingMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[8], &m_psrvGPUDescriptorStartHandle[8]);
+	m_ppMaterials[matnum] = Materials::CreateLightingMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[8], &m_psrvGPUDescriptorStartHandle[8]);
 	m_iEmissiveIndex[matnum++] = 0;
-	m_ppMaterials[9] = Materials::CreateWatchMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[9], &m_psrvGPUDescriptorStartHandle[9]);
+	m_ppMaterials[matnum] = Materials::CreateWatchMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[9], &m_psrvGPUDescriptorStartHandle[9]);
 	m_iEmissiveIndex[matnum++] = 0;
-	m_ppMaterials[10] = Materials::CreateLolipopMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[10], &m_psrvGPUDescriptorStartHandle[10]);
+	m_ppMaterials[matnum] = Materials::CreateLolipopMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[10], &m_psrvGPUDescriptorStartHandle[10]);
 	m_iEmissiveIndex[matnum++] = 0;
 	//활 - 5
-	m_ppMaterials[11] = Materials::CreateBowMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[11], &m_psrvGPUDescriptorStartHandle[11]);
+	m_ppMaterials[matnum] = Materials::CreateBowMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[11], &m_psrvGPUDescriptorStartHandle[11]);
 	m_iEmissiveIndex[matnum++] = 0;
-	m_ppMaterials[12] = Materials::CreateCompoundMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[12], &m_psrvGPUDescriptorStartHandle[12]);
+	m_ppMaterials[matnum] = Materials::CreateCompoundMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[12], &m_psrvGPUDescriptorStartHandle[12]);
 	m_iEmissiveIndex[matnum++] = 0;
-	m_ppMaterials[13] = Materials::CreateFlightMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[13], &m_psrvGPUDescriptorStartHandle[13]);
+	m_ppMaterials[matnum] = Materials::CreateFlightMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[13], &m_psrvGPUDescriptorStartHandle[13]);
 	m_iEmissiveIndex[matnum++] = 0;
-	m_ppMaterials[14] = Materials::CreateBananaMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[14], &m_psrvGPUDescriptorStartHandle[14]);
+	m_ppMaterials[matnum] = Materials::CreateBananaMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[14], &m_psrvGPUDescriptorStartHandle[14]);
 	m_iEmissiveIndex[matnum++] = 0;
-	m_ppMaterials[15] = Materials::CreateBattleMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[15], &m_psrvGPUDescriptorStartHandle[15]);
+	m_ppMaterials[matnum] = Materials::CreateBattleMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[15], &m_psrvGPUDescriptorStartHandle[15]);
 	m_iEmissiveIndex[matnum++] = 0;
 
 	//전사 방어구 - 4
-	m_ppMaterials[16] = Materials::CreateShoulderMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[16], &m_psrvGPUDescriptorStartHandle[16]);
+	m_ppMaterials[matnum] = Materials::CreateShoulderMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[16], &m_psrvGPUDescriptorStartHandle[16]);
 	m_iEmissiveIndex[matnum++] = 0;
-	m_ppMaterials[17] = Materials::CreateBulletJaketMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[17], &m_psrvGPUDescriptorStartHandle[17]);
+	m_ppMaterials[matnum] = Materials::CreateBulletJaketMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[17], &m_psrvGPUDescriptorStartHandle[17]);
 	m_iEmissiveIndex[matnum++] = 0;
-	m_ppMaterials[18] = Materials::CreateNikeMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[18], &m_psrvGPUDescriptorStartHandle[18]);
+	m_ppMaterials[matnum] = Materials::CreateNikeMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[18], &m_psrvGPUDescriptorStartHandle[18]);
 	m_iEmissiveIndex[matnum++] = 0;
-	m_ppMaterials[19] = Materials::CreateMedicBoxMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[19], &m_psrvGPUDescriptorStartHandle[19]);
+	m_ppMaterials[matnum] = Materials::CreateMedicBoxMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[19], &m_psrvGPUDescriptorStartHandle[19]);
 	m_iEmissiveIndex[matnum++] = 0;
 
 	//마법 방어구 - 4 
-	m_ppMaterials[20] = Materials::CreateShaShackMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[20], &m_psrvGPUDescriptorStartHandle[20]);
+	m_ppMaterials[matnum] = Materials::CreateShaShackMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[20], &m_psrvGPUDescriptorStartHandle[20]);
 	m_iEmissiveIndex[matnum++] = 1;
-	m_ppMaterials[21] = Materials::CreateMosMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[21], &m_psrvGPUDescriptorStartHandle[21]);
+	m_ppMaterials[matnum] = Materials::CreateMosMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[21], &m_psrvGPUDescriptorStartHandle[21]);
 	m_iEmissiveIndex[matnum++] = 1;
-	m_ppMaterials[22] = Materials::CreateSpringMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[22], &m_psrvGPUDescriptorStartHandle[22]);
+	m_ppMaterials[matnum] = Materials::CreateSpringMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[22], &m_psrvGPUDescriptorStartHandle[22]);
 	m_iEmissiveIndex[matnum++] = 0;
-	m_ppMaterials[23] = Materials::CreateBloodPackMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[23], &m_psrvGPUDescriptorStartHandle[23]);
+	m_ppMaterials[matnum] = Materials::CreateBloodPackMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[23], &m_psrvGPUDescriptorStartHandle[23]);
 	m_iEmissiveIndex[matnum++] = 0;
 	//활 방어구 - 4 
-	m_ppMaterials[24] = Materials::CreateMufflerMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[24], &m_psrvGPUDescriptorStartHandle[24]);
+	m_ppMaterials[matnum] = Materials::CreateMufflerMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[24], &m_psrvGPUDescriptorStartHandle[24]);
 	m_iEmissiveIndex[matnum++] = 0;
-	m_ppMaterials[25] = Materials::CreateLinkClothMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[25], &m_psrvGPUDescriptorStartHandle[25]);
+	m_ppMaterials[matnum] = Materials::CreateLinkClothMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[25], &m_psrvGPUDescriptorStartHandle[25]);
 	m_iEmissiveIndex[matnum++] = 0;
-	m_ppMaterials[26] = Materials::Create3DidasMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[26], &m_psrvGPUDescriptorStartHandle[26]);
+	m_ppMaterials[matnum] = Materials::Create3DidasMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[26], &m_psrvGPUDescriptorStartHandle[26]);
 	m_iEmissiveIndex[matnum++] = 0;
-	m_ppMaterials[27] = Materials::CreateCrossHairMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[27], &m_psrvGPUDescriptorStartHandle[27]);
+	m_ppMaterials[matnum] = Materials::CreateCrossHairMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[27], &m_psrvGPUDescriptorStartHandle[27]);
 	m_iEmissiveIndex[matnum++] = 0;
 	//특수 - 4
-	m_ppMaterials[28] = Materials::CreateGlassesMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[28], &m_psrvGPUDescriptorStartHandle[28]);
+	m_ppMaterials[matnum] = Materials::CreateGlassesMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[28], &m_psrvGPUDescriptorStartHandle[28]);
 	m_iEmissiveIndex[matnum++] = 0;
-	m_ppMaterials[29] = Materials::CreateSunGlassesMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[29], &m_psrvGPUDescriptorStartHandle[29]);
+	m_ppMaterials[matnum] = Materials::CreateSunGlassesMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[29], &m_psrvGPUDescriptorStartHandle[29]);
 	m_iEmissiveIndex[matnum++] = 0;
-	m_ppMaterials[30] = Materials::CreateWinderMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[30], &m_psrvGPUDescriptorStartHandle[30]);
+	m_ppMaterials[matnum] = Materials::CreateWinderMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[30], &m_psrvGPUDescriptorStartHandle[30]);
 	m_iEmissiveIndex[matnum++] = 0;
-	m_ppMaterials[31] = Materials::CreateIcecreamMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[31], &m_psrvGPUDescriptorStartHandle[31]);
+	m_ppMaterials[matnum] = Materials::CreateIcecreamMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[31], &m_psrvGPUDescriptorStartHandle[31]);
 	m_iEmissiveIndex[matnum++] = 0;
 
 	m_pStick = new CSkinnedMesh(pCreateMgr, "Resource//3D//Player//Mesh//Player_Stick.meshinfo");

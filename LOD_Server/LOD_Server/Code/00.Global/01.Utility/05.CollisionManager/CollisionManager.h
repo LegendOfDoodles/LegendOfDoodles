@@ -39,7 +39,7 @@ protected:
 			return false;
 	}
 
-	void SearchSight(XMFLOAT2 startpos, int dir, int slength, TeamType team);
+	void SearchSight(int startX, int startY, int dir, int slength, TeamType team);
 
 
 protected:
