@@ -61,10 +61,9 @@ protected: // 내부 함수
 
 	void CreatePathes();
 
-	int GetPossibleIndex();
-
-	void SetPossibleIndex(int idx) { m_indexArr[idx] = true; }
-	void ResetPossibleIndex(int idx) { m_indexArr[idx] = false; }
+	int GetPossibleIndex(ObjectType type);
+	void SetPossibleIndex(int idx, ObjectType type);
+	void ResetPossibleIndex(int idx, ObjectType type);
 
 protected: // 변수
 	static const int m_nMeshes{ 3 };
@@ -77,7 +76,7 @@ protected: // 변수
 	CollisionObjectList m_redStaffMinions;
 	CollisionObjectList m_redBowMinions;
 
-	bool m_indexArr[MAX_MINION];
+	std::unordered_map<ObjectType, bool*> m_possibleIndicies;
 
 	Path m_pathes[4];
 

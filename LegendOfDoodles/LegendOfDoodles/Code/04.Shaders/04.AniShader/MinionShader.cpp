@@ -14,7 +14,7 @@
 /// 목적: 미니언 관리 및 그리기 용도
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-08-22
+/// 최종 수정 날짜: 2018-09-03
 /// </summary>
 
 #define SwordMinionMesh m_ppMinionMeshes[0]
@@ -149,7 +149,7 @@ void CMinionShader::AnimateObjects(float timeElapsed)
 	static auto removeFunc = [this](CCollisionObject* obj) {
 		if (obj->GetState() == StatesType::Remove)
 		{
-			ResetPossibleIndex(obj->GetIndex());
+			ResetPossibleIndex(obj->GetIndex(), (ObjectType)obj->GetType());
 			delete obj;
 			return true;
 		}
@@ -191,32 +191,40 @@ void CMinionShader::AnimateObjects(float timeElapsed)
 
 void CMinionShader::Render(CCamera *pCamera)
 {
-	CShader::Render(pCamera, 0);
-
 	CollisionObjectList* curObjectList{ NULL };
 	for (int i = 0; i < 6; ++i)
 	{
 		switch (i)
 		{
 		case 0: // Blue Sword
+			CShader::Render(pCamera, 0);
 			curObjectList = &m_blueSwordMinions;
 			if (m_ppMaterials) m_ppMaterials[0]->UpdateShaderVariables();
 			break;
 		case 1: // Blue Staff
+			CShader::Render(pCamera, 1);
 			curObjectList = &m_blueStaffMinions;
-			break;
-		case 2: // Blue Bow
-			curObjectList = &m_blueBowMinions;
-			break;
-		case 3: // Red Sword
-			curObjectList = &m_redSwordMinions;
 			if (m_ppMaterials) m_ppMaterials[1]->UpdateShaderVariables();
 			break;
+		case 2: // Blue Bow
+			CShader::Render(pCamera, 2);
+			curObjectList = &m_blueBowMinions;
+			if (m_ppMaterials) m_ppMaterials[2]->UpdateShaderVariables();
+			break;
+		case 3: // Red Sword
+			CShader::Render(pCamera, 0);
+			curObjectList = &m_redSwordMinions;
+			if (m_ppMaterials) m_ppMaterials[3]->UpdateShaderVariables();
+			break;
 		case 4: // Red Staff
+			CShader::Render(pCamera, 1);
 			curObjectList = &m_redStaffMinions;
+			if (m_ppMaterials) m_ppMaterials[4]->UpdateShaderVariables();
 			break;
 		case 5: // Red Bow
+			CShader::Render(pCamera, 2);
 			curObjectList = &m_redBowMinions;
+			if (m_ppMaterials) m_ppMaterials[5]->UpdateShaderVariables();
 			break;
 		}
 
@@ -265,29 +273,33 @@ void CMinionShader::RenderBoundingBox(CCamera * pCamera)
 
 void CMinionShader::RenderShadow(CCamera * pCamera)
 {
-	CShader::Render(pCamera, 0, 2);
-
 	CollisionObjectList* curObjectList{ NULL };
 	for (int i = 0; i < 6; ++i)
 	{
 		switch (i)
 		{
 		case 0: // Blue Sword
+			CShader::Render(pCamera, 0, 2);
 			curObjectList = &m_blueSwordMinions;
 			break;
 		case 1: // Blue Staff
+			CShader::Render(pCamera, 1, 2);
 			curObjectList = &m_blueStaffMinions;
 			break;
 		case 2: // Blue Bow
+			CShader::Render(pCamera, 2, 2);
 			curObjectList = &m_blueBowMinions;
 			break;
 		case 3: // Red Sword
+			CShader::Render(pCamera, 0, 2);
 			curObjectList = &m_redSwordMinions;
 			break;
 		case 4: // Red Staff
+			CShader::Render(pCamera, 1, 2);
 			curObjectList = &m_redStaffMinions;
 			break;
 		case 5: // Red Bow
+			CShader::Render(pCamera, 2, 2);
 			curObjectList = &m_redBowMinions;
 			break;
 		}
@@ -366,7 +378,7 @@ void CMinionShader::SpawnMinion(ObjectType minionKind, short tag)
 	CollisionObjectList objectAdder;
 	for (; wayKind < 4; ++wayKind)
 	{
-		int index{ GetPossibleIndex() };
+		int index{ GetPossibleIndex(minionKind) };
 
 		if (index == NONE) break;
 		CMinion *pMinionObject{ NULL };
@@ -376,18 +388,24 @@ void CMinionShader::SpawnMinion(ObjectType minionKind, short tag)
 		case ObjectType::SwordMinion:
 			pMinionObject = new CSwordMinion(m_pCreateMgr);
 			pMinionObject->SetMesh(0, SwordMinionMesh);
+			pMinionObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * index));
+			pMinionObject->SetCbvGPUDescriptorHandlePtrForBB(m_pcbvGPUDescriptorStartHandle[m_nHeaps - 1].ptr + (incrementSize * index));
 			break;
 		case ObjectType::StaffMinion:
 			pMinionObject = new CMagicMinion(m_pCreateMgr);
 			pMinionObject->SetMesh(0, StaffMinionMesh);
 			pMinionObject->SetThrowingManager(m_pThrowingMgr);
 			pMinionObject->SetEffectManager(m_pEffectMgr);
+			pMinionObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[1].ptr + (incrementSize * (index - MAX_MINION)));
+			pMinionObject->SetCbvGPUDescriptorHandlePtrForBB(m_pcbvGPUDescriptorStartHandle[m_nHeaps - 1].ptr + (incrementSize * index));
 			break;
 		case ObjectType::BowMinion:
 			pMinionObject = new CBowMinion(m_pCreateMgr);
 			pMinionObject->SetMesh(0, BowMinionMesh);
 			pMinionObject->SetThrowingManager(m_pThrowingMgr);
 			pMinionObject->SetEffectManager(m_pEffectMgr);
+			pMinionObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[2].ptr + (incrementSize * (index - MAX_MINION * 2)));
+			pMinionObject->SetCbvGPUDescriptorHandlePtrForBB(m_pcbvGPUDescriptorStartHandle[m_nHeaps - 1].ptr + (incrementSize * index));
 			break;
 		}
 
@@ -433,9 +451,6 @@ void CMinionShader::SpawnMinion(ObjectType minionKind, short tag)
 		pMinionObject->CBaseObject::SetPosition(XMFLOAT3(firstPos.x, 0, firstPos.y));
 
 		pMinionObject->SetCollisionManager(m_pColManager);
-
-		pMinionObject->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (incrementSize * index));
-		pMinionObject->SetCbvGPUDescriptorHandlePtrForBB(m_pcbvGPUDescriptorStartHandle[1].ptr + (incrementSize * index));
 
 		if (wayKind == Minion_Species::Blue_Up || wayKind == Minion_Species::Blue_Down)
 		{
@@ -615,7 +630,7 @@ void CMinionShader::CreateShader(shared_ptr<CCreateMgr> pCreateMgr, UINT nRender
 {
 	m_nPipelineStates = 3;
 
-	m_nHeaps = 2;
+	m_nHeaps = 3 + 1;
 	CreateDescriptorHeaps();
 
 	CShader::CreateShader(pCreateMgr, nRenderTargets, isRenderBB, isRenderShadow);
@@ -628,25 +643,44 @@ void CMinionShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pConte
 	UINT ncbElementBytes = ((sizeof(CB_ANIOBJECT_INFO) + 255) & ~255);
 	UINT boundingBoxElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255);
 
-	CreateShaderVariables(pCreateMgr, ncbElementBytes, MAX_MINION, true, boundingBoxElementBytes, MAX_MINION);
+	m_possibleIndicies[ObjectType::SwordMinion] = new bool[MAX_MINION] {};
+	m_possibleIndicies[ObjectType::StaffMinion] = new bool[MAX_MINION] {};
+	m_possibleIndicies[ObjectType::BowMinion] = new bool[MAX_MINION] {};
 
-	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, MAX_MINION, 1, 0);
-	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, MAX_MINION, 0, 1);
+	CreateShaderVariables(pCreateMgr, ncbElementBytes, MAX_MINION * 3, true, boundingBoxElementBytes, MAX_MINION * 3);
 
-	CreateConstantBufferViews(pCreateMgr, MAX_MINION, m_pConstBuffer.Get(), ncbElementBytes, 0, 0);
-	CreateConstantBufferViews(pCreateMgr, MAX_MINION, m_pBoundingBoxBuffer.Get(), boundingBoxElementBytes, 0, 1);
+	for (int i = 0; i < 3; ++i)
+	{
+		CreateCbvAndSrvDescriptorHeaps(pCreateMgr, MAX_MINION, 1, i);
+		CreateConstantBufferViews(pCreateMgr, MAX_MINION, m_pConstBuffer.Get(), ncbElementBytes, MAX_MINION * i, i);
+	}
+	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, MAX_MINION * 3, 0, m_nHeaps - 1);
+	CreateConstantBufferViews(pCreateMgr, MAX_MINION * 3, m_pBoundingBoxBuffer.Get(), boundingBoxElementBytes, 0, m_nHeaps - 1);
 
-	SaveBoundingBoxHeapNumber(1);
+	SaveBoundingBoxHeapNumber(m_nHeaps - 1);
 
 #if USE_BATCH_MATERIAL
-	m_nMaterials = 2;
+	m_nMaterials = 6;
 	m_ppMaterials = new CMaterial*[m_nMaterials];
 	// Blue
-	m_ppMaterials[0] = Materials::CreateMinionMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[0], &m_psrvGPUDescriptorStartHandle[0]);
+	m_ppMaterials[0] = Materials::CreateSwordMinionMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[0], &m_psrvGPUDescriptorStartHandle[0]);
 	m_ppMaterials[0]->SetAlbedo(XMFLOAT4(0.2f, 0.2f, 1.0f, 1.0f));
+
+	m_ppMaterials[1] = Materials::CreateMagicMinionMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[1], &m_psrvGPUDescriptorStartHandle[1]);
+	m_ppMaterials[1]->SetAlbedo(XMFLOAT4(0.2f, 0.2f, 1.0f, 1.0f));
+
+	m_ppMaterials[2] = Materials::CreateBowMinionMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[2], &m_psrvGPUDescriptorStartHandle[2]);
+	m_ppMaterials[2]->SetAlbedo(XMFLOAT4(0.2f, 0.2f, 1.0f, 1.0f));
+
 	// Red
-	m_ppMaterials[1] = Materials::CreateMinionMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[0], &m_psrvGPUDescriptorStartHandle[0]);
-	m_ppMaterials[1]->SetAlbedo(XMFLOAT4(1.0f, 0.2f, 0.2f, 1.0f));
+	m_ppMaterials[3] = Materials::CreateSwordMinionMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[0], &m_psrvGPUDescriptorStartHandle[0]);
+	m_ppMaterials[3]->SetAlbedo(XMFLOAT4(1.0f, 0.2f, 0.2f, 1.0f));
+
+	m_ppMaterials[4] = Materials::CreateMagicMinionMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[1], &m_psrvGPUDescriptorStartHandle[1]);
+	m_ppMaterials[4]->SetAlbedo(XMFLOAT4(1.0f, 0.2f, 0.2f, 1.0f));
+
+	m_ppMaterials[5] = Materials::CreateBowMinionMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[2], &m_psrvGPUDescriptorStartHandle[2]);
+	m_ppMaterials[5]->SetAlbedo(XMFLOAT4(1.0f, 0.2f, 0.2f, 1.0f));
 #else
 	CMaterial *pCubeMaterial = Materials::CreateBrickMaterial(pCreateMgr, &m_srvCPUDescriptorStartHandle, &m_srvGPUDescriptorStartHandle);
 #endif
@@ -715,6 +749,10 @@ void CMinionShader::ReleaseObjects()
 			m_ppMinionMeshes[i]->Release();
 		}
 	}
+
+	if (m_possibleIndicies[ObjectType::SwordMinion]) Safe_Delete_Array(m_possibleIndicies[ObjectType::SwordMinion]);
+	if (m_possibleIndicies[ObjectType::StaffMinion]) Safe_Delete_Array(m_possibleIndicies[ObjectType::StaffMinion]);
+	if (m_possibleIndicies[ObjectType::BowMinion]) Safe_Delete_Array(m_possibleIndicies[ObjectType::BowMinion]);
 }
 
 void CMinionShader::CreatePathes()
@@ -733,15 +771,40 @@ void CMinionShader::CreatePathes()
 	}
 }
 
-int CMinionShader::GetPossibleIndex()
+int CMinionShader::GetPossibleIndex(ObjectType type)
 {
 	for (int idx = 0; idx < MAX_MINION; ++idx)
 	{
-		if (!m_indexArr[idx])
+		if (!m_possibleIndicies[type][idx])
 		{
-			m_indexArr[idx] = true;
-			return idx;
+			m_possibleIndicies[type][idx] = true;
+			if (type == ObjectType::SwordMinion)
+				return idx;
+			else if (type == ObjectType::StaffMinion)
+				return idx + MAX_MINION;
+			else if (type == ObjectType::BowMinion)
+				return idx + MAX_MINION * 2;
 		}
 	}
 	return NONE;
+}
+
+void CMinionShader::SetPossibleIndex(int idx, ObjectType type)
+{
+	if (type == ObjectType::SwordMinion)
+		m_possibleIndicies[type][idx] = true;
+	else if (type == ObjectType::StaffMinion)
+		m_possibleIndicies[type][idx - MAX_MINION] = true;
+	else if (type == ObjectType::BowMinion)
+		m_possibleIndicies[type][idx - MAX_MINION * 2] = true;
+}
+
+void CMinionShader::ResetPossibleIndex(int idx, ObjectType type)
+{
+	if (type == ObjectType::SwordMinion)
+		m_possibleIndicies[type][idx] = false;
+	else if (type == ObjectType::StaffMinion)
+		m_possibleIndicies[type][idx - MAX_MINION] = false;
+	else if (type == ObjectType::BowMinion)
+		m_possibleIndicies[type][idx - MAX_MINION * 2] = false;
 }
