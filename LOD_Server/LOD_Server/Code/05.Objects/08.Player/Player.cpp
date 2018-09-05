@@ -515,6 +515,27 @@ void CPlayer::ReceiveDamage(float damage, CCollisionObject * pCol)
 	}
 }
 
+void CPlayer::ChangeWeapon(UINT weaponNum, ObjectType type)
+{
+	m_StatusInfo.Weapon = weaponNum;
+	m_ObjectType = type;
+
+	if (type == ObjectType::SwordPlayer)
+	{
+
+	}
+	else if (type == ObjectType::StaffPlayer)
+	{
+
+	}
+	else if (type == ObjectType::BowPlayer)
+	{
+		// 대왕 화살 공격력 80%로 조정
+		m_StatusInfo.WSkillPower = 0.8f;
+		m_StatusInfo.WSkillPower = 0.55f;
+	}
+}
+
 void CPlayer::ApplySpecialStat(SpecialType curSP)
 {
 	if (m_ObjectType == ObjectType::SwordPlayer)
@@ -543,12 +564,13 @@ void CPlayer::ApplySwordSP(SpecialType curSP)
 		}
 		else if (curSP == SpecialType::DefenceSpecial)
 		{
-			m_StatusInfo.Def *= 1.3f;
+			m_StatusInfo.Def *= 1.5f;
 		}
 		else if (curSP == SpecialType::TechnicSpecial)
 		{
-			m_detectRange *= 1.15f;
-			m_sightRange *= 1.15f;
+			m_detectRange *= 1.5f;
+			m_sightRange *= 1.5f;
+			SendSightPacket();
 		}
 	}
 	else if (index == 1)
@@ -559,7 +581,7 @@ void CPlayer::ApplySwordSP(SpecialType curSP)
 		}
 		else if (curSP == SpecialType::DefenceSpecial)
 		{
-			m_StatusInfo.Def *= 1.25f;
+			m_StatusInfo.Def *= 2.5f;
 		}
 		else if (curSP == SpecialType::TechnicSpecial)
 		{
@@ -570,7 +592,7 @@ void CPlayer::ApplySwordSP(SpecialType curSP)
 	{
 		if (curSP == SpecialType::AttackSpecial)
 		{
-			m_StatusInfo.WSkillPower;
+			m_StatusInfo.WSkillPower *= 1.4f;
 		}
 		else if (curSP == SpecialType::DefenceSpecial)
 		{
@@ -626,8 +648,9 @@ void CPlayer::ApplyStaffSP(SpecialType curSP)
 		}
 		else if (curSP == SpecialType::TechnicSpecial)
 		{
-			m_detectRange *= 1.15f;
-			m_sightRange *= 1.15f;
+			m_detectRange *= 1.5f;
+			m_sightRange *= 1.5f;
+			SendSightPacket();
 		}
 	}
 	else if (index == 1)
@@ -706,12 +729,13 @@ void CPlayer::ApplyBowSP(SpecialType curSP)
 		}
 		else if (curSP == SpecialType::DefenceSpecial)
 		{
-			m_StatusInfo.Def *= 1.2f;
+			m_StatusInfo.Def *= 1.3f;
 		}
 		else if (curSP == SpecialType::TechnicSpecial)
 		{
-			m_detectRange *= 1.15f;
-			m_sightRange *= 1.15f;
+			m_detectRange *= 1.5f;
+			m_sightRange *= 1.5f;
+			SendSightPacket();
 		}
 	}
 	else if (index == 1)
@@ -722,9 +746,9 @@ void CPlayer::ApplyBowSP(SpecialType curSP)
 		}
 		else if (curSP == SpecialType::DefenceSpecial)
 		{
-			m_StatusInfo.Def *= 1.1f;
+			m_StatusInfo.Def *= 1.3f;
 			float hpPercent{ m_StatusInfo.HP / m_StatusInfo.maxHP };
-			m_StatusInfo.maxHP *= 1.2f;
+			m_StatusInfo.maxHP *= 1.5f;
 			m_StatusInfo.HP = m_StatusInfo.maxHP * hpPercent;
 		}
 		else if (curSP == SpecialType::TechnicSpecial)
@@ -790,6 +814,21 @@ void CPlayer::SendSpeedPacket(SpeedType type)
 	{
 		p.Changed_Speed = m_StatusInfo.AtkSpeed;
 	}
+	for (int j = 0; j < MAX_USER; ++j) {
+		if (g_clients[j].m_isconnected == true) {
+			SendPacket(j, &p);
+		}
+	}
+}
+
+void CPlayer::SendSightPacket()
+{
+	SC_Msg_Change_Sight p;
+	p.size = sizeof(p);
+	p.type = SC_CHANGE_SIGHT;
+	p.Target_Tag = (short)m_tag;
+	p.Changed_Detect_Range = m_detectRange;
+	p.Changed_Sight_Range = m_sightRange;
 	for (int j = 0; j < MAX_USER; ++j) {
 		if (g_clients[j].m_isconnected == true) {
 			SendPacket(j, &p);

@@ -36,6 +36,8 @@ public:	// 외부 함수
 	//virtual void SetObjectType(ObjectType type) { m_StatusInfo.WeaponType = type; };
 	virtual void ReceiveDamage(float damage, CCollisionObject * pCol);
 
+	virtual void ChangeWeapon(UINT weaponNum, ObjectType type);
+
 	virtual void ApplySpecialStat(SpecialType curSP);
 
 	void ApplySwordSP(SpecialType curSP);
@@ -43,15 +45,11 @@ public:	// 외부 함수
 	void ApplyBowSP(SpecialType curSP);
 
 	void SendSpeedPacket(SpeedType type);
+	void SendSightPacket();
 	
 	//virtual void ReceiveDamage(float damage) { m_StatusInfo.HP -= damage * Compute_Defence(m_StatusInfo.Def); }
 	UINT GetWeaponType() { return m_StatusInfo.Weapon; }
 	UINT GetWeaponNum() { return m_StatusInfo.WeaponNum; }
-
-	void SetWeaponData(UINT type, UINT num) {
-		m_StatusInfo.Weapon = type;
-		m_StatusInfo.WeaponNum = num;
-	}
 
 protected: // 내부 함수
 	virtual void AdjustAnimationIndex();
@@ -63,8 +61,6 @@ protected: // 내부 함수
 
 
 	*/
-
-	void SendMissilePacket(FlyingObjectType type);
 
 protected: // 변수
 	PlayerInfo m_StatusInfo;

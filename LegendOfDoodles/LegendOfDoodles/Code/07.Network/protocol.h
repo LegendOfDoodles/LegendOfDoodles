@@ -178,6 +178,13 @@ struct SC_Msg_Update_Golem_Stat : public Packet
 	float def;
 };
 
+struct SC_Msg_Change_Sight : public Packet
+{
+	short Target_Tag;
+	float Changed_Detect_Range;
+	float Changed_Sight_Range;
+};
+
 struct SC_Msg_Update_Tower_Stat : public Packet
 {
 	short Tower_Tag;
@@ -283,6 +290,7 @@ struct SC_Msg_Sync_Time : public Packet
 //enum class Type : BYTE { Connect, Create, Delete, Move, Attack, Hit };
 //Server-> Client
 #define SC_PLAYER_RESPAWN		  1
+#define SC_CHANGE_SIGHT			  2
 #define SC_UPDATE_TOWER_STAT	  3
 #define SC_COOLTIME				  4
 #define SC_CHANGE_SPEED			  5

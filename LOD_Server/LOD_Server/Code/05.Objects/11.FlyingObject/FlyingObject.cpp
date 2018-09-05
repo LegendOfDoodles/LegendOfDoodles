@@ -7,7 +7,7 @@
 /// 목적: 날아가는(스킬, 화살 등) 오브젝트 처리 클래스
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-08-03
+/// 최종 수정 날짜: 2018-09-05
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -99,9 +99,10 @@ void CFlyingObject::Animate(float timeElapsed)
 
 		if (m_EffectTriger && m_distance > m_maxDistance * 0.5f)
 		{
+			// 스킬 돌아올 때 데미지 증가 적용
 			m_direction = Vector3::ScalarProduct(m_direction, -1);
 			Rotate(180.0f, 0, 0.0f);
-			m_damage *= 2.0f;
+			m_damage *= 1.3f;
 			m_EffectTriger = false;
 		}
 
@@ -165,14 +166,14 @@ void CFlyingObject::SetFlyingObjectsType(FlyingObjectType type)
 		m_distance = 0.0f;
 		m_EffectTriger = true;
 		m_maxDistance = CONVERT_PaperUnit_to_InG(30);
-		m_speed = CONVERT_cm_to_InG(3.355f);
+		m_speed = CONVERT_cm_to_InG(7.355f);
 	}
 	else if (type == FlyingObjectType::Minion_Magic)
 	{
 		m_attackRange = CONVERT_PaperUnit_to_InG(2.5f);
 		m_distance = 0.0f;
 		m_maxDistance = CONVERT_PaperUnit_to_InG(24);
-		m_speed = CONVERT_cm_to_InG(2.148f);
+		m_speed = CONVERT_cm_to_InG(3.68f);
 	}
 	else if (type == FlyingObjectType::BlueTower_Attack)
 	{
@@ -193,7 +194,7 @@ void CFlyingObject::SetFlyingObjectsType(FlyingObjectType type)
 		m_EffectTriger = true;
 		m_SoundTrigier = true;
 		m_maxDistance = CONVERT_PaperUnit_to_InG(40);
-		m_speed = CONVERT_cm_to_InG(7.22f);
+		m_speed = CONVERT_cm_to_InG(8.67f);
 	}
 	else if (type == FlyingObjectType::Player_MagicSkill_Q)
 	{
@@ -216,7 +217,7 @@ void CFlyingObject::SetFlyingObjectsType(FlyingObjectType type)
 		m_distance = 0.0f;
 		m_SoundTrigier = true;
 		m_maxDistance = CONVERT_PaperUnit_to_InG(50);
-		m_speed = CONVERT_cm_to_InG(3.305f);
+		m_speed = CONVERT_cm_to_InG(5.305f);
 	}
 	else if (type == FlyingObjectType::Player_ArrowSkill_E)
 	{
@@ -231,8 +232,8 @@ void CFlyingObject::SetFlyingObjectsType(FlyingObjectType type)
 		m_attackRange = CONVERT_PaperUnit_to_InG(17);
 		m_distance = 0.0f;
 		m_SoundTrigier = true;
-		m_maxDistance = CONVERT_PaperUnit_to_InG(44);
-		m_speed = CONVERT_cm_to_InG(9.05f);
+		m_maxDistance = CONVERT_PaperUnit_to_InG(40);
+		m_speed = CONVERT_cm_to_InG(18.7f);
 	}
 	else if (type == FlyingObjectType::Player_MagicSkill_R)
 	{
