@@ -7,7 +7,7 @@
 /// 목적: 날아다니는(화살 등) 오브젝트 그리기 용도의 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-08-15
+/// 최종 수정 날짜: 2018-09-05
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -183,7 +183,7 @@ void CFlyingShader::BuildObjects(void *pContext)
 
 	int accCnt{ 0 };
 
-	for (int i = 0; i < m_nMesh; ++i)
+	for (int i = 0; i < m_objectsMaxCount.size(); ++i)
 	{
 		m_objectsIndices[objectOrder[i]] = FlyingObjectIndices();
 		m_objectsIndices[objectOrder[i]].m_begIndex = accCnt;

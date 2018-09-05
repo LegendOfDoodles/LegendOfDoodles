@@ -199,7 +199,7 @@ struct PlayerInfo
 	float maxMP{ 500 };
 	float MP{ 150 };
 
-	float Atk{ 150 };
+	float Atk{ 110 };
 	float Def{ 60 };
 
 	float QSkillCoolTime{ COOLTIME_SKILL_Q };

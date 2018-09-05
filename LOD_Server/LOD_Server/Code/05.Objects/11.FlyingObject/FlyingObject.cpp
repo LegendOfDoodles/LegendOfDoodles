@@ -173,19 +173,19 @@ void CFlyingObject::SetFlyingObjectsType(FlyingObjectType type)
 		m_attackRange = CONVERT_PaperUnit_to_InG(2.5f);
 		m_distance = 0.0f;
 		m_maxDistance = CONVERT_PaperUnit_to_InG(24);
-		m_speed = CONVERT_cm_to_InG(3.68f);
+		m_speed = CONVERT_cm_to_InG(4.93f);
 	}
 	else if (type == FlyingObjectType::BlueTower_Attack)
 	{
 		m_SoundTrigier = true;
 		m_attackRange = CONVERT_PaperUnit_to_InG(20);
-		m_speed = CONVERT_cm_to_InG(4.733f);
+		m_speed = CONVERT_cm_to_InG(6.3f);
 	}
 	else if (type == FlyingObjectType::RedTower_Attack)
 	{
 		m_SoundTrigier = true;
 		m_attackRange = CONVERT_PaperUnit_to_InG(20);
-		m_speed = CONVERT_cm_to_InG(4.733f);
+		m_speed = CONVERT_cm_to_InG(6.3f);
 	}
 	else if (type == FlyingObjectType::Player_Arrow)
 	{
@@ -247,7 +247,7 @@ void CFlyingObject::SetFlyingObjectsType(FlyingObjectType type)
 		m_distance = 0.0f;
 		m_EffectTriger = true;
 		m_maxDistance = CONVERT_PaperUnit_to_InG(36);
-		m_speed = CONVERT_cm_to_InG(3.52f);
+		m_speed = CONVERT_cm_to_InG(7.72f);
 	}
 }
 

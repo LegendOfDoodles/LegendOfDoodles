@@ -419,33 +419,6 @@ void CPlayer::Respawn()
 	}
 }
 
-void CPlayer::SetType(ObjectType newObjectType)
-{
-	m_ObjectType = newObjectType;
-
-	if (m_ObjectType == ObjectType::SwordPlayer)
-	{
-		m_StatusInfo.QSkillPower = 2.5f;
-		m_StatusInfo.WSkillPower = 3.5f;
-		m_StatusInfo.ESkillPower = 5.0f;
-		m_StatusInfo.RSkillPower = 7.6f;
-	}
-	else if (m_ObjectType == ObjectType::StaffPlayer)
-	{
-		m_StatusInfo.QSkillPower = 2.5f;
-		m_StatusInfo.WSkillPower = 3.5f;
-		m_StatusInfo.ESkillPower = 5.0f;
-		m_StatusInfo.RSkillPower = 7.6f;
-	}
-	else if (m_ObjectType == ObjectType::BowPlayer)
-	{
-		m_StatusInfo.QSkillPower = 2.5f;
-		m_StatusInfo.WSkillPower = 3.5f;
-		m_StatusInfo.ESkillPower = 5.0f;
-		m_StatusInfo.RSkillPower = 7.6f;
-	}
-}
-
 void CPlayer::SendCoolTime(int id)
 {
 	SC_Msg_Cooltime_Percent p;
@@ -522,17 +495,30 @@ void CPlayer::ChangeWeapon(UINT weaponNum, ObjectType type)
 
 	if (type == ObjectType::SwordPlayer)
 	{
+		m_StatusInfo.Atk *= 0.9f;
 
+		m_StatusInfo.QSkillPower = 1.13;
+		m_StatusInfo.WSkillPower = 1.27f;
+		m_StatusInfo.ESkillPower = 1.42f;
+		m_StatusInfo.RSkillPower = 2.3f;
 	}
 	else if (type == ObjectType::StaffPlayer)
 	{
+		m_StatusInfo.Atk *= 1.4f;
 
+		m_StatusInfo.QSkillPower = 1.02f;
+		m_StatusInfo.WSkillPower = 1.15f;
+		m_StatusInfo.ESkillPower = 1.29f;
+		m_StatusInfo.RSkillPower = 1.64f;
 	}
 	else if (type == ObjectType::BowPlayer)
 	{
-		// 대왕 화살 공격력 80%로 조정
-		m_StatusInfo.WSkillPower = 0.8f;
-		m_StatusInfo.WSkillPower = 0.55f;
+		m_StatusInfo.Atk *= 1.5f;
+
+		m_StatusInfo.QSkillPower = 1.12f;
+		m_StatusInfo.WSkillPower = 0.9f;
+		m_StatusInfo.ESkillPower = 0.82f;
+		m_StatusInfo.RSkillPower = 2.3f;
 	}
 }
 

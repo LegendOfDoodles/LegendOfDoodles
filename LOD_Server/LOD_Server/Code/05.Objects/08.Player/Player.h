@@ -27,8 +27,6 @@ public:	// 외부 함수
 	void SaveCurrentState();
 	void Respawn();
 
-	virtual void SetType(ObjectType newObjectType);
-
 	virtual void SendCoolTime(int id);
 
 	virtual PlayerInfo* GetPlayerStatus() { return &m_StatusInfo; }
