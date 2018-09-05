@@ -83,7 +83,6 @@ void CMinionHPGaugeShader::SetCamera(CCamera * pCamera)
 
 	for (auto iter = m_HPGaugeObjectList.begin(); iter != m_HPGaugeObjectList.end(); ++iter) {
 
-
 		static_cast<CGaugeObject*>(*iter)->SetCamera(m_pCamera);
 	}
 }
