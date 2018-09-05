@@ -296,11 +296,7 @@ void CEffectObject::SetEffectObjectsType(EffectObjectType type)
 
 	m_AnimaitonTime = 0.0f;
 
-	if (m_EffectObjectType == EffectObjectType::Flying_MinionArrow_Effect)
-	{
-		m_speed = MINION_ARROW_SPEED;
-	}
-	else if (m_EffectObjectType == EffectObjectType::Flying_PlayerArrow_Effect)
+	if (m_EffectObjectType == EffectObjectType::Flying_PlayerArrow_Effect)
 	{
 		m_speed = PLAYER_ESKILL_ARROW_SPEED;
 	}

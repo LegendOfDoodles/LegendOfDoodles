@@ -173,8 +173,7 @@ void ProcessPacket(int id, char *packet)
 	}
 	case CS_CHANGE_WEAPON:
 	{
-		g_ppPlayer[WeaponPacket->Character_id]->GetPlayerStatus()->Weapon = WeaponPacket->WeaponNum;
-		g_ppPlayer[WeaponPacket->Character_id]->SetType((ObjectType)WeaponPacket->ObjectType);
+		g_ppPlayer[WeaponPacket->Character_id]->ChangeWeapon(WeaponPacket->WeaponNum, (ObjectType)WeaponPacket->ObjectType);
 		g_pScene->GetShader(1)->SetPlayerAnimation((ObjectType)WeaponPacket->ObjectType, WeaponPacket->Character_id);
 
 		for (int i = 0; i < MAX_USER; ++i)
@@ -197,6 +196,7 @@ void ProcessPacket(int id, char *packet)
 		for (int i = 0; i < 4; ++i) {
 			if (g_ppPlayer[SpeacialPacket->Character_id]->GetPlayerStatus()->Special[i] == (SpecialType::NoSelected)) {
 				g_ppPlayer[SpeacialPacket->Character_id]->GetPlayerStatus()->Special[i] = (SpecialType)SpeacialPacket->Ability_Type;
+				g_ppPlayer[SpeacialPacket->Character_id]->ApplySpecialStat((SpecialType)SpeacialPacket->Ability_Type);
 				idx = i;
 				break;
 			}

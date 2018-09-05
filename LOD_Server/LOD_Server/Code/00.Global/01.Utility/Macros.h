@@ -105,7 +105,7 @@
 #define INCREASE_MINION_EXP 5
 
 //방어력 적용 공식----------------
-#define Compute_Defence(val) (100)/(100+val)
+#define Compute_Defence(val) (100.f)/(100.f + val)
 
 
 // 플레이어 무기별 증가량-----------

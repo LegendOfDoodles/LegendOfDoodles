@@ -313,6 +313,13 @@ void CNetwork::ProcessPacket(char *ptr)
 			Golem->SetCommonStatus(my_packet->maxHP, my_packet->atk, my_packet->def);
 			break;
 		}
+		case SC_CHANGE_SIGHT:
+		{
+			SC_Msg_Change_Sight* my_packet = reinterpret_cast<SC_Msg_Change_Sight*>(ptr);
+			CCollisionObject* Player{ m_pColManager->RequestPlayerByTag(my_packet->Target_Tag) };
+			if(Player) Player->SetSightRanges(my_packet->Changed_Detect_Range, my_packet->Changed_Sight_Range);
+			break;
+		}
 		case SC_UPDATE_TOWER_STAT:
 		{
 			SC_Msg_Update_Tower_Stat* my_packet = reinterpret_cast<SC_Msg_Update_Tower_Stat*>(ptr);

@@ -85,6 +85,8 @@ public: // 공개 함수
 	virtual FlyingObjectType GetFlyingObjectsType() { return FlyingObjectType::Roider_Dumbel; }
 	virtual EffectObjectType GetEffetObjectsType() { return EffectObjectType::Player_SwordSkill_Q_Effect; }
 
+	void SetSightRanges(float detectRange, float sightRange) { m_detectRange = detectRange; m_sightRange = sightRange; }
+
 	float GetDetectRange() { return m_detectRange; }
 	float GetSightRange() { return m_sightRange; }
 
