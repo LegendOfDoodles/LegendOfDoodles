@@ -7,7 +7,7 @@
 /// 목적: 길찾기 알고리즘을 위한 클래스 작성
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-08-29
+/// 최종 수정 날짜: 2018-09-05
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -126,13 +126,16 @@ XMFLOAT2 CWayFinder::GetClosestNotCollidePos(const XMFLOAT2 & source, const XMFL
 
 	do
 	{
-		for (float checker = -NODE_SIZE; checker < NODE_SIZE; checker += CONVERT_PaperUnit_to_InG(1))
+		for (float yChecker = -NODE_SIZE; yChecker < NODE_SIZE; yChecker += CONVERT_PaperUnit_to_InG(1))
 		{
-			if (m_pCollisionMapImage->GetCollision(curPos.x, curPos.y + checker)) return XMFLOAT2(curPos.x, curPos.y + checker);
-			if (m_pCollisionMapImage->GetCollision(curPos.x + checker, curPos.y)) return XMFLOAT2(curPos.x + checker, curPos.y);
-			if (m_pCollisionMapImage->GetCollision(curPos.x - checker, curPos.y + checker)) return XMFLOAT2(curPos.x - checker, curPos.y + checker);
-			if (m_pCollisionMapImage->GetCollision(curPos.x + checker, curPos.y - checker)) return XMFLOAT2(curPos.x + checker, curPos.y - checker);
-			if (m_pCollisionMapImage->GetCollision(curPos.x + checker, curPos.y + checker)) return XMFLOAT2(curPos.x + checker, curPos.y + checker);
+			for (float xChecker = -NODE_SIZE; xChecker < NODE_SIZE; xChecker += CONVERT_PaperUnit_to_InG(1))
+			{
+				if (!m_pCollisionMapImage->GetCollision(curPos.x, curPos.y + yChecker)) return XMFLOAT2(curPos.x, curPos.y + yChecker);
+				if (!m_pCollisionMapImage->GetCollision(curPos.x + xChecker, curPos.y)) return XMFLOAT2(curPos.x + xChecker, curPos.y);
+				if (!m_pCollisionMapImage->GetCollision(curPos.x - xChecker, curPos.y + yChecker)) return XMFLOAT2(curPos.x - xChecker, curPos.y + yChecker);
+				if (!m_pCollisionMapImage->GetCollision(curPos.x + xChecker, curPos.y - yChecker)) return XMFLOAT2(curPos.x + xChecker, curPos.y - yChecker);
+				if (!m_pCollisionMapImage->GetCollision(curPos.x + xChecker, curPos.y + yChecker)) return XMFLOAT2(curPos.x + xChecker, curPos.y + yChecker);
+			}
 		}
 		curPos = Vector2::Add(curPos, addVal);
 	} while (Vector2::DistanceSquare(curPos, target) > NODE_SIZE_SQR);
@@ -145,23 +148,46 @@ XMFLOAT3 CWayFinder::GetClosestNotCollidePos(const XMFLOAT3 & source, const XMFL
 	return XMFLOAT3(result.x, 0, result.y);
 }
 
+XMFLOAT2 CWayFinder::GetClosestNotCollidePos(const XMFLOAT2 & source)
+{
+	// Source 기준으로 가장 가까운 충돌하지 않는 위치를 찾는다.
+	int cnt{ 1 };
+	while (true)
+	{
+		for (float yChecker = -NODE_SIZE * cnt; yChecker < NODE_SIZE * cnt; yChecker += CONVERT_PaperUnit_to_InG(1))
+		{
+			for (float xChecker = -NODE_SIZE * cnt; xChecker < NODE_SIZE * cnt; xChecker += CONVERT_PaperUnit_to_InG(1))
+			{
+				if (!m_pCollisionMapImage->GetCollision(source.x, source.y + yChecker)) return XMFLOAT2(source.x, source.y + yChecker);
+				if (!m_pCollisionMapImage->GetCollision(source.x + xChecker, source.y)) return XMFLOAT2(source.x + xChecker, source.y);
+				if (!m_pCollisionMapImage->GetCollision(source.x - xChecker, source.y + yChecker)) return XMFLOAT2(source.x - xChecker, source.y + yChecker);
+				if (!m_pCollisionMapImage->GetCollision(source.x + xChecker, source.y - yChecker)) return XMFLOAT2(source.x + xChecker, source.y - yChecker);
+				if (!m_pCollisionMapImage->GetCollision(source.x + xChecker, source.y + yChecker)) return XMFLOAT2(source.x + xChecker, source.y + yChecker);
+			}
+		}
+		cnt++;
+	}
+
+	return XMFLOAT2();
+}
+
+XMFLOAT3 CWayFinder::GetClosestNotCollidePos(const XMFLOAT3 & source)
+{
+	XMFLOAT2 result{ GetClosestNotCollidePos(XMFLOAT2(source.x, source.z)) };
+	return XMFLOAT3(result.x, 0, result.y);
+}
+
 Path *CWayFinder::GetPathToPosition(const XMFLOAT2 &source, const XMFLOAT2 &target)
 {
 	Path *path{ nullptr };
 
-	XMFLOAT2 adjSource{ source }, adjTarget{ target };
+	XMFLOAT2 adjSource{ GetClosestNotCollidePos(source) }, adjTarget{ GetClosestNotCollidePos(target) };
 
 	// 시작지와 끝 지점에서 가장 가까운 노드 검색
-	int srcIndex = FindClosestNodeIndexWithPosition(source);
+	int srcIndex = FindClosestNodeIndexWithPosition(adjSource);
 	if (srcIndex == INVALID_NODE) return nullptr;
-	int dstIndex = FindClosestNodeIndexWithPosition(target);
+	int dstIndex = FindClosestNodeIndexWithPosition(adjTarget);
 	if (dstIndex == INVALID_NODE) return nullptr;
-
-	// 도착지가 충돌체 위인 경우 도착지를 충돌이 없는 가장 가까운 위치로 변경한다.
-	if (m_pCollisionMapImage->GetCollision(source.x, source.y))
-		adjSource = GetClosestNotCollidePos(source, m_nodes[srcIndex].Position());
-	if (m_pCollisionMapImage->GetCollision(target.x, target.y))
-		adjTarget = GetClosestNotCollidePos(target, m_nodes[dstIndex].Position());
 
 	// 바로 근처면 이동하지 않음
 	if (Vector2::DistanceSquare(adjSource, adjTarget) < NODE_SIZE_SQR)

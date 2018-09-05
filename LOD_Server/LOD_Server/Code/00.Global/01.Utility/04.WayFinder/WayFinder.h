@@ -25,6 +25,8 @@ public: // 공개 함수
 	bool CanGoDirectly(const XMFLOAT3 &source, const XMFLOAT3 &target);
 	XMFLOAT2 GetClosestNotCollidePos(const XMFLOAT2 &source, const XMFLOAT2 &target);
 	XMFLOAT3 GetClosestNotCollidePos(const XMFLOAT3 &source, const XMFLOAT3 &target);
+	XMFLOAT2 GetClosestNotCollidePos(const XMFLOAT2 &source);
+	XMFLOAT3 GetClosestNotCollidePos(const XMFLOAT3 &source);
 	Path *GetPathToPosition(const XMFLOAT2 &source, const XMFLOAT2 &target);
 	Path *GetPathToPosition(const XMFLOAT3 &source, const XMFLOAT3 &target);
 	Path *GetPathToPosition(const XMFLOAT3 &source, const XMFLOAT2 &target);
