@@ -420,14 +420,19 @@ void timer_thread()
 {
 	static int CoolTimeSync{ 0 };
 	static int GameTimeSync{ 0 };
+	static int StatusTimeChecker{ 0 };
 	//if (g_Clientsync)
 	while (1)
 	{
 		Sleep(10);
 		g_PacketCoolTime += 10;
 		CoolTimeSync += 10;
-		if (g_GameTime > 10 && static_cast<int>(g_GameTime) % 60 == 0)
+		StatusTimeChecker += 10;
+
+		if (StatusTimeChecker >= 6000)
 		{
+			StatusTimeChecker = 0;
+
 			g_BowMinionStat.maxHP += 15;
 			g_BowMinionStat.Atk += 2;
 			g_BowMinionStat.Def += 1;
