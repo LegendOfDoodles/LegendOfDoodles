@@ -395,6 +395,32 @@ void CNetwork::ProcessPacket(char *ptr)
 			m_pNumberShader->SyncTime(my_packet->Game_Time);
 			break;
 		}
+		case SC_CHANGE_RANGE:
+		{
+			SC_Msg_Change_Range* my_packet = reinterpret_cast<SC_Msg_Change_Range*>(ptr);
+			CCollisionObject* Player{ m_pColManager->RequestPlayerByTag(my_packet->Target_Tag) };
+			if ((SpeedType)my_packet->Range_Type == RangeType::AtkRange)
+			{
+				Player->GetPlayerStatus()->AtkRange = my_packet->Changed_Range;
+			}
+			else if ((SpeedType)my_packet->Range_Type == RangeType::QSkillRange)
+			{
+				Player->GetPlayerStatus()->QSkillRange = my_packet->Changed_Range;
+			}
+			else if ((SpeedType)my_packet->Range_Type == RangeType::WSkillRange)
+			{
+				Player->GetPlayerStatus()->WSkillRange = my_packet->Changed_Range;
+			}
+			else if ((SpeedType)my_packet->Range_Type == RangeType::ESkillRange)
+			{
+				Player->GetPlayerStatus()->ESkillRange = my_packet->Changed_Range;
+			}
+			else if ((SpeedType)my_packet->Range_Type == RangeType::RSkillRange)
+			{
+				Player->GetPlayerStatus()->RSkillRange = my_packet->Changed_Range;
+			}
+			break;
+		}
 		default:
 			printf("Unknown PACKET type [%d]\n", ptr[1]);
 			break;

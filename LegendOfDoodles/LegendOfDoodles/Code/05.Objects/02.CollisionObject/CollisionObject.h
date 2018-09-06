@@ -101,6 +101,8 @@ public: // 공개 함수
 	void SetTag(short id) { m_tag = id; }
 	short GetTag() { return m_tag; }
 
+	void ApplyAtkRange(float adjRange) { m_attackRange *= adjRange; }
+
 	void SetUpdateTime(float updatetime) { m_updatetime = updatetime; }
 	float GetUpdateTime() { return m_updatetime; }
 

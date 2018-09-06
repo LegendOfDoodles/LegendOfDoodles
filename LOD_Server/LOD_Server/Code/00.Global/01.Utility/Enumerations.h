@@ -4,7 +4,7 @@
 /// 목적: 여러 지점에서 사용할 나열형 데이터를 통합 관리한다.
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-08-03
+/// 최종 수정 날짜: 2018-09-06
 /// </summary>
 
 namespace States
@@ -191,6 +191,14 @@ enum SpeedType {
 	AttackSpeed
 };
 
+enum RangeType {
+	AtkRange,
+	QSkillRange,
+	WSkillRange,
+	ESkillRange,
+	RSkillRange,
+};
+
 struct PlayerInfo
 {
 	float maxHP{ 1500 };
@@ -220,6 +228,10 @@ struct PlayerInfo
 	float WSkillRange{ 1.0f };
 	float ESkillRange{ 1.0f };
 	float RSkillRange{ 1.0f };
+
+	float EvationRate{ 0.0f };	// 공격 회피율
+	float AbsorptionRate{ 0.0f };	// 공격 흡수율
+	float AbsorptionAmount{ 0.0f };	// 공격 흡수량
 
 	//0. 몽둥이	1. 검	2. 마법	3.	활
 	UINT Weapon{ 0 };

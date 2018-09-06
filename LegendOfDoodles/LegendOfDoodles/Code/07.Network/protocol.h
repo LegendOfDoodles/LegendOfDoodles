@@ -272,6 +272,13 @@ struct SC_Msg_Sync_Time : public Packet
 	float Game_Time;
 };
 
+struct SC_Msg_Change_Range : public Packet
+{
+	short Target_Tag;
+	BYTE Range_Type;
+	float Changed_Range;
+};
+
 #pragma pack(pop)
 
 #define MAX_BUFF_SIZE 4000
@@ -297,6 +304,7 @@ struct SC_Msg_Sync_Time : public Packet
 #define SC_SET_PLAYER_DEATH		  6
 #define SC_SET_PLAYER_KILL		  7
 #define SC_SYNC_TIME			  8
+#define SC_CHANGE_RANGE			  9
 
 #define SC_CONNECT_PLAYER		  101
 #define SC_PUT_PLAYER			  102

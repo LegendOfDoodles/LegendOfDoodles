@@ -39,11 +39,12 @@ public:	// 외부 함수
 	virtual void ApplySpecialStat(SpecialType curSP);
 
 	void ApplySwordSP(SpecialType curSP);
-	void ApplyStaffSP(SpecialType curSP);
 	void ApplyBowSP(SpecialType curSP);
+	void ApplyStaffSP(SpecialType curSP);
 
 	void SendSpeedPacket(SpeedType type);
 	void SendSightPacket();
+	void SendRangePacket(RangeType type);
 	
 	//virtual void ReceiveDamage(float damage) { m_StatusInfo.HP -= damage * Compute_Defence(m_StatusInfo.Def); }
 	UINT GetWeaponType() { return m_StatusInfo.Weapon; }

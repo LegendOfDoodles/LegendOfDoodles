@@ -9,7 +9,7 @@
 /// 목적: 날아다니는(화살 등) 오브젝트 그리기 용도의 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-08-22
+/// 최종 수정 날짜: 2018-09-06
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -232,7 +232,7 @@ void CFlyingShader::Render(CCamera *pCamera)
 	}
 }
 
-void CFlyingShader::SpawnFlyingObject(const XMFLOAT3& position, const XMFLOAT3& direction, TeamType teamType, FlyingObjectType objectType, float damage)
+void CFlyingShader::SpawnFlyingObject(const XMFLOAT3& position, const XMFLOAT3& direction, TeamType teamType, FlyingObjectType objectType, float damage, float rangeAdj)
 {
 	FlyingObjectType adjObjectType{ objectType };
 
@@ -253,6 +253,7 @@ void CFlyingShader::SpawnFlyingObject(const XMFLOAT3& position, const XMFLOAT3& 
 		m_ppObjects[idx]->SetDirection(direction);
 		m_ppObjects[idx]->SetFlyingObjectsType(objectType);
 		m_ppObjects[idx]->SetDamage(damage);
+		m_ppObjects[idx]->ApplyAtkRange(rangeAdj);
 		m_ppObjects[idx]->ResetCollisionLevel();
 		m_ppObjects[idx]->Activate();
 		int adjIdx{ idx - m_objectsIndices[adjObjectType].m_begIndex };

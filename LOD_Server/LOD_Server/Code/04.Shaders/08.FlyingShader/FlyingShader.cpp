@@ -61,13 +61,13 @@ void CFlyingShader::SpawnFlyingObject(const XMFLOAT3& position, const XMFLOAT3& 
 
 	if (idx != NONE)
 	{
-		m_ppObjects[idx]->ApplyAtkRange(rangeAdj);
 		m_ppObjects[idx]->ResetWorldMatrix();
 		m_ppObjects[idx]->SaveIndex(idx);
 		m_ppObjects[idx]->SetTeam(teamType);
 		m_ppObjects[idx]->SetDirection(direction);
 		m_ppObjects[idx]->SetFlyingObjectsType(objectType);
 		m_ppObjects[idx]->SetDamage(damage);
+		m_ppObjects[idx]->ApplyAtkRange(rangeAdj);
 		m_ppObjects[idx]->ResetCollisionLevel();
 		m_ppObjects[idx]->Activate();
 		if (objectType == FlyingObjectType::Roider_Dumbel)

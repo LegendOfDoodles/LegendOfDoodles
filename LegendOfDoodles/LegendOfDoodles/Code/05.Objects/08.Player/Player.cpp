@@ -85,14 +85,14 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_Magic, m_StatusInfo.Atk);
+				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_Magic, m_StatusInfo.Atk, m_StatusInfo.AtkRange);
 				m_pSoundMgr->play(SOUND::Player_Staff_Attack_Sound, GetPosition());
 			}
 			else if (m_nCurrAnimation == Animations::SkillQ &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_MagicSkill_Q, m_StatusInfo.Atk);
+				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_MagicSkill_Q, m_StatusInfo.Atk, m_StatusInfo.QSkillRange);
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_StaffQSkill_Effect);
 				m_pSoundMgr->play(SOUND::Player_Staff_Q_Sound, GetPosition());
 			}
@@ -116,7 +116,7 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.666f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.666f)
 			{
-				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_MagicSkill_R, m_StatusInfo.Atk);
+				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_MagicSkill_R, m_StatusInfo.Atk, m_StatusInfo.RSkillRange);
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_StaffAttack_Effect);
 			}
 		}
@@ -126,14 +126,14 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_Arrow, m_StatusInfo.Atk);
+				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_Arrow, m_StatusInfo.Atk, m_StatusInfo.AtkRange);
 				m_pSoundMgr->play(SOUND::Player_Arrow_Attack_Sound, GetPosition());
 			}
 			else if (m_nCurrAnimation == Animations::SkillQ &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_ArrowSkill_Q, m_StatusInfo.Atk);
+				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_ArrowSkill_Q, m_StatusInfo.Atk, m_StatusInfo.QSkillRange);
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_ArrowAttack_Effect);
 				m_pSoundMgr->play(SOUND::Player_Arrow_Q_Sound, GetPosition());
 			}
@@ -141,7 +141,7 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_ArrowSkill_W, m_StatusInfo.Atk);
+				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_ArrowSkill_W, m_StatusInfo.Atk, m_StatusInfo.WSkillRange);
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_ArrowAttack_Effect);
 				m_pSoundMgr->play(SOUND::Player_Arrow_W_Sound, GetPosition());
 			}
@@ -149,7 +149,7 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_ArrowSkill_E, m_StatusInfo.Atk);
+				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_ArrowSkill_E, m_StatusInfo.Atk, m_StatusInfo.ESkillRange);
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_ArrowAttack_Effect);
 				m_pSoundMgr->play(SOUND::Player_Arrow_E_Sound, GetPosition());
 			}
@@ -157,7 +157,7 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_ArrowSkill_R, m_StatusInfo.Atk);
+				m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, FlyingObjectType::Player_ArrowSkill_R, m_StatusInfo.Atk, m_StatusInfo.RSkillRange);
 				m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), m_nAniLength[m_nAniIndex], EffectObjectType::Player_ArrowAttack_Effect);
 				m_pSoundMgr->play(SOUND::Player_Arrow_R_Sound, GetPosition());
 			}
