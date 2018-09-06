@@ -513,7 +513,7 @@ void CPlayer::ChangeWeapon(UINT weaponNum, ObjectType type)
 	{
 		m_StatusInfo.Atk *= 0.9f;
 
-		m_StatusInfo.QSkillPower = 1.13;
+		m_StatusInfo.QSkillPower = 1.13f;
 		m_StatusInfo.WSkillPower = 1.27f;
 		m_StatusInfo.ESkillPower = 1.42f;
 		m_StatusInfo.RSkillPower = 2.3f;
@@ -587,7 +587,7 @@ void CPlayer::ApplySwordSP(SpecialType curSP)
 		}
 		else if (curSP == SpecialType::TechnicSpecial)
 		{
-			m_StatusInfo.WSkillCoolTime *= 0.5f;
+			m_StatusInfo.QSkillCoolTime *= 0.5f;
 		}
 	}
 	else if (index == 2)
