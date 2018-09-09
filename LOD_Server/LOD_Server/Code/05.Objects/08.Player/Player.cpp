@@ -594,7 +594,11 @@ void CPlayer::ApplySwordSP(SpecialType curSP)
 	{
 		if (curSP == SpecialType::AttackSpecial)
 		{
-			m_StatusInfo.WSkillPower *= 1.4f;
+			m_StatusInfo.WSkillPower *= 1.3f;
+			m_StatusInfo.ESkillPower *= 1.3f;
+
+			m_StatusInfo.WSkillCoolTime *= 1.1f;
+			m_StatusInfo.ESkillCoolTime *= 1.1f;
 		}
 		else if (curSP == SpecialType::DefenceSpecial)
 		{
@@ -603,7 +607,10 @@ void CPlayer::ApplySwordSP(SpecialType curSP)
 		}
 		else if (curSP == SpecialType::TechnicSpecial)
 		{
-			m_StatusInfo.RSkillCoolTime *= 0.5f;
+			m_StatusInfo.RSkillRange *= 2.f;
+			SendRangePacket(RangeType::RSkillRange);
+
+			m_StatusInfo.RSkillCoolTime *= 1.2f;
 		}
 	}
 	else if (index == 3)
@@ -611,21 +618,33 @@ void CPlayer::ApplySwordSP(SpecialType curSP)
 		if (curSP == SpecialType::AttackSpecial)
 		{
 			m_StatusInfo.Atk *= 1.5f;
-			m_StatusInfo.QSkillPower *= 1.5f;
-			m_StatusInfo.WSkillPower *= 1.5f;
-			m_StatusInfo.ESkillPower *= 1.5f;
-			m_StatusInfo.RSkillPower *= 1.5f;
+			m_StatusInfo.RSkillPower *= 2.0f;
+
+			m_StatusInfo.AtkSpeed *= 0.85f;
+			SendSpeedPacket(SpeedType::AttackSpeed);
+
+			float hpPercent{ m_StatusInfo.HP / m_StatusInfo.maxHP };
+			m_StatusInfo.maxHP *= 0.4f;
+			m_StatusInfo.HP = m_StatusInfo.maxHP * hpPercent;
 		}
 		else if (curSP == SpecialType::DefenceSpecial)
 		{
 			float hpPercent{ m_StatusInfo.HP / m_StatusInfo.maxHP };
 			m_StatusInfo.maxHP *= 2.0f;
 			m_StatusInfo.HP = m_StatusInfo.maxHP * hpPercent;
+
+			m_StatusInfo.Def *= 1.3f;
+
+			m_StatusInfo.WalkSpeed *= 0.8f;
+			SendSpeedPacket(SpeedType::WalkSpeed);
 		}
 		else if (curSP == SpecialType::TechnicSpecial)
 		{
-			m_StatusInfo.WSkillCoolTime *= 0.1f;
-			m_StatusInfo.WSkillPower *= 0.4f;
+			m_StatusInfo.QSkillCoolTime *= 0.5f;
+			m_StatusInfo.WSkillCoolTime *= 0.5f;
+
+			m_StatusInfo.QSkillPower *= 0.85f;
+			m_StatusInfo.WSkillPower *= 0.8f;
 		}
 	}
 
@@ -645,7 +664,6 @@ void CPlayer::ApplyBowSP(SpecialType curSP)
 		else if (curSP == SpecialType::DefenceSpecial)
 		{
 			m_StatusInfo.EvationRate += 0.05f;
-			SendSpeedPacket(SpeedType::WalkSpeed);
 		}
 		else if (curSP == SpecialType::TechnicSpecial)
 		{
@@ -664,7 +682,6 @@ void CPlayer::ApplyBowSP(SpecialType curSP)
 		else if (curSP == SpecialType::DefenceSpecial)
 		{
 			m_StatusInfo.EvationRate += 0.1f;
-			SendSpeedPacket(SpeedType::WalkSpeed);
 		}
 		else if (curSP == SpecialType::TechnicSpecial)
 		{
@@ -675,42 +692,57 @@ void CPlayer::ApplyBowSP(SpecialType curSP)
 	{
 		if (curSP == SpecialType::AttackSpecial)
 		{
-			m_StatusInfo.AtkSpeed *= 1.13f;
+			m_StatusInfo.AtkSpeed *= 1.05f;
 			SendSpeedPacket(SpeedType::AttackSpeed);
+
+			m_StatusInfo.ESkillPower *= 1.15f;
+			m_StatusInfo.ESkillCoolTime *= 1.1f;
 		}
 		else if (curSP == SpecialType::DefenceSpecial)
 		{
-			m_StatusInfo.WalkSpeed *= 1.25f;
+			m_StatusInfo.WalkSpeed *= 1.3f;
 			SendSpeedPacket(SpeedType::WalkSpeed);
 		}
 		else if (curSP == SpecialType::TechnicSpecial)
 		{
-			m_StatusInfo.RSkillCoolTime *= 0.5f;
+			m_StatusInfo.RSkillRange *= 1.5f;
+			SendRangePacket(RangeType::RSkillRange);
+
+			m_StatusInfo.RSkillCoolTime *= 1.2f;
 		}
 	}
 	else if (index == 3)
 	{
 		if (curSP == SpecialType::AttackSpecial)
 		{
-			m_StatusInfo.AtkSpeed *= 1.1f;
-			m_StatusInfo.Atk *= 1.1f;
+			m_StatusInfo.QSkillPower *= 1.5f;
+			m_StatusInfo.WSkillPower *= 1.5f;
+			m_StatusInfo.ESkillPower *= 1.5f;
+			m_StatusInfo.RSkillPower *= 1.5f;
+
 			float hpPercent{ m_StatusInfo.HP / m_StatusInfo.maxHP };
 			m_StatusInfo.maxHP *= 0.7f;
 			m_StatusInfo.HP = m_StatusInfo.maxHP * hpPercent;
-			SendSpeedPacket(SpeedType::AttackSpeed);
+
+			m_StatusInfo.WalkSpeed *= 0.85f;
+			SendSpeedPacket(SpeedType::WalkSpeed);
 		}
 		else if (curSP == SpecialType::DefenceSpecial)
 		{
-			m_StatusInfo.AtkSpeed *= 1.2f;
-			float hpPercent{ m_StatusInfo.HP / m_StatusInfo.maxHP };
-			m_StatusInfo.maxHP *= 0.6f;
-			m_StatusInfo.HP = m_StatusInfo.maxHP * hpPercent;
-			SendSpeedPacket(SpeedType::AttackSpeed);
+			m_StatusInfo.EvationRate += 0.3f;
+
+			m_StatusInfo.WalkSpeed *= 1.05f;
+			SendSpeedPacket(SpeedType::WalkSpeed);
+
+			m_StatusInfo.Atk *= 0.85f;
 		}
 		else if (curSP == SpecialType::TechnicSpecial)
 		{
-			m_StatusInfo.WSkillCoolTime *= 0.1f;
-			m_StatusInfo.WSkillPower *= 0.4f;
+			m_StatusInfo.QSkillCoolTime *= 0.5f;
+			m_StatusInfo.RSkillCoolTime *= 0.5f;
+
+			m_StatusInfo.QSkillPower *= 0.8f;
+			m_StatusInfo.RSkillPower *= 0.85f;
 		}
 	}
 
@@ -760,7 +792,11 @@ void CPlayer::ApplyStaffSP(SpecialType curSP)
 	{
 		if (curSP == SpecialType::AttackSpecial)
 		{
-			m_StatusInfo.QSkillPower *= 1.25f;
+			m_StatusInfo.WSkillPower *= 1.3f;
+			m_StatusInfo.ESkillPower *= 1.3f;
+
+			m_StatusInfo.WSkillCoolTime *= 1.1f;
+			m_StatusInfo.ESkillCoolTime *= 1.1f;
 		}
 		else if (curSP == SpecialType::DefenceSpecial)
 		{
@@ -769,30 +805,40 @@ void CPlayer::ApplyStaffSP(SpecialType curSP)
 		}
 		else if (curSP == SpecialType::TechnicSpecial)
 		{
-			m_StatusInfo.WSkillCoolTime *= 0.5f;
+			m_StatusInfo.RSkillRange *= 2.f;
+			SendRangePacket(RangeType::RSkillRange);
+
+			m_StatusInfo.RSkillCoolTime *= 1.3f;
 		}
 	}
 	else if (index == 3)
 	{
 		if (curSP == SpecialType::AttackSpecial)
 		{
-			m_StatusInfo.WSkillRange *= 1.5f;
-			m_StatusInfo.ESkillRange *= 1.5f;
-			float hpPercent{ m_StatusInfo.HP / m_StatusInfo.maxHP };
-			m_StatusInfo.maxHP *= 0.6f;
-			m_StatusInfo.HP = m_StatusInfo.maxHP * hpPercent;
+			m_StatusInfo.Atk *= 1.2f;
+
+			m_StatusInfo.RSkillPower *= 2.85f;
+			m_StatusInfo.RSkillCoolTime *= 1.15f;
+
+			m_StatusInfo.Def = -m_StatusInfo.Def * 1.5f;
 		}
 		else if (curSP == SpecialType::DefenceSpecial)
 		{
-			m_StatusInfo.Def *= 2.0f;
-			float hpPercent{ m_StatusInfo.HP / m_StatusInfo.maxHP };
-			m_StatusInfo.maxHP *= 0.7f;
-			m_StatusInfo.HP = m_StatusInfo.maxHP * hpPercent;
+			m_StatusInfo.AbsorptionRate += 0.15f;
+			m_StatusInfo.AbsorptionAmount += 0.65f;
+			m_StatusInfo.Atk *= 0.9f;
+			m_StatusInfo.AtkSpeed *= 0.9f;
+			SendSpeedPacket(SpeedType::AttackSpeed);
 		}
 		else if (curSP == SpecialType::TechnicSpecial)
 		{
-			m_StatusInfo.WSkillCoolTime *= 0.1f;
-			m_StatusInfo.WSkillPower *= 0.4f;
+			m_StatusInfo.QSkillCoolTime *= 0.65f;
+			m_StatusInfo.WSkillCoolTime *= 0.65f;
+			m_StatusInfo.ESkillCoolTime *= 0.65f;
+
+			m_StatusInfo.QSkillPower *= 0.92f;
+			m_StatusInfo.WSkillPower *= 0.91f;
+			m_StatusInfo.ESkillPower *= 0.91f;
 		}
 	}
 
