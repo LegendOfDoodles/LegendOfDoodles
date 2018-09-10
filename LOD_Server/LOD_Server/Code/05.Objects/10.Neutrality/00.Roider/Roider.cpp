@@ -191,7 +191,7 @@ void CRoider::PlayChase(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)
 		}
 		else
 			GenerateSubPathToMainPath(pWayFinder);
-		SetState(States::Walk);
+		SetNextState(States::Walk);
 	}
 	else
 	{
