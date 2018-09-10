@@ -24,6 +24,7 @@ public:	// 외부 함수
 	virtual void Respawn();
 
 	virtual void SetCollisionManager(shared_ptr<CCollisionManager> manager);
+	virtual void SetHP(float maxHP, float curHP);
 
 	void SetNexusPoses(const XMFLOAT3& bluePos, const XMFLOAT3& redPos)
 	{
@@ -36,7 +37,6 @@ public:	// 외부 함수
 
 	virtual CommonInfo* GetCommonStatus() { return &m_StatusInfo; };
 	virtual void SetCommonStatus(float maxhp, float atk, float def);
-	virtual void SetHP(float maxHP, float curHP) { m_StatusInfo.maxHP = maxHP;  m_StatusInfo.HP = curHP; }
 	void SetPathes(Path* pathes) { m_pathes = pathes; }
 	virtual void SetWayKind(int wayKind) { m_wayKind = wayKind; }
 
@@ -46,6 +46,8 @@ protected:	// 내부 함수
 	void AnimateByCurState();
 	void GenerateSubPathToSpawnLocation(shared_ptr<CWayFinder> pWayFinder);
 	bool FarFromSpawnLocation();
+
+	virtual bool Heal(float timeElapsed);
 
 protected:	// 변수
 	bool m_activated{ true };

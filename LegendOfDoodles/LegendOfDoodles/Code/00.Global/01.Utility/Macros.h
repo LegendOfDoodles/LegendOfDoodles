@@ -4,7 +4,7 @@
 /// 목적: 메크로 연산을 모아 보기쉽고 처리하기 쉽게 한다.
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-08-22
+/// 최종 수정 날짜: 2018-09-10
 /// </summary>
 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
@@ -56,6 +56,8 @@
 #define TIME_ACTIVATE_CHECK 3.0f	// 중립 몬스터가 대기 상태로 돌아가는 시간
 #define TIME_ACTIVATE_CHECK_GOLEM 10.0f	// 중립 몬스터가 대기 상태로 돌아가는 시간
 
+#define TIME_ACTIVATE_RECOVERY 10.0f
+
 // 높이(Height) 관련
 #define REVISE_HEIGHT 100.0f
 #define REVISE_HEIGHT_FOR_OBJECT REVISE_HEIGHT + 6.3f
@@ -79,6 +81,7 @@
 
 // 최대 최소
 #define MAX_SKILL 4
+#define MAX_RECOVERY_PER_SEC 0.1f
 
 // Animation Speed
 #define ANIMATION_SPEED 30

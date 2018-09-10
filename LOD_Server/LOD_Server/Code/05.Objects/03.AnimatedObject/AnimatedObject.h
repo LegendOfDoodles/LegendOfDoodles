@@ -75,6 +75,11 @@ protected: // 내부 함수
 	// 길 맞게 가고 있는지 확인 제대로 안가면 다시 방향 잡도록 한다.
 	void CheckRightWay(PathType type, shared_ptr<CWayFinder> pWayFinder);
 
+	// 회복 시키기 및 피격/공격 시 회복 시간 리셋
+	void Recovery(float timeElapsed);
+	void ResetRecovery();
+	virtual bool Heal(float timeElapsed) { timeElapsed; return false; }
+
 protected: // 변수
 	CSkeleton	m_pSkeleton[20];
 
@@ -100,5 +105,8 @@ protected: // 변수
 	Path *m_subPath{ NULL };
 
 	float m_availableTime{ 0.0f };	// subPath가 유효한 시간 체크
+
+	float m_recoveryTime{ 0.0f };	// 회복 진행 시간
+	float m_lastRecoveryTime{ 0.0f };	// 마지막으로 회복한 시간
 };
 

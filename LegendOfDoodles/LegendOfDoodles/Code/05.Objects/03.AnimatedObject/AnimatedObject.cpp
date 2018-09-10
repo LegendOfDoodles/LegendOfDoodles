@@ -7,7 +7,7 @@
 /// 목적: 움직이는 오브젝트 처리용 기본 클래스
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-08-31
+/// 최종 수정 날짜: 2018-09-10
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -401,4 +401,20 @@ void CAnimatedObject::CheckRightWay(PathType type, shared_ptr<CWayFinder> pWayFi
 	{
 		LookAt(destination);
 	}
+}
+
+void CAnimatedObject::Recovery(float timeElapsed)
+{
+	m_recoveryTime += timeElapsed;
+
+	// 10초동안 공격 받거나 공격 하지 않은 경우 회복 시작
+	if (m_recoveryTime < TIME_ACTIVATE_RECOVERY) return;
+	// 최대 체력까지 체력이 차있는 경우 제외하고 체력 회복
+	// 회복이 된 경우 최근 회복 시간 변경
+	if (!Heal(timeElapsed)) return;
+}
+
+void CAnimatedObject::ResetRecovery()
+{
+	m_recoveryTime = m_lastRecoveryTime = 0.f;
 }

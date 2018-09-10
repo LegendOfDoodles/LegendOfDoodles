@@ -64,6 +64,8 @@ public:	// 외부 함수
 
 protected: // 내부 함수
 	virtual void AdjustAnimationIndex();
+
+	virtual bool Heal(float timeElapsed);
 	/*
 	0. Win		1.Defeat		2.Defeat
 	3. Idle		4.StartWalk		5.Walking

@@ -6,7 +6,7 @@
 /// 목적: 중립 몬스터(로이더) 클래스 분할
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-08-07
+/// 최종 수정 날짜: 2018-09-10
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -19,11 +19,10 @@ CRoider::CRoider() : CAnimatedObject()
 	m_detectRange = CONVERT_PaperUnit_to_InG(40.0f);
 	m_speed = CONVERT_cm_to_InG(3.237f);
 
-	// Warning! 로이더 스테이터스 설정 필요
-	m_StatusInfo.HP = m_StatusInfo.maxHP = 1300.0f;
+	m_StatusInfo.HP = m_StatusInfo.maxHP = 1050.0f;
 	m_StatusInfo.Def = 10.0f;
 	m_StatusInfo.Atk = 42.0f;
-	m_StatusInfo.Exp = 100;
+	m_StatusInfo.Exp = 153;
 
 	m_attackRange = CONVERT_PaperUnit_to_InG(16);
 	m_farAttackRange = CONVERT_PaperUnit_to_InG(30);
@@ -37,6 +36,9 @@ CRoider::~CRoider()
 // 공개 함수
 void CRoider::Animate(float timeElapsed)
 {
+	if (m_curState != States::Die && m_curState != States::Remove)
+		Recovery(timeElapsed);
+
 	m_hpSyncCoolTime += timeElapsed;
 
 	AdjustAnimationIndex();
@@ -88,6 +90,7 @@ void CRoider::SetState(StatesType newState)
 		m_nCurrAnimation = Animations::StartWalk;
 		break;
 	case States::Attack:
+		ResetRecovery();
 		SetAnimation(Animations::Attack1);
 		m_fFrameTime = 0;
 		break;
@@ -297,6 +300,8 @@ void CRoider::ReceiveDamage(float damage, CCollisionObject * pCol)
 			}
 		}
 	}
+	ResetRecovery();
+
 	if (m_hpSyncCoolTime > COOLTIME_HP_SYNC)
 	{
 		SC_Msg_Hp_Sync p;
@@ -315,7 +320,6 @@ void CRoider::ReceiveDamage(float damage, CCollisionObject * pCol)
 		}
 		m_hpSyncCoolTime = 0.0f;
 	}
-
 	
 	m_activated = true;
 }
@@ -526,4 +530,26 @@ bool CRoider::FarFromSpawnLocation()
 	if (m_TeamType != TeamType::Neutral) return false;
 	float dstSqr = Vector3::DistanceSquare(GetPosition(), m_spawnLocation);
 	return (dstSqr > MAX_RANGE_FROM_SPAWN_ROIDER * MAX_RANGE_FROM_SPAWN_ROIDER);
+}
+
+bool CRoider::Heal(float timeElapsed)
+{
+	// 최대 체력 보다 작은 경우 진행
+	if (m_StatusInfo.HP >= m_StatusInfo.maxHP) return false;
+	// 1초에 10%씩 회복 / 1초에 한번 회복 이펙트 생성
+	if (m_recoveryTime - m_lastRecoveryTime >= 1.f)
+	{
+		m_lastRecoveryTime = m_recoveryTime;
+		// Warning! 회복 이펙트 생성
+	}
+	// 전체 체력의 10%씩 회복
+	m_StatusInfo.HP += m_StatusInfo.maxHP * MAX_RECOVERY_PER_SEC * timeElapsed;
+
+	// 최대 체력보다 많이 찼으면 최대 체력으로 보정
+	if (m_StatusInfo.HP > m_StatusInfo.maxHP)
+	{
+		m_StatusInfo.HP = m_StatusInfo.maxHP;
+	}
+
+	return true;
 }

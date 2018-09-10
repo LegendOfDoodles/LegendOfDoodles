@@ -6,7 +6,7 @@
 /// 목적: 플레이어 관리 클래스
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-08-31
+/// 최종 수정 날짜: 2018-09-10
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -27,6 +27,9 @@ CPlayer::~CPlayer()
 // 공개 함수
 void CPlayer::Animate(float timeElapsed)
 {
+	if (m_curState != States::Die && m_curState != States::Remove)
+		Recovery(timeElapsed);
+
 	switch (m_curState) {
 	case States::Idle:
 		if (m_nCurrAnimation != Animations::Idle) m_nCurrAnimation = Animations::Idle;
@@ -351,6 +354,7 @@ void CPlayer::ActiveSkill(AnimationsType act)
 		m_curState = States::Attack;
 		m_nCurrAnimation = act;
 		m_fFrameTime = 0;
+		ResetRecovery();
 	}
 }
 
@@ -403,6 +407,8 @@ void CPlayer::SetHP(float maxHP, float curHP)
 {
 	m_StatusInfo.maxHP = maxHP; 
 	m_StatusInfo.HP = curHP;
+
+	ResetRecovery();
 
 	if (m_StatusInfo.HP <= 0)
 	{
@@ -507,4 +513,25 @@ void CPlayer::AdjustAnimationIndex()
 		m_nAniIndex = 11;
 		break;
 	}
+}
+
+bool CPlayer::Heal(float timeElapsed)
+{
+	// 최대 체력 보다 작은 경우 진행
+	if (m_StatusInfo.HP >= m_StatusInfo.maxHP) return false;
+	// 1초에 10%씩 회복 / 1초에 한번 회복 이펙트 생성
+	if (m_recoveryTime - m_lastRecoveryTime >= 1.f)
+	{
+		m_lastRecoveryTime = m_recoveryTime;
+	}
+	// 전체 체력의 10%씩 회복
+	m_StatusInfo.HP += m_StatusInfo.maxHP * MAX_RECOVERY_PER_SEC * timeElapsed;
+
+	// 최대 체력보다 많이 찼으면 최대 체력으로 보정
+	if (m_StatusInfo.HP > m_StatusInfo.maxHP)
+	{
+		m_StatusInfo.HP = m_StatusInfo.maxHP;
+	}
+
+	return true;
 }

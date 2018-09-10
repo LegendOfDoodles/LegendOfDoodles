@@ -16,7 +16,7 @@
 /// 목적: 기본 씬, 인터페이스 용
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-08-31
+/// 최종 수정 날짜: 2018-09-10
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -43,8 +43,6 @@ void CScene::Finalize()
 
 void CScene::AnimateObjects(float timeElapsed)
 {
-	g_GameTime += timeElapsed;
-
 	for (int i = 0; i < m_nShaders; i++)
 	{
 		m_ppShaders[i]->AnimateObjects(timeElapsed);

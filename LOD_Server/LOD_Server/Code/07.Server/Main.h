@@ -147,7 +147,6 @@ extern bool AcceptFinish;
 
 extern int g_MinionCounts;
 extern int g_ReuseMinion;
-extern int g_PacketCoolTime;
 
 extern bool g_Clientsync;
 

@@ -36,7 +36,6 @@ bool AcceptFinish = false;
 
 int g_NeutralityCount = 0;
 int g_NexusTowerCount = 0;
-int g_PacketCoolTime = 0;
 
 bool g_Clientsync = false;
 
@@ -418,31 +417,34 @@ void accept_thread()	//새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 
 void timer_thread()
 {
-	static int CoolTimeSync{ 0 };
-	static int GameTimeSync{ 0 };
-	static int StatusTimeChecker{ 0 };
+	static float PacketCoolTime{ 0.f };
+	static float CoolTimeSync{ 0.f };
+	static float GameTimeSync{ 0.f };
+	static float StatusTimeChecker{ 0.f };
+
 	//if (g_Clientsync)
 	while (1)
 	{
-		Sleep(10);
-		g_PacketCoolTime += 10;
-		CoolTimeSync += 10;
-		StatusTimeChecker += 10;
+		Sleep(100);
 
-		if (StatusTimeChecker >= 6000)
+		if (g_GameTime - StatusTimeChecker >= 60.f)
 		{
-			StatusTimeChecker = 0;
+			StatusTimeChecker = g_GameTime;
 
 			g_BowMinionStat.maxHP += 15;
 			g_BowMinionStat.Atk += 2;
-			g_BowMinionStat.Def += 1;
+			g_BowMinionStat.Def += 4;
+			g_BowMinionStat.Exp += 5;
 
 			g_SwordMinionStat.maxHP += 20;
 			g_SwordMinionStat.Atk += 1;
 			g_SwordMinionStat.Def += 2;
+			g_SwordMinionStat.Exp += 5;
 
 			g_StaffMinionStat.maxHP += 10;
 			g_StaffMinionStat.Atk += 3;
+			g_StaffMinionStat.Def += 1;
+			g_StaffMinionStat.Exp += 5;
 
 			for (auto iter = g_blueBowMinions->begin(); iter != g_blueBowMinions->end(); ++iter) {
 				(*iter)->SetCommonStatus(&g_BowMinionStat);
@@ -463,22 +465,25 @@ void timer_thread()
 				(*iter)->SetCommonStatus(&g_StaffMinionStat);
 			}
 
+			// Warning! 로이더, 골렘 증가량 필요
 		}
-		if (g_PacketCoolTime >= 300)
-		{
-			if (++GameTimeSync > 5) {
-				for (int i = 0; i < MAX_USER; ++i) {
-					if (g_clients[i].m_isconnected) {
-						SC_Msg_Sync_Time p2;
-						p2.Game_Time = g_GameTime;
-						p2.size = sizeof(p2);
-						p2.type = SC_SYNC_TIME;
-						SendPacket(i, &p2);
-					}
+		if (g_GameTime - GameTimeSync >= 5.f) {
+			GameTimeSync = g_GameTime;
+
+			for (int i = 0; i < MAX_USER; ++i) {
+				if (g_clients[i].m_isconnected) {
+					SC_Msg_Sync_Time p2;
+					p2.Game_Time = g_GameTime;
+					p2.size = sizeof(p2);
+					p2.type = SC_SYNC_TIME;
+					SendPacket(i, &p2);
 				}
-				GameTimeSync = 0;
 			}
-			g_PacketCoolTime = 0;
+		}
+		if (g_GameTime - PacketCoolTime >= 0.3f)
+		{
+			PacketCoolTime = g_GameTime;
+
 			//Sqva User's Information
 			for (int i = 0; i < MAX_USER; ++i) {
 				XMFLOAT3 playerPos{ g_ppPlayer[i]->GetPosition() };
@@ -664,9 +669,10 @@ void timer_thread()
 				
 			}
 		}
-		if (CoolTimeSync >= 200)
+		if (g_GameTime - CoolTimeSync >= 0.2f)
 		{
-			CoolTimeSync = 0;
+			CoolTimeSync = g_GameTime;
+
 			for (int i = 0; i < MAX_USER; ++i) {
 				if (g_clients[i].m_isconnected == true) {
 					g_ppPlayer[i]->SendCoolTime(i);
