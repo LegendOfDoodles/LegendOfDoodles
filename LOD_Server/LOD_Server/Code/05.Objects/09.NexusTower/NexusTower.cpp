@@ -6,18 +6,17 @@
 /// 목적: 넥서스 및 타워 관리 클래스
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-08-07
+/// 최종 수정 날짜: 2018-09-11
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
 CNexusTower::CNexusTower() : CCollisionObject()
 {
-	m_StatusInfo.maxHP = 1000;
-	m_StatusInfo.HP = 1000;
-	m_StatusInfo.Atk = 100;
-	m_StatusInfo.Def = 0;
-	m_StatusInfo.Exp = 0;
+	m_StatusInfo.HP = m_StatusInfo.maxHP = 4100;
+	m_StatusInfo.Atk = 295;
+	m_StatusInfo.Def = 80;
+	m_StatusInfo.Exp = 188;
 	m_sightRange = CONVERT_PaperUnit_to_InG(160.0f);
 	m_detectRange = CONVERT_PaperUnit_to_InG(80.0f);
 
@@ -90,20 +89,6 @@ void CNexusTower::PlayIdle(float timeElapsed)
 				}
 			}
 			SetState(States::Attack);
-		}
-	}
-	if (static_cast<int>(g_GameTime) % 60 == 0)
-	{
-		m_StatusInfo.Atk += 5;
-		m_StatusInfo.Def += 2;
-		SC_Msg_Update_Tower_Stat p;
-		p.Tower_Tag = (short)m_tag;
-		p.atk = m_StatusInfo.Atk;
-		p.def = m_StatusInfo.Def;
-		p.size = sizeof(p);
-		p.type = SC_UPDATE_TOWER_STAT;
-		for (int i = 0; i < MAX_USER; ++i) {
-			if (g_clients[i].m_isconnected) SendPacket(i, &p);
 		}
 	}
 }
@@ -237,6 +222,23 @@ void CNexusTower::ReceiveDamage(float damage, CCollisionObject * pCol)
 			}
 		}
 	}
+}
+
+void CNexusTower::UpdateTowerStatus()
+{
+	// 10분 이전 스탯 증가량 적용
+	if (g_GameTime < 600.f)
+	{
+		m_StatusInfo.Atk += 5;
+		m_StatusInfo.Def += 2;
+	}
+	// 10분 이후 스탯 증가량 적용
+	else
+	{
+		m_StatusInfo.Atk += 10;
+		m_StatusInfo.Def += 4;
+	}
+	m_StatusInfo.Exp += 5;
 }
 
 ////////////////////////////////////////////////////////////////////////

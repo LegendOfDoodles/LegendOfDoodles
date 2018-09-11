@@ -431,41 +431,14 @@ void timer_thread()
 		{
 			StatusTimeChecker = g_GameTime;
 
-			g_BowMinionStat.maxHP += 15;
-			g_BowMinionStat.Atk += 2;
-			g_BowMinionStat.Def += 4;
-			g_BowMinionStat.Exp += 5;
+			// 미니언 스테이터스 증가 처리
+			g_pScene->GetShader(0)->UpdateActiveMinionStatus();
 
-			g_SwordMinionStat.maxHP += 20;
-			g_SwordMinionStat.Atk += 1;
-			g_SwordMinionStat.Def += 2;
-			g_SwordMinionStat.Exp += 5;
+			// 타워 스테이터스 증가 처리
+			g_pScene->GetShader(3)->UpdateActiveTowerStatus();
 
-			g_StaffMinionStat.maxHP += 10;
-			g_StaffMinionStat.Atk += 3;
-			g_StaffMinionStat.Def += 1;
-			g_StaffMinionStat.Exp += 5;
-
-			for (auto iter = g_blueBowMinions->begin(); iter != g_blueBowMinions->end(); ++iter) {
-				(*iter)->SetCommonStatus(&g_BowMinionStat);
-			}
-			for (auto iter = g_blueSwordMinions->begin(); iter != g_blueSwordMinions->end(); ++iter) {
-				(*iter)->SetCommonStatus(&g_SwordMinionStat);
-			}
-			for (auto iter = g_blueStaffMinions->begin(); iter != g_blueStaffMinions->end(); ++iter) {
-				(*iter)->SetCommonStatus(&g_StaffMinionStat);
-			}
-			for (auto iter = g_redBowMinions->begin(); iter != g_redBowMinions->end(); ++iter) {
-				(*iter)->SetCommonStatus(&g_BowMinionStat);
-			}
-			for (auto iter = g_redSwordMinions->begin(); iter != g_redSwordMinions->end(); ++iter) {
-				(*iter)->SetCommonStatus(&g_SwordMinionStat);
-			}
-			for (auto iter = g_redStaffMinions->begin(); iter != g_redStaffMinions->end(); ++iter) {
-				(*iter)->SetCommonStatus(&g_StaffMinionStat);
-			}
-
-			// Warning! 로이더, 골렘 증가량 필요
+			// 중립 몬스터 스테이터스 증가 처리
+			g_pScene->GetShader(2)->UpdateActiveNeutralStatus();
 		}
 		if (g_GameTime - GameTimeSync >= 5.f) {
 			GameTimeSync = g_GameTime;
@@ -532,8 +505,6 @@ void timer_thread()
 					p.size = sizeof(p);
 					p.x = MinionPos.x;
 					p.y = MinionPos.z;
-					p.atk = MinionStat->Atk;
-					p.def = MinionStat->Def;
 					p.Minion_Tag = (short)(*iter)->GetTag();
 					p.updatetime = g_GameTime;
 					p.type = SC_POS_MINION;
@@ -553,8 +524,6 @@ void timer_thread()
 					p.size = sizeof(p);
 					p.x = MinionPos.x;
 					p.y = MinionPos.z;
-					p.atk = MinionStat->Atk;
-					p.def = MinionStat->Def;
 					p.Minion_Tag = (short)(*iter)->GetTag();
 					p.updatetime = g_GameTime;
 					p.type = SC_POS_MINION;
@@ -574,8 +543,6 @@ void timer_thread()
 					p.size = sizeof(p);
 					p.x = MinionPos.x;
 					p.y = MinionPos.z;
-					p.atk = MinionStat->Atk;
-					p.def = MinionStat->Def;
 					p.Minion_Tag = (short)(*iter)->GetTag();
 					p.updatetime = g_GameTime;
 					p.type = SC_POS_MINION;
@@ -595,8 +562,6 @@ void timer_thread()
 					p.size = sizeof(p);
 					p.x = MinionPos.x;
 					p.y = MinionPos.z;
-					p.atk = MinionStat->Atk;
-					p.def = MinionStat->Def;
 					p.Minion_Tag = (short)(*iter)->GetTag();
 					p.updatetime = g_GameTime;
 					p.type = SC_POS_MINION;
@@ -616,8 +581,6 @@ void timer_thread()
 					p.size = sizeof(p);
 					p.x = MinionPos.x;
 					p.y = MinionPos.z;
-					p.atk = MinionStat->Atk;
-					p.def = MinionStat->Def;
 					p.Minion_Tag = (short)(*iter)->GetTag();
 					p.updatetime = g_GameTime;
 					p.type = SC_POS_MINION;
@@ -637,8 +600,6 @@ void timer_thread()
 					p.size = sizeof(p);
 					p.x = MinionPos.x;
 					p.y = MinionPos.z;
-					p.atk = MinionStat->Atk;
-					p.def = MinionStat->Def;
 					p.Minion_Tag = (short)(*iter)->GetTag();
 					p.updatetime = g_GameTime;
 					p.type = SC_POS_MINION;

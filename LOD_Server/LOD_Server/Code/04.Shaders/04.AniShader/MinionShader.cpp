@@ -2,10 +2,8 @@
 #include "MinionShader.h"
 #include "05.Objects/06.Minion/Minion.h"
 #include "05.Objects/04.Terrain/HeightMapTerrain.h"
-//#include "05.Objects/99.Material/Material.h"
 #include "00.Global/01.Utility/05.CollisionManager/CollisionManager.h"
 #include "00.Global/01.Utility/07.ThrowingManager/ThrowingMgr.h"
-//#include "00.Global/01.Utility/06.HPGaugeManager/HPGaugeManager.h"
 #include "06.Meshes/01.Mesh/MeshImporter.h"
 #include "00.Global/02.AI/00.FSMMgr/FSMMgr.h"
 #include "07.Server/Main.h"
@@ -14,7 +12,7 @@
 /// 목적: 미니언 관리 및 그리기 용도
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-08-01
+/// 최종 수정 날짜: 2018-09-11
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -175,6 +173,43 @@ CollisionObjectList * CMinionShader::GetMinionList(ObjectType Minion_Type, TeamT
 		}
 	}
 	return nullptr;
+}
+
+void CMinionShader::UpdateActiveMinionStatus()
+{
+	g_BowMinionStat.maxHP += 15;
+	g_BowMinionStat.Atk += 2;
+	g_BowMinionStat.Def += 2;
+	g_BowMinionStat.Exp += 5;
+
+	g_SwordMinionStat.maxHP += 20;
+	g_SwordMinionStat.Atk += 1;
+	g_SwordMinionStat.Def += 4;
+	g_SwordMinionStat.Exp += 5;
+
+	g_StaffMinionStat.maxHP += 10;
+	g_StaffMinionStat.Atk += 3;
+	g_StaffMinionStat.Def += 1;
+	g_StaffMinionStat.Exp += 5;
+
+	for (auto iter = m_blueBowMinions.begin(); iter != m_blueBowMinions.end(); ++iter) {
+		(*iter)->SetCommonStatus(&g_BowMinionStat);
+	}
+	for (auto iter = m_blueSwordMinions.begin(); iter != m_blueSwordMinions.end(); ++iter) {
+		(*iter)->SetCommonStatus(&g_SwordMinionStat);
+	}
+	for (auto iter = m_blueStaffMinions.begin(); iter != m_blueStaffMinions.end(); ++iter) {
+		(*iter)->SetCommonStatus(&g_StaffMinionStat);
+	}
+	for (auto iter = m_redBowMinions.begin(); iter != m_redBowMinions.end(); ++iter) {
+		(*iter)->SetCommonStatus(&g_BowMinionStat);
+	}
+	for (auto iter = m_redSwordMinions.begin(); iter != m_redSwordMinions.end(); ++iter) {
+		(*iter)->SetCommonStatus(&g_SwordMinionStat);
+	}
+	for (auto iter = m_redStaffMinions.begin(); iter != m_redStaffMinions.end(); ++iter) {
+		(*iter)->SetCommonStatus(&g_StaffMinionStat);
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////

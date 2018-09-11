@@ -11,15 +11,8 @@
 /// 목적: 중립 몬스터 관리 및 렌더링용 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-08-03
+/// 최종 수정 날짜: 2018-09-11
 /// </summary>
-
-//#define Roider_NetralMaterial m_ppMaterials[0]
-//#define Roider_BlueMaterial m_ppMaterials[1]
-//#define Roider_RedMaterial m_ppMaterials[2]
-//#define Golem_NetralMaterial m_ppMaterials[3]
-//#define Golem_BlueMaterial m_ppMaterials[4]
-//#define Golem_RedMaterial m_ppMaterials[5]
 
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
@@ -36,7 +29,6 @@ CNeutralityShader::~CNeutralityShader()
 // 공개 함수
 void CNeutralityShader::Initialize(void *pContext)
 {
-	
 	BuildObjects(pContext);
 }
 
@@ -63,6 +55,16 @@ void CNeutralityShader::SetThrowingManagerToObject(shared_ptr<CThrowingMgr> mana
 	for (int i = 0; i < m_nObjects; ++i)
 	{
 		m_ppObjects[i]->SetThrowingManager(manager);
+	}
+}
+
+void CNeutralityShader::UpdateActiveNeutralStatus()
+{
+	for (int i = 0; i < m_nObjects; ++i)
+	{
+		StatesType curState{ m_ppObjects[i]->GetState() };
+		if (curState != States::Die && curState != States::Remove)
+			m_ppObjects[i]->UpdateNeutralStatus();
 	}
 }
 

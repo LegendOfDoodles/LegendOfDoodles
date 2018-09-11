@@ -6,18 +6,17 @@
 /// 목적: 넥서스 및 타워 관리 클래스
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-08-07
+/// 최종 수정 날짜: 2018-09-11
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
 CNexusTower::CNexusTower(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes) : CCollisionObject(pCreateMgr, nMeshes)
 {
-	m_StatusInfo.maxHP = 3800;
-	m_StatusInfo.HP = 3800;
-	m_StatusInfo.Atk = 152;
-	m_StatusInfo.Def = 40;
-	m_StatusInfo.Exp = 0;
+	m_StatusInfo.HP = m_StatusInfo.maxHP = 4100;
+	m_StatusInfo.Atk = 295;
+	m_StatusInfo.Def = 80;
+	m_StatusInfo.Exp = 188;
 	m_sightRange = CONVERT_PaperUnit_to_InG(160.0f);
 	m_detectRange = CONVERT_PaperUnit_to_InG(80.0f);
 

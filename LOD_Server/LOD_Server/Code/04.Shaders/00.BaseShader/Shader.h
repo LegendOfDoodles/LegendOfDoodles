@@ -17,6 +17,9 @@ public: // 공개 함수
 	int GetObjectCount() { return m_nObjects; }
 
 	virtual void SetPlayerAnimation(ObjectType type, int id) { type; id; }
+	virtual void UpdateActiveMinionStatus() {}
+	virtual void UpdateActiveTowerStatus() {}
+	virtual void UpdateActiveNeutralStatus() {}
 
 	void AddRef() { m_nReferences++; }
 	void Release() { if (--m_nReferences <= 0) delete this; }

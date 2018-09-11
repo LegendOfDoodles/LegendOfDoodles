@@ -34,6 +34,8 @@ public: // 공개 함수
 	void SetColManagerToObject(shared_ptr<CCollisionManager> manager);
 	void SetThrowingManagerToObject(shared_ptr<CThrowingMgr> manager);
 
+	virtual void UpdateActiveNeutralStatus();
+
 	void SetCollisionManager(shared_ptr<CCollisionManager> pManger) { m_pColManager = pManger; }
 	void SetFSMManager(shared_ptr<CFSMMgr> pManger) { m_pFSMMgr = pManger; }
 

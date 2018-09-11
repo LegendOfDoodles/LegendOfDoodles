@@ -6,7 +6,7 @@
 /// 목적: 중립 몬스터(수호 골렘) 클래스 분할
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-10
+/// 최종 수정 날짜: 2018-09-11
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@ CGolem::CGolem() : CAnimatedObject()
 	m_speed = CONVERT_cm_to_InG(7.682f);
 
 	m_StatusInfo.HP = m_StatusInfo.maxHP = 2800.0f;
-	m_StatusInfo.Def = 50.0f;
+	m_StatusInfo.Def = 90.0f;
 	m_StatusInfo.Atk = 240.0f;
 	m_StatusInfo.Exp = 900;
 
@@ -316,6 +316,25 @@ void CGolem::SaveCurrentState()
 {
 	m_xmf4x4SpawnWorld = m_xmf4x4World;
 	m_spawnLocation = GetPosition();
+}
+
+void CGolem::UpdateNeutralStatus()
+{
+	// 10분 이전 스탯 증가량 적용
+	if (g_GameTime < 600.f)
+	{
+		m_StatusInfo.maxHP += 110;
+		m_StatusInfo.Atk += 8;
+		m_StatusInfo.Def += 2;
+	}
+	// 10분 이후 스탯 증가량 적용
+	else
+	{
+		m_StatusInfo.maxHP += 130;
+		m_StatusInfo.Atk += 16;
+		m_StatusInfo.Def += 3;
+	}
+	m_StatusInfo.Exp += 5;
 }
 
 void CGolem::ReceiveDamage(float damage, CCollisionObject * pCol)

@@ -4,7 +4,7 @@
 /// 목적: 여러 지점에서 사용할 나열형 데이터를 통합 관리한다.
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-06
+/// 최종 수정 날짜: 2018-09-11
 /// </summary>
 
 namespace States
@@ -201,7 +201,7 @@ enum RangeType {
 
 struct PlayerInfo
 {
-	float maxHP{ 1500 };
+	float maxHP{ 880 };
 	float HP{ maxHP };
 
 	float maxMP{ 500 };

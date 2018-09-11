@@ -9,7 +9,7 @@
 /// 목적: 넥서스 및 타워 그리기 용도의 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-08-04
+/// 최종 수정 날짜: 2018-09-11
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -27,7 +27,6 @@ CNexusTowerShader::~CNexusTowerShader()
 // 공개 함수
 void CNexusTowerShader::Initialize(void *pContext)
 {
-	
 	BuildObjects(pContext);
 }
 
@@ -55,6 +54,16 @@ void CNexusTowerShader::SetThrowingManagerToObject(shared_ptr<CThrowingMgr> mana
 	for (int i = 0; i < m_nObjects; ++i)
 	{
 		m_ppObjects[i]->SetThrowingManager(manager);
+	}
+}
+
+void CNexusTowerShader::UpdateActiveTowerStatus()
+{
+	for (int i = 0; i < m_nObjects; ++i)
+	{
+		StatesType curState{ m_ppObjects[i]->GetState() };
+		if(curState != States::Die && curState != States::Remove)
+			m_ppObjects[i]->UpdateTowerStatus();
 	}
 }
 

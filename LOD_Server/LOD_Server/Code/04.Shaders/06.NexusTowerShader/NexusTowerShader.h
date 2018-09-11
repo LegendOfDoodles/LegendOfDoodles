@@ -20,6 +20,8 @@ public: // 공개 함수
 	void SetColManagerToObject(shared_ptr<CCollisionManager> manager);
 	void SetThrowingManagerToObject(shared_ptr<CThrowingMgr> manager);
 
+	virtual void UpdateActiveTowerStatus();
+
 	int GetNexusCount() { return m_nNexus; }
 	int GetTowerCount() { return m_nTower; }
 

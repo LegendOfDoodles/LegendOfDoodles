@@ -26,6 +26,8 @@ public: // 공개 함수
 
 	virtual CollisionObjectList* GetMinionList(ObjectType Minion_Type, TeamType Team_Type);
 
+	virtual void UpdateActiveMinionStatus();
+
 	void SetCollisionManager(shared_ptr<CCollisionManager> pManger) { m_pColManager = pManger; }
 	void SetThrowingManager(shared_ptr<CThrowingMgr> pManger) { m_pThrowingMgr = pManger; }
 	void SetFSMManager(shared_ptr<CFSMMgr> pManger) { m_pFSMMgr = pManger; }

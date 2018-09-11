@@ -320,13 +320,6 @@ void CNetwork::ProcessPacket(char *ptr)
 			if(Player) Player->SetSightRanges(my_packet->Changed_Detect_Range, my_packet->Changed_Sight_Range);
 			break;
 		}
-		case SC_UPDATE_TOWER_STAT:
-		{
-			SC_Msg_Update_Tower_Stat* my_packet = reinterpret_cast<SC_Msg_Update_Tower_Stat*>(ptr);
-			CCollisionObject* Tower{ m_pColManager->RequestObjectByTag(my_packet->Tower_Tag) };
-			if(Tower) Tower->SetCommonStatus(Tower->GetNexusAndTowerStatus()->maxHP, my_packet->atk, my_packet->def);
-			break;
-		}
 		case SC_SET_ABILITY_POINT:
 		{
 			SC_Msg_Set_Speacial_Point* my_packet = reinterpret_cast<SC_Msg_Set_Speacial_Point*>(ptr);

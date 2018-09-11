@@ -22,6 +22,8 @@ public:	// 외부 함수
 
 	void SaveCurrentState();
 
+	virtual void UpdateNeutralStatus();
+
 	void SetNexusPoses(const XMFLOAT3& bluePos, const XMFLOAT3& redPos)
 	{
 		m_blueNexusLoc = bluePos;

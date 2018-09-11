@@ -143,8 +143,6 @@ struct SC_Msg_Pos_Minion : public Packet
 	short Minion_Tag;
 	float x;
 	float y;
-	float atk;
-	float def;
 	float updatetime;
 	XMFLOAT3 vLook;
 };
@@ -184,14 +182,6 @@ struct SC_Msg_Change_Sight : public Packet
 	float Changed_Detect_Range;
 	float Changed_Sight_Range;
 };
-
-struct SC_Msg_Update_Tower_Stat : public Packet
-{
-	short Tower_Tag;
-	float atk;
-	float def;
-};
-
 
 struct SC_Msg_Enemy_Tag_Neutral : public Packet
 {
@@ -298,7 +288,6 @@ struct SC_Msg_Change_Range : public Packet
 //Server-> Client
 #define SC_PLAYER_RESPAWN		  1
 #define SC_CHANGE_SIGHT			  2
-#define SC_UPDATE_TOWER_STAT	  3
 #define SC_COOLTIME				  4
 #define SC_CHANGE_SPEED			  5
 #define SC_SET_PLAYER_DEATH		  6

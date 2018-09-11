@@ -16,6 +16,8 @@ public: // 공개 함수
 	virtual bool Attackable(CCollisionObject* other);
 	virtual bool AttackableFarRange(CCollisionObject* other);
 
+	void LevelUP(CCollisionObject* player);
+
 	virtual void PlayIdle(float timeElapsed) { timeElapsed; }
 	virtual void PlayWalk(float timeElapsed, shared_ptr<CWayFinder> pWayFinder) { timeElapsed; pWayFinder; }
 	virtual void PlayChase(float timeElapsed, shared_ptr<CWayFinder> pWayFinder) { timeElapsed; pWayFinder; }
@@ -79,7 +81,8 @@ public: // 공개 함수
 
 	void ApplyAtkRange(float adjRange) { m_attackRange *= adjRange; }
 
-	void LevelUP(CCollisionObject* player);
+	virtual void UpdateTowerStatus() {}
+	virtual void UpdateNeutralStatus() {}
 
 protected: // 내부 함수
 

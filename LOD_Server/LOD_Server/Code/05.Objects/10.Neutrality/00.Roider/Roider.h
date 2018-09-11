@@ -25,6 +25,8 @@ public:	// 외부 함수
 	void SaveCurrentState();
 	virtual void ReceiveDamage(float damage, CCollisionObject * pCol);
 
+	virtual void UpdateNeutralStatus();
+
 	void SetNexusPoses(const XMFLOAT3& bluePos, const XMFLOAT3& redPos)
 	{
 		m_blueNexusLoc = bluePos;
