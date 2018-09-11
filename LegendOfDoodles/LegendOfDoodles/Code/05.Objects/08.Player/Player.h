@@ -31,7 +31,7 @@ public:	// 외부 함수
 
 	virtual void SetCollisionManager(shared_ptr<CCollisionManager> manager);
 
-	virtual void RequestSpawnMissile(FlyingObjectType type);
+	virtual void LevelUP(int level);
 
 	virtual PlayerInfo* GetPlayerStatus() { return &m_StatusInfo; }
 	virtual void ReceiveSpecial(BYTE idx,  SpecialType type, bool myid = false);

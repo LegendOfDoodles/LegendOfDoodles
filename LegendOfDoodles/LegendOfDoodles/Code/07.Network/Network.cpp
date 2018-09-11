@@ -290,19 +290,11 @@ void CNetwork::ProcessPacket(char *ptr)
 			if(Building) Building->AttackEnemy();
 			break;
 		}
-		case SC_EXP_UP:
-		{
-			SC_Msg_Exp_Up* my_packet = reinterpret_cast<SC_Msg_Exp_Up*>(ptr);
-			CCollisionObject* Player{ m_pColManager->RequestPlayerByTag(my_packet->Target_Tag) };
-			PlayerInfo* status{ Player->GetPlayerStatus() };
-			status->Exp += my_packet->exp;
-			break;
-		}
 		case SC_LEVEL_UP:
 		{
 			SC_Msg_Level_Up* my_packet = reinterpret_cast<SC_Msg_Level_Up*>(ptr);
 			CCollisionObject* Player{ m_pColManager->RequestPlayerByTag(my_packet->Target_Tag) };
-			Player->LevelUP();
+			Player->LevelUP(my_packet->level);
 			m_pNumberShader->ApplyLevel();
 			break;
 		}

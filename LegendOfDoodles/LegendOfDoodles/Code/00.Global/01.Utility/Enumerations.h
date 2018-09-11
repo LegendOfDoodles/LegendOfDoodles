@@ -242,9 +242,6 @@ struct PlayerInfo
 	float maxHP{ 880 };
 	float HP{ maxHP };
 
-	float maxMP{ 500 };
-	float MP{ 150 };
-
 	float Atk{ 110 };
 	float Def{ 60 };
 
@@ -276,6 +273,7 @@ struct PlayerInfo
 	UINT MaxExp{ 170 };
 	UINT Exp{ 0 };
 
+	// Warning! 특성 포인트 0으로 변경 필요
 	UINT SpecialPoint{ 4 };
 
 	// 특성 7 ~ 21 4개

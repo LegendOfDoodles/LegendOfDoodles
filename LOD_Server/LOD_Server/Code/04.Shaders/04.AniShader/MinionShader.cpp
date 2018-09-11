@@ -177,20 +177,20 @@ CollisionObjectList * CMinionShader::GetMinionList(ObjectType Minion_Type, TeamT
 
 void CMinionShader::UpdateActiveMinionStatus()
 {
-	g_BowMinionStat.maxHP += 15;
-	g_BowMinionStat.Atk += 2;
-	g_BowMinionStat.Def += 2;
-	g_BowMinionStat.Exp += 5;
+	g_SwordMinionStat.maxHP += INCREASE_SWORD_MINION_HP;
+	g_SwordMinionStat.Atk += INCREASE_SWORD_MINION_ATK;
+	g_SwordMinionStat.Def += INCREASE_SWORD_MINION_DEF;
+	g_SwordMinionStat.Exp += INCREASE_MINION_EXP;
 
-	g_SwordMinionStat.maxHP += 20;
-	g_SwordMinionStat.Atk += 1;
-	g_SwordMinionStat.Def += 4;
-	g_SwordMinionStat.Exp += 5;
+	g_StaffMinionStat.maxHP += INCREASE_STAFF_MINION_HP;
+	g_StaffMinionStat.Atk += INCREASE_STAFF_MINION_ATK;
+	g_StaffMinionStat.Def += INCREASE_STAFF_MINION_DEF;
+	g_StaffMinionStat.Exp += INCREASE_MINION_EXP;
 
-	g_StaffMinionStat.maxHP += 10;
-	g_StaffMinionStat.Atk += 3;
-	g_StaffMinionStat.Def += 1;
-	g_StaffMinionStat.Exp += 5;
+	g_BowMinionStat.maxHP += INCREASE_BOW_MINION_HP;
+	g_BowMinionStat.Atk += INCREASE_BOW_MINION_ATK;
+	g_BowMinionStat.Def += INCREASE_BOW_MINION_DEF;
+	g_BowMinionStat.Exp += INCREASE_MINION_EXP;
 
 	for (auto iter = m_blueBowMinions.begin(); iter != m_blueBowMinions.end(); ++iter) {
 		(*iter)->SetCommonStatus(&g_BowMinionStat);

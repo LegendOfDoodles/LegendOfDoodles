@@ -424,6 +424,67 @@ void CPlayer::Respawn()
 	}
 }
 
+void CPlayer::ApplyExp(UINT addExp)
+{
+	// 경험치 처리
+	m_StatusInfo.Exp += addExp;
+
+	// 경험치가 레벨업 가능한 영역에 도달하지 못한 경우 추가 처리 안함
+	if (m_StatusInfo.Exp < m_StatusInfo.MaxExp) return;
+
+	m_StatusInfo.Level++;
+	m_StatusInfo.Exp -= m_StatusInfo.MaxExp;
+
+	m_StatusInfo.MaxExp += INCREASE_PLAYER_EXP;
+
+	if (m_StatusInfo.Level == 7 || m_StatusInfo.Level == 12 || m_StatusInfo.Level == 17 || m_StatusInfo.Level == 21) {
+		m_StatusInfo.SpecialPoint += 1;
+	}
+
+	if (m_StatusInfo.Weapon == 1)
+	{
+		m_StatusInfo.maxHP += INCREASE_SWORD_PLAYER_HP;
+		m_StatusInfo.HP = m_StatusInfo.maxHP;
+		m_StatusInfo.Atk += INCREASE_SWORD_PLAYER_ATK;
+		m_StatusInfo.Def += INCREASE_SWORD_PLAYER_DEF;
+	}
+	else if (m_StatusInfo.Weapon == 2)
+	{
+		m_StatusInfo.maxHP += INCREASE_STAFF_PLAYER_HP;
+		m_StatusInfo.HP = m_StatusInfo.maxHP;
+		m_StatusInfo.Atk += INCREASE_STAFF_PLAYER_ATK;
+		m_StatusInfo.Def += INCREASE_STAFF_PLAYER_DEF;
+		
+	}
+	else if (m_StatusInfo.Weapon == 3)
+	{
+		m_StatusInfo.maxHP += INCREASE_BOW_PLAYER_HP;
+		m_StatusInfo.HP = m_StatusInfo.maxHP;
+		m_StatusInfo.Atk += INCREASE_BOW_PLAYER_ATK;
+		m_StatusInfo.Def += INCREASE_BOW_PLAYER_DEF;
+	}
+	else
+	{
+		// 무기를 선택하지 않은 경우 가장 작게 오르는 것을 기준으로 증가시킨다.
+		// 이후 무기를 선택할 때 부족분을 선택한 무기 옵션에 맞게 추가한다.
+		m_StatusInfo.maxHP += INCREASE_STICK_PLAYER_HP;
+		m_StatusInfo.HP = m_StatusInfo.maxHP;
+		m_StatusInfo.Atk += INCREASE_SWORD_PLAYER_ATK;
+		m_StatusInfo.Def += INCREASE_STAFF_PLAYER_DEF;
+	}
+
+	// 클라이언트에 레벨업 패킷 전송
+	SC_Msg_Level_Up p;
+	p.Target_Tag = (short)m_tag;
+	p.size = sizeof(p);
+	p.type = SC_LEVEL_UP;
+	p.level = (short)m_StatusInfo.Level;
+	for (int j = 0; j < MAX_USER; ++j)
+	{
+		if (g_clients[j].m_isconnected) SendPacket(j, &p);
+	}
+}
+
 void CPlayer::SendCoolTime(int id)
 {
 	SC_Msg_Cooltime_Percent p;
@@ -514,32 +575,40 @@ void CPlayer::ChangeWeapon(UINT weaponNum, ObjectType type)
 	m_StatusInfo.Weapon = weaponNum;
 	m_ObjectType = type;
 
+	UINT adjLevel{ 3 - m_StatusInfo.Level };	// 무기 변경 레벨은 2이므로 보정 값을 찾는다.
+
 	if (type == ObjectType::SwordPlayer)
 	{
-		m_StatusInfo.Atk *= 0.9f;
+		m_StatusInfo.maxHP += ADJUST_SWORD_PLAYER_HP(adjLevel);
+		m_StatusInfo.Atk += ADJUST_SWORD_PLAYER_ATK(adjLevel);
+		m_StatusInfo.Def += ADJUST_SWORD_PLAYER_DEF(adjLevel);
 
-		m_StatusInfo.QSkillPower = 1.13f;
-		m_StatusInfo.WSkillPower = 1.27f;
-		m_StatusInfo.ESkillPower = 1.42f;
-		m_StatusInfo.RSkillPower = 2.3f;
+		m_StatusInfo.QSkillPower = INCREASE_SWORD_PLAYER_SKILL_Q;
+		m_StatusInfo.WSkillPower = INCREASE_SWORD_PLAYER_SKILL_W;
+		m_StatusInfo.ESkillPower = INCREASE_SWORD_PLAYER_SKILL_E;
+		m_StatusInfo.RSkillPower = INCREASE_SWORD_PLAYER_SKILL_R;
 	}
 	else if (type == ObjectType::StaffPlayer)
 	{
-		m_StatusInfo.Atk *= 1.4f;
+		m_StatusInfo.maxHP += ADJUST_STAFF_PLAYER_HP(adjLevel);
+		m_StatusInfo.Atk += ADJUST_STAFF_PLAYER_ATK(adjLevel);
+		m_StatusInfo.Def += ADJUST_STAFF_PLAYER_DEF(adjLevel);
 
-		m_StatusInfo.QSkillPower = 1.02f;
-		m_StatusInfo.WSkillPower = 1.15f;
-		m_StatusInfo.ESkillPower = 1.29f;
-		m_StatusInfo.RSkillPower = 1.64f;
+		m_StatusInfo.QSkillPower = INCREASE_STAFF_PLAYER_SKILL_Q;
+		m_StatusInfo.WSkillPower = INCREASE_STAFF_PLAYER_SKILL_W;
+		m_StatusInfo.ESkillPower = INCREASE_STAFF_PLAYER_SKILL_E;
+		m_StatusInfo.RSkillPower = INCREASE_STAFF_PLAYER_SKILL_R;
 	}
 	else if (type == ObjectType::BowPlayer)
 	{
-		m_StatusInfo.Atk *= 1.5f;
+		m_StatusInfo.maxHP += ADJUST_BOW_PLAYER_HP(adjLevel);
+		m_StatusInfo.Atk += ADJUST_BOW_PLAYER_ATK(adjLevel);
+		m_StatusInfo.Def += ADJUST_BOW_PLAYER_DEF(adjLevel);
 
-		m_StatusInfo.QSkillPower = 1.12f;
-		m_StatusInfo.WSkillPower = 0.9f;
-		m_StatusInfo.ESkillPower = 0.82f;
-		m_StatusInfo.RSkillPower = 2.3f;
+		m_StatusInfo.QSkillPower = INCREASE_BOW_PLAYER_SKILL_Q;
+		m_StatusInfo.WSkillPower = INCREASE_BOW_PLAYER_SKILL_W;
+		m_StatusInfo.ESkillPower = INCREASE_BOW_PLAYER_SKILL_E;
+		m_StatusInfo.RSkillPower = INCREASE_BOW_PLAYER_SKILL_R;
 	}
 }
 

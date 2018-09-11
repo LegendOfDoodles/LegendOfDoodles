@@ -13,7 +13,7 @@
 /// 목적: 플레이어 관리 및 렌더링 용도
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-08-23
+/// 최종 수정 날짜: 2018-09-11
 /// </summary>
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -232,12 +232,8 @@ void CPlayerShader::SetChangeWeapon(int id)
 			m_ChangeWeapon = true;
 			static_cast<CPlayer*>(m_ppObjects[id])->SetWeaponChangeTriger(false);
 
-			p.Character_id = (BYTE)m_pNetwork->m_myid;
 			p.ObjectType = (short)ObjectType::SwordPlayer;
-			p.size = sizeof(p);
 			p.WeaponNum = 1;
-			p.type = CS_CHANGE_WEAPON;
-			m_pNetwork->SendPacket(&p);
 			break;
 		case 2:
 			m_ppObjects[m_pNetwork->m_myid]->SetType((ObjectType)m_nWeaponState);
@@ -248,12 +244,8 @@ void CPlayerShader::SetChangeWeapon(int id)
 			m_ChangeWeapon = true;
 			static_cast<CPlayer*>(m_ppObjects[id])->SetWeaponChangeTriger(false);
 
-			p.Character_id = (BYTE)m_pNetwork->m_myid;
 			p.ObjectType = (short)ObjectType::StaffPlayer;
-			p.size = sizeof(p);
 			p.WeaponNum = 2;
-			p.type = CS_CHANGE_WEAPON;
-			m_pNetwork->SendPacket(&p);
 			break;
 		case 3:
 			m_ppObjects[m_pNetwork->m_myid]->SetType((ObjectType)m_nWeaponState);
@@ -264,14 +256,15 @@ void CPlayerShader::SetChangeWeapon(int id)
 			m_ChangeWeapon = true;
 			static_cast<CPlayer*>(m_ppObjects[id])->SetWeaponChangeTriger(false);
 
-			p.Character_id = (BYTE)m_pNetwork->m_myid;
 			p.ObjectType = (short)ObjectType::BowPlayer;
-			p.size = sizeof(p);
 			p.WeaponNum = 3;
-			p.type = CS_CHANGE_WEAPON;
-			m_pNetwork->SendPacket(&p);
 			break;
 		}
+
+		p.Character_id = (BYTE)m_pNetwork->m_myid;
+		p.size = sizeof(p);
+		p.type = CS_CHANGE_WEAPON;
+		m_pNetwork->SendPacket(&p);
 	}
 }
 

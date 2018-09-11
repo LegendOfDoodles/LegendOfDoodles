@@ -6,7 +6,7 @@
 /// 목적: 플레이어 관리 클래스
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-09-10
+/// 최종 수정 날짜: 2018-09-11
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -448,9 +448,37 @@ void CPlayer::SetCollisionManager(shared_ptr<CCollisionManager> manager)
 	m_pColManager->AddPlayerCollider(this);
 }
 
-void CPlayer::RequestSpawnMissile(FlyingObjectType type)
+void CPlayer::LevelUP(int level)
 {
-	m_pThrowingMgr->RequestSpawn(GetPosition(), GetLook(), m_TeamType, type, m_StatusInfo.Atk);
+	m_StatusInfo.Level = level;
+
+	m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), 30, EffectObjectType::Player_LevelUp_CircleEffect);
+	m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), 30, EffectObjectType::Player_LevelUp_ArrowEffect);
+
+	if (m_StatusInfo.Level == 7 || m_StatusInfo.Level == 12 || m_StatusInfo.Level == 17 || m_StatusInfo.Level == 21) {
+		m_StatusInfo.SpecialPoint += 1;
+	}
+
+	if (m_StatusInfo.Weapon == 1)
+	{
+		m_StatusInfo.maxHP += INCREASE_SWORD_PLAYER_HP;
+		m_StatusInfo.HP = m_StatusInfo.maxHP;
+	}
+	else if (m_StatusInfo.Weapon == 2)
+	{
+		m_StatusInfo.maxHP += INCREASE_STAFF_PLAYER_HP;
+		m_StatusInfo.HP = m_StatusInfo.maxHP;
+	}
+	else if (m_StatusInfo.Weapon == 3)
+	{
+		m_StatusInfo.maxHP += INCREASE_BOW_PLAYER_HP;
+		m_StatusInfo.HP = m_StatusInfo.maxHP;
+	}
+	else
+	{
+		m_StatusInfo.maxHP += INCREASE_STICK_PLAYER_HP;
+		m_StatusInfo.HP = m_StatusInfo.maxHP;
+	}
 }
 
 void CPlayer::ReceiveSpecial(BYTE idx,  SpecialType type, bool myid)

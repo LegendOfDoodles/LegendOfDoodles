@@ -204,9 +204,6 @@ struct PlayerInfo
 	float maxHP{ 880 };
 	float HP{ maxHP };
 
-	float maxMP{ 500 };
-	float MP{ 150 };
-
 	float Atk{ 110 };
 	float Def{ 60 };
 
@@ -242,7 +239,7 @@ struct PlayerInfo
 	UINT Death{ 0 };
 	UINT Assist{ 0 };
 
-	UINT Level{ 0 };
+	UINT Level{ 1 };
 
 	UINT MaxExp{ 170 };
 	UINT Exp{ 0 };

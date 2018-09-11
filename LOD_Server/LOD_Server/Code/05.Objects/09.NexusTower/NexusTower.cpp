@@ -158,38 +158,28 @@ void CNexusTower::ReceiveDamage(float damage, CCollisionObject * pCol)
 
 	m_StatusInfo.HP -= damage * Compute_Defence(m_StatusInfo.Def);
 
-	if (m_StatusInfo.HP <= 0 && m_pEnemy) {
-		PlayerInfo* PlayerStatus{ m_pEnemy->GetPlayerStatus() };
-		if (m_pEnemy->GetTag() >= 10000 && m_pEnemy->GetTag() < 20000)
+	if (m_StatusInfo.HP <= 0 && m_curState != States::Die)
+	{
+		SetState(States::Die);
+		m_pColManager->RequestIncreaseExp(this, m_sightRange, m_TeamType, m_StatusInfo.Exp);
+
+		if (m_ObjectType == ObjectType::Nexus)
 		{
-			PlayerStatus->Exp += (short)(100 + (g_GameTime / 60) * 5);
-			if (PlayerStatus->Level * 110 + 170 <= PlayerStatus->Exp) {
-				PlayerStatus->Exp -= PlayerStatus->Level * 110 + 170;
-				m_pEnemy->LevelUP(m_pEnemy);
-				SC_Msg_Level_Up p;
-				p.Target_Tag = (short)m_pEnemy->GetTag();
-				p.size = sizeof(p);
-				p.type = SC_LEVEL_UP;
-				for (int j = 0; j < MAX_USER; ++j) {
-					if (g_clients[j].m_isconnected == true) {
-						SendPacket(j, &p);
-					}
-				}
-			}
-			SC_Msg_Exp_Up p;
-			p.Target_Tag = (short)m_pEnemy->GetTag();
-			p.exp = (short)(100 + (g_GameTime / 60) * 5);
-			p.size = sizeof(p);
-			p.type = SC_EXP_UP;
-			for (int j = 0; j < MAX_USER; ++j) {
-				if (g_clients[j].m_isconnected == true) {
-					SendPacket(j, &p);
+			m_pColManager->GameOver(m_TeamType);
+			for (int i = 0; i < MAX_USER; ++i)
+			{
+				if (g_clients[i].m_isconnected) 
+				{
+					SC_Msg_Game_Over p;
+					p.Team_Type = (BYTE)m_TeamType;
+					p.size = sizeof(p);
+					p.type = SC_GAME_OVER;
+					SendPacket(i, &p);
 				}
 			}
 		}
 	}
-
-	if (m_hpSyncCoolTime > COOLTIME_HP_SYNC)
+	else if (m_hpSyncCoolTime > COOLTIME_HP_SYNC)
 	{
 		SC_Msg_Hp_Sync hpPacket;
 		hpPacket.curhp = m_StatusInfo.HP;
@@ -205,23 +195,6 @@ void CNexusTower::ReceiveDamage(float damage, CCollisionObject * pCol)
 		}
 		m_hpSyncCoolTime = 0.0f;
 	}
-
-	if (m_StatusInfo.HP <= 0 && m_curState != States::Die) {
-		SetState(States::Die);
-		if (m_ObjectType == ObjectType::Nexus) {
-			m_pColManager->GameOver(m_TeamType);
-			for (int i = 0; i < MAX_USER; ++i)
-			{
-				if (g_clients[i].m_isconnected) {
-					SC_Msg_Game_Over p;
-					p.Team_Type = (BYTE)m_TeamType;
-					p.size = sizeof(p);
-					p.type = SC_GAME_OVER;
-					SendPacket(i, &p);
-				}
-			}
-		}
-	}
 }
 
 void CNexusTower::UpdateTowerStatus()
@@ -229,16 +202,16 @@ void CNexusTower::UpdateTowerStatus()
 	// 10분 이전 스탯 증가량 적용
 	if (g_GameTime < 600.f)
 	{
-		m_StatusInfo.Atk += 5;
-		m_StatusInfo.Def += 2;
+		m_StatusInfo.Atk += INCREASE_STATICOBJECT_BF_ATK;
+		m_StatusInfo.Def += INCREASE_STATICOBJECT_BF_DEF;
 	}
 	// 10분 이후 스탯 증가량 적용
 	else
 	{
-		m_StatusInfo.Atk += 10;
-		m_StatusInfo.Def += 4;
+		m_StatusInfo.Atk += INCREASE_STATICOBJECT_AF_ATK;
+		m_StatusInfo.Def += INCREASE_STATICOBJECT_AF_DEF;
 	}
-	m_StatusInfo.Exp += 5;
+	m_StatusInfo.Exp += INCREASE_STATICOBJECT_EXP;
 }
 
 ////////////////////////////////////////////////////////////////////////

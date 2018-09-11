@@ -173,12 +173,12 @@ void CMinion::ReceiveDamage(float damage, CCollisionObject * pCol)
 
 	m_StatusInfo.HP -= damage * Compute_Defence(m_StatusInfo.Def);
 
-	if (m_StatusInfo.HP <= 0) {
+	if (m_StatusInfo.HP <= 0)
+	{
 		SetState(States::Die);
 		m_pColManager->RequestIncreaseExp(this, m_sightRange, m_TeamType, m_StatusInfo.Exp);
 	}
-
-	if (m_hpSyncCoolTime > COOLTIME_HP_SYNC)
+	else if (m_hpSyncCoolTime > COOLTIME_HP_SYNC)
 	{
 		SC_Msg_Hp_Sync p;
 		p.curhp = m_StatusInfo.HP;
@@ -196,8 +196,6 @@ void CMinion::ReceiveDamage(float damage, CCollisionObject * pCol)
 		}
 		m_hpSyncCoolTime = 0.0f;
 	}
-
-	
 }
 
 void CMinion::SetCommonStatus(CommonInfo * status)

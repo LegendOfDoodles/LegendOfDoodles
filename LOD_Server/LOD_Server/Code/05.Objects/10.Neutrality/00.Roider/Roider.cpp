@@ -264,45 +264,20 @@ void CRoider::ReceiveDamage(float damage, CCollisionObject * pCol)
 {
 	// 이미 사망한 상태인 경우 대미지 처리를 하지 않는다.
 	if (m_curState == States::Die || m_curState == States::Remove) { return; }
-	
-	m_StatusInfo.HP -= damage * Compute_Defence(m_StatusInfo.Def);
-	if (m_StatusInfo.HP <= 0) {
-		SetState(States::Die);
-		m_pEnemy = m_pColManager->RequestNearObject(this, m_detectRange,m_TeamType);
-	}
-	if (m_StatusInfo.HP <= 0 && m_pEnemy) {
-		PlayerInfo* PlayerStatus{ m_pEnemy->GetPlayerStatus() };
-		if (m_pEnemy->GetTag() >= 10000 && m_pEnemy->GetTag() < 20000)
-		{
-			PlayerStatus->Exp += 153;
-			if (PlayerStatus->Level * 110 + 170 <= PlayerStatus->Exp) {
-				PlayerStatus->Exp -= PlayerStatus->Level * 110 + 170;
-				m_pEnemy->LevelUP(m_pEnemy);
-				SC_Msg_Level_Up p;
-				p.Target_Tag = (short)m_pEnemy->GetTag();
-				p.size = sizeof(p);
-				p.type = SC_LEVEL_UP;
-				for (int j = 0; j < MAX_USER; ++j) {
-					if (g_clients[j].m_isconnected == true) {
-						SendPacket(j, &p);
-					}
-				}
-			}
-			SC_Msg_Exp_Up p;
-			p.Target_Tag = (short)m_pEnemy->GetTag();
-			p.exp = 153;
-			p.size = sizeof(p);
-			p.type = SC_EXP_UP;
-			for (int j = 0; j < MAX_USER; ++j) {
-				if (g_clients[j].m_isconnected == true) {
-					SendPacket(j, &p);
-				}
-			}
-		}
-	}
+
 	ResetRecovery();
 
-	if (m_hpSyncCoolTime > COOLTIME_HP_SYNC)
+	m_StatusInfo.HP -= damage * Compute_Defence(m_StatusInfo.Def);
+
+	if (m_StatusInfo.HP <= 0)
+	{
+		SetState(States::Die);
+		if(m_lastDamageTeam == TeamType::Blue)
+			m_pColManager->RequestIncreaseExp(this, m_sightRange, TeamType::Red, m_StatusInfo.Exp);
+		else if(m_lastDamageTeam == TeamType::Red)
+			m_pColManager->RequestIncreaseExp(this, m_sightRange, TeamType::Blue, m_StatusInfo.Exp);
+	}
+	else if (m_hpSyncCoolTime > COOLTIME_HP_SYNC)
 	{
 		SC_Msg_Hp_Sync p;
 		p.curhp = m_StatusInfo.HP;
@@ -329,18 +304,18 @@ void CRoider::UpdateNeutralStatus()
 	// 10분 이전 스탯 증가량 적용
 	if (g_GameTime < 600.f)
 	{
-		m_StatusInfo.maxHP += 80;
-		m_StatusInfo.Atk += 2;
-		m_StatusInfo.Def += 1;
+		m_StatusInfo.maxHP += INCREASE_COMMON_ROIDER_BF_HP;
+		m_StatusInfo.Atk += INCREASE_COMMON_ROIDER_BF_ATK;
+		m_StatusInfo.Def += INCREASE_COMMON_ROIDER_BF_DEF;
 	}
 	// 10분 이후 스탯 증가량 적용
 	else
 	{
-		m_StatusInfo.maxHP += 100;
-		m_StatusInfo.Atk += 4;
-		m_StatusInfo.Def += 2;
+		m_StatusInfo.maxHP += INCREASE_COMMON_ROIDER_AF_HP;
+		m_StatusInfo.Atk += INCREASE_COMMON_ROIDER_AF_ATK;
+		m_StatusInfo.Def += INCREASE_COMMON_ROIDER_AF_DEF;
 	}
-	m_StatusInfo.Exp += 5;
+	m_StatusInfo.Exp += INCREASE_STATICOBJECT_EXP;
 }
 
 ////////////////////////////////////////////////////////////////////////

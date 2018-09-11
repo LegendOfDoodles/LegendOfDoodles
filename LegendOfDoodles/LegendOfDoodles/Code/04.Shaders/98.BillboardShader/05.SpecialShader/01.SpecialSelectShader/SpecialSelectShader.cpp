@@ -93,6 +93,7 @@ bool CSpecialSelectShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 		if ((cursorPos.x > SPECIAL_MINIMUM_X  && cursorPos.x < SPECIAL_MAXIMUM_X)
 			&& (cursorPos.y > SPECIAL_MINIMUM_Y && cursorPos.y < SPECIAL_MAXIMUM_Y))
 		{
+			// Warning! 무기 선택 레벨 2로 변경 필요
 			if (m_pPlayer->GetPlayerStatus()->Weapon == 0
 				&& m_pPlayer->GetPlayerStatus()->Level >= 0)
 			{
