@@ -6,7 +6,7 @@
 /// 목적: 중립 몬스터(로이더) 클래스 분할
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-11
+/// 최종 수정 날짜: 2018-09-12
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -95,7 +95,6 @@ void CRoider::SetState(StatesType newState, shared_ptr<CWayFinder> pWayFinder)
 	switch (newState)
 	{
 	case States::Idle:
-		m_returning = false;
 		SetAnimation(Animations::Idle);
 		break;
 	case States::Walk:

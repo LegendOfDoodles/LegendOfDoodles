@@ -6,7 +6,7 @@
 /// 목적: 중립 몬스터(수호 골렘) 클래스 분할
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-11
+/// 최종 수정 날짜: 2018-09-12
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -225,7 +225,6 @@ void CGolem::PlayChase(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)
 		if (m_TeamType == TeamType::Neutral)
 		{
 			GenerateSubPathToSpawnLocation(pWayFinder);
-			m_returning = true;
 		}
 		else
 			GenerateSubPathToMainPath(pWayFinder);
@@ -252,7 +251,6 @@ void CGolem::PlayAttack(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)
 		if (m_TeamType == TeamType::Neutral)
 		{
 			GenerateSubPathToSpawnLocation(pWayFinder);
-			m_returning = true;
 		}
 		else
 			GenerateSubPathToMainPath(pWayFinder);
@@ -650,6 +648,7 @@ void CGolem::GenerateSubPathToSpawnLocation(shared_ptr<CWayFinder> pWayFinder)
 		m_subDestination = m_subPath->front().To();
 		m_subPath->pop_front();
 		LookAt(m_subDestination);
+		m_returning = true;
 	}
 }
 

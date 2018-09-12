@@ -298,7 +298,8 @@ void CCollisionManager::RequestIncreaseExp(CCollisionObject * pCol, float sightR
 	if (m_Winner != TeamType::None) return;
 
 	TeamType enemytype;
-		
+	
+	// 요청한(사망한) 오브젝트의 반대 팀 플레이어에 경험치 부여
 	if (type == TeamType::Blue)
 		enemytype = TeamType::Red;
 	else if (type == TeamType::Red)
@@ -309,6 +310,7 @@ void CCollisionManager::RequestIncreaseExp(CCollisionObject * pCol, float sightR
 	{
 		if ((*i)->GetTeam() == enemytype && (*i)->GetTag() >= 10000 && (*i)->GetTag() < 20000) 
 		{
+			// 해당 오브젝트와 플레이어의 거리가 해당 오브젝트 인근인 경우 경험치를 부여한다.
 			XMFLOAT2 playerPos = XMFLOAT2((*i)->GetPosition().x, (*i)->GetPosition().z);
 			XMFLOAT2 objectPos = XMFLOAT2(pCol->GetPosition().x, pCol->GetPosition().z);
 			float distanceSqr = Vector2::DistanceSquare(playerPos, objectPos);
