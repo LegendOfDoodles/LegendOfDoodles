@@ -169,6 +169,7 @@
     <ClInclude Include="Code\01.Main\LOD_Server.h" />
     <ClInclude Include="Code\02.Framework\00.Frame\Framework.h" />
     <ClInclude Include="Code\03.Scenes\00.BaseScene\Scene.h" />
+    <ClInclude Include="Code\03.Scenes\01.GameScene\GameScene.h" />
     <ClInclude Include="Code\04.Shaders\00.BaseShader\Shader.h" />
     <ClInclude Include="Code\04.Shaders\04.AniShader\MinionShader.h" />
     <ClInclude Include="Code\04.Shaders\05.PlayerShader\PlayerShader.h" />
@@ -218,6 +219,7 @@
     <ClCompile Include="Code\01.Main\LOD_Server.cpp" />
     <ClCompile Include="Code\02.Framework\00.Frame\Framework.cpp" />
     <ClCompile Include="Code\03.Scenes\00.BaseScene\Scene.cpp" />
+    <ClCompile Include="Code\03.Scenes\01.GameScene\GameScene.cpp" />
     <ClCompile Include="Code\04.Shaders\00.BaseShader\Shader.cpp" />
     <ClCompile Include="Code\04.Shaders\04.AniShader\MinionShader.cpp" />
     <ClCompile Include="Code\04.Shaders\05.PlayerShader\PlayerShader.cpp" />

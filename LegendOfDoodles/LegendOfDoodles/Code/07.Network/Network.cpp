@@ -6,6 +6,7 @@
 #include "05.Objects\06.Minion\Minion.h"
 #include "05.Objects\09.NexusTower\NexusTower.h"
 #include "03.Scenes/00.BaseScene/Scene.h"
+#include "03.Scenes/01.GameScene/GameScene.h"
 #include "04.Shaders/04.AniShader/MinionShader.h"
 #include "04.Shaders/98.BillboardShader/98.NumberShader/NumberShader.h"
 #include "00.Global/01.Utility/08.EffectManager/EffectManager.h"
@@ -473,7 +474,7 @@ void CNetwork::SendPacket(void* ptr)
 	}
 }
 
-void CNetwork::SetScene(shared_ptr<CScene> pScene)
+void CNetwork::SetGameScene(shared_ptr<CGameScene> pScene)
 {
 	m_pScene = pScene;
 }

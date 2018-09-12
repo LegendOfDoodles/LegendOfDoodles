@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Framework.h"
+#include "03.Scenes/01.GameScene/GameScene.h"
 
 /// <summary>
 /// 목적: 프레임워크 클래스
@@ -49,7 +50,7 @@ void CFramework::FrameAdvance(float timeElapsed)
 // 내부 함수
 void CFramework::BuildObjects()
 {
-	m_pScene = shared_ptr<CScene>(new CScene());
+	m_pScene = shared_ptr<CGameScene>(new CGameScene());
 	m_pScene->Initialize();
 }
 

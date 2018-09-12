@@ -184,6 +184,7 @@
     <ClInclude Include="Code\02.Framework\01.CreateMgr\CreateMgr.h" />
     <ClInclude Include="Code\02.Framework\02.RenderMgr\RenderMgr.h" />
     <ClInclude Include="Code\03.Scenes\00.BaseScene\Scene.h" />
+    <ClInclude Include="Code\03.Scenes\01.GameScene\GameScene.h" />
     <ClInclude Include="Code\04.Shaders\00.BaseShader\Shader.h" />
     <ClInclude Include="Code\04.Shaders\01.ObjectShader\StaticObjectShader.h" />
     <ClInclude Include="Code\04.Shaders\02.TerrainShader\TerrainShader.h" />
@@ -271,6 +272,7 @@
     <ClCompile Include="Code\02.Framework\01.CreateMgr\CreateMgr.cpp" />
     <ClCompile Include="Code\02.Framework\02.RenderMgr\RenderMgr.cpp" />
     <ClCompile Include="Code\03.Scenes\00.BaseScene\Scene.cpp" />
+    <ClCompile Include="Code\03.Scenes\01.GameScene\GameScene.cpp" />
     <ClCompile Include="Code\04.Shaders\00.BaseShader\Shader.cpp" />
     <ClCompile Include="Code\04.Shaders\01.ObjectShader\StaticObjectShader.cpp" />
     <ClCompile Include="Code\04.Shaders\02.TerrainShader\TerrainShader.cpp" />

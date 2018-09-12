@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "RenderMgr.h"
-#include "../../03.Scenes/00.BaseScene/Scene.h"
+#include "03.Scenes/00.BaseScene/Scene.h"
 
 /// <summary>
 /// 목적: 렌더링 관련 함수를 모아 두어 다른 변경사항 없이 그릴 수 있도록 하기 위함

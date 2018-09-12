@@ -19,7 +19,7 @@ public: // 공개 함수
 	virtual bool Attackable(CCollisionObject* other);
 	virtual bool AttackableFarRange(CCollisionObject* other);
 
-	virtual void LevelUP(int level) {}
+	virtual void LevelUP(int level) { level; }
 
 	virtual void PlayIdle(float timeElapsed) { timeElapsed; }
 	virtual void PlayWalk(float timeElapsed, shared_ptr<CWayFinder> pWayFinder) { timeElapsed; pWayFinder; }

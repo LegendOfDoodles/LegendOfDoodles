@@ -1,8 +1,6 @@
 #pragma once
 #include "03.Scenes/00.BaseScene/Scene.h"
 
-class CScene;
-
 class CFramework
 {
 public:	// 持失切, 社瑚切

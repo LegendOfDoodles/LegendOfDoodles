@@ -135,6 +135,9 @@
     <Filter Include="소스 파일\05.Objects\10.Neutrality\01.Golem">
       <UniqueIdentifier>{b566cd71-e4b6-4de6-8a40-e04a8a2995d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\03.Scenes\01.GameScene">
+      <UniqueIdentifier>{d36d1ebb-968b-460e-81ee-bdfe6b0c5798}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource\Resource.h">
@@ -187,9 +190,6 @@
     </ClInclude>
     <ClInclude Include="Code\02.Framework\00.Frame\Framework.h">
       <Filter>소스 파일\02.Framework\00.Frame</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\03.Scenes\00.BaseScene\Scene.h">
-      <Filter>소스 파일\03.Scenes\00.BaseScene</Filter>
     </ClInclude>
     <ClInclude Include="Code\04.Shaders\00.BaseShader\Shader.h">
       <Filter>소스 파일\04.Shaders\00.BaseShader</Filter>
@@ -254,6 +254,12 @@
     <ClInclude Include="Code\05.Objects\00.BaseObject\BaseObject.h">
       <Filter>소스 파일\05.Objects\00.BaseObject</Filter>
     </ClInclude>
+    <ClInclude Include="Code\03.Scenes\00.BaseScene\Scene.h">
+      <Filter>소스 파일\03.Scenes\00.BaseScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\03.Scenes\01.GameScene\GameScene.h">
+      <Filter>소스 파일\03.Scenes\01.GameScene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resource\LOD_Server.ico">
@@ -304,9 +310,6 @@
     </ClCompile>
     <ClCompile Include="Code\02.Framework\00.Frame\Framework.cpp">
       <Filter>소스 파일\02.Framework\00.Frame</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\03.Scenes\00.BaseScene\Scene.cpp">
-      <Filter>소스 파일\03.Scenes\00.BaseScene</Filter>
     </ClCompile>
     <ClCompile Include="Code\04.Shaders\00.BaseShader\Shader.cpp">
       <Filter>소스 파일\04.Shaders\00.BaseShader</Filter>
@@ -370,6 +373,12 @@
     </ClCompile>
     <ClCompile Include="Code\07.Server\Main.cpp">
       <Filter>소스 파일\07.Server</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\03.Scenes\00.BaseScene\Scene.cpp">
+      <Filter>소스 파일\03.Scenes\00.BaseScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\03.Scenes\01.GameScene\GameScene.cpp">
+      <Filter>소스 파일\03.Scenes\01.GameScene</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

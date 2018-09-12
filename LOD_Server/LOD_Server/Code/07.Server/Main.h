@@ -19,7 +19,7 @@
 
 class CCollisionObject;
 class CNexusTower;
-class CScene;
+class CGameScene;
 class CAnimatedObject;
 
 using namespace std;
@@ -130,7 +130,7 @@ extern array <NexusTower, 14> g_nexustowers;
 
 //CScene* g_pScene{ NULL };
 
-
+class CScene;
 
 extern shared_ptr<CScene> g_pScene;
 extern CAnimatedObject** g_ppPlayer;

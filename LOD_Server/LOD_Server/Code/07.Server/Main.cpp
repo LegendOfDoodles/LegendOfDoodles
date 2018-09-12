@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
 //클라쪽 헤더
-#include "03.Scenes\00.BaseScene\Scene.h"
+#include "03.Scenes\01.GameScene\GameScene.h"
 #include "04.Shaders\05.PlayerShader\PlayerShader.h"
 #include "04.Shaders/04.AniShader/MinionShader.h"
 #include "05.Objects\03.AnimatedObject\AnimatedObject.h"
