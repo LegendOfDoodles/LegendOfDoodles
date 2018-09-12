@@ -13,7 +13,7 @@
 /// 목적: 넥서스 및 타워 그리기 용도의 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-08-22
+/// 최종 수정 날짜: 2018-09-12
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -74,11 +74,24 @@ void CNexusTowerShader::Render(CCamera *pCamera)
 	int cnt{ 0 };
 	for (int i = 0; i < m_nMaterials; ++i)
 	{
+		int curMaterialCnt{ cnt };
 		CShader::Render(pCamera, i);
 		m_ppMaterials[i]->UpdateShaderVariables();
 		for (int j = 0; j < m_meshCounts[i]; ++j, ++cnt)
 		{
-			if (m_ppObjects[cnt]) m_ppObjects[cnt]->Render(pCamera);
+			if (m_ppObjects[cnt] && m_ppObjects[cnt]->IsAlive())
+			{
+				m_ppObjects[cnt]->Render(pCamera);
+			}
+		}
+		// 부서진 타워 랜더링 시 이미시브 적용 하지 않음
+		ChangePipeline(3);
+		for (int j = 0; j < m_meshCounts[i]; ++j, ++curMaterialCnt)
+		{
+			if (m_ppObjects[curMaterialCnt] && !m_ppObjects[curMaterialCnt]->IsAlive())
+			{
+				m_ppObjects[curMaterialCnt]->Render(pCamera);
+			}
 		}
 	}
 }
@@ -193,6 +206,15 @@ D3D12_SHADER_BYTECODE CNexusTowerShader::CreatePixelShader(ComPtr<ID3DBlob>& pSh
 		pShaderBlob));
 }
 
+D3D12_SHADER_BYTECODE CNexusTowerShader::CreateNoneEmissivePixelShader(ComPtr<ID3DBlob>& pShaderBlob)
+{
+	return(CShader::CompileShaderFromFile(
+		L"./code/04.Shaders/99.GraphicsShader/StaticShader.hlsl",
+		"PSTexturedLighting",
+		"ps_5_1",
+		pShaderBlob));
+}
+
 D3D12_SHADER_BYTECODE CNexusTowerShader::CreateShadowVertexShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
@@ -204,12 +226,81 @@ D3D12_SHADER_BYTECODE CNexusTowerShader::CreateShadowVertexShader(ComPtr<ID3DBlo
 
 void CNexusTowerShader::CreateShader(shared_ptr<CCreateMgr> pCreateMgr, UINT nRenderTargets, bool isRenderBB, bool isRenderShadow)
 {
-	m_nPipelineStates = 3;
+	m_nPipelineStates = 4;
 
 	m_nHeaps = 5;
 	CreateDescriptorHeaps();
 
-	CShader::CreateShader(pCreateMgr, nRenderTargets, isRenderBB, isRenderShadow);
+	m_ppPipelineStates.resize(m_nPipelineStates);
+
+	m_isRenderBB = isRenderBB;
+
+	int index{ 0 };
+	HRESULT hResult;
+	ComPtr<ID3DBlob> pVertexShaderBlob, pPixelShaderBlob;
+
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineStateDesc;
+	::ZeroMemory(&pipelineStateDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
+
+	pipelineStateDesc.pRootSignature = pCreateMgr->GetGraphicsRootSignature().Get();
+	pipelineStateDesc.VS = CreateVertexShader(pVertexShaderBlob);
+	pipelineStateDesc.PS = CreatePixelShader(pPixelShaderBlob);
+	pipelineStateDesc.RasterizerState = CreateRasterizerState();
+	pipelineStateDesc.BlendState = CreateBlendState();
+	pipelineStateDesc.DepthStencilState = CreateDepthStencilState();
+	pipelineStateDesc.InputLayout = CreateInputLayout();
+	pipelineStateDesc.SampleMask = UINT_MAX;
+	pipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	pipelineStateDesc.NumRenderTargets = nRenderTargets;
+	for (UINT i = 0; i < nRenderTargets; i++)
+	{
+		pipelineStateDesc.RTVFormats[i] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	}
+	pipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	pipelineStateDesc.SampleDesc.Count = 1;
+	pipelineStateDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
+
+	hResult = pCreateMgr->GetDevice()->CreateGraphicsPipelineState(
+		&pipelineStateDesc,
+		IID_PPV_ARGS(m_ppPipelineStates[index++].GetAddressOf()));
+	ThrowIfFailed(hResult);
+
+	// Non-Emissive 파이프라인 추가
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC NoneEmissivePipelineStateDesc{ pipelineStateDesc };
+	NoneEmissivePipelineStateDesc.PS = CreateNoneEmissivePixelShader(pPixelShaderBlob);
+
+	if (isRenderBB)
+	{
+		D3D12_GRAPHICS_PIPELINE_STATE_DESC BBPipelineStateDesc{ pipelineStateDesc };
+		BBPipelineStateDesc.VS = CreateBoundingBoxVertexShader(pVertexShaderBlob);
+		BBPipelineStateDesc.PS = CreateBoundingBoxPixelShader(pPixelShaderBlob);
+		BBPipelineStateDesc.RasterizerState = CreateBoundingBoxRasterizerState();
+		BBPipelineStateDesc.InputLayout = CreateBoundingBoxInputLayout();
+		hResult = pCreateMgr->GetDevice()->CreateGraphicsPipelineState(
+			&BBPipelineStateDesc,
+			IID_PPV_ARGS(m_ppPipelineStates[index++].GetAddressOf()));
+		ThrowIfFailed(hResult);
+	}
+
+	if (isRenderShadow)
+	{
+		D3D12_GRAPHICS_PIPELINE_STATE_DESC ShadowPipelineStateDesc{ pipelineStateDesc };
+		ShadowPipelineStateDesc.VS = CreateShadowVertexShader(pVertexShaderBlob);
+		ShadowPipelineStateDesc.PS = CreateShadowPixelShader(pPixelShaderBlob);
+		pipelineStateDesc.RasterizerState = CreateShadowRasterizerState();
+		pipelineStateDesc.NumRenderTargets = 0;
+		pipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_UNKNOWN;
+		hResult = pCreateMgr->GetDevice()->CreateGraphicsPipelineState(
+			&ShadowPipelineStateDesc,
+			IID_PPV_ARGS(m_ppPipelineStates[index++].GetAddressOf()));
+		ThrowIfFailed(hResult);
+	}
+
+	// Non-Emissive 파이프라인 추가
+	hResult = pCreateMgr->GetDevice()->CreateGraphicsPipelineState(
+		&NoneEmissivePipelineStateDesc,
+		IID_PPV_ARGS(m_ppPipelineStates[index++].GetAddressOf()));
+	ThrowIfFailed(hResult);
 }
 
 void CNexusTowerShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pContext)

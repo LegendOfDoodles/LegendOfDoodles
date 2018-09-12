@@ -5,7 +5,7 @@
 /// 목적: 충돌체가 있는 오브젝트 구분용 클래스
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-11
+/// 최종 수정 날짜: 2018-09-12
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -41,4 +41,11 @@ bool CCollisionObject::AttackableFarRange(CCollisionObject * other)
 {
 	float dstSqr = Vector3::DistanceSquare(GetPosition(), other->GetPosition());
 	return (dstSqr < m_farAttackRange * m_farAttackRange);
+}
+
+bool CCollisionObject::IsAlive()
+{
+	if (m_curState == States::Remove) return false;
+	if (m_curState == States::Die) return false;
+	return true;
 }

@@ -8,7 +8,7 @@
 /// 목적: 기본 쉐이터 코드, 인터페이스 용
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-08-22
+/// 최종 수정 날짜: 2018-09-12
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -120,6 +120,11 @@ bool CShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 {
 	UNREFERENCED_PARAMETER(pKeyBuffer);
 	return true;
+}
+
+void CShader::ChangePipeline(int index)
+{
+	m_pCommandList->SetPipelineState(m_ppPipelineStates[index].Get());
 }
 
 void CShader::OnStatus(int ObjectType)

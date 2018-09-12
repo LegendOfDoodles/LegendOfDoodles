@@ -19,6 +19,8 @@ public: // 공개 함수
 	virtual bool Attackable(CCollisionObject* other);
 	virtual bool AttackableFarRange(CCollisionObject* other);
 
+	bool IsAlive();
+
 	virtual void LevelUP(int level) { level; }
 
 	virtual void PlayIdle(float timeElapsed) { timeElapsed; }

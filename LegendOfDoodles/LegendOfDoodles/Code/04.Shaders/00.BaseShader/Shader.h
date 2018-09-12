@@ -36,10 +36,12 @@ public: // 공개 함수
 	virtual bool OnProcessKeyInput(UCHAR* pKeyBuffer);
 	virtual bool OnProcessMouseInput(WPARAM pKeyBuffer);
 
-	bool HasBoundingBox() { return m_isRenderBB; }
+	void ChangePipeline(int index);
 
 	virtual void OnStatus(int ObjectType);
 	virtual void OffStatus();
+
+	bool HasBoundingBox() { return m_isRenderBB; }
 
 	virtual void CreateGraphicsRootSignature(shared_ptr<CCreateMgr> pCreateMgr) { pCreateMgr; }
 
