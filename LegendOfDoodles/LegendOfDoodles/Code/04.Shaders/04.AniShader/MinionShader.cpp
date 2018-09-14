@@ -14,7 +14,7 @@
 /// 목적: 미니언 관리 및 그리기 용도
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-09-03
+/// 최종 수정 날짜: 2018-09-14
 /// </summary>
 
 #define SwordMinionMesh m_ppMinionMeshes[0]
@@ -36,8 +36,10 @@ CMinionShader::~CMinionShader()
 // 공개 함수
 void CMinionShader::Initialize(shared_ptr<CCreateMgr> pCreateMgr, void *pContext)
 {
+	pCreateMgr->ResetCommandList();
 	CreateShader(pCreateMgr, RENDER_TARGET_BUFFER_CNT, true, true);
 	BuildObjects(pCreateMgr, pContext);
+	pCreateMgr->ExecuteCommandList();
 }
 
 void CMinionShader::ReleaseUploadBuffers()

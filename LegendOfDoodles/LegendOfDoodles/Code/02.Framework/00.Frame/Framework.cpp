@@ -6,7 +6,7 @@
 /// 목적: 프레임워크 클래스
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-12
+/// 최종 수정 날짜: 2018-09-14
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -79,12 +79,8 @@ LRESULT CALLBACK CFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMessageI
 
 void CFramework::BuildObjects()
 {
-	m_pRenderMgr->ResetCommandList();
-
 	m_pScene = shared_ptr<CGameScene>(new CGameScene());
 	m_pScene->Initialize(m_pCreateMgr, m_pNetwork);
-
-	m_pRenderMgr->ExecuteCommandList();
 
 	m_pScene->ReleaseUploadBuffers();
 }

@@ -13,7 +13,7 @@
 /// 목적: 넥서스 및 타워 그리기 용도의 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-12
+/// 최종 수정 날짜: 2018-09-14
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -31,8 +31,10 @@ CNexusTowerShader::~CNexusTowerShader()
 // 공개 함수
 void CNexusTowerShader::Initialize(shared_ptr<CCreateMgr> pCreateMgr, void *pContext)
 {
+	pCreateMgr->ResetCommandList();
 	CreateShader(pCreateMgr, RENDER_TARGET_BUFFER_CNT, true, true);
 	BuildObjects(pCreateMgr, pContext);
+	pCreateMgr->ExecuteCommandList();
 }
 
 void CNexusTowerShader::UpdateShaderVariables(int opt)

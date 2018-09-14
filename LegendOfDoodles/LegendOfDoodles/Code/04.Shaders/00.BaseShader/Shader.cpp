@@ -8,7 +8,7 @@
 /// 목적: 기본 쉐이터 코드, 인터페이스 용
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-12
+/// 최종 수정 날짜: 2018-09-14
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -30,8 +30,10 @@ CShader::~CShader()
 // 공개 함수
 void CShader::Initialize(shared_ptr<CCreateMgr> pCreateMgr, void *pContext)
 {
+	pCreateMgr->ResetCommandList();
 	CreateShader(pCreateMgr, RENDER_TARGET_BUFFER_CNT);
 	BuildObjects(pCreateMgr, pContext);
+	pCreateMgr->ExecuteCommandList();
 }
 
 void CShader::Finalize()

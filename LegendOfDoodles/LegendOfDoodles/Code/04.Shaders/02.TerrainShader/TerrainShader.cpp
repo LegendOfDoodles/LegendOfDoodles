@@ -6,7 +6,7 @@
 /// 목적: 지형 출력용 Shader
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-08-22
+/// 최종 수정 날짜: 2018-09-14
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -23,8 +23,10 @@ CTerrainShader::~CTerrainShader()
 // 공개 함수
 void CTerrainShader::Initialize(shared_ptr<CCreateMgr> pCreateMgr, void * pContext)
 {
+	pCreateMgr->ResetCommandList();
 	CreateShader(pCreateMgr, RENDER_TARGET_BUFFER_CNT, false, true);
 	BuildObjects(pCreateMgr, pContext);
+	pCreateMgr->ExecuteCommandList();
 }
 
 void CTerrainShader::ReleaseUploadBuffers()

@@ -13,7 +13,7 @@
 /// 목적: 플레이어 관리 및 렌더링 용도
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-09-11
+/// 최종 수정 날짜: 2018-09-14
 /// </summary>
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -29,8 +29,10 @@ CPlayerShader::~CPlayerShader()
 // 공개 함수
 void CPlayerShader::Initialize(shared_ptr<CCreateMgr> pCreateMgr, void *pContext)
 {
+	pCreateMgr->ResetCommandList();
 	CreateShader(pCreateMgr, RENDER_TARGET_BUFFER_CNT, true, true);
 	BuildObjects(pCreateMgr, pContext);
+	pCreateMgr->ExecuteCommandList();
 }
 
 void CPlayerShader::UpdateShaderVariables(int opt)

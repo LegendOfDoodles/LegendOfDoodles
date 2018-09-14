@@ -14,7 +14,7 @@
 /// 목적: 중립 몬스터 관리 및 렌더링용 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-08-22
+/// 최종 수정 날짜: 2018-09-14
 /// </summary>
 
 #define Roider_NetralMaterial m_ppMaterials[0]
@@ -39,8 +39,10 @@ CNeutralityShader::~CNeutralityShader()
 // 공개 함수
 void CNeutralityShader::Initialize(shared_ptr<CCreateMgr> pCreateMgr, void *pContext)
 {
+	pCreateMgr->ResetCommandList();
 	CreateShader(pCreateMgr, RENDER_TARGET_BUFFER_CNT, true, true);
 	BuildObjects(pCreateMgr, pContext);
+	pCreateMgr->ExecuteCommandList();
 }
 
 void CNeutralityShader::UpdateShaderVariables(int opt)

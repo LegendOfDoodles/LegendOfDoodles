@@ -10,7 +10,7 @@
 /// 목적: 스테틱 오브젝트 그리기 용도의 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-08-22
+/// 최종 수정 날짜: 2018-09-14
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -28,8 +28,10 @@ CStaticObjectShader::~CStaticObjectShader()
 // 공개 함수
 void CStaticObjectShader::Initialize(shared_ptr<CCreateMgr> pCreateMgr, void *pContext)
 {
+	pCreateMgr->ResetCommandList();
 	CreateShader(pCreateMgr, RENDER_TARGET_BUFFER_CNT, true, true);
 	BuildObjects(pCreateMgr, pContext);
+	pCreateMgr->ExecuteCommandList();
 }
 
 void CStaticObjectShader::UpdateShaderVariables(int opt)
