@@ -19,7 +19,7 @@ public:	// 공개 함수
 	void RenderColor(shared_ptr<CScene> pScene);
 	void RenderLight(shared_ptr<CScene> pScene);
 
-	void RenderLoadingScreen();
+	void RenderLoadingScreen(float loadingPercentage = 0.f);
 
 	// Set dsvCPUHandle by dsvDescriptorHeap
 	void SetDsvCPUHandleWithDsvHeap(ComPtr<ID3D12DescriptorHeap> pDsvDescriptorHeap, UINT incrementSize);

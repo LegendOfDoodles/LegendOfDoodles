@@ -13,6 +13,8 @@ public:	// 공개 함수
 	void Initialize(HINSTANCE hInstance, HWND hWnd);
 	void Release();
 
+	void RenderLoadingScreen(float loadingPercentage = 0.f);
+
 	void Resize(int width, int height);
 
 	void OnResizeBackBuffers();

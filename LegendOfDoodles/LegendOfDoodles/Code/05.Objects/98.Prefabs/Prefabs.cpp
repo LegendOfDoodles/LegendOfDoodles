@@ -2059,6 +2059,23 @@ CMaterial * Materials::CreateLoadingScreenMaterial(shared_ptr<CCreateMgr> pCreat
 	return pMaterial;
 }
 
+CMaterial * Materials::CreateLoadingBarMaterial(shared_ptr<CCreateMgr> pCreateMgr, D3D12_CPU_DESCRIPTOR_HANDLE * pSrvCPUDescriptorStartHandle, D3D12_GPU_DESCRIPTOR_HANDLE * pSrvGPUDescriptorStartHandle)
+{
+	CMaterial *pMaterial{ new CMaterial(pCreateMgr) };
+	CTexture *pTexture{ new CTexture(1, RESOURCE_TEXTURE_2DARRAY, 0) };
+	pTexture->LoadTextureFromFile(pCreateMgr, L"./Resource/Sprites/LoadingScreen/LoadingBar.dds", 0);
+
+	CreateShaderResourceViews(
+		pCreateMgr, pTexture,
+		2, false,
+		pSrvCPUDescriptorStartHandle,
+		pSrvGPUDescriptorStartHandle);
+
+	pMaterial->Initialize(pCreateMgr);
+	pMaterial->SetTexture(pTexture);
+
+	return pMaterial;
+}
 
 // SRV 생성 함수 ...
 void Materials::GetShaderResourceViewDesc(

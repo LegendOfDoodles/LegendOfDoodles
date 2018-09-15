@@ -306,6 +306,9 @@
     <Filter Include="소스 파일\05.Objects\95.Sprites">
       <UniqueIdentifier>{8ea1bfcc-8f16-4357-9f29-8885c91a2947}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\04.Shaders\96.SpritesShader\02.LoadingBarShader">
+      <UniqueIdentifier>{f97a430f-81b5-452a-bb85-9ff6df1dbddb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\00.Global\00.Standard\stdafx.h">
@@ -578,6 +581,9 @@
     <ClInclude Include="Code\05.Objects\95.Sprites\Sprite.h">
       <Filter>소스 파일\05.Objects\95.Sprites</Filter>
     </ClInclude>
+    <ClInclude Include="Code\04.Shaders\96.SpritesShader\02.LoadingBarShader\LoadingBarShader.h">
+      <Filter>소스 파일\04.Shaders\96.SpritesShader\02.LoadingBarShader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\00.Global\00.Standard\stdafx.cpp">
@@ -828,6 +834,9 @@
     </ClCompile>
     <ClCompile Include="Code\05.Objects\95.Sprites\Sprite.cpp">
       <Filter>소스 파일\05.Objects\95.Sprites</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\04.Shaders\96.SpritesShader\02.LoadingBarShader\LoadingBarShader.cpp">
+      <Filter>소스 파일\04.Shaders\96.SpritesShader\02.LoadingBarShader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

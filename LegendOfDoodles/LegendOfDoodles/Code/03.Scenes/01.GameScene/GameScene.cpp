@@ -39,7 +39,7 @@
 /// 목적: 기본 씬, 인터페이스 용
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-12
+/// 최종 수정 날짜: 2018-09-15
 /// </summary>
 
 #define UI_Shader m_ppShaders[8]
@@ -338,6 +338,8 @@ void CGameScene::BuildLights()
 
 void CGameScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 {
+	float loadPercentage{ 0.f };
+
 	m_pCreateMgr = pCreateMgr;
 
 	m_hWnd = pCreateMgr->GetHwnd();
@@ -359,6 +361,9 @@ void CGameScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	m_ppShaders[6] = new CStaticObjectShader(pCreateMgr);
 	m_ppShaders[7] = new CFlyingShader(pCreateMgr);
 
+	loadPercentage += 0.05f;
+	pCreateMgr->RenderLoadingScreen(loadPercentage);
+
 	for (int i = 2; i <= 5; ++i)
 	{
 		m_ppShaders[i]->SetNetwork(m_pNetwork);
@@ -372,6 +377,10 @@ void CGameScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	BuildingMapIco_Shader = new CBuildingMinimapIconShader(pCreateMgr);
 	CharFrame_Shader = new CharacterFrameGaugeShader(pCreateMgr);
 	Minimap_Shader = new CMinimapShader(pCreateMgr);
+
+	loadPercentage += 0.03f;
+	pCreateMgr->RenderLoadingScreen(loadPercentage);
+
 	Skill_Shader = new CSkillShader(pCreateMgr);
 	Number_Shader = new CNumberShader(pCreateMgr);
 	SelectedSpecial_Shader = new CSelectedSpecialShader(pCreateMgr);
@@ -381,17 +390,24 @@ void CGameScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	SpecialSelect_Shader = new CSpecialSelectShader(pCreateMgr);
 	m_ppShaders[22] = new CEquipShader(pCreateMgr);
 
+	loadPercentage += 0.05f;
+	pCreateMgr->RenderLoadingScreen(loadPercentage);
+
 	m_pCollisionManager = shared_ptr<CCollisionManager>(new CCollisionManager());
 	//m_pCollisionManager->SetMyTeam((TeamType)(m_pNetwork->m_myid % 2));
 
 	for (int i = 0; i < 2; ++i)
 	{
 		m_ppShaders[i]->Initialize(pCreateMgr);
+		loadPercentage += 0.05f;
+		pCreateMgr->RenderLoadingScreen(loadPercentage);
 	}
 
 	for (int i = 2; i < m_nShaders - 14; ++i)
 	{
 		m_ppShaders[i]->Initialize(pCreateMgr, pTerrainShader->GetTerrain());
+		loadPercentage += 0.05f;
+		pCreateMgr->RenderLoadingScreen(loadPercentage);
 	}
 
 	((CEquipShader*)m_ppShaders[22])->SetPlayerCnt(((CPlayerShader *)m_ppShaders[3])->GetObjectCount());
@@ -415,6 +431,9 @@ void CGameScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	);
 	((CBuildingMinimapIconShader*)BuildingMapIco_Shader)->SetNexusAndTower(((CNexusTowerShader *)m_ppShaders[5])->GetCollisionObjects());
 
+	loadPercentage += 0.03f;
+	pCreateMgr->RenderLoadingScreen(loadPercentage);
+
 	m_ppObjects = ((CPlayerShader *)m_ppShaders[3])->GetCollisionObjects();
 
 	SetPlayer();
@@ -428,26 +447,52 @@ void CGameScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 
 	((CSpecialSelectShader*)SpecialSelect_Shader)->SetShader((CPlayerShader*)m_ppShaders[3]);
 
+	loadPercentage += 0.02f;
+	pCreateMgr->RenderLoadingScreen(loadPercentage);
+
 	for (int i = 8; i <= 21; ++i)
 	{
 		m_ppShaders[i]->SetNetwork(m_pNetwork);
 	}
 
 	UI_Shader->Initialize(pCreateMgr, m_pCamera);
+
+	loadPercentage += 0.02f;
+	pCreateMgr->RenderLoadingScreen(loadPercentage);
+
 	PlayerHP_Shader->Initialize(pCreateMgr, m_pCamera);
 	MinionHP_Shader->Initialize(pCreateMgr, m_pCamera);
+
+	loadPercentage += 0.05f;
+	pCreateMgr->RenderLoadingScreen(loadPercentage);
+
 	MinimapIco_Shader->Initialize(pCreateMgr, m_pCamera);
 	BuildingMapIco_Shader->Initialize(pCreateMgr, m_pCamera);
 	CharFrame_Shader->Initialize(pCreateMgr, m_pCamera);
+
+	loadPercentage += 0.05f;
+	pCreateMgr->RenderLoadingScreen(loadPercentage);
+
 	Minimap_Shader->Initialize(pCreateMgr, m_pCamera);
 	Skill_Shader->Initialize(pCreateMgr, m_pCamera);
 	Number_Shader->Initialize(pCreateMgr, m_pCamera);
+
+	loadPercentage += 0.05f;
+	pCreateMgr->RenderLoadingScreen(loadPercentage);
+
 	SelectedSpecial_Shader->Initialize(pCreateMgr, m_pCamera);
 	NexusTowerHP_Shader->Initialize(pCreateMgr, m_pCamera);
 	NeutralityHP_Shader->Initialize(pCreateMgr, m_pCamera);
 	Eeffect_Shader->Initialize(pCreateMgr, m_pCamera);
 	SpecialSelect_Shader->Initialize(pCreateMgr, m_pCamera);
+
+	loadPercentage += 0.05f;
+	pCreateMgr->RenderLoadingScreen(loadPercentage);
+
 	m_ppShaders[22]->Initialize(pCreateMgr, m_pCamera);
+
+	loadPercentage += 0.05f;
+	pCreateMgr->RenderLoadingScreen(loadPercentage);
 
 	//Managere Initialize
 	m_pWayFinder = shared_ptr<CWayFinder>(new CWayFinder());
@@ -464,8 +509,11 @@ void CGameScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	m_pCollisionManager->SetEffectManager(m_pEffectMgr);
 
 	m_pSoundManager = shared_ptr<CSoundManager>(new CSoundManager(m_pCamera));	// Fmod System Init
-	m_pSoundManager->loading();													// Sound File Load
+	m_pSoundManager->loading();					
+	// Sound File Load
 
+	loadPercentage += 0.03f;
+	pCreateMgr->RenderLoadingScreen(loadPercentage);
 																				//Manager Shaders Setting
 	CMinionShader* pMinionS = (CMinionShader *)m_ppShaders[2];
 
@@ -477,6 +525,9 @@ void CGameScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 
 	static_cast<CMinionHPGaugeShader*>(MinionHP_Shader)->SetUIObjectsManager(m_pUIObjectsManager);
 	static_cast<CMinimapIconShader*>(MinimapIco_Shader)->SetUIObjectsManager(m_pUIObjectsManager);
+
+	loadPercentage += 0.04f;
+	pCreateMgr->RenderLoadingScreen(loadPercentage);
 
 	m_pCollisionManager->SetNodeMap(m_pWayFinder->GetNodeMap(), m_pWayFinder->GetNodeSize(), m_pWayFinder->GetNodeWH());
 
@@ -491,6 +542,9 @@ void CGameScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	pPlayerS->SetEffectManagerToObject(m_pEffectMgr);
 	pPlayerS->SetSoundManagerToObject(m_pSoundManager);
 
+	loadPercentage += 0.01f;
+	pCreateMgr->RenderLoadingScreen(loadPercentage);
+
 	// 중립 몬스터에 충돌체 부여
 	CNeutralityShader* pNetral = (CNeutralityShader *)m_ppShaders[4];
 	nColliderObject = pNetral->GetObjectCount();
@@ -498,11 +552,18 @@ void CGameScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	{
 		m_pCollisionManager->AddCollider((pNetral->GetCollisionObjects())[i]);
 	}
+
+	loadPercentage += 0.01f;
+	pCreateMgr->RenderLoadingScreen(loadPercentage);
+
 	pNetral->SetColManagerToObject(m_pCollisionManager);
 	pNetral->SetFSMManager(m_pFSMMgr);
 	pNetral->SetThrowingManagerToObject(m_pThrowingMgr);
 	pNetral->SetEffectManagerToObject(m_pEffectMgr);
 	pNetral->SetSoundManagerToObject(m_pSoundManager);
+
+	loadPercentage += 0.02f;
+	pCreateMgr->RenderLoadingScreen(loadPercentage);
 
 	CNexusTowerShader* pNTS = (CNexusTowerShader *)m_ppShaders[5];
 	nColliderObject = pNTS->GetObjectCount();
@@ -510,9 +571,16 @@ void CGameScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	{
 		m_pCollisionManager->AddCollider((pNTS->GetCollisionObjects())[i]);
 	}
+
+	loadPercentage += 0.01f;
+	pCreateMgr->RenderLoadingScreen(loadPercentage);
+
 	pNTS->SetColManagerToObject(m_pCollisionManager);
 	pNTS->SetFSMManager(m_pFSMMgr);
 	pNTS->SetThrowingManagerToObject(m_pThrowingMgr);
+
+	loadPercentage += 0.02f;
+	pCreateMgr->RenderLoadingScreen(loadPercentage);
 
 	CFlyingShader* pFS = (CFlyingShader*)m_ppShaders[7];
 	pFS->SetColManagerToObject(m_pCollisionManager);
@@ -520,6 +588,9 @@ void CGameScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	pFS->SetSoundManagerToObject(m_pSoundManager);
 
 	BuildLights();
+
+	loadPercentage += 0.01f;
+	pCreateMgr->RenderLoadingScreen(loadPercentage);
 
 	m_pNetwork->SetWayfinder(m_pWayFinder);
 	m_pNetwork->SetCollisionManager(m_pCollisionManager);

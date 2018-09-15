@@ -198,6 +198,7 @@
     <ClInclude Include="Code\04.Shaders\09.EffectShader\EffectShader.h" />
     <ClInclude Include="Code\04.Shaders\10.EquipShader\EquipShader.h" />
     <ClInclude Include="Code\04.Shaders\96.SpritesShader\01.LoadingScreenShader\LoadingScreenShader.h" />
+    <ClInclude Include="Code\04.Shaders\96.SpritesShader\02.LoadingBarShader\LoadingBarShader.h" />
     <ClInclude Include="Code\04.Shaders\97.TextureToFullScreenShader\TextureToFullScreenShader.h" />
     <ClInclude Include="Code\04.Shaders\98.BillboardShader\00.UIShader\UIShader.h" />
     <ClInclude Include="Code\04.Shaders\98.BillboardShader\01.GaugeShader\00.PlayerGaugeShader\PlayerGaugeShader.h" />
@@ -290,6 +291,7 @@
     <ClCompile Include="Code\04.Shaders\09.EffectShader\EffectShader.cpp" />
     <ClCompile Include="Code\04.Shaders\10.EquipShader\EquipShader.cpp" />
     <ClCompile Include="Code\04.Shaders\96.SpritesShader\01.LoadingScreenShader\LoadingScreenShader.cpp" />
+    <ClCompile Include="Code\04.Shaders\96.SpritesShader\02.LoadingBarShader\LoadingBarShader.cpp" />
     <ClCompile Include="Code\04.Shaders\97.TextureToFullScreenShader\TextureToFullScreenShader.cpp" />
     <ClCompile Include="Code\04.Shaders\98.BillboardShader\00.UIShader\UIShader.cpp" />
     <ClCompile Include="Code\04.Shaders\98.BillboardShader\01.GaugeShader\00.PlayerGaugeShader\PlayerGaugeShader.cpp" />

@@ -6,7 +6,7 @@
 /// 목적: 생성 관련 함수를 모아 두어 헷갈리는 일 없이 생성 가능하도록 함
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-07-16
+/// 최종 수정 날짜: 2018-09-15
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -74,6 +74,11 @@ void CCreateMgr::Release()
 	m_pSwapChain.Reset();
 	m_pDevice.Reset();
 	m_pFactory.Reset();
+}
+
+void CCreateMgr::RenderLoadingScreen(float loadingPercentage)
+{
+	m_pRenderMgr->RenderLoadingScreen(loadingPercentage);
 }
 
 void CCreateMgr::Resize(int width, int height)

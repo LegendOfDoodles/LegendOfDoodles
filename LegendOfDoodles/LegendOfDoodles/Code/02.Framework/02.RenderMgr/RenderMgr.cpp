@@ -164,9 +164,13 @@ void CRenderMgr::RenderLight(shared_ptr<CScene> pScene)
 	ThrowIfFailed(hResult);
 }
 
-void CRenderMgr::RenderLoadingScreen()
+void CRenderMgr::RenderLoadingScreen(float loadingPercentage)
 {
-	if (m_pLoadingScene) Render(m_pLoadingScene);
+	if (m_pLoadingScene)
+	{
+		m_pLoadingScene->ApplyPercentage(loadingPercentage);
+		Render(m_pLoadingScene);
+	}
 }
 
 void CRenderMgr::SetDsvCPUHandleWithDsvHeap(ComPtr<ID3D12DescriptorHeap> pDsvDescriptorHeap, UINT incrementSize)

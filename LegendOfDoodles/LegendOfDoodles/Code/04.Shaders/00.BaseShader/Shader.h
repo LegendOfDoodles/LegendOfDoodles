@@ -41,6 +41,8 @@ public: // 공개 함수
 	virtual void OnStatus(int ObjectType);
 	virtual void OffStatus();
 
+	virtual void ApplyPercentage(float pct) { pct; }
+
 	bool HasBoundingBox() { return m_isRenderBB; }
 
 	virtual void CreateGraphicsRootSignature(shared_ptr<CCreateMgr> pCreateMgr) { pCreateMgr; }

@@ -1,11 +1,11 @@
 #pragma once
 #include "04.Shaders/00.BaseShader/Shader.h"
 
-class CLoadingScreenShader : public CShader
+class CLoadingBarShader : public CShader
 {
 public:	// 생성자, 소멸자
-	CLoadingScreenShader(shared_ptr<CCreateMgr> pCreateMgr);
-	virtual ~CLoadingScreenShader();
+	CLoadingBarShader(shared_ptr<CCreateMgr> pCreateMgr);
+	virtual ~CLoadingBarShader();
 
 public: // 공개 함수
 	virtual void ReleaseUploadBuffers();
@@ -13,9 +13,10 @@ public: // 공개 함수
 	virtual void UpdateShaderVariables(int opt = 0);
 	virtual void Render(CCamera *pCamera);
 
+	virtual void ApplyPercentage(float pct) { m_loadPercentage = pct; }
+
 protected: // 내부 함수
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
-	virtual D3D12_RASTERIZER_DESC CreateRasterizerState();
 
 	virtual D3D12_SHADER_BYTECODE CreateVertexShader(ComPtr<ID3DBlob>& pShaderBlob);
 	virtual D3D12_SHADER_BYTECODE CreatePixelShader(ComPtr<ID3DBlob>& pShaderBlob);
@@ -26,6 +27,8 @@ protected: // 내부 함수
 	virtual void ReleaseObjects();
 
 protected: // 변수
-	CBaseObject *m_pBackground{ NULL };
+	CBaseObject *m_pLoadingBar{ NULL };
+	
+	float m_loadPercentage{ 0.f };
 };
 

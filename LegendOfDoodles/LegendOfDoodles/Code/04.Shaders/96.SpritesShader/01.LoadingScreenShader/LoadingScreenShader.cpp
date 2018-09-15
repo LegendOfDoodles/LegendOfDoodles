@@ -152,6 +152,8 @@ void CLoadingScreenShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void 
 	m_pBackground = new CSprite(pCreateMgr);
 	m_pBackground->SetMesh(0, pFullScreenRectMesh);
 
+	m_pBackground->SetPosition(0.f, 0.f, 10.f);
+
 	m_pBackground->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr);
 }
 

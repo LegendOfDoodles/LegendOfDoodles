@@ -1,6 +1,12 @@
 #pragma once
 #include "05.Objects/00.BaseObject/BaseObject.h"
 
+struct CB_SPRITE_INFO
+{
+	XMFLOAT4X4 m_xmf4x4World;
+	float m_percentage;
+};
+
 class CSprite : public CBaseObject
 {
 public:	// 持失切, 社瑚切
