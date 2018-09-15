@@ -6,7 +6,7 @@
 /// 목적: 렌더링 관련 함수를 모아 두어 다른 변경사항 없이 그릴 수 있도록 하기 위함
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-08-06
+/// 최종 수정 날짜: 2018-09-15
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -162,6 +162,11 @@ void CRenderMgr::RenderLight(shared_ptr<CScene> pScene)
 	// Present
 	hResult = m_pSwapChain->Present(0, 0);
 	ThrowIfFailed(hResult);
+}
+
+void CRenderMgr::RenderLoadingScreen()
+{
+	if (m_pLoadingScene) Render(m_pLoadingScene);
 }
 
 void CRenderMgr::SetDsvCPUHandleWithDsvHeap(ComPtr<ID3D12DescriptorHeap> pDsvDescriptorHeap, UINT incrementSize)

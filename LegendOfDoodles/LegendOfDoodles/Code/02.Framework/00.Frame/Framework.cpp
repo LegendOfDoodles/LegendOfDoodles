@@ -1,12 +1,13 @@
 #include "stdafx.h"
 #include "Framework.h"
 #include "03.Scenes/01.GameScene/GameScene.h"
+#include "03.Scenes/99.LoadingScene/LoadingScene.h"
 
 /// <summary>
 /// 목적: 프레임워크 클래스
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-14
+/// 최종 수정 날짜: 2018-09-15
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -79,6 +80,12 @@ LRESULT CALLBACK CFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMessageI
 
 void CFramework::BuildObjects()
 {
+	m_pLoadingScene = shared_ptr<CLoadingScene>(new CLoadingScene());
+	m_pLoadingScene->Initialize(m_pCreateMgr);
+	m_pLoadingScene->ReleaseUploadBuffers();
+	m_pRenderMgr->SetLoadingScene(m_pLoadingScene);
+	m_pRenderMgr->RenderLoadingScreen();
+
 	m_pScene = shared_ptr<CGameScene>(new CGameScene());
 	m_pScene->Initialize(m_pCreateMgr, m_pNetwork);
 
@@ -89,8 +96,6 @@ void CFramework::BuildObjects()
 // 내부 함수
 void CFramework::ReleaseObjects()
 {
-	if (m_pScene)
-	{
-		m_pScene->Finalize();
-	}
+	if (m_pScene) m_pScene->Finalize();
+	if (m_pLoadingScene) m_pLoadingScene->Finalize();
 }

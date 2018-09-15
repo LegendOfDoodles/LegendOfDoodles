@@ -291,6 +291,21 @@
     <Filter Include="소스 파일\03.Scenes\01.GameScene">
       <UniqueIdentifier>{4afb5211-88ad-4307-bef8-16617f02f9ac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\03.Scenes\99.LoadingScene">
+      <UniqueIdentifier>{97f643bb-a88b-4508-9d8b-e49da4b8b2e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04.Shaders\96.SpritesShader">
+      <UniqueIdentifier>{03ec8cc5-ee88-49e5-9612-bd7c4beb11c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04.Shaders\96.SpritesShader\01.LoadingScreenShader">
+      <UniqueIdentifier>{33d6266f-1bc2-4e3f-870e-32492b0f2276}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\05.Objects\01.Camera\03.StaticCamera">
+      <UniqueIdentifier>{1c255de2-621f-4419-9d53-94430f6d8924}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\05.Objects\95.Sprites">
+      <UniqueIdentifier>{8ea1bfcc-8f16-4357-9f29-8885c91a2947}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\00.Global\00.Standard\stdafx.h">
@@ -551,6 +566,18 @@
     <ClInclude Include="Code\03.Scenes\00.BaseScene\Scene.h">
       <Filter>소스 파일\03.Scenes\00.BaseScene</Filter>
     </ClInclude>
+    <ClInclude Include="Code\03.Scenes\99.LoadingScene\LoadingScene.h">
+      <Filter>소스 파일\03.Scenes\99.LoadingScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\04.Shaders\96.SpritesShader\01.LoadingScreenShader\LoadingScreenShader.h">
+      <Filter>소스 파일\04.Shaders\96.SpritesShader\01.LoadingScreenShader</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\05.Objects\01.Camera\03.StaticCamera\StaticCamera.h">
+      <Filter>소스 파일\05.Objects\01.Camera\03.StaticCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\05.Objects\95.Sprites\Sprite.h">
+      <Filter>소스 파일\05.Objects\95.Sprites</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\00.Global\00.Standard\stdafx.cpp">
@@ -789,6 +816,18 @@
     </ClCompile>
     <ClCompile Include="Code\03.Scenes\00.BaseScene\Scene.cpp">
       <Filter>소스 파일\03.Scenes\00.BaseScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\03.Scenes\99.LoadingScene\LoadingScene.cpp">
+      <Filter>소스 파일\03.Scenes\99.LoadingScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\04.Shaders\96.SpritesShader\01.LoadingScreenShader\LoadingScreenShader.cpp">
+      <Filter>소스 파일\04.Shaders\96.SpritesShader\01.LoadingScreenShader</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\05.Objects\01.Camera\03.StaticCamera\StaticCamera.cpp">
+      <Filter>소스 파일\05.Objects\01.Camera\03.StaticCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\05.Objects\95.Sprites\Sprite.cpp">
+      <Filter>소스 파일\05.Objects\95.Sprites</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

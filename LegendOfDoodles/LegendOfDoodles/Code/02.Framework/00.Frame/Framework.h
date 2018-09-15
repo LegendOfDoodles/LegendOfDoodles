@@ -34,6 +34,7 @@ private: // º¯¼ö
 	shared_ptr<CRenderMgr> m_pRenderMgr;
 
 	shared_ptr<CScene> m_pScene;
+	shared_ptr<CScene> m_pLoadingScene;
 
 	shared_ptr<CNetwork> m_pNetwork;
 

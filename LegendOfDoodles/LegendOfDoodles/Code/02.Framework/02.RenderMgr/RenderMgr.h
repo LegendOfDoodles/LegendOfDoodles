@@ -19,6 +19,8 @@ public:	// 공개 함수
 	void RenderColor(shared_ptr<CScene> pScene);
 	void RenderLight(shared_ptr<CScene> pScene);
 
+	void RenderLoadingScreen();
+
 	// Set dsvCPUHandle by dsvDescriptorHeap
 	void SetDsvCPUHandleWithDsvHeap(ComPtr<ID3D12DescriptorHeap> pDsvDescriptorHeap, UINT incrementSize);
 
@@ -53,6 +55,8 @@ public:	// 공개 함수
 
 	// Set ShadowMap Texture
 	void SetShadowDepthBuffer(ComPtr<ID3D12Resource> pShadowDepthBuffer) { m_pShadowDepthBuffer = pShadowDepthBuffer; }
+
+	void SetLoadingScene(shared_ptr<CScene> pLoadingScene) { m_pLoadingScene = pLoadingScene; }
 
 private:	// 내부 함수
 	void SynchronizeResourceTransition(ComPtr<ID3D12Resource> pResource, D3D12_RESOURCE_STATES stateBefore, D3D12_RESOURCE_STATES stateAfter);
@@ -89,5 +93,8 @@ private:	// 변수
 
 	// Root Signature
 	ComPtr<ID3D12RootSignature> m_pGraphicsRootSignature;
+
+	// Loading Scene
+	shared_ptr<CScene> m_pLoadingScene;
 };
 

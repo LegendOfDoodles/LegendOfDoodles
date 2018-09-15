@@ -6,7 +6,7 @@
 /// 목적: 사용하는 매터리얼 정리용
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단, 이용선
-/// 최종 수정 날짜: 2018-09-03
+/// 최종 수정 날짜: 2018-09-15
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -2039,6 +2039,26 @@ CMaterial * Materials::CreateIcecreamMaterial(shared_ptr<CCreateMgr> pCreateMgr,
 
 	return pMaterial;
 }
+
+// ------------------------------- 스프라이트 -------------------------------
+CMaterial * Materials::CreateLoadingScreenMaterial(shared_ptr<CCreateMgr> pCreateMgr, D3D12_CPU_DESCRIPTOR_HANDLE * pSrvCPUDescriptorStartHandle, D3D12_GPU_DESCRIPTOR_HANDLE * pSrvGPUDescriptorStartHandle)
+{
+	CMaterial *pMaterial{ new CMaterial(pCreateMgr) };
+	CTexture *pTexture{ new CTexture(1, RESOURCE_TEXTURE_2DARRAY, 0) };
+	pTexture->LoadTextureFromFile(pCreateMgr, L"./Resource/Sprites/LoadingScreen/LoadingImage.dds", 0);
+
+	CreateShaderResourceViews(
+		pCreateMgr, pTexture,
+		2, false,
+		pSrvCPUDescriptorStartHandle,
+		pSrvGPUDescriptorStartHandle);
+
+	pMaterial->Initialize(pCreateMgr);
+	pMaterial->SetTexture(pTexture);
+
+	return pMaterial;
+}
+
 
 // SRV 생성 함수 ...
 void Materials::GetShaderResourceViewDesc(

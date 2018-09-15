@@ -8,7 +8,7 @@
 /// 목적: 기본 씬, 인터페이스 용
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-12
+/// 최종 수정 날짜: 2018-09-15
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -65,8 +65,8 @@ void CScene::ProcessInput()
 
 void CScene::AnimateObjects(float timeElapsed)
 {
-	m_pCamera->Update(timeElapsed);
-	m_pSoundManager->Update(timeElapsed);
+	if (m_pCamera) m_pCamera->Update(timeElapsed);
+	if (m_pSoundManager) m_pSoundManager->Update(timeElapsed);
 
 	UpdateShaderVariables();
 
@@ -87,17 +87,17 @@ void CScene::Render()
 void CScene::RenderWithLights()
 {
 	UpdateShaderVariables();
-	m_pCamera->UpdateShaderVariables(1);
+	if (m_pCamera) m_pCamera->UpdateShaderVariables(1);
 }
 
 void CScene::SetViewportsAndScissorRects()
 {
-	m_pCamera->SetViewportsAndScissorRects();
+	if (m_pCamera) m_pCamera->SetViewportsAndScissorRects();
 }
 
 void CScene::UpdateCamera()
 {
-	m_pCamera->UpdateShaderVariables();
+	if (m_pCamera) m_pCamera->UpdateShaderVariables();
 }
 
 void CScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID,
@@ -108,7 +108,7 @@ void CScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID,
 	case WM_LBUTTONDOWN:
 	case WM_RBUTTONDOWN:
 		::SetCapture(hWnd);
-		m_pCamera->SavePickedPos();
+		if (m_pCamera) m_pCamera->SavePickedPos();
 		for (int i = 0; i < m_nShaders; ++i)
 			m_ppShaders[i]->OnProcessMouseInput(wParam);
 		break;
@@ -117,7 +117,7 @@ void CScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID,
 		::ReleaseCapture();
 		break;
 	case WM_MOUSEWHEEL:
-		m_pCamera->OnProcessMouseWheel(wParam, lParam);
+		if (m_pCamera) m_pCamera->OnProcessMouseWheel(wParam, lParam);
 		break;
 	default:
 		break;

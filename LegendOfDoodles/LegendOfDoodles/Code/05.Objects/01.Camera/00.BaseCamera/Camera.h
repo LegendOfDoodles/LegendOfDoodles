@@ -44,7 +44,7 @@ public:	// 공개 함수
 	virtual void Move(float fTimeElapsed, bool bVelocity);
 	void Move(XMFLOAT3& xmf3Shift);
 	void Rotate(float x = 0.0f, float y = 0.0f, float z = 0.0f);
-	void Update(float fTimeElapsed);
+	virtual void Update(float fTimeElapsed);
 	virtual void SetLookAt(XMFLOAT3& xmf3LookAt);
 
 	void SetOffset(XMFLOAT3 xmf3Offset);
