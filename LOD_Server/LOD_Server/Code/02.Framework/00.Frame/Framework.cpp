@@ -38,7 +38,6 @@ void CFramework::Finalize()
 void CFramework::FrameAdvance(float timeElapsed)
 {
 	g_GameTime += timeElapsed;
-
 	m_pScene->AnimateObjects(timeElapsed);
 	// Warning! 임시 종료 확인 -> 향우 변경 필요
 	//m_running = !(GetAsyncKeyState(VK_ESCAPE) & 0x8000);

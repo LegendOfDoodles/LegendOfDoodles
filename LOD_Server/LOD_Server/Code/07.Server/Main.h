@@ -63,8 +63,8 @@ public:
 	int m_packet_size;  // 지금 조립하고 있는 패킷의 크기
 	int	m_prev_packet_size; // 지난번 recv에서 완성되지 않아서 저장해 놓은 패킷의 앞부분의 크기
 	char m_packet[MAX_PACKET_SIZE];
-	unordered_set <int> m_viewlist;
-	mutex m_mvl; 
+
+	bool m_isReady{ false };
 
 	Client()
 	{
@@ -151,7 +151,6 @@ extern int g_ReuseMinion;
 extern bool g_Clientsync;
 
 extern float g_GameTime;
-
 extern CommonInfo g_SwordMinionStat;
 extern CommonInfo g_StaffMinionStat;
 extern CommonInfo g_BowMinionStat;

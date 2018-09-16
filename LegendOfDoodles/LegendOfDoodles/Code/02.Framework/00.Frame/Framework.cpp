@@ -81,7 +81,7 @@ LRESULT CALLBACK CFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMessageI
 void CFramework::BuildObjects()
 {
 	m_pLoadingScene = shared_ptr<CLoadingScene>(new CLoadingScene());
-	m_pLoadingScene->Initialize(m_pCreateMgr);
+	m_pLoadingScene->Initialize(m_pCreateMgr, m_pNetwork);
 	m_pLoadingScene->ReleaseUploadBuffers();
 	m_pRenderMgr->SetLoadingScene(m_pLoadingScene);
 	m_pRenderMgr->RenderLoadingScreen();

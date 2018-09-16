@@ -61,6 +61,8 @@ protected: // 변수
 	CShader **m_ppShaders{ NULL };
 	int m_nShaders{ 0 };
 
+	shared_ptr<CNetwork> m_pNetwork;
+
 	// 매니저 클래스
 	shared_ptr<CCreateMgr> m_pCreateMgr;
 	shared_ptr<CSoundManager> m_pSoundManager;

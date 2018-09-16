@@ -263,6 +263,12 @@ void ProcessPacket(int id, char *packet)
 
 		break;
 	}
+	case CS_GAME_LOAD:
+	{
+		g_clients[PreparePacket->Character_id].m_isReady = true;
+		g_GameTime = 0; //Warning!
+		break;
+	}
 	default:
 		cout << "Unkown Packet Type from Client [" << id << "]\n";
 		return;
@@ -278,26 +284,17 @@ void DisconnectPlayer(int id)
 	for (int i = 0; i < MAX_USER; ++i) {
 		if (false == g_clients[i].m_isconnected) continue;
 		if (i == id) continue;
-		g_clients[i].m_mvl.lock();
-		if (0 != g_clients[i].m_viewlist.count(id)) {
-			g_clients[i].m_viewlist.erase(id);
-			g_clients[i].m_mvl.unlock();
 			SendPacket(i, &p);
-		}
-		else {
-			g_clients[i].m_mvl.unlock();
-		}
 	}
+	
 	closesocket(g_clients[id].m_s);
-	g_clients[id].m_mvl.lock();
-	g_clients[id].m_viewlist.clear();
-	g_clients[id].m_mvl.unlock();
 	g_clients[id].m_isconnected = false;
 	g_loaded[id] = false;
 }
 
 void worker_thread()
 {
+	
 	while (true)
 	{
 		unsigned long io_size;
@@ -399,7 +396,6 @@ void accept_thread()	//새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 		//clear for reuse
 		g_clients[id].m_packet_size = 0;
 		g_clients[id].m_prev_packet_size = 0;
-		g_clients[id].m_viewlist.clear();
 
 		CreateIoCompletionPort(reinterpret_cast<HANDLE>(cs), gh_iocp, id, 0);
 		g_loaded[id] = true;
@@ -421,222 +417,224 @@ void timer_thread()
 	static float CoolTimeSync{ 0.f };
 	static float GameTimeSync{ 0.f };
 	static float StatusTimeChecker{ 0.f };
-
-	//if (g_Clientsync)
 	while (1)
 	{
-		Sleep(100);
+	if (g_clients[0].m_isReady) {// && g_clients[1].m_isReady && g_clients[2].m_isReady && g_clients[3].m_isReady) {
 
-		if (g_GameTime - StatusTimeChecker >= 60.f)
-		{
-			StatusTimeChecker = g_GameTime;
+		
+			Sleep(100);
 
-			// 미니언 스테이터스 증가 처리
-			g_pScene->GetShader(0)->UpdateActiveMinionStatus();
+			if (g_GameTime - StatusTimeChecker >= 60.f)
+			{
+				StatusTimeChecker = g_GameTime;
 
-			// 타워 스테이터스 증가 처리
-			g_pScene->GetShader(3)->UpdateActiveTowerStatus();
+				// 미니언 스테이터스 증가 처리
+				g_pScene->GetShader(0)->UpdateActiveMinionStatus();
 
-			// 중립 몬스터 스테이터스 증가 처리
-			g_pScene->GetShader(2)->UpdateActiveNeutralStatus();
-		}
-		if (g_GameTime - GameTimeSync >= 5.f) {
-			GameTimeSync = g_GameTime;
+				// 타워 스테이터스 증가 처리
+				g_pScene->GetShader(3)->UpdateActiveTowerStatus();
 
-			for (int i = 0; i < MAX_USER; ++i) {
-				if (g_clients[i].m_isconnected) {
-					SC_Msg_Sync_Time p2;
-					p2.Game_Time = g_GameTime;
-					p2.size = sizeof(p2);
-					p2.type = SC_SYNC_TIME;
-					SendPacket(i, &p2);
+				// 중립 몬스터 스테이터스 증가 처리
+				g_pScene->GetShader(2)->UpdateActiveNeutralStatus();
+			}
+			if (g_GameTime - GameTimeSync >= 5.f) {
+				GameTimeSync = g_GameTime;
+
+				for (int i = 0; i < MAX_USER; ++i) {
+					if (g_clients[i].m_isconnected) {
+						SC_Msg_Sync_Time p2;
+						p2.Game_Time = g_GameTime;
+						p2.size = sizeof(p2);
+						p2.type = SC_SYNC_TIME;
+						SendPacket(i, &p2);
+					}
 				}
 			}
-		}
-		if (g_GameTime - PacketCoolTime >= 0.3f)
-		{
-			PacketCoolTime = g_GameTime;
+			if (g_GameTime - PacketCoolTime >= 0.3f)
+			{
+				PacketCoolTime = g_GameTime;
 
-			//Sqva User's Information
-			for (int i = 0; i < MAX_USER; ++i) {
-				XMFLOAT3 playerPos{ g_ppPlayer[i]->GetPosition() };
-				g_clients[i].m_x = playerPos.x;
-				g_clients[i].m_y = playerPos.z;
-				//g_clients[i].m_anistate = g_ppPlayer[i]->GetAnimState();
-				//g_clients[i].m_frameTime = g_ppPlayer[i]->GetAnimTimeRemain();
-				PlayerInfo* playerStat{ g_ppPlayer[i]->GetPlayerStatus() };
-				g_clients[i].m_maxhp = playerStat->maxHP;
-				g_clients[i].m_curhp = playerStat->HP;
-				g_clients[i].m_level = playerStat->Level;
-				g_clients[i].m_maxexp = playerStat->MaxExp;
-				g_clients[i].m_exp = playerStat->Exp;
-			}
+				//Sqva User's Information
+				for (int i = 0; i < MAX_USER; ++i) {
+					XMFLOAT3 playerPos{ g_ppPlayer[i]->GetPosition() };
+					g_clients[i].m_x = playerPos.x;
+					g_clients[i].m_y = playerPos.z;
+					//g_clients[i].m_anistate = g_ppPlayer[i]->GetAnimState();
+					//g_clients[i].m_frameTime = g_ppPlayer[i]->GetAnimTimeRemain();
+					PlayerInfo* playerStat{ g_ppPlayer[i]->GetPlayerStatus() };
+					g_clients[i].m_maxhp = playerStat->maxHP;
+					g_clients[i].m_curhp = playerStat->HP;
+					g_clients[i].m_level = playerStat->Level;
+					g_clients[i].m_maxexp = playerStat->MaxExp;
+					g_clients[i].m_exp = playerStat->Exp;
+				}
 
-			//Send Every User's Position Packet
-			for (int i = 0; i < MAX_USER; ++i) {
-				if (g_clients[i].m_isconnected == true) {
-					SC_Msg_Pos_Character p;
-					p.Character_id = (BYTE)i;
-					p.size = sizeof(p);
-					p.type = SC_POS;
-					p.level = (short)g_clients[i].m_level;
-					p.maxexp = (short)g_clients[i].m_maxexp;
-					p.exp = (short)g_clients[i].m_exp;
-					p.updatetime = g_GameTime;
-					p.x = g_clients[i].m_x;
-					p.y = g_clients[i].m_y;
-					//p.state = (short)g_clients[i].m_anistate;
-					//p.frameTime = (short)g_clients[i].m_frameTime;
-					for (int j = 0; j < MAX_USER; ++j) {
-						if (g_clients[j].m_isconnected == true) {
-							SendPacket(j, &p);
+				//Send Every User's Position Packet
+				for (int i = 0; i < MAX_USER; ++i) {
+					if (g_clients[i].m_isconnected == true) {
+						SC_Msg_Pos_Character p;
+						p.Character_id = (BYTE)i;
+						p.size = sizeof(p);
+						p.type = SC_POS;
+						p.level = (short)g_clients[i].m_level;
+						p.maxexp = (short)g_clients[i].m_maxexp;
+						p.exp = (short)g_clients[i].m_exp;
+						p.updatetime = g_GameTime;
+						p.x = g_clients[i].m_x;
+						p.y = g_clients[i].m_y;
+						//p.state = (short)g_clients[i].m_anistate;
+						//p.frameTime = (short)g_clients[i].m_frameTime;
+						for (int j = 0; j < MAX_USER; ++j) {
+							if (g_clients[j].m_isconnected == true) {
+								SendPacket(j, &p);
 
+							}
 						}
 					}
 				}
-			}
 
-			//Send Every User Blue Sword Minion Packet
-			for (auto iter = g_blueSwordMinions->begin(); iter != g_blueSwordMinions->end(); ++iter) {
-				XMFLOAT3 MinionPos{ (*iter)->GetPosition() };
-				CommonInfo* MinionStat{ (*iter)->GetCommonStatus() };
-				if (MinionStat) {
-					SC_Msg_Pos_Minion p;
-					p.size = sizeof(p);
-					p.x = MinionPos.x;
-					p.y = MinionPos.z;
-					p.Minion_Tag = (short)(*iter)->GetTag();
-					p.updatetime = g_GameTime;
-					p.type = SC_POS_MINION;
-					for (int j = 0; j < MAX_USER; ++j) {
-						if (g_clients[j].m_isconnected == true) {
-							SendPacket(j, &p);
+				//Send Every User Blue Sword Minion Packet
+				for (auto iter = g_blueSwordMinions->begin(); iter != g_blueSwordMinions->end(); ++iter) {
+					XMFLOAT3 MinionPos{ (*iter)->GetPosition() };
+					CommonInfo* MinionStat{ (*iter)->GetCommonStatus() };
+					if (MinionStat) {
+						SC_Msg_Pos_Minion p;
+						p.size = sizeof(p);
+						p.x = MinionPos.x;
+						p.y = MinionPos.z;
+						p.Minion_Tag = (short)(*iter)->GetTag();
+						p.updatetime = g_GameTime;
+						p.type = SC_POS_MINION;
+						for (int j = 0; j < MAX_USER; ++j) {
+							if (g_clients[j].m_isconnected == true) {
+								SendPacket(j, &p);
+							}
 						}
 					}
 				}
-			}
-			//Send Every User Blue Bow Minion Packet
-			for (auto iter = g_blueBowMinions->begin(); iter != g_blueBowMinions->end(); ++iter) {
-				XMFLOAT3 MinionPos{ (*iter)->GetPosition() };
-				CommonInfo* MinionStat{ (*iter)->GetCommonStatus() };
-				if (MinionStat) {
-					SC_Msg_Pos_Minion p;
-					p.size = sizeof(p);
-					p.x = MinionPos.x;
-					p.y = MinionPos.z;
-					p.Minion_Tag = (short)(*iter)->GetTag();
-					p.updatetime = g_GameTime;
-					p.type = SC_POS_MINION;
-					for (int j = 0; j < MAX_USER; ++j) {
-						if (g_clients[j].m_isconnected == true) {
-							SendPacket(j, &p);
+				//Send Every User Blue Bow Minion Packet
+				for (auto iter = g_blueBowMinions->begin(); iter != g_blueBowMinions->end(); ++iter) {
+					XMFLOAT3 MinionPos{ (*iter)->GetPosition() };
+					CommonInfo* MinionStat{ (*iter)->GetCommonStatus() };
+					if (MinionStat) {
+						SC_Msg_Pos_Minion p;
+						p.size = sizeof(p);
+						p.x = MinionPos.x;
+						p.y = MinionPos.z;
+						p.Minion_Tag = (short)(*iter)->GetTag();
+						p.updatetime = g_GameTime;
+						p.type = SC_POS_MINION;
+						for (int j = 0; j < MAX_USER; ++j) {
+							if (g_clients[j].m_isconnected == true) {
+								SendPacket(j, &p);
+							}
 						}
 					}
 				}
-			}
-			//Send Every User Blue Staff Minion Packet
-			for (auto iter = g_blueStaffMinions->begin(); iter != g_blueStaffMinions->end(); ++iter) {
-				XMFLOAT3 MinionPos{ (*iter)->GetPosition() };
-				CommonInfo* MinionStat{ (*iter)->GetCommonStatus() };
-				if (MinionStat) {
-					SC_Msg_Pos_Minion p;
-					p.size = sizeof(p);
-					p.x = MinionPos.x;
-					p.y = MinionPos.z;
-					p.Minion_Tag = (short)(*iter)->GetTag();
-					p.updatetime = g_GameTime;
-					p.type = SC_POS_MINION;
-					for (int j = 0; j < MAX_USER; ++j) {
-						if (g_clients[j].m_isconnected == true) {
-							SendPacket(j, &p);
+				//Send Every User Blue Staff Minion Packet
+				for (auto iter = g_blueStaffMinions->begin(); iter != g_blueStaffMinions->end(); ++iter) {
+					XMFLOAT3 MinionPos{ (*iter)->GetPosition() };
+					CommonInfo* MinionStat{ (*iter)->GetCommonStatus() };
+					if (MinionStat) {
+						SC_Msg_Pos_Minion p;
+						p.size = sizeof(p);
+						p.x = MinionPos.x;
+						p.y = MinionPos.z;
+						p.Minion_Tag = (short)(*iter)->GetTag();
+						p.updatetime = g_GameTime;
+						p.type = SC_POS_MINION;
+						for (int j = 0; j < MAX_USER; ++j) {
+							if (g_clients[j].m_isconnected == true) {
+								SendPacket(j, &p);
+							}
 						}
 					}
 				}
-			}
-			//Send Every User Red Sword Minion Packet
-			for (auto iter = g_redSwordMinions->begin(); iter != g_redSwordMinions->end(); ++iter) {
-				XMFLOAT3 MinionPos{ (*iter)->GetPosition() };
-				CommonInfo* MinionStat{ (*iter)->GetCommonStatus() };
-				if (MinionStat) {
-					SC_Msg_Pos_Minion p;
-					p.size = sizeof(p);
-					p.x = MinionPos.x;
-					p.y = MinionPos.z;
-					p.Minion_Tag = (short)(*iter)->GetTag();
-					p.updatetime = g_GameTime;
-					p.type = SC_POS_MINION;
-					for (int j = 0; j < MAX_USER; ++j) {
-						if (g_clients[j].m_isconnected == true) {
-							SendPacket(j, &p);
+				//Send Every User Red Sword Minion Packet
+				for (auto iter = g_redSwordMinions->begin(); iter != g_redSwordMinions->end(); ++iter) {
+					XMFLOAT3 MinionPos{ (*iter)->GetPosition() };
+					CommonInfo* MinionStat{ (*iter)->GetCommonStatus() };
+					if (MinionStat) {
+						SC_Msg_Pos_Minion p;
+						p.size = sizeof(p);
+						p.x = MinionPos.x;
+						p.y = MinionPos.z;
+						p.Minion_Tag = (short)(*iter)->GetTag();
+						p.updatetime = g_GameTime;
+						p.type = SC_POS_MINION;
+						for (int j = 0; j < MAX_USER; ++j) {
+							if (g_clients[j].m_isconnected == true) {
+								SendPacket(j, &p);
+							}
 						}
 					}
 				}
-			}
-			//Send Every User Red Bow Minion Packet
-			for (auto iter = g_redBowMinions->begin(); iter != g_redBowMinions->end(); ++iter) {
-				XMFLOAT3 MinionPos{ (*iter)->GetPosition() };
-				CommonInfo* MinionStat{ (*iter)->GetCommonStatus() };
-				if (MinionStat) {
-					SC_Msg_Pos_Minion p;
-					p.size = sizeof(p);
-					p.x = MinionPos.x;
-					p.y = MinionPos.z;
-					p.Minion_Tag = (short)(*iter)->GetTag();
-					p.updatetime = g_GameTime;
-					p.type = SC_POS_MINION;
-					for (int j = 0; j < MAX_USER; ++j) {
-						if (g_clients[j].m_isconnected == true) {
-							SendPacket(j, &p);
+				//Send Every User Red Bow Minion Packet
+				for (auto iter = g_redBowMinions->begin(); iter != g_redBowMinions->end(); ++iter) {
+					XMFLOAT3 MinionPos{ (*iter)->GetPosition() };
+					CommonInfo* MinionStat{ (*iter)->GetCommonStatus() };
+					if (MinionStat) {
+						SC_Msg_Pos_Minion p;
+						p.size = sizeof(p);
+						p.x = MinionPos.x;
+						p.y = MinionPos.z;
+						p.Minion_Tag = (short)(*iter)->GetTag();
+						p.updatetime = g_GameTime;
+						p.type = SC_POS_MINION;
+						for (int j = 0; j < MAX_USER; ++j) {
+							if (g_clients[j].m_isconnected == true) {
+								SendPacket(j, &p);
+							}
 						}
 					}
 				}
-			}
-			//Send Every User Red Staff Minion Packet
-			for (auto iter = g_redStaffMinions->begin(); iter != g_redStaffMinions->end(); ++iter) {
-				XMFLOAT3 MinionPos{ (*iter)->GetPosition() };
-				CommonInfo* MinionStat{ (*iter)->GetCommonStatus() };
-				if (MinionStat) {
-					SC_Msg_Pos_Minion p;
-					p.size = sizeof(p);
-					p.x = MinionPos.x;
-					p.y = MinionPos.z;
-					p.Minion_Tag = (short)(*iter)->GetTag();
-					p.updatetime = g_GameTime;
-					p.type = SC_POS_MINION;
-					for (int j = 0; j < MAX_USER; ++j) {
-						if (g_clients[j].m_isconnected == true) {
-							SendPacket(j, &p);
+				//Send Every User Red Staff Minion Packet
+				for (auto iter = g_redStaffMinions->begin(); iter != g_redStaffMinions->end(); ++iter) {
+					XMFLOAT3 MinionPos{ (*iter)->GetPosition() };
+					CommonInfo* MinionStat{ (*iter)->GetCommonStatus() };
+					if (MinionStat) {
+						SC_Msg_Pos_Minion p;
+						p.size = sizeof(p);
+						p.x = MinionPos.x;
+						p.y = MinionPos.z;
+						p.Minion_Tag = (short)(*iter)->GetTag();
+						p.updatetime = g_GameTime;
+						p.type = SC_POS_MINION;
+						for (int j = 0; j < MAX_USER; ++j) {
+							if (g_clients[j].m_isconnected == true) {
+								SendPacket(j, &p);
+							}
 						}
 					}
 				}
-			}
 
-			//Send Every Neutrality's Position Packet
-			for (int i = 0; i < g_NeutralityCount; ++i) {
-				XMFLOAT3 NeutralPos{ g_ppNeutrality[i]->GetPosition() };
-				
-				SC_Msg_Pos_Neutrality p;
-				p.Monster_Tag = (short)g_ppNeutrality[i]->GetTag();
-				p.x = NeutralPos.x;
-				p.y = NeutralPos.z;
-				p.size = sizeof(p);
-				p.type = SC_POS_MONSTER;
-				p.updatetime = g_GameTime;
-				for (int j = 0; j < MAX_USER; ++j) {
-					if (g_clients[j].m_isconnected == true) {
-						SendPacket(j, &p);
-					}
-				}
-				
-			}
-		}
-		if (g_GameTime - CoolTimeSync >= 0.2f)
-		{
-			CoolTimeSync = g_GameTime;
+				//Send Every Neutrality's Position Packet
+				for (int i = 0; i < g_NeutralityCount; ++i) {
+					XMFLOAT3 NeutralPos{ g_ppNeutrality[i]->GetPosition() };
 
-			for (int i = 0; i < MAX_USER; ++i) {
-				if (g_clients[i].m_isconnected == true) {
-					g_ppPlayer[i]->SendCoolTime(i);
+					SC_Msg_Pos_Neutrality p;
+					p.Monster_Tag = (short)g_ppNeutrality[i]->GetTag();
+					p.x = NeutralPos.x;
+					p.y = NeutralPos.z;
+					p.size = sizeof(p);
+					p.type = SC_POS_MONSTER;
+					p.updatetime = g_GameTime;
+					for (int j = 0; j < MAX_USER; ++j) {
+						if (g_clients[j].m_isconnected == true) {
+							SendPacket(j, &p);
+						}
+					}
+
+				}
+			}
+			if (g_GameTime - CoolTimeSync >= 0.2f)
+			{
+				CoolTimeSync = g_GameTime;
+
+				for (int i = 0; i < MAX_USER; ++i) {
+					if (g_clients[i].m_isconnected == true) {
+						g_ppPlayer[i]->SendCoolTime(i);
+					}
 				}
 			}
 		}

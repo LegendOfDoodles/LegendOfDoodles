@@ -30,6 +30,10 @@ struct CS_Msg_Demand_Sync : public Packet
 {
 	BYTE Sync_on;
 };
+struct CS_Msg_Demand_Game_Start : public Packet
+{
+	BYTE Character_id;
+};
 struct SC_Msg_Pos_Character : public Packet
 {
 	BYTE Character_id;
@@ -325,6 +329,8 @@ struct SC_Msg_Change_Range : public Packet
 #define CS_CHANGE_WEAPON		  204
 #define CS_SET_ABILITY_POINT      205
 #define CS_PREPARE_DATA			  206
+#define CS_GAME_LOAD			  207
+
 
 
 

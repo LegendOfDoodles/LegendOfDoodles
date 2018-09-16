@@ -25,6 +25,7 @@ CScene::~CScene()
 // 공개 함수
 void CScene::Initialize(shared_ptr<CCreateMgr> pCreateMgr, shared_ptr<CNetwork> pNetwork)
 {
+	m_pNetwork = pNetwork;
 	BuildObjects(pCreateMgr);
 	CreateShaderVariables(pCreateMgr);
 }

@@ -14,5 +14,6 @@ protected: // 내부 함수
 	virtual void BuildObjects(shared_ptr<CCreateMgr> pCreateMgr);
 
 protected: // 변수
+	
 };
 

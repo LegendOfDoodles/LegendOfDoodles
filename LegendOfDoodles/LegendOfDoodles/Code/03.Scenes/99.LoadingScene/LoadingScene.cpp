@@ -27,9 +27,17 @@ CLoadingScene::~CLoadingScene()
 
 ////////////////////////////////////////////////////////////////////////
 // 공개 함수
+
 void CLoadingScene::ApplyPercentage(float pct)
 {
 	LoadingBarShader->ApplyPercentage(pct);
+	if (pct > 1.f) {
+		CS_Msg_Demand_Game_Start p;
+		p.Character_id = m_pNetwork->m_myid;
+		p.size = sizeof(p);
+		p.type = CS_GAME_LOAD;
+		m_pNetwork->SendPacket(&p);
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////
