@@ -7,7 +7,7 @@
 /// 목적: 로딩 바 출력용 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-15
+/// 최종 수정 날짜: 2018-09-16
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -83,6 +83,27 @@ D3D12_INPUT_LAYOUT_DESC CLoadingBarShader::CreateInputLayout()
 	d3dInputLayoutDesc.NumElements = nInputElementDescs;
 
 	return(d3dInputLayoutDesc);
+}
+
+D3D12_BLEND_DESC CLoadingBarShader::CreateBlendState()
+{
+	D3D12_BLEND_DESC blendDesc;
+	::ZeroMemory(&blendDesc, sizeof(D3D12_BLEND_DESC));
+
+	blendDesc.AlphaToCoverageEnable = FALSE;
+	blendDesc.IndependentBlendEnable = FALSE;
+	blendDesc.RenderTarget[0].BlendEnable = TRUE;
+	blendDesc.RenderTarget[0].LogicOpEnable = FALSE;
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].LogicOp = D3D12_LOGIC_OP_NOOP;
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+
+	return(blendDesc);
 }
 
 D3D12_SHADER_BYTECODE CLoadingBarShader::CreateVertexShader(ComPtr<ID3DBlob>& pShaderBlob)
