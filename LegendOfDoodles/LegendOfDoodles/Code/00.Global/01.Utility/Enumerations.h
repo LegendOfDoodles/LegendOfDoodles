@@ -4,8 +4,16 @@
 /// 목적: 여러 지점에서 사용할 나열형 데이터를 통합 관리한다.
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-11
+/// 최종 수정 날짜: 2018-09-16
 /// </summary>
+
+enum SceneType
+{
+	BaseScene,
+	GameScene,
+	LoadingScene,
+	LogoScene
+};
 
 namespace States
 {

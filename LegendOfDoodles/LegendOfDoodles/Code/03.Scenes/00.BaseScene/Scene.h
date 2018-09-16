@@ -42,6 +42,10 @@ public: // 공개 함수
 
 	virtual void ApplyPercentage(float pct) { pct; }
 
+	virtual bool IsSceneDone() { return false; }
+
+	SceneType GetCurSceneType() { return m_SceneType; }
+
 protected: // 내부 함수
 	virtual void BuildObjects(shared_ptr<CCreateMgr> pCreateMgr);
 	virtual void ReleaseObjects();
@@ -66,5 +70,7 @@ protected: // 변수
 	// 매니저 클래스
 	shared_ptr<CCreateMgr> m_pCreateMgr;
 	shared_ptr<CSoundManager> m_pSoundManager;
+
+	SceneType m_SceneType{ SceneType::BaseScene };
 };
 

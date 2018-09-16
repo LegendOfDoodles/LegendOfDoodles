@@ -66,16 +66,6 @@ VS_TEXTURED_OUTPUT VSTextured(VS_TEXTURED_INPUT input)
     return (output);
 }
 
-VS_TEXTURED_OUTPUT VSSprite(VS_TEXTURED_INPUT input)
-{
-    VS_TEXTURED_OUTPUT output;
-
-    output.position = mul(mul(mul(float4(input.position, 1.0f), gmtxGaugeObject), gmtxView), gmtxProjection);
-    output.uv = input.uv;
-
-    return (output);
-}
-
 PS_MULTIPLE_RENDER_TARGETS_OUTPUT_DEFAULT PSTextured(VS_TEXTURED_OUTPUT input)
 {
     PS_MULTIPLE_RENDER_TARGETS_OUTPUT_DEFAULT output;
@@ -94,6 +84,31 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT_DEFAULT PSTexturedRepeat(VS_TEXTURED_OUTPUT in
     newUV.y = input.uv.y * 5;
 
     output.color = gtxtTexture.Sample(mirrorSampler, newUV);
+    output.normal = float4(0, 0, 0, 0);
+    output.roughMetalFresnel = float4(0, 0, 0, 0);
+
+    return (output);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
+//
+VS_TEXTURED_OUTPUT VSSprite(VS_TEXTURED_INPUT input)
+{
+    VS_TEXTURED_OUTPUT output;
+
+    output.position = mul(mul(mul(float4(input.position, 1.0f), gmtxGaugeObject), gmtxView), gmtxProjection);
+    output.uv = input.uv;
+
+    return (output);
+}
+
+PS_MULTIPLE_RENDER_TARGETS_OUTPUT_DEFAULT PSLogo(VS_TEXTURED_OUTPUT input)
+{
+    PS_MULTIPLE_RENDER_TARGETS_OUTPUT_DEFAULT output;
+
+    int curImage = 1 - floor(input.uv + (1.f - CurrentHP));
+
+    output.color = gtxtTextures.Sample(wrapSampler, float3(input.uv, curImage));
     output.normal = float4(0, 0, 0, 0);
     output.roughMetalFresnel = float4(0, 0, 0, 0);
 

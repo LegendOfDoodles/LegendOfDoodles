@@ -27,6 +27,8 @@ public: // 공개 함수
 private: // 내부 함수
 	void ReleaseObjects();
 
+	void ChangeDoneScene();
+
 private: // 변수
 	HWND m_hWnd{ NULL };
 

@@ -19,6 +19,7 @@
 // 持失切, 社瑚切
 CLoadingScene::CLoadingScene()
 {
+	m_SceneType = SceneType::LoadingScene;
 }
 
 CLoadingScene::~CLoadingScene()
