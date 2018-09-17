@@ -38,6 +38,7 @@ int g_NeutralityCount = 0;
 int g_NexusTowerCount = 0;
 
 bool g_Clientsync = false;
+bool g_GameStart{ false };
 
 float g_GameTime{ 0.0f };
 CommonInfo g_SwordMinionStat;
@@ -641,7 +642,20 @@ void timer_thread()
 	}
 }
 
-void condition_thread()
+void lobbyinfo_thread()
 {
-
+	while (1)
+	{
+		for (int i = 0; i < MAX_USER; ++i) {
+			if (g_clients[i].m_isInLobby && g_clients[i].m_isconnected) //연결되어 있고, 로비안에 있는 유저들한테
+			{
+				for (int j = 0; j < MAX_USER; ++j) {
+					if (j == i) continue;
+					else {
+						//서버에 연결된 유저정보 전송
+					}
+				}
+			}
+		}
+	}
 }

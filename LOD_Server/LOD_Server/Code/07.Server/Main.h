@@ -45,14 +45,11 @@ public:
 	int m_anistate;
 	int m_weaponstate;
 	
-	//아직 정보 설정 안한 얘들
 	int m_kill;
 	int m_death;
 	int m_maxexp;
 	int m_exp;
 	int m_level;
-	system_clock::time_point m_login;
-	std::chrono::duration<double> m_duration;
 
 	XMFLOAT2 m_targetlocation;
 	bool m_changetarget;
@@ -65,13 +62,13 @@ public:
 	char m_packet[MAX_PACKET_SIZE];
 
 	bool m_isReady{ false };
+	bool m_isInLobby{ false };
 
 	Client()
 	{
 		m_isconnected = false;
 		m_x = 0;
 		m_y = 0;
-		m_login = {};
 		m_changetarget = false;
 		ZeroMemory(&m_rxover.m_over, sizeof(WSAOVERLAPPED));
 		m_rxover.m_wsabuf.buf = m_rxover.m_iobuf;
@@ -149,6 +146,7 @@ extern int g_MinionCounts;
 extern int g_ReuseMinion;
 
 extern bool g_Clientsync;
+extern bool g_GameStart{ false };
 
 extern float g_GameTime;
 extern CommonInfo g_SwordMinionStat;
@@ -186,4 +184,4 @@ void accept_thread();	//새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 
 void timer_thread();
 
-void condition_thread();
+void lobbyinfo_thread();
