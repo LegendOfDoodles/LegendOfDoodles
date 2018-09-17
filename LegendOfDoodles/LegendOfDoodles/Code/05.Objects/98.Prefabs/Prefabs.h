@@ -458,6 +458,15 @@ namespace Materials
 		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
 		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
 
+	// 타이틀 창
+	CMaterial* CreateTitleScreenMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+
+	CMaterial* CreateTitleButtonMaterial(shared_ptr<CCreateMgr> pCreateMgr,
+		D3D12_CPU_DESCRIPTOR_HANDLE *pSrvCPUDescriptorStartHandle,
+		D3D12_GPU_DESCRIPTOR_HANDLE *pSrvGPUDescriptorStartHandle);
+
 	// SRV 생성 함수
 	void GetShaderResourceViewDesc(
 		D3D12_RESOURCE_DESC resourceDesc,

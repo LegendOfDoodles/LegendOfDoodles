@@ -297,23 +297,38 @@
     <Filter Include="소스 파일\04.Shaders\96.SpritesShader">
       <UniqueIdentifier>{03ec8cc5-ee88-49e5-9612-bd7c4beb11c9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\04.Shaders\96.SpritesShader\01.LoadingScreenShader">
-      <UniqueIdentifier>{33d6266f-1bc2-4e3f-870e-32492b0f2276}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\05.Objects\01.Camera\03.StaticCamera">
       <UniqueIdentifier>{1c255de2-621f-4419-9d53-94430f6d8924}</UniqueIdentifier>
     </Filter>
     <Filter Include="소스 파일\05.Objects\95.Sprites">
       <UniqueIdentifier>{8ea1bfcc-8f16-4357-9f29-8885c91a2947}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\04.Shaders\96.SpritesShader\02.LoadingBarShader">
-      <UniqueIdentifier>{f97a430f-81b5-452a-bb85-9ff6df1dbddb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\03.Scenes\98.LogoScene">
       <UniqueIdentifier>{6e4f8c5b-9248-42c5-b3c7-2663ed52815e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\04.Shaders\96.SpritesShader\03.LogoShader">
+    <Filter Include="소스 파일\03.Scenes\02.TitleScene">
+      <UniqueIdentifier>{20399b9c-7e35-4665-a2bf-b0c5f1fd023c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04.Shaders\96.SpritesShader\01.LoadingShader">
+      <UniqueIdentifier>{08ab1b00-cb37-4b89-95a9-3acf33cd0038}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04.Shaders\96.SpritesShader\01.LoadingShader\01.LoadingScreenShader">
+      <UniqueIdentifier>{33d6266f-1bc2-4e3f-870e-32492b0f2276}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04.Shaders\96.SpritesShader\01.LoadingShader\02.LoadingBarShader">
+      <UniqueIdentifier>{f97a430f-81b5-452a-bb85-9ff6df1dbddb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04.Shaders\96.SpritesShader\02.LogoShader">
       <UniqueIdentifier>{53ecc9f1-c1f2-43fd-b98b-82e557057418}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04.Shaders\96.SpritesShader\03.TitleShader">
+      <UniqueIdentifier>{1e65e3f9-870d-44fc-bcaf-e996643f3356}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04.Shaders\96.SpritesShader\03.TitleShader\00.TitleScreenShader">
+      <UniqueIdentifier>{7d44f5b4-bf4d-45c1-a575-7fbaf55f9b38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04.Shaders\96.SpritesShader\03.TitleShader\01.TitleButtonsShader">
+      <UniqueIdentifier>{b734b24e-8edc-45e9-9d1c-f487df65f16d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -578,23 +593,32 @@
     <ClInclude Include="Code\03.Scenes\99.LoadingScene\LoadingScene.h">
       <Filter>소스 파일\03.Scenes\99.LoadingScene</Filter>
     </ClInclude>
-    <ClInclude Include="Code\04.Shaders\96.SpritesShader\01.LoadingScreenShader\LoadingScreenShader.h">
-      <Filter>소스 파일\04.Shaders\96.SpritesShader\01.LoadingScreenShader</Filter>
-    </ClInclude>
     <ClInclude Include="Code\05.Objects\01.Camera\03.StaticCamera\StaticCamera.h">
       <Filter>소스 파일\05.Objects\01.Camera\03.StaticCamera</Filter>
     </ClInclude>
     <ClInclude Include="Code\05.Objects\95.Sprites\Sprite.h">
       <Filter>소스 파일\05.Objects\95.Sprites</Filter>
     </ClInclude>
-    <ClInclude Include="Code\04.Shaders\96.SpritesShader\02.LoadingBarShader\LoadingBarShader.h">
-      <Filter>소스 파일\04.Shaders\96.SpritesShader\02.LoadingBarShader</Filter>
-    </ClInclude>
     <ClInclude Include="Code\03.Scenes\98.LogoScene\LogoScene.h">
       <Filter>소스 파일\03.Scenes\98.LogoScene</Filter>
     </ClInclude>
-    <ClInclude Include="Code\04.Shaders\96.SpritesShader\03.LogoShader\LogoShader.h">
-      <Filter>소스 파일\04.Shaders\96.SpritesShader\03.LogoShader</Filter>
+    <ClInclude Include="Code\03.Scenes\02.TitleScene\TitleScene.h">
+      <Filter>소스 파일\03.Scenes\02.TitleScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\04.Shaders\96.SpritesShader\01.LoadingShader\01.LoadingScreenShader\LoadingScreenShader.h">
+      <Filter>소스 파일\04.Shaders\96.SpritesShader\01.LoadingShader\01.LoadingScreenShader</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\04.Shaders\96.SpritesShader\01.LoadingShader\02.LoadingBarShader\LoadingBarShader.h">
+      <Filter>소스 파일\04.Shaders\96.SpritesShader\01.LoadingShader\02.LoadingBarShader</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\04.Shaders\96.SpritesShader\02.LogoShader\LogoShader.h">
+      <Filter>소스 파일\04.Shaders\96.SpritesShader\02.LogoShader</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\04.Shaders\96.SpritesShader\03.TitleShader\00.TitleScreenShader\TitleScreenShader.h">
+      <Filter>소스 파일\04.Shaders\96.SpritesShader\03.TitleShader\00.TitleScreenShader</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\04.Shaders\96.SpritesShader\03.TitleShader\01.TitleButtonsShader\TitleButtonsShader.h">
+      <Filter>소스 파일\04.Shaders\96.SpritesShader\03.TitleShader\01.TitleButtonsShader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -838,23 +862,32 @@
     <ClCompile Include="Code\03.Scenes\99.LoadingScene\LoadingScene.cpp">
       <Filter>소스 파일\03.Scenes\99.LoadingScene</Filter>
     </ClCompile>
-    <ClCompile Include="Code\04.Shaders\96.SpritesShader\01.LoadingScreenShader\LoadingScreenShader.cpp">
-      <Filter>소스 파일\04.Shaders\96.SpritesShader\01.LoadingScreenShader</Filter>
-    </ClCompile>
     <ClCompile Include="Code\05.Objects\01.Camera\03.StaticCamera\StaticCamera.cpp">
       <Filter>소스 파일\05.Objects\01.Camera\03.StaticCamera</Filter>
     </ClCompile>
     <ClCompile Include="Code\05.Objects\95.Sprites\Sprite.cpp">
       <Filter>소스 파일\05.Objects\95.Sprites</Filter>
     </ClCompile>
-    <ClCompile Include="Code\04.Shaders\96.SpritesShader\02.LoadingBarShader\LoadingBarShader.cpp">
-      <Filter>소스 파일\04.Shaders\96.SpritesShader\02.LoadingBarShader</Filter>
-    </ClCompile>
     <ClCompile Include="Code\03.Scenes\98.LogoScene\LogoScene.cpp">
       <Filter>소스 파일\03.Scenes\98.LogoScene</Filter>
     </ClCompile>
-    <ClCompile Include="Code\04.Shaders\96.SpritesShader\03.LogoShader\LogoShader.cpp">
-      <Filter>소스 파일\04.Shaders\96.SpritesShader\03.LogoShader</Filter>
+    <ClCompile Include="Code\03.Scenes\02.TitleScene\TitleScene.cpp">
+      <Filter>소스 파일\03.Scenes\02.TitleScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\04.Shaders\96.SpritesShader\01.LoadingShader\01.LoadingScreenShader\LoadingScreenShader.cpp">
+      <Filter>소스 파일\04.Shaders\96.SpritesShader\01.LoadingShader\01.LoadingScreenShader</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\04.Shaders\96.SpritesShader\01.LoadingShader\02.LoadingBarShader\LoadingBarShader.cpp">
+      <Filter>소스 파일\04.Shaders\96.SpritesShader\01.LoadingShader\02.LoadingBarShader</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\04.Shaders\96.SpritesShader\02.LogoShader\LogoShader.cpp">
+      <Filter>소스 파일\04.Shaders\96.SpritesShader\02.LogoShader</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\04.Shaders\96.SpritesShader\03.TitleShader\00.TitleScreenShader\TitleScreenShader.cpp">
+      <Filter>소스 파일\04.Shaders\96.SpritesShader\03.TitleShader\00.TitleScreenShader</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\04.Shaders\96.SpritesShader\03.TitleShader\01.TitleButtonsShader\TitleButtonsShader.cpp">
+      <Filter>소스 파일\04.Shaders\96.SpritesShader\03.TitleShader\01.TitleButtonsShader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -900,6 +933,9 @@
       <Filter>소스 파일\04.Shaders\99.GraphicsShader</Filter>
     </CustomBuild>
     <CustomBuild Include="Code\04.Shaders\99.GraphicsShader\BoneShader.hlsl">
+      <Filter>소스 파일\04.Shaders\99.GraphicsShader</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Code\04.Shaders\99.GraphicsShader\SpriteShader.hlsl">
       <Filter>소스 파일\04.Shaders\99.GraphicsShader</Filter>
     </CustomBuild>
   </ItemGroup>

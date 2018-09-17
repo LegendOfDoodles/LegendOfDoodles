@@ -53,6 +53,7 @@ public: // 공개 함수
 	virtual void SetCamera(CCamera *pCamera) { pCamera; }
 
 	virtual bool IsShaderDone() { return true; }
+	virtual bool IsShaderExit() { return false; }
 
 	CCollisionObject **GetCollisionObjects() { return m_ppObjects; }
 	int GetObjectCount() { return m_nObjects; }

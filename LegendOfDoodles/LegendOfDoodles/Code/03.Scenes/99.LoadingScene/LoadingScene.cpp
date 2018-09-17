@@ -2,14 +2,14 @@
 #include "LoadingScene.h"
 #include "02.Framework/01.CreateMgr/CreateMgr.h"
 #include "05.Objects/01.Camera/03.StaticCamera/StaticCamera.h"
-#include "04.Shaders/96.SpritesShader/01.LoadingScreenShader/LoadingScreenShader.h"
-#include "04.Shaders/96.SpritesShader/02.LoadingBarShader/LoadingBarShader.h"
+#include "04.Shaders/96.SpritesShader/01.LoadingShader/01.LoadingScreenShader/LoadingScreenShader.h"
+#include "04.Shaders/96.SpritesShader/01.LoadingShader/02.LoadingBarShader/LoadingBarShader.h"
 
 /// <summary>
 /// 목적: 로딩 신 처리용 클래스
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-15
+/// 최종 수정 날짜: 2018-09-17
 /// </summary>
 
 #define LoadingScreenShader m_ppShaders[0]
@@ -34,7 +34,7 @@ void CLoadingScene::ApplyPercentage(float pct)
 	LoadingBarShader->ApplyPercentage(pct);
 	if (pct > 1.f) {
 		CS_Msg_Demand_Game_Start p;
-		p.Character_id = m_pNetwork->m_myid;
+		p.Character_id = (BYTE)m_pNetwork->m_myid;
 		p.size = sizeof(p);
 		p.type = CS_GAME_LOAD;
 		m_pNetwork->SendPacket(&p);

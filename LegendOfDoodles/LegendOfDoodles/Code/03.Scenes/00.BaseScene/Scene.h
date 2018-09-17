@@ -43,6 +43,7 @@ public: // 공개 함수
 	virtual void ApplyPercentage(float pct) { pct; }
 
 	virtual bool IsSceneDone() { return false; }
+	virtual bool IsExitScene() { return false; }
 
 	SceneType GetCurSceneType() { return m_SceneType; }
 

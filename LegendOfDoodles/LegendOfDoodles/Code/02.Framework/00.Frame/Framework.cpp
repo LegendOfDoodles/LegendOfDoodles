@@ -3,12 +3,13 @@
 #include "03.Scenes/01.GameScene/GameScene.h"
 #include "03.Scenes/99.LoadingScene/LoadingScene.h"
 #include "03.Scenes/98.LogoScene/LogoScene.h"
+#include "03.Scenes/02.TitleScene/TitleScene.h"
 
 /// <summary>
 /// 목적: 프레임워크 클래스
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-16
+/// 최종 수정 날짜: 2018-09-17
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -50,9 +51,6 @@ void CFramework::FrameAdvance(float timeElapsed)
 	m_pRenderMgr->Render(m_pScene);
 
 	ChangeDoneScene();
-
-	// Warning! 임시 종료 확인 -> 향후 변경 필요
-	m_running = !(GetAsyncKeyState(VK_ESCAPE) & 0x8000);
 }
 
 void CFramework::BuildObjects()
@@ -85,11 +83,11 @@ LRESULT CALLBACK CFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMessageI
 	case WM_RBUTTONUP:
 	case WM_MOUSEMOVE:
 	case WM_MOUSEWHEEL:
-		m_pScene->OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
+		if(m_pScene) m_pScene->OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
 		break;
 	case WM_KEYDOWN:
 	case WM_KEYUP:
-		m_pScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
+		if(m_pScene) m_pScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
 		break;
 	}
 	return 0;
@@ -111,10 +109,29 @@ void CFramework::ChangeDoneScene()
 		if (m_pScene->GetCurSceneType() == SceneType::LogoScene)
 		{
 			if (m_pScene) m_pScene->Finalize();
-			m_pScene = shared_ptr<CGameScene>(new CGameScene());
+			m_pScene = shared_ptr<CTitleScene>(new CTitleScene());
 			m_pScene->Initialize(m_pCreateMgr, m_pNetwork);
 
 			m_pScene->ReleaseUploadBuffers();
+		}
+		else if (m_pScene->GetCurSceneType() == SceneType::TitleScene)
+		{
+			if (m_pScene->IsExitScene())
+			{
+				m_running = false;
+				m_pNetwork->Finalize();
+			}
+			else
+			{
+				if (m_pScene) m_pScene->Finalize();
+
+				m_pNetwork->Initialize(m_hWnd);
+
+				m_pScene = shared_ptr<CGameScene>(new CGameScene());
+				m_pScene->Initialize(m_pCreateMgr, m_pNetwork);
+
+				m_pScene->ReleaseUploadBuffers();
+			}
 		}
 		else if (m_pScene->GetCurSceneType() == SceneType::GameScene)
 		{

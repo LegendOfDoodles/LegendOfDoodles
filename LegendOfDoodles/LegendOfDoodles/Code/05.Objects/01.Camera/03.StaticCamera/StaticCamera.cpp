@@ -6,7 +6,7 @@
 /// 목적: 입력 받지 않는 고정 카메라
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-15
+/// 최종 수정 날짜: 2018-09-17
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -36,8 +36,8 @@ void CStaticCamera::Initialize(shared_ptr<CCreateMgr> pCreateMgr)
 
 	GenerateOrthographicProjectionMatrix(width * 1.f, height * 1.f, 1, 5000.0f);
 	GenerateViewMatrix(
-		XMFLOAT3(0.0f, 0.f, 0.0f),
-		XMFLOAT3(0.f, 0.f, 5000.0f));
+		XMFLOAT3(width * 0.5f, height * 0.5f, 0.0f),
+		XMFLOAT3(width * 0.5f, height * 0.5f, 5000.0f));
 
 	CreateShaderVariables(pCreateMgr, ((sizeof(VS_CB_CAMERA_INFO) + 255) & ~255));
 }

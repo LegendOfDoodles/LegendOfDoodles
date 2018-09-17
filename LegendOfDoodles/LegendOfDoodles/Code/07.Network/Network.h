@@ -25,7 +25,7 @@ struct EXOVER {
 class CNetwork
 {
 public:
-	SOCKET  m_mysocket;
+	SOCKET  m_mysocket{ NULL };
 	WSABUF	m_send_wsabuf;
 	char 	m_send_buffer[MAX_BUFF_SIZE];
 	WSABUF	m_recv_wsabuf;

@@ -44,12 +44,15 @@ void CNetwork::Initialize(HWND hWnd)
 	m_send_wsabuf.len = MAX_BUFF_SIZE;
 	m_recv_wsabuf.buf = m_recv_buffer;
 	m_recv_wsabuf.len = MAX_BUFF_SIZE;
-
 }
 
 void CNetwork::Finalize()
 {
-	closesocket(m_mysocket);
+	if (m_mysocket)
+	{
+		closesocket(m_mysocket);
+		m_mysocket = NULL;
+	}
 }
 
 void CNetwork::ProcessPacket(char *ptr)

@@ -9,7 +9,7 @@
 /// 목적: 기본 오브젝트 클래스, 인터페이스 용
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-08-01
+/// 최종 수정 날짜: 2018-09-17
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -251,6 +251,18 @@ void CBaseObject::SetPosition(float x, float y, float z)
 void CBaseObject::SetPosition(XMFLOAT3 xmf3Position)
 {
 	SetPosition(xmf3Position.x, xmf3Position.y, xmf3Position.z);
+}
+
+bool CBaseObject::IsInRect(float width, float height, POINT cursorPos)
+{
+	XMFLOAT3 curPos{ GetPosition() };
+
+	if (curPos.x - width * 0.5f > cursorPos.x) return false;
+	if (curPos.x + width * 0.5f < cursorPos.x) return false;
+	if (curPos.y - height * 0.5f > cursorPos.y) return false;
+	if (curPos.y + height * 0.5f < cursorPos.y) return false;
+
+	return true;
 }
 
 ////////////////////////////////////////////////////////////////////////

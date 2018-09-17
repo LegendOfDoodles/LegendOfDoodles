@@ -61,6 +61,8 @@ public: // 공개 함수
 	void SetPosition(float x, float y, float z);
 	void SetPosition(XMFLOAT3 xmf3Position);
 
+	bool IsInRect(float width, float height, POINT cursorPos);
+
 	void AddRef() { m_nReferences++; }
 	void Release() { if (--m_nReferences <= 0) delete this; }
 
