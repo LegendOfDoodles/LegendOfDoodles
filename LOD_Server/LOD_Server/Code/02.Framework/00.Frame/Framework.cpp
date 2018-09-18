@@ -6,7 +6,7 @@
 /// 목적: 프레임워크 클래스
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-08-05
+/// 최종 수정 날짜: 2018-09-18
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -39,8 +39,6 @@ void CFramework::FrameAdvance(float timeElapsed)
 {
 	g_GameTime += timeElapsed;
 	m_pScene->AnimateObjects(timeElapsed);
-	// Warning! 임시 종료 확인 -> 향우 변경 필요
-	//m_running = !(GetAsyncKeyState(VK_ESCAPE) & 0x8000);
 }
 
 

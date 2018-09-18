@@ -21,6 +21,8 @@ public: // 공개 함수
 	virtual void UpdateActiveTowerStatus() {}
 	virtual void UpdateActiveNeutralStatus() {}
 
+	virtual void SetPlayerByIndex(int index) { index; }
+
 	void AddRef() { m_nReferences++; }
 	void Release() { if (--m_nReferences <= 0) delete this; }
 

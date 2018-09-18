@@ -62,7 +62,6 @@ public:
 	char m_packet[MAX_PACKET_SIZE];
 
 	bool m_isReady{ false };
-	bool m_isInLobby{ false };
 
 	Client()
 	{
@@ -127,6 +126,8 @@ extern array <NexusTower, 14> g_nexustowers;
 
 //CScene* g_pScene{ NULL };
 
+extern SceneType g_currentScene;
+
 class CScene;
 
 extern shared_ptr<CScene> g_pScene;
@@ -146,7 +147,7 @@ extern int g_MinionCounts;
 extern int g_ReuseMinion;
 
 extern bool g_Clientsync;
-extern bool g_GameStart{ false };
+extern bool g_GameStart;
 
 extern float g_GameTime;
 extern CommonInfo g_SwordMinionStat;
@@ -160,8 +161,8 @@ void error_display(const char *msg, int err_no);
 
 void ErrorDisplay(const char * location);
 
-void initialize(shared_ptr<CScene> pScene);
-
+void NetworkInitialize();
+void ReadyForScene(shared_ptr<CScene> pScene);
 
 void StartRecv(int id);
 
@@ -184,4 +185,3 @@ void accept_thread();	//새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 
 void timer_thread();
 
-void lobbyinfo_thread();

@@ -138,6 +138,18 @@
     <Filter Include="소스 파일\03.Scenes\01.GameScene">
       <UniqueIdentifier>{d36d1ebb-968b-460e-81ee-bdfe6b0c5798}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\03.Scenes\02.RoomScene">
+      <UniqueIdentifier>{b1e6c4c9-7520-4d6a-8f16-58286584f539}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04.Shaders\96.SpritesShader">
+      <UniqueIdentifier>{dddd5bdd-eb03-4c3e-bd4c-327c9da593eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04.Shaders\96.SpritesShader\04.RoomShader">
+      <UniqueIdentifier>{bd6665dc-848a-454a-b24d-5a17623baad2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04.Shaders\96.SpritesShader\04.RoomShader\02.RoomCardShader">
+      <UniqueIdentifier>{f5ff1b83-7570-48eb-b25d-94107e9fe8f4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource\Resource.h">
@@ -260,6 +272,12 @@
     <ClInclude Include="Code\03.Scenes\01.GameScene\GameScene.h">
       <Filter>소스 파일\03.Scenes\01.GameScene</Filter>
     </ClInclude>
+    <ClInclude Include="Code\03.Scenes\02.RoomScene\RoomScene.h">
+      <Filter>소스 파일\03.Scenes\02.RoomScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\04.Shaders\96.SpritesShader\04.RoomShader\02.RoomCardShader\RoomCardShader.h">
+      <Filter>소스 파일\04.Shaders\96.SpritesShader\04.RoomShader\02.RoomCardShader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resource\LOD_Server.ico">
@@ -379,6 +397,12 @@
     </ClCompile>
     <ClCompile Include="Code\03.Scenes\01.GameScene\GameScene.cpp">
       <Filter>소스 파일\03.Scenes\01.GameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\03.Scenes\02.RoomScene\RoomScene.cpp">
+      <Filter>소스 파일\03.Scenes\02.RoomScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\04.Shaders\96.SpritesShader\04.RoomShader\02.RoomCardShader\RoomCardShader.cpp">
+      <Filter>소스 파일\04.Shaders\96.SpritesShader\04.RoomShader\02.RoomCardShader</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

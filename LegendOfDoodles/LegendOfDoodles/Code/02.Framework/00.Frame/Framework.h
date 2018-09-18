@@ -28,6 +28,7 @@ private: // 내부 함수
 	void ReleaseObjects();
 
 	void ChangeDoneScene();
+	void ChangeSceneByType(SceneType type);
 
 private: // 변수
 	HWND m_hWnd{ NULL };

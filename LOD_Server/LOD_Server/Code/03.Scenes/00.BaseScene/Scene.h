@@ -21,6 +21,8 @@ public: // 공개 함수
 
 	CShader* GetShader(int num) { return m_ppShaders[num]; }
 
+	virtual void ApplyPlayerIndex(int index) { index; }
+
 protected: // 내부 함수
 	virtual void BuildObjects() {}
 	virtual void ReleaseObjects();

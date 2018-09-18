@@ -7,7 +7,7 @@
 /// 목적: 로딩 바 출력용 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-17
+/// 최종 수정 날짜: 2018-09-18
 /// </summary>
 
 #define StartButton m_TitleButtons[0]
@@ -78,11 +78,11 @@ bool CTitleButtonsShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 
 	cursorPos.y = FRAME_BUFFER_HEIGHT - cursorPos.y;
 
-	if (StartButton->IsInRect(FRAME_BUFFER_WIDTH * 2.f / 6.f, FRAME_BUFFER_HEIGHT / 6.f, cursorPos))
+	if (StartButton->IsInRect(FRAME_BUFFER_WIDTH / 3.f, FRAME_BUFFER_HEIGHT / 6.f, cursorPos))
 	{
 		m_StartButtonClicked = true;
 	}
-	else if (ExitButton->IsInRect(FRAME_BUFFER_WIDTH * 2.f / 6.f, FRAME_BUFFER_HEIGHT / 6.f, cursorPos))
+	else if (ExitButton->IsInRect(FRAME_BUFFER_WIDTH / 3.f, FRAME_BUFFER_HEIGHT / 6.f, cursorPos))
 	{
 		m_StartButtonClicked = m_ExitButtonClicked = true;
 	}
@@ -184,7 +184,7 @@ void CTitleButtonsShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *
 
 	m_ppMaterials[0] = Materials::CreateTitleButtonMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[0], &m_psrvGPUDescriptorStartHandle[0]);
 
-	CMesh* pTitleButtonMesh{ new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH * 2.f / 6.f, FRAME_BUFFER_HEIGHT / 6.f, 0.f, 0.f, 0.f, 1.f) };
+	CMesh* pTitleButtonMesh{ new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 3.f, FRAME_BUFFER_HEIGHT / 6.f, 0.f, 0.f, 0.f, 1.f) };
 
 	UINT incrementSize{ pCreateMgr->GetCbvSrvDescriptorIncrementSize() };
 

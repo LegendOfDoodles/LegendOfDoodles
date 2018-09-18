@@ -186,6 +186,7 @@
     <ClInclude Include="Code\03.Scenes\00.BaseScene\Scene.h" />
     <ClInclude Include="Code\03.Scenes\01.GameScene\GameScene.h" />
     <ClInclude Include="Code\03.Scenes\02.TitleScene\TitleScene.h" />
+    <ClInclude Include="Code\03.Scenes\03.RoomScene\RoomScene.h" />
     <ClInclude Include="Code\03.Scenes\98.LogoScene\LogoScene.h" />
     <ClInclude Include="Code\03.Scenes\99.LoadingScene\LoadingScene.h" />
     <ClInclude Include="Code\04.Shaders\00.BaseShader\Shader.h" />
@@ -204,6 +205,9 @@
     <ClInclude Include="Code\04.Shaders\96.SpritesShader\02.LogoShader\LogoShader.h" />
     <ClInclude Include="Code\04.Shaders\96.SpritesShader\03.TitleShader\00.TitleScreenShader\TitleScreenShader.h" />
     <ClInclude Include="Code\04.Shaders\96.SpritesShader\03.TitleShader\01.TitleButtonsShader\TitleButtonsShader.h" />
+    <ClInclude Include="Code\04.Shaders\96.SpritesShader\04.RoomShader\00.RoomScreenShader\RoomScreenShader.h" />
+    <ClInclude Include="Code\04.Shaders\96.SpritesShader\04.RoomShader\01.RoomButtonsShader\RoomButtonsShader.h" />
+    <ClInclude Include="Code\04.Shaders\96.SpritesShader\04.RoomShader\02.RoomCardShader\RoomCardShader.h" />
     <ClInclude Include="Code\04.Shaders\97.TextureToFullScreenShader\TextureToFullScreenShader.h" />
     <ClInclude Include="Code\04.Shaders\98.BillboardShader\00.UIShader\UIShader.h" />
     <ClInclude Include="Code\04.Shaders\98.BillboardShader\01.GaugeShader\00.PlayerGaugeShader\PlayerGaugeShader.h" />
@@ -284,6 +288,7 @@
     <ClCompile Include="Code\03.Scenes\00.BaseScene\Scene.cpp" />
     <ClCompile Include="Code\03.Scenes\01.GameScene\GameScene.cpp" />
     <ClCompile Include="Code\03.Scenes\02.TitleScene\TitleScene.cpp" />
+    <ClCompile Include="Code\03.Scenes\03.RoomScene\RoomScene.cpp" />
     <ClCompile Include="Code\03.Scenes\98.LogoScene\LogoScene.cpp" />
     <ClCompile Include="Code\03.Scenes\99.LoadingScene\LoadingScene.cpp" />
     <ClCompile Include="Code\04.Shaders\00.BaseShader\Shader.cpp" />
@@ -302,6 +307,9 @@
     <ClCompile Include="Code\04.Shaders\96.SpritesShader\02.LogoShader\LogoShader.cpp" />
     <ClCompile Include="Code\04.Shaders\96.SpritesShader\03.TitleShader\00.TitleScreenShader\TitleScreenShader.cpp" />
     <ClCompile Include="Code\04.Shaders\96.SpritesShader\03.TitleShader\01.TitleButtonsShader\TitleButtonsShader.cpp" />
+    <ClCompile Include="Code\04.Shaders\96.SpritesShader\04.RoomShader\00.RoomScreenShader\RoomScreenShader.cpp" />
+    <ClCompile Include="Code\04.Shaders\96.SpritesShader\04.RoomShader\01.RoomButtonsShader\RoomButtonsShader.cpp" />
+    <ClCompile Include="Code\04.Shaders\96.SpritesShader\04.RoomShader\02.RoomCardShader\RoomCardShader.cpp" />
     <ClCompile Include="Code\04.Shaders\97.TextureToFullScreenShader\TextureToFullScreenShader.cpp" />
     <ClCompile Include="Code\04.Shaders\98.BillboardShader\00.UIShader\UIShader.cpp" />
     <ClCompile Include="Code\04.Shaders\98.BillboardShader\01.GaugeShader\00.PlayerGaugeShader\PlayerGaugeShader.cpp" />

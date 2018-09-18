@@ -18,7 +18,7 @@ array <NexusTower, 14> g_nexustowers;
 
 //CScene* g_pScene{ NULL };
 
-
+SceneType g_currentScene{ SceneType::RoomScene };
 
 shared_ptr<CScene> g_pScene;
 CAnimatedObject** g_ppPlayer{ NULL };
@@ -65,7 +65,16 @@ void ErrorDisplay(const char * location)
 	error_display(location, WSAGetLastError());
 }
 
-void initialize(shared_ptr<CScene> pScene)
+void NetworkInitialize()
+{
+	gh_iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0); // 의미없는 파라메터, 마지막은 알아서 쓰레드를 만들어준다.
+	std::wcout.imbue(std::locale("korean"));
+
+	WSADATA	wsadata;
+	WSAStartup(MAKEWORD(2, 2), &wsadata);
+}
+
+void ReadyForScene(shared_ptr<CScene> pScene)
 {
 	g_pScene = pScene;
 
@@ -80,14 +89,6 @@ void initialize(shared_ptr<CScene> pScene)
 	g_NeutralityCount = g_pScene->GetShader(2)->GetObjectCount();
 	g_ppNexusTower = g_pScene->GetNexusTower();
 	g_NexusTowerCount = g_pScene->GetShader(3)->GetObjectCount();
-
-	//g_ppNexusTower = g_pScene->GetNexusTower();
-
-	gh_iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0); // 의미없는 파라메터, 마지막은 알아서 쓰레드를 만들어준다.
-	std::wcout.imbue(std::locale("korean"));
-
-	WSADATA	wsadata;
-	WSAStartup(MAKEWORD(2, 2), &wsadata);
 }
 
 void StartRecv(int id)
@@ -382,6 +383,7 @@ void accept_thread()	//새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 			ErrorDisplay("In Accept Thread:WSAAccept()");
 			continue;
 		}
+		// Warning! 게임 중일 때 플레이어 받지 말아야 함
 		int id = -1;
 		for (int i = 0; i < MAX_USER; ++i)
 			if (false == g_loaded[i]) {
@@ -635,24 +637,6 @@ void timer_thread()
 				for (int i = 0; i < MAX_USER; ++i) {
 					if (g_clients[i].m_isconnected == true) {
 						g_ppPlayer[i]->SendCoolTime(i);
-					}
-				}
-			}
-		}
-	}
-}
-
-void lobbyinfo_thread()
-{
-	while (1)
-	{
-		for (int i = 0; i < MAX_USER; ++i) {
-			if (g_clients[i].m_isInLobby && g_clients[i].m_isconnected) //연결되어 있고, 로비안에 있는 유저들한테
-			{
-				for (int j = 0; j < MAX_USER; ++j) {
-					if (j == i) continue;
-					else {
-						//서버에 연결된 유저정보 전송
 					}
 				}
 			}

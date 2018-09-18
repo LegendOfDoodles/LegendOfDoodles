@@ -330,6 +330,21 @@
     <Filter Include="소스 파일\04.Shaders\96.SpritesShader\03.TitleShader\01.TitleButtonsShader">
       <UniqueIdentifier>{b734b24e-8edc-45e9-9d1c-f487df65f16d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\04.Shaders\96.SpritesShader\04.RoomShader">
+      <UniqueIdentifier>{fa887224-bd75-46d1-a55e-090150b236b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04.Shaders\96.SpritesShader\04.RoomShader\00.RoomScreenShader">
+      <UniqueIdentifier>{8cbd0e75-19a3-41cd-9484-34dd1de38572}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04.Shaders\96.SpritesShader\04.RoomShader\01.RoomButtonsShader">
+      <UniqueIdentifier>{ec4e52c5-0c89-4a6e-afd8-7acf0408bbc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\04.Shaders\96.SpritesShader\04.RoomShader\02.RoomCardShader">
+      <UniqueIdentifier>{a53be4fa-5bf1-44e2-a5d1-9df7e44b1505}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\03.Scenes\03.RoomScene">
+      <UniqueIdentifier>{21a668b7-7a5d-4eee-807b-c28123edc084}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\00.Global\00.Standard\stdafx.h">
@@ -620,6 +635,18 @@
     <ClInclude Include="Code\04.Shaders\96.SpritesShader\03.TitleShader\01.TitleButtonsShader\TitleButtonsShader.h">
       <Filter>소스 파일\04.Shaders\96.SpritesShader\03.TitleShader\01.TitleButtonsShader</Filter>
     </ClInclude>
+    <ClInclude Include="Code\04.Shaders\96.SpritesShader\04.RoomShader\00.RoomScreenShader\RoomScreenShader.h">
+      <Filter>소스 파일\04.Shaders\96.SpritesShader\04.RoomShader\00.RoomScreenShader</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\04.Shaders\96.SpritesShader\04.RoomShader\01.RoomButtonsShader\RoomButtonsShader.h">
+      <Filter>소스 파일\04.Shaders\96.SpritesShader\04.RoomShader\01.RoomButtonsShader</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\04.Shaders\96.SpritesShader\04.RoomShader\02.RoomCardShader\RoomCardShader.h">
+      <Filter>소스 파일\04.Shaders\96.SpritesShader\04.RoomShader\02.RoomCardShader</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\03.Scenes\03.RoomScene\RoomScene.h">
+      <Filter>소스 파일\03.Scenes\03.RoomScene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\00.Global\00.Standard\stdafx.cpp">
@@ -888,6 +915,18 @@
     </ClCompile>
     <ClCompile Include="Code\04.Shaders\96.SpritesShader\03.TitleShader\01.TitleButtonsShader\TitleButtonsShader.cpp">
       <Filter>소스 파일\04.Shaders\96.SpritesShader\03.TitleShader\01.TitleButtonsShader</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\04.Shaders\96.SpritesShader\04.RoomShader\00.RoomScreenShader\RoomScreenShader.cpp">
+      <Filter>소스 파일\04.Shaders\96.SpritesShader\04.RoomShader\00.RoomScreenShader</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\04.Shaders\96.SpritesShader\04.RoomShader\01.RoomButtonsShader\RoomButtonsShader.cpp">
+      <Filter>소스 파일\04.Shaders\96.SpritesShader\04.RoomShader\01.RoomButtonsShader</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\04.Shaders\96.SpritesShader\04.RoomShader\02.RoomCardShader\RoomCardShader.cpp">
+      <Filter>소스 파일\04.Shaders\96.SpritesShader\04.RoomShader\02.RoomCardShader</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\03.Scenes\03.RoomScene\RoomScene.cpp">
+      <Filter>소스 파일\03.Scenes\03.RoomScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

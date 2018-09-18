@@ -64,7 +64,7 @@ void CNetwork::ProcessPacket(char *ptr)
 		{
 			SC_Msg_Put_Character *my_packet = reinterpret_cast<SC_Msg_Put_Character *>(ptr);
 			int id = my_packet->Character_id;
-			if (!m_idSet) {
+			if (id != NONE) {
 				m_myid = id;
 				m_idSet = true;
 			}
