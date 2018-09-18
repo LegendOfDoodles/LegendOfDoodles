@@ -120,16 +120,7 @@ void SendPacket(int id, void *ptr)
 		
 	}
 }
-void SendPutObjectPacket(int client, int object)
-{
-	SC_Msg_Put_Character p;
-	p.Character_id = (BYTE)object;
-	p.size = sizeof(p);
-	p.type = SC_PUT_PLAYER;
-	p.x = (short)g_clients[object].m_x;
-	p.y = (short)g_clients[object].m_y;
-	SendPacket(client, &p);
-}
+
 void SendRemovePacket(int client, int object)
 {
 	SC_Msg_Remove_Character p;
@@ -237,23 +228,6 @@ void ProcessPacket(int id, char *packet)
 	{
 		g_clients[PreparePacket->Character_id].m_isconnected = true;
 		
-		SC_Msg_Put_Character p;
-		p.Character_id = (BYTE)PreparePacket->Character_id;
-		p.size = sizeof(p);
-		p.type = SC_PUT_PLAYER;
-
-
-		//지금 연결된 애한테 4명 어디있는지 
-		for (int i = 0; i < MAX_USER; ++i)
-		{
-			if (i == id) continue;
-			p.Character_id = (BYTE)i;
-			p.x = g_ppPlayer[i]->GetPosition().x;
-			p.y = g_ppPlayer[i]->GetPosition().z;
-
-			SendPacket(id, &p);
-
-		}
 		if (g_clients[(BYTE)PreparePacket->Character_id].m_isconnected)
 		{
 			SC_Msg_Sync_Time p2;

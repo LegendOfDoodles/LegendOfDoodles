@@ -169,8 +169,6 @@ void StartRecv(int id);
 
 void SendPacket(int id, void *ptr);
 
-void SendPutObjectPacket(int client, int object);
-
 void SendRemovePacket(int client, int object);
 
 void ProcessPacket(int id, char *packet);

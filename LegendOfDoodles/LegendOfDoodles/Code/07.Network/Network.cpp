@@ -62,11 +62,10 @@ void CNetwork::ProcessPacket(char *ptr)
 		{
 		case SC_PUT_PLAYER:
 		{
-			SC_Msg_Put_Character *my_packet = reinterpret_cast<SC_Msg_Put_Character *>(ptr);
+			CS_Msg_Prepare_Data *my_packet = reinterpret_cast<CS_Msg_Prepare_Data *>(ptr);
 			int id = my_packet->Character_id;
 			if (id != NONE) {
 				m_myid = id;
-				m_idSet = true;
 			}
 			break;
 		}
