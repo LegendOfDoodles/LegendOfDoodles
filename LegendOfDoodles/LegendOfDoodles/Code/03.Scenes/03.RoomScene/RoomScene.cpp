@@ -78,4 +78,6 @@ void CRoomScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	{
 		m_ppShaders[i]->Initialize(pCreateMgr);
 	}
+
+	RoomCardsShader->SetNetwork(m_pNetwork);
 }

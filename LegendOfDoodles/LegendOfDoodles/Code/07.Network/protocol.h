@@ -73,6 +73,12 @@ struct SC_Msg_Set_Speacial_Point : public Packet
 	BYTE idx;
 };
 
+struct CS_Msg_Demand_Change_Seat: public Packet
+{
+	BYTE Character_id;
+	BYTE Demand_id;
+};
+
 struct SC_Msg_BroadCast_Change_Weapon :public Packet
 {
 	BYTE Character_id;
@@ -268,6 +274,12 @@ struct SC_Msg_Change_Range : public Packet
 	float Changed_Range;
 };
 
+struct SC_Msg_Permit_Change_Seat : public Packet
+{
+	BYTE Pre_id;
+	BYTE Permit_id;
+};
+
 #pragma pack(pop)
 
 #define MAX_BUFF_SIZE 4000
@@ -293,6 +305,7 @@ struct SC_Msg_Change_Range : public Packet
 #define SC_SET_PLAYER_KILL		  7
 #define SC_SYNC_TIME			  8
 #define SC_CHANGE_RANGE			  9
+#define SC_PERMIT_CHANGE_SEAT	  10
 
 #define SC_CONNECT_PLAYER		  101
 #define SC_PUT_PLAYER			  102
@@ -330,6 +343,7 @@ struct SC_Msg_Change_Range : public Packet
 #define CS_SET_ABILITY_POINT      205
 #define CS_PREPARE_DATA			  206
 #define CS_GAME_LOAD			  207
+#define CS_DEMAND_CHANGE_SEAT     208
 
 
 

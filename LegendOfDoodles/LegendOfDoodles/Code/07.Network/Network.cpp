@@ -69,6 +69,13 @@ void CNetwork::ProcessPacket(char *ptr)
 			}
 			break;
 		}
+		case SC_PERMIT_CHANGE_SEAT:
+		{
+			SC_Msg_Permit_Change_Seat* SeatChangePacket{ reinterpret_cast<SC_Msg_Permit_Change_Seat*>(ptr) };
+			m_pRoomScene->GetShader(2)->ApplyChangeSeat(SeatChangePacket->Pre_id, SeatChangePacket->Permit_id);
+			if(m_myid == SeatChangePacket->Pre_id) m_myid = SeatChangePacket->Permit_id;
+			break;
+		}
 		/*case SC_PACKET:
 		{
 			SC_Msg_What_Is_Packet *my_packet = reinterpret_cast<SC_Msg_What_Is_Packet *>(ptr);
@@ -108,7 +115,7 @@ void CNetwork::ProcessPacket(char *ptr)
 			m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->Weapon = my_packet->WeaponNum;
 			m_ppPlayer[my_packet->Character_id]->SetType((ObjectType)my_packet->ObjectType);
 			
-			m_pScene->GetShader(3)->SetChangeWeapon(my_packet->Character_id);
+			m_pGameScene->GetShader(3)->SetChangeWeapon(my_packet->Character_id);
 			break;
 		}
 		case SC_PERMIT_USE_SKILL:
@@ -476,15 +483,10 @@ void CNetwork::SendPacket(void* ptr)
 	}
 }
 
-void CNetwork::SetGameScene(shared_ptr<CGameScene> pScene)
-{
-	m_pScene = pScene;
-}
-
 void CNetwork::PrepareData()
 {
-	m_pMinionShader = (CMinionShader*)m_pScene->GetShader(2);
-	m_pNumberShader = (CNumberShader*)m_pScene->GetShader(16);
+	m_pMinionShader = (CMinionShader*)m_pGameScene->GetShader(2);
+	m_pNumberShader = (CNumberShader*)m_pGameScene->GetShader(16);
 
 	CS_Msg_Prepare_Data p;
 	p.Character_id = (BYTE)m_myid;

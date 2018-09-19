@@ -2,6 +2,7 @@
 #include "RoomCardShader.h"
 #include "02.Framework/01.CreateMgr/CreateMgr.h"
 #include "05.Objects/95.Sprites/Sprite.h"
+#include "07.Network/Network.h"
 
 /// <summary>
 /// 목적: 로딩 바 출력용 쉐이더
@@ -87,29 +88,49 @@ bool CRoomCardShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 
 		if (m_RoomCards[i]->IsInRect(FRAME_BUFFER_WIDTH / 5.f, FRAME_BUFFER_WIDTH / 5.f, cursorPos))
 		{
-			if (m_EachCardType[i] == CardType::Blue_AI)
-			{
-				m_EachCardType[i] = CardType::Blue_Player;
-			}
-			else if (m_EachCardType[i] == CardType::Red_AI)
-			{
-				m_EachCardType[i] = CardType::Red_Player;
-			}
-
-			if (m_EachCardType[m_myId] == CardType::Blue_Player)
-			{
-				m_EachCardType[m_myId] = CardType::Blue_AI;
-			}
-			else if (m_EachCardType[m_myId] == CardType::Red_Player)
-			{
-				m_EachCardType[m_myId] = CardType::Red_AI;
-			}
-			m_myId = i;
-			// Warning! 서버에 플레이어 위치 바꾸는 것 요청 필요
+			CS_Msg_Demand_Change_Seat p;
+			p.Character_id = (BYTE)m_pNetwork->m_myid;
+			if (i == 0 || i == 3) p.Demand_id = (BYTE)i;
+			else if (i == 1) p.Demand_id = (BYTE)2;
+			else if (i == 2) p.Demand_id = (BYTE)1;
+			p.size = sizeof(p);
+			p.type = CS_DEMAND_CHANGE_SEAT;
+			m_pNetwork->SendPacket(&p);
 		}
 	}
 
 	return true;
+}
+
+void CRoomCardShader::ApplyChangeSeat(int preId, int curId)
+{
+	int adjPreId{ preId };
+
+	if (preId == 1) adjPreId = (BYTE)2;
+	else if (preId == 2) adjPreId = (BYTE)1;
+
+	if (m_EachCardType[adjPreId] == CardType::Blue_Player)
+	{
+		m_EachCardType[adjPreId] = CardType::Blue_AI;
+	}
+	else if (m_EachCardType[adjPreId] == CardType::Red_Player)
+	{
+		m_EachCardType[adjPreId] = CardType::Red_AI;
+	}
+
+	int adjCurId{ curId };
+
+	if (curId == 1) adjCurId = (BYTE)2;
+	else if (curId == 2) adjCurId = (BYTE)1;
+
+	if (m_EachCardType[adjCurId] == CardType::Blue_AI)
+	{
+		m_EachCardType[adjCurId] = CardType::Blue_Player;
+	}
+	else if (m_EachCardType[adjCurId] == CardType::Red_AI)
+	{
+		m_EachCardType[adjCurId] = CardType::Red_Player;
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////

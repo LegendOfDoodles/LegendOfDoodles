@@ -154,6 +154,7 @@ void CFramework::ChangeSceneByType(SceneType type)
 	{
 		m_pNetwork->Initialize(m_hWnd);
 		m_pScene = shared_ptr<CRoomScene>(new CRoomScene());
+		m_pNetwork->SetRoomScene(m_pScene);
 	}
 	else if (type == SceneType::GameScene)
 	{

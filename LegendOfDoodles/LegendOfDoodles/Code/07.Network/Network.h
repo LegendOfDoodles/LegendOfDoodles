@@ -44,7 +44,8 @@ protected:
 	shared_ptr<CWayFinder> m_pWayFinder;
 	shared_ptr<CCollisionManager> m_pColManager;
 	shared_ptr<CEffectMgr> m_pEffectMgr;
-	shared_ptr<CGameScene> m_pScene;
+	shared_ptr<CGameScene> m_pGameScene;
+	shared_ptr<CScene> m_pRoomScene;
 
 	CAnimatedObject ** m_ppPlayer{ NULL };
 	CMinionShader *m_pMinionShader{ NULL };
@@ -68,8 +69,10 @@ public:
 	void SendPacket(void *ptr);
 	//void err_display(void* msg);
 
-	void SetGameScene(shared_ptr<CGameScene> pScene);
 	void PrepareData();
+
+	void SetRoomScene(shared_ptr<CScene> pScene) { m_pRoomScene = pScene; }
+	void SetGameScene(shared_ptr<CGameScene> pScene) { m_pGameScene = pScene; }
 
 	void SetCollisionManager(shared_ptr<CCollisionManager> pColmanager) { m_pColManager = pColmanager; }
 	void SetEffectManager(shared_ptr<CEffectMgr> pManager) { m_pEffectMgr = pManager; }

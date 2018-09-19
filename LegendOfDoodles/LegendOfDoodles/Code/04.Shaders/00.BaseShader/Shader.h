@@ -67,6 +67,7 @@ public: // 공개 함수
 	void Release() { if (--m_nReferences <= 0) delete this; }
 
 	virtual void SetChangeWeapon(int id) { id; }
+	virtual void ApplyChangeSeat(int preId, int curId) { preId; curId; }
 
 protected: // 내부 함수
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();

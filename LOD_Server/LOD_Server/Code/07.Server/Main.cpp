@@ -132,6 +132,56 @@ void SendRemovePacket(int client, int object)
 }
 void ProcessPacket(int id, char *packet)
 {
+	if (g_currentScene == SceneType::RoomScene)
+	{
+		CS_Msg_Prepare_Data* PreparePacket = reinterpret_cast<CS_Msg_Prepare_Data*>(packet);
+		CS_Msg_Demand_Change_Seat* SeatChangePacket{ reinterpret_cast<CS_Msg_Demand_Change_Seat*>(packet) };
+
+		switch (PreparePacket->type)
+		{
+		case CS_DEMAND_CHANGE_SEAT:
+		{
+			if (g_loaded[SeatChangePacket->Demand_id]) break;
+
+			SC_Msg_Permit_Change_Seat p;
+			p.Pre_id = SeatChangePacket->Character_id;
+			p.Permit_id = SeatChangePacket->Demand_id;
+			p.size = sizeof(p);
+			p.type = SC_PERMIT_CHANGE_SEAT;
+			SendPacket(SeatChangePacket->Character_id, &p);
+
+			g_clients[SeatChangePacket->Demand_id].m_s = g_clients[SeatChangePacket->Character_id].m_s;
+
+			g_clients[SeatChangePacket->Demand_id].m_isconnected = true;
+			g_loaded[SeatChangePacket->Demand_id] = true;
+
+			g_clients[SeatChangePacket->Demand_id].m_prev_packet_size = 0;
+			g_clients[SeatChangePacket->Demand_id].m_packet_size = 0;
+
+			g_clients[SeatChangePacket->Character_id].m_s = NULL;
+
+			g_clients[SeatChangePacket->Character_id].m_isconnected = false;
+			g_loaded[SeatChangePacket->Character_id] = false;
+
+			for (int i = 0; i < MAX_USER; ++i)
+			{
+				if (SeatChangePacket->Demand_id == i) continue;
+				if (g_clients[i].m_isconnected) {
+					SC_Msg_Permit_Change_Seat p;
+					p.Pre_id = SeatChangePacket->Character_id;
+					p.Permit_id = SeatChangePacket->Demand_id;
+					p.size = sizeof(p);
+					p.type = SC_PERMIT_CHANGE_SEAT;
+					SendPacket(i, &p);
+				}
+			}
+
+			StartRecv(SeatChangePacket->Demand_id);
+			break;
+		}
+		}
+	}
+
 	//클라로부터 오는 패킷 종류들
 	CS_MsgChMove* MovePacket = reinterpret_cast<CS_MsgChMove*>(packet);
 	CS_Msg_Demand_Use_Skill* CSkillPacket = reinterpret_cast<CS_Msg_Demand_Use_Skill*>(packet);
@@ -141,6 +191,9 @@ void ProcessPacket(int id, char *packet)
 	//서버에서 클라로 보내줘야할 패킷들
 	switch (MovePacket->type)
 	{
+		// Warning! 방 씬 추가 이후 제거 필요
+	case CS_DEMAND_CHANGE_SEAT:
+		break;
 		//이동하는 부분
 	case CS_MOVE_PLAYER:
 	{
@@ -321,7 +374,7 @@ void worker_thread()
 					wptr += work_size;
 				}
 			}
-			StartRecv(key);
+			if(g_clients[key].m_isconnected) StartRecv(key);
 		}
 		else {  // Send 후처리
 				//cout << "WT:A packet was sent to Client[" << key << "]\n";

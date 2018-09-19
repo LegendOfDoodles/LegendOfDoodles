@@ -15,6 +15,8 @@ public: // 공개 함수
 
 	virtual bool OnProcessMouseInput(WPARAM pKeyBuffer);
 
+	virtual void ApplyChangeSeat(int preId, int curId);
+
 	virtual int GetPlayerId() { return m_myId; }
 	virtual CardType* GetCardType() { return m_EachCardType; }
 
