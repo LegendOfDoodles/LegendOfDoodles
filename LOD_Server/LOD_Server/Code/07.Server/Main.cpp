@@ -146,7 +146,7 @@ void SendPacketBySocket(SOCKET sock, void * ptr)
 	s_over->m_wsabuf.buf = s_over->m_iobuf;
 	s_over->m_wsabuf.len = s_over->m_iobuf[0];
 	ZeroMemory(&s_over->m_over, sizeof(WSAOVERLAPPED));
-	int res = WSASend(sock, &s_over->m_wsabuf, 1, NULL, 0,
+	WSASend(sock, &s_over->m_wsabuf, 1, NULL, 0,
 		&s_over->m_over, NULL);
 }
 
