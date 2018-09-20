@@ -17,11 +17,10 @@ CRoomCardShader::CRoomCardShader(shared_ptr<CCreateMgr> pCreateMgr) : CShader(pC
 {
 	m_hWnd = pCreateMgr->GetHwnd();
 
-	// Warning! 서버에서 최초 정보 얻어와야 함
-	m_EachCardType[0] = CardType::Blue_Player;
-	m_EachCardType[1] = CardType::Blue_AI;
-	m_EachCardType[2] = CardType::Red_AI;
-	m_EachCardType[3] = CardType::Red_AI;
+	for (int i = 0; i < 4; ++i)
+	{
+		m_EachCardType[i] = CardType::Blue_AI;
+	}
 }
 
 CRoomCardShader::~CRoomCardShader()
@@ -130,6 +129,28 @@ void CRoomCardShader::ApplyChangeSeat(int preId, int curId)
 	else if (m_EachCardType[adjCurId] == CardType::Red_AI)
 	{
 		m_EachCardType[adjCurId] = CardType::Red_Player;
+	}
+}
+
+void CRoomCardShader::SetPlayerConnectedStatus(bool status[])
+{
+	for (int i = 0; i < 4; ++i)
+	{
+		int num{ (i == 1) ? 2 : (i == 2) ? 1 : i };
+		if (status[i])
+		{
+			if(num == 0 || num == 1)
+				m_EachCardType[num] = CardType::Blue_Player;
+			else
+				m_EachCardType[num] = CardType::Red_Player;
+		}
+		else
+		{
+			if (num == 0 || num == 1)
+				m_EachCardType[num] = CardType::Blue_AI;
+			else
+				m_EachCardType[num] = CardType::Red_AI;
+		}
 	}
 }
 

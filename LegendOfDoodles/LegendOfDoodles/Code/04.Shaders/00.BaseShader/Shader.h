@@ -56,6 +56,7 @@ public: // 공개 함수
 	virtual bool IsShaderExit() { return false; }
 
 	virtual void StartGame() { }
+	virtual void ExitRoom() { }
 
 	virtual int GetPlayerId() { return 0; }
 	virtual CardType* GetCardType() { return nullptr; }
@@ -70,6 +71,7 @@ public: // 공개 함수
 
 	virtual void SetChangeWeapon(int id) { id; }
 	virtual void ApplyChangeSeat(int preId, int curId) { preId; curId; }
+	virtual void SetPlayerConnectedStatus(bool status[]) { status; };
 
 protected: // 내부 함수
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();

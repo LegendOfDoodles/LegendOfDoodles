@@ -20,7 +20,7 @@ CNetwork::~CNetwork()
 {
 }
 
-void CNetwork::Initialize(HWND hWnd)
+bool CNetwork::Initialize(HWND hWnd)
 {
 	m_hWnd = hWnd;
 
@@ -37,13 +37,19 @@ void CNetwork::Initialize(HWND hWnd)
 	ServerAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
 	int Result = WSAConnect(m_mysocket, (sockaddr *)&ServerAddr, sizeof(ServerAddr), NULL, NULL, NULL, NULL);
-	if (Result)WSAGetLastError();
+	if (Result) 
+	{ 
+		assert(WSAGetLastError());
+		return false;
+	}
 	WSAAsyncSelect(m_mysocket, m_hWnd, WM_SOCKET, FD_READ);
 
 	m_send_wsabuf.buf = m_send_buffer;
 	m_send_wsabuf.len = MAX_BUFF_SIZE;
 	m_recv_wsabuf.buf = m_recv_buffer;
 	m_recv_wsabuf.len = MAX_BUFF_SIZE;
+
+	return true;
 }
 
 void CNetwork::Finalize()
@@ -60,25 +66,31 @@ void CNetwork::ProcessPacket(char *ptr)
  	if (ptr[1] != 0) {
 		switch (ptr[1])
 		{
-		case SC_PUT_PLAYER:
+		case SC_CONNECT_PLAYER:
 		{
-			CS_Msg_Prepare_Data *my_packet = reinterpret_cast<CS_Msg_Prepare_Data *>(ptr);
+			SC_Msg_Connect_Player *my_packet = reinterpret_cast<SC_Msg_Connect_Player *>(ptr);
 			int id = my_packet->Character_id;
 			if (id != NONE) {
 				m_myid = id;
 			}
+			m_pRoomScene->GetShader(2)->SetPlayerConnectedStatus(my_packet->PlayerConnectStatus);
 			break;
 		}
 		case SC_PERMIT_CHANGE_SEAT:
 		{
 			SC_Msg_Permit_Change_Seat* SeatChangePacket{ reinterpret_cast<SC_Msg_Permit_Change_Seat*>(ptr) };
 			m_pRoomScene->GetShader(2)->ApplyChangeSeat(SeatChangePacket->Pre_id, SeatChangePacket->Permit_id);
-			if(m_myid == SeatChangePacket->Pre_id) m_myid = SeatChangePacket->Permit_id;
+			m_myid = SeatChangePacket->Permit_id;
 			break;
 		}
 		case SC_GAME_START:
 		{
 			m_pRoomScene->GetShader(1)->StartGame();
+			break;
+		}
+		case SC_CANT_JOIN:
+		{
+			m_pRoomScene->GetShader(1)->ExitRoom();
 			break;
 		}
 		/*case SC_PACKET:

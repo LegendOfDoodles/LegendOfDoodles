@@ -280,6 +280,12 @@ struct SC_Msg_Permit_Change_Seat : public Packet
 	BYTE Permit_id;
 };
 
+struct SC_Msg_Connect_Player : public Packet
+{
+	BYTE Character_id;
+	bool PlayerConnectStatus[4];
+};
+
 #pragma pack(pop)
 
 #define MAX_BUFF_SIZE 4000
@@ -307,6 +313,7 @@ struct SC_Msg_Permit_Change_Seat : public Packet
 #define SC_CHANGE_RANGE			  9
 #define SC_PERMIT_CHANGE_SEAT	  10
 #define SC_GAME_START			  11
+#define SC_CANT_JOIN			  12
 
 #define SC_CONNECT_PLAYER		  101
 #define SC_PUT_PLAYER			  102

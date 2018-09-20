@@ -61,7 +61,7 @@ void CFramework::BuildObjects()
 	m_pLoadingScene->ReleaseUploadBuffers();
 	m_pRenderMgr->SetLoadingScene(m_pLoadingScene);
 
-	ChangeSceneByType(SceneType::LogoScene);
+	ChangeSceneByType(SceneType::TitleScene);
 }
 
 LRESULT CALLBACK CFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMessageID,
@@ -152,9 +152,15 @@ void CFramework::ChangeSceneByType(SceneType type)
 	}
 	else if (type == SceneType::RoomScene)
 	{
-		m_pNetwork->Initialize(m_hWnd);
-		m_pScene = shared_ptr<CRoomScene>(new CRoomScene());
-		m_pNetwork->SetRoomScene(m_pScene);
+		if (m_pNetwork->Initialize(m_hWnd))
+		{
+			m_pScene = shared_ptr<CRoomScene>(new CRoomScene());
+			m_pNetwork->SetRoomScene(m_pScene);
+		}
+		else
+		{
+			m_pNetwork->Finalize();
+		}
 	}
 	else if (type == SceneType::GameScene)
 	{

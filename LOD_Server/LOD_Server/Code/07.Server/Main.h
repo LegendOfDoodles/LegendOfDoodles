@@ -44,6 +44,8 @@ public:
 	float m_curhp;
 	int m_anistate;
 	int m_weaponstate;
+
+	int m_realId{ NONE };
 	
 	int m_kill;
 	int m_death;
@@ -170,6 +172,7 @@ void StartRecv(int id);
 
 
 void SendPacket(int id, void *ptr);
+void SendPacketBySocket(SOCKET sock, void *ptr);
 
 void SendRemovePacket(int client, int object);
 

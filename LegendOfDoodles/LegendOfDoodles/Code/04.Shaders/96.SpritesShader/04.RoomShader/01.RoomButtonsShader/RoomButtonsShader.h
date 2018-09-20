@@ -19,6 +19,7 @@ public: // 공개 함수
 	virtual bool IsShaderExit() { return m_ExitButtonClicked; }
 
 	virtual void StartGame() { m_ReadyButtonClicked = true; }
+	virtual void ExitRoom() { m_ReadyButtonClicked = m_ExitButtonClicked = true; }
 
 protected: // 내부 함수
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();

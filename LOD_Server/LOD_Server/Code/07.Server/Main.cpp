@@ -108,7 +108,11 @@ void StartRecv(int id)
 		NULL, &r_flag, &g_clients[id].m_rxover.m_over, NULL);
 	if (0 != ret) {
 		int err_no = WSAGetLastError();
-		if (WSA_IO_PENDING != err_no) error_display("Recv Error", err_no);
+		if (WSA_IO_PENDING != err_no)
+		{
+			error_display("Recv Error", err_no);
+			DisconnectPlayer(id);
+		}
 	}
 }
 
@@ -125,9 +129,25 @@ void SendPacket(int id, void *ptr)
 		&s_over->m_over, NULL);
 	if (0 != res) {
 		int err_no = WSAGetLastError();
-		if (WSA_IO_PENDING != err_no) error_display("Send Error! ", err_no);
-		
+		if (WSA_IO_PENDING != err_no)
+		{
+			error_display("Send Error! ", err_no);
+			DisconnectPlayer(id);
+		}
 	}
+}
+
+void SendPacketBySocket(SOCKET sock, void * ptr)
+{
+	char *packet = reinterpret_cast<char *>(ptr);
+	EXOVER *s_over = new EXOVER;
+	s_over->is_recv = false;
+	memcpy(s_over->m_iobuf, packet, packet[0]);
+	s_over->m_wsabuf.buf = s_over->m_iobuf;
+	s_over->m_wsabuf.len = s_over->m_iobuf[0];
+	ZeroMemory(&s_over->m_over, sizeof(WSAOVERLAPPED));
+	int res = WSASend(sock, &s_over->m_wsabuf, 1, NULL, 0,
+		&s_over->m_over, NULL);
 }
 
 void SendRemovePacket(int client, int object)
@@ -150,15 +170,13 @@ void ProcessPacket(int id, char *packet)
 		{
 		case CS_PREPARE_DATA:
 		{
-			g_clients[PreparePacket->Character_id].m_isconnected = true;
-
-			if (g_clients[(BYTE)PreparePacket->Character_id].m_isconnected)
+			if (g_clients[PreparePacket->Character_id].m_isconnected)
 			{
 				SC_Msg_Sync_Time p2;
 				p2.Game_Time = g_GameTime;
 				p2.size = sizeof(p2);
 				p2.type = SC_SYNC_TIME;
-				SendPacket((BYTE)PreparePacket->Character_id, &p2);
+				SendPacket(PreparePacket->Character_id, &p2);
 			}
 
 			break;
@@ -190,44 +208,39 @@ void ProcessPacket(int id, char *packet)
 				Packet p;
 				p.size = sizeof(p);
 				p.type = SC_GAME_START;
-				SendPacket(SeatChangePacket->Character_id, &p);
+				for (int i = 0; i < MAX_USER; ++i) {
+					if(g_clients[i].m_isconnected)
+						SendPacket(i, &p);
+				}
 			}
 			break;
 		}
 		case CS_DEMAND_CHANGE_SEAT:
 		{
-			if (g_loaded[SeatChangePacket->Demand_id]) break;
+			if (g_clients[SeatChangePacket->Demand_id].m_isconnected) break;
+
+			g_clients[SeatChangePacket->Demand_id].m_s = g_clients[SeatChangePacket->Character_id].m_s;
+			g_clients[SeatChangePacket->Character_id].m_s = NULL;
+
+			g_clients[SeatChangePacket->Demand_id].m_isconnected = true;
+			g_clients[SeatChangePacket->Character_id].m_isconnected = false;
+
+			g_clients[SeatChangePacket->Demand_id].m_realId = g_clients[SeatChangePacket->Character_id].m_realId;
+			g_clients[SeatChangePacket->Character_id].m_realId = NONE;
+
+			g_clients[SeatChangePacket->Demand_id].m_prev_packet_size = 0;
+			g_clients[SeatChangePacket->Demand_id].m_packet_size = 0;
 
 			SC_Msg_Permit_Change_Seat p;
 			p.Pre_id = SeatChangePacket->Character_id;
 			p.Permit_id = SeatChangePacket->Demand_id;
 			p.size = sizeof(p);
 			p.type = SC_PERMIT_CHANGE_SEAT;
-			SendPacket(SeatChangePacket->Character_id, &p);
-
-			g_clients[SeatChangePacket->Demand_id].m_s = g_clients[SeatChangePacket->Character_id].m_s;
-
-			g_clients[SeatChangePacket->Demand_id].m_isconnected = true;
-			g_loaded[SeatChangePacket->Demand_id] = true;
-
-			g_clients[SeatChangePacket->Demand_id].m_prev_packet_size = 0;
-			g_clients[SeatChangePacket->Demand_id].m_packet_size = 0;
-
-			g_clients[SeatChangePacket->Character_id].m_s = NULL;
-
-			g_clients[SeatChangePacket->Character_id].m_isconnected = false;
-			g_loaded[SeatChangePacket->Character_id] = false;
 
 			for (int i = 0; i < MAX_USER; ++i)
 			{
-				if (SeatChangePacket->Demand_id == i) continue;
 				if (g_clients[i].m_isconnected) {
-					SC_Msg_Permit_Change_Seat p2;
-					p2.Pre_id = SeatChangePacket->Character_id;
-					p2.Permit_id = SeatChangePacket->Demand_id;
-					p2.size = sizeof(p2);
-					p2.type = SC_PERMIT_CHANGE_SEAT;
-					SendPacket(i, &p2);
+					SendPacket(i, &p);
 				}
 			}
 
@@ -341,20 +354,11 @@ void ProcessPacket(int id, char *packet)
 
 void DisconnectPlayer(int id)
 {
-	SC_Msg_Remove_Character p;
-	p.Character_id = (BYTE)id;
-	p.size = sizeof(p);
-	p.type = SC_REMOVE_PLAYER;
-	for (int i = 0; i < MAX_USER; ++i) {
-		if (false == g_clients[i].m_isconnected) continue;
-		if (i == id) continue;
-			SendPacket(i, &p);
-	}
-	
+	cout << id << "disconnect" << endl;
 	closesocket(g_clients[id].m_s);
 	g_clients[id].m_isconnected = false;
 	g_clients[id].m_isReady = false;
-	g_loaded[id] = false;
+	g_loaded[g_clients[id].m_realId] = false;
 }
 
 void worker_thread()
@@ -367,50 +371,57 @@ void worker_thread()
 		WSAOVERLAPPED *over;
 		BOOL ret = GetQueuedCompletionStatus(gh_iocp, &io_size, &iocp_key, &over, INFINITE);
 		int key = static_cast<int>(iocp_key);
+
+		int fakeId{ 0 };
+		for (; fakeId < MAX_USER; ++fakeId)
+		{
+			if (g_clients[fakeId].m_realId == key) break;
+		}
+
 		//cout << "WT::Network I/O with Client [" << key << "]\n";
 		if (FALSE == ret) {
 			cout << "Error in GQCS\n";
-			DisconnectPlayer(key);
+			DisconnectPlayer(fakeId);
 			continue;
 		}
 		if (0 == io_size) {
-			DisconnectPlayer(key);
+			DisconnectPlayer(fakeId);
 			continue;
 		}
 
 		EXOVER *p_over = reinterpret_cast<EXOVER *>(over);
-		if (true == p_over->is_recv) {
+		if (p_over->is_recv) {
 			//cout << "WT:Packet From Client [" << key << "]\n";
 			int work_size = io_size;
 			char *wptr = p_over->m_iobuf;
 			while (0 < work_size) {
 				int p_size;
-				if (0 != g_clients[key].m_packet_size)
-					p_size = g_clients[key].m_packet_size;
+				if (0 != g_clients[fakeId].m_packet_size)
+					p_size = g_clients[fakeId].m_packet_size;
 				else {
 					p_size = wptr[0];
-					g_clients[key].m_packet_size = p_size;
+					g_clients[fakeId].m_packet_size = p_size;
 				}
-				int need_size = p_size - g_clients[key].m_prev_packet_size;
+				int need_size = p_size - g_clients[fakeId].m_prev_packet_size;
 				if (need_size <= work_size) {
-					memcpy(g_clients[key].m_packet
-						+ g_clients[key].m_prev_packet_size, wptr, need_size);
+					memcpy(g_clients[fakeId].m_packet
+						+ g_clients[fakeId].m_prev_packet_size, wptr, need_size);
 
-					ProcessPacket(key, g_clients[key].m_packet);
+					ProcessPacket(fakeId, g_clients[fakeId].m_packet);
 
-					g_clients[key].m_prev_packet_size = 0;
-					g_clients[key].m_packet_size = 0;
+					g_clients[fakeId].m_prev_packet_size = 0;
+					g_clients[fakeId].m_packet_size = 0;
 					work_size -= need_size;
 					wptr += need_size;
 				}
 				else {
-					memcpy(g_clients[key].m_packet + g_clients[key].m_prev_packet_size, wptr, work_size);
-					g_clients[key].m_prev_packet_size += work_size;
+					memcpy(g_clients[fakeId].m_packet + g_clients[fakeId].m_prev_packet_size, wptr, work_size);
+					g_clients[fakeId].m_prev_packet_size += work_size;
 					work_size = -work_size;
 					wptr += work_size;
 				}
 			}
-			if(g_clients[key].m_isconnected) StartRecv(key);
+			if(g_clients[fakeId].m_isconnected) StartRecv(key);
 		}
 		else {  // Send 후처리
 				//cout << "WT:A packet was sent to Client[" << key << "]\n";
@@ -446,32 +457,64 @@ void accept_thread()	//새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 			ErrorDisplay("In Accept Thread:WSAAccept()");
 			continue;
 		}
-		// Warning! 게임 중일 때 플레이어 받지 말아야 함
-		int id = -1;
-		for (int i = 0; i < MAX_USER; ++i)
-			if (false == g_loaded[i]) {
-				id = i;
-				break;
+
+		if (g_currentScene == SceneType::RoomScene)
+		{
+			int id{ NONE };
+			for (int i = 0; i < MAX_USER; ++i)
+			{
+				if (!g_loaded[i])
+				{
+					id = i;
+					break;
+				}
 			}
-		if (-1 == id) {
-			cout << "MAX USER Exceeded\n";
-			continue;
+			if (-1 == id) {
+				cout << "MAX USER Exceeded\n";
+				continue;
+			}
+			cout << "ID of new Client is [" << id << "]\n";
+
+			int fakeId{ NONE };
+			for (int i = 0; i < MAX_USER; ++i)
+			{
+				if (!g_clients[i].m_isconnected)
+				{
+					fakeId = i;
+					break;
+				}
+			}
+
+			g_clients[fakeId].m_s = cs;
+			//clear for reuse
+			g_clients[fakeId].m_realId = id;
+			g_clients[fakeId].m_packet_size = 0;
+			g_clients[fakeId].m_prev_packet_size = 0;
+
+			CreateIoCompletionPort(reinterpret_cast<HANDLE>(cs),
+				gh_iocp, id, 0);
+
+			g_loaded[id] = true;
+			g_clients[fakeId].m_isconnected = true;
+			StartRecv(id);
+
+			SC_Msg_Connect_Player p;
+			p.Character_id = (BYTE)fakeId;
+			for (int i = 0; i < MAX_USER; ++i)
+			{
+				p.PlayerConnectStatus[i] = g_clients[i].m_isconnected;
+			}
+			p.size = sizeof(p);
+			p.type = SC_CONNECT_PLAYER;
+			SendPacket(fakeId, &p);
 		}
-		cout << "ID of new Client is [" << id << "]\n";
-		g_clients[id].m_s = cs;
-		//clear for reuse
-		g_clients[id].m_packet_size = 0;
-		g_clients[id].m_prev_packet_size = 0;
-
-		CreateIoCompletionPort(reinterpret_cast<HANDLE>(cs), gh_iocp, id, 0);
-		g_loaded[id] = true;
-		StartRecv(id);
-
-		CS_Msg_Prepare_Data p;
-		p.Character_id = (BYTE)id;
-		p.size = sizeof(p);
-		p.type = SC_PUT_PLAYER;
-		SendPacket(id, &p);
+		else
+		{
+			Packet p;
+			p.size = sizeof(p);
+			p.type = SC_CANT_JOIN;
+			SendPacketBySocket(cs, &p);
+		}
 	}
 }
 

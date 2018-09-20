@@ -62,7 +62,7 @@ protected:
 public:
 	CNetwork();
 	~CNetwork();
-	void Initialize(HWND hWnd);
+	bool Initialize(HWND hWnd);
 	void ProcessPacket(char *ptr);
 	void Finalize();
 	void ReadPacket();
