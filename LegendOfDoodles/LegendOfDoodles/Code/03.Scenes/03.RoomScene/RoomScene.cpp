@@ -10,7 +10,7 @@
 /// 목적: 로딩 신 처리용 클래스
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-18
+/// 최종 수정 날짜: 2018-09-20
 /// </summary>
 
 #define RoomScreenShader m_ppShaders[0]
@@ -79,5 +79,6 @@ void CRoomScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 		m_ppShaders[i]->Initialize(pCreateMgr);
 	}
 
+	RoomButtonsShader->SetNetwork(m_pNetwork);
 	RoomCardsShader->SetNetwork(m_pNetwork);
 }

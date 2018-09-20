@@ -128,8 +128,10 @@ extern array <NexusTower, 14> g_nexustowers;
 
 extern SceneType g_currentScene;
 
+class CFramework;
 class CScene;
 
+extern shared_ptr<CFramework> g_pFramework;
 extern shared_ptr<CScene> g_pScene;
 extern CAnimatedObject** g_ppPlayer;
 extern CollisionObjectList* g_blueSwordMinions;
@@ -161,7 +163,7 @@ void error_display(const char *msg, int err_no);
 
 void ErrorDisplay(const char * location);
 
-void NetworkInitialize();
+void NetworkInitialize(shared_ptr<CFramework> pFramework);
 void ReadyForScene(shared_ptr<CScene> pScene);
 
 void StartRecv(int id);
@@ -180,6 +182,11 @@ void worker_thread();
 
 
 void accept_thread();	//새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
+
+extern float PacketCoolTime;
+extern float CoolTimeSync;
+extern float GameTimeSync;
+extern float StatusTimeChecker;
 
 void timer_thread();
 

@@ -14,6 +14,9 @@ public: // 공개 함수
 	void FrameAdvance(float timeElapsed);
 	shared_ptr<CScene> GetScene() { return m_pScene; }
 
+	void StartGame();
+	void FinishGame();
+
 	bool IsRunning() { return m_running; }
 
 private: // 내부 함수

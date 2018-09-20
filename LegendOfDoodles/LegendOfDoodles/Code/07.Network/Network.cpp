@@ -76,6 +76,11 @@ void CNetwork::ProcessPacket(char *ptr)
 			if(m_myid == SeatChangePacket->Pre_id) m_myid = SeatChangePacket->Permit_id;
 			break;
 		}
+		case SC_GAME_START:
+		{
+			m_pRoomScene->GetShader(1)->StartGame();
+			break;
+		}
 		/*case SC_PACKET:
 		{
 			SC_Msg_What_Is_Packet *my_packet = reinterpret_cast<SC_Msg_What_Is_Packet *>(ptr);

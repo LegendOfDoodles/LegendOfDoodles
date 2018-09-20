@@ -306,6 +306,7 @@ struct SC_Msg_Permit_Change_Seat : public Packet
 #define SC_SYNC_TIME			  8
 #define SC_CHANGE_RANGE			  9
 #define SC_PERMIT_CHANGE_SEAT	  10
+#define SC_GAME_START			  11
 
 #define SC_CONNECT_PLAYER		  101
 #define SC_PUT_PLAYER			  102
@@ -342,7 +343,7 @@ struct SC_Msg_Permit_Change_Seat : public Packet
 #define CS_CHANGE_WEAPON		  204
 #define CS_SET_ABILITY_POINT      205
 #define CS_PREPARE_DATA			  206
-#define CS_GAME_LOAD			  207
+#define CS_PLAYER_READY			  207
 #define CS_DEMAND_CHANGE_SEAT     208
 
 

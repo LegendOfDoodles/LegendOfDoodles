@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 //클라쪽 헤더
+#include "02.Framework/00.Frame/Framework.h"
 #include "03.Scenes\01.GameScene\GameScene.h"
 #include "04.Shaders\05.PlayerShader\PlayerShader.h"
 #include "04.Shaders/04.AniShader/MinionShader.h"
@@ -16,10 +17,9 @@ array <Client, MAX_USER> g_clients;
 array <bool, MAX_USER> g_loaded;
 array <NexusTower, 14> g_nexustowers;
 
-//CScene* g_pScene{ NULL };
-
 SceneType g_currentScene{ SceneType::RoomScene };
 
+shared_ptr<CFramework> g_pFramework;
 shared_ptr<CScene> g_pScene;
 CAnimatedObject** g_ppPlayer{ NULL };
 CollisionObjectList* g_blueSwordMinions;
@@ -65,13 +65,15 @@ void ErrorDisplay(const char * location)
 	error_display(location, WSAGetLastError());
 }
 
-void NetworkInitialize()
+void NetworkInitialize(shared_ptr<CFramework> pFramework)
 {
 	gh_iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0); // 의미없는 파라메터, 마지막은 알아서 쓰레드를 만들어준다.
 	std::wcout.imbue(std::locale("korean"));
 
 	WSADATA	wsadata;
 	WSAStartup(MAKEWORD(2, 2), &wsadata);
+
+	g_pFramework = pFramework;
 }
 
 void ReadyForScene(shared_ptr<CScene> pScene)
@@ -89,6 +91,13 @@ void ReadyForScene(shared_ptr<CScene> pScene)
 	g_NeutralityCount = g_pScene->GetShader(2)->GetObjectCount();
 	g_ppNexusTower = g_pScene->GetNexusTower();
 	g_NexusTowerCount = g_pScene->GetShader(3)->GetObjectCount();
+
+	PacketCoolTime = 0.f;
+	CoolTimeSync = 0.f;
+	GameTimeSync = 0.f;
+	StatusTimeChecker = 0.f;
+
+	g_GameTime = 0.f;
 }
 
 void StartRecv(int id)
@@ -139,6 +148,52 @@ void ProcessPacket(int id, char *packet)
 
 		switch (PreparePacket->type)
 		{
+		case CS_PREPARE_DATA:
+		{
+			g_clients[PreparePacket->Character_id].m_isconnected = true;
+
+			if (g_clients[(BYTE)PreparePacket->Character_id].m_isconnected)
+			{
+				SC_Msg_Sync_Time p2;
+				p2.Game_Time = g_GameTime;
+				p2.size = sizeof(p2);
+				p2.type = SC_SYNC_TIME;
+				SendPacket((BYTE)PreparePacket->Character_id, &p2);
+			}
+
+			break;
+		}
+		case CS_PLAYER_READY:
+		{
+			int connectedUserCnt{ 0 };
+			int readyUserCnt{ 0 };
+			g_clients[PreparePacket->Character_id].m_isReady = true;
+			for (int i = 0; i < MAX_USER; ++i)
+			{
+				if (g_clients[i].m_isconnected)
+				{
+					connectedUserCnt++;
+					if (g_clients[i].m_isReady) readyUserCnt++;
+				}
+			}
+			if (connectedUserCnt != 0 && connectedUserCnt == readyUserCnt)
+			{
+				for (int i = 0; i < MAX_USER; ++i)
+				{
+					if (g_clients[i].m_isconnected && g_clients[i].m_isReady)
+					{
+						g_clients[i].m_isReady = false;
+					}
+				}
+				g_pFramework->StartGame();
+
+				Packet p;
+				p.size = sizeof(p);
+				p.type = SC_GAME_START;
+				SendPacket(SeatChangePacket->Character_id, &p);
+			}
+			break;
+		}
 		case CS_DEMAND_CHANGE_SEAT:
 		{
 			if (g_loaded[SeatChangePacket->Demand_id]) break;
@@ -167,140 +222,120 @@ void ProcessPacket(int id, char *packet)
 			{
 				if (SeatChangePacket->Demand_id == i) continue;
 				if (g_clients[i].m_isconnected) {
-					SC_Msg_Permit_Change_Seat p;
-					p.Pre_id = SeatChangePacket->Character_id;
-					p.Permit_id = SeatChangePacket->Demand_id;
-					p.size = sizeof(p);
-					p.type = SC_PERMIT_CHANGE_SEAT;
-					SendPacket(i, &p);
+					SC_Msg_Permit_Change_Seat p2;
+					p2.Pre_id = SeatChangePacket->Character_id;
+					p2.Permit_id = SeatChangePacket->Demand_id;
+					p2.size = sizeof(p2);
+					p2.type = SC_PERMIT_CHANGE_SEAT;
+					SendPacket(i, &p2);
 				}
 			}
 
 			StartRecv(SeatChangePacket->Demand_id);
 			break;
-		}
+		}		
+		default:
+			cout << "Unkown Packet Type from Client [" << id << "]\n";
+			return;
 		}
 	}
-
-	//클라로부터 오는 패킷 종류들
-	CS_MsgChMove* MovePacket = reinterpret_cast<CS_MsgChMove*>(packet);
-	CS_Msg_Demand_Use_Skill* CSkillPacket = reinterpret_cast<CS_Msg_Demand_Use_Skill*>(packet);
-	CS_Msg_Change_Weapon* WeaponPacket = reinterpret_cast<CS_Msg_Change_Weapon*>(packet);
-	CS_Msg_Set_Speacial_Point* SpeacialPacket = reinterpret_cast<CS_Msg_Set_Speacial_Point*>(packet);
-	CS_Msg_Prepare_Data* PreparePacket = reinterpret_cast<CS_Msg_Prepare_Data*>(packet);
-	//서버에서 클라로 보내줘야할 패킷들
-	switch (MovePacket->type)
+	else if (g_currentScene == SceneType::GameScene)
 	{
-		// Warning! 방 씬 추가 이후 제거 필요
-	case CS_DEMAND_CHANGE_SEAT:
-		break;
-		//이동하는 부분
-	case CS_MOVE_PLAYER:
-	{
-		XMFLOAT3 pickposition{MovePacket->x, 0 ,MovePacket->y };
-		g_pScene->GenerateLayEndWorldPosition(pickposition, MovePacket->Character_id);
-
-		g_clients[MovePacket->Character_id].m_targetlocation.x = MovePacket->x;
-		g_clients[MovePacket->Character_id].m_targetlocation.y = MovePacket->y;
-
-		for (int i = 0; i < MAX_USER; ++i)
+		//클라로부터 오는 패킷 종류들
+		CS_MsgChMove* MovePacket = reinterpret_cast<CS_MsgChMove*>(packet);
+		CS_Msg_Demand_Use_Skill* CSkillPacket = reinterpret_cast<CS_Msg_Demand_Use_Skill*>(packet);
+		CS_Msg_Change_Weapon* WeaponPacket = reinterpret_cast<CS_Msg_Change_Weapon*>(packet);
+		CS_Msg_Set_Speacial_Point* SpeacialPacket = reinterpret_cast<CS_Msg_Set_Speacial_Point*>(packet);
+		//서버에서 클라로 보내줘야할 패킷들
+		switch (MovePacket->type)
 		{
-			if (g_clients[i].m_isconnected && i != MovePacket->Character_id) {
-				SC_Msg_Target_Location p;
-				p.Character_id = MovePacket->Character_id;
-				p.location = g_clients[MovePacket->Character_id].m_targetlocation;
-				p.size = sizeof(p);
-				p.type = SC_CHANGE_TARGET;
-				SendPacket(i, &p);
-			}
-		}
-		break;
-	}
-	case CS_CHANGE_WEAPON:
-	{
-		g_ppPlayer[WeaponPacket->Character_id]->ChangeWeapon(WeaponPacket->WeaponNum, (ObjectType)WeaponPacket->ObjectType);
-		g_pScene->GetShader(1)->SetPlayerAnimation((ObjectType)WeaponPacket->ObjectType, WeaponPacket->Character_id);
-
-		for (int i = 0; i < MAX_USER; ++i)
+			//이동하는 부분
+		case CS_MOVE_PLAYER:
 		{
-			if (g_clients[i].m_isconnected) {
-				SC_Msg_BroadCast_Change_Weapon p;
-				p.Character_id = WeaponPacket->Character_id;
-				p.WeaponNum = WeaponPacket->WeaponNum;
-				p.ObjectType = WeaponPacket->ObjectType;
-				p.size = sizeof(p);
-				p.type = SC_CHANGE_WEAPON;
-				SendPacket(i, &p);
-			}
-		}
-		break;
-	}
-	case CS_SET_ABILITY_POINT:
-	{
-		int idx{};
-		for (int i = 0; i < 4; ++i) {
-			if (g_ppPlayer[SpeacialPacket->Character_id]->GetPlayerStatus()->Special[i] == (SpecialType::NoSelected)) {
-				g_ppPlayer[SpeacialPacket->Character_id]->GetPlayerStatus()->Special[i] = (SpecialType)SpeacialPacket->Ability_Type;
-				g_ppPlayer[SpeacialPacket->Character_id]->ApplySpecialStat((SpecialType)SpeacialPacket->Ability_Type);
-				idx = i;
-				break;
-			}
-		}
-		for (int i = 0; i < MAX_USER; ++i)
-		{
-			if (g_clients[i].m_isconnected) {
-				SC_Msg_Set_Speacial_Point p;
-				p.Ability_Type = SpeacialPacket->Ability_Type;
-				p.Character_id = SpeacialPacket->Character_id;
-				p.idx = (BYTE)idx;
-				p.size = sizeof(p);
-				p.type = SC_SET_ABILITY_POINT;
-				SendPacket(i, &p);
-			}
-		}
-		
-		break;
-	}
-	case CS_DEMAND_USE_SKILL:
-	{
-		g_ppPlayer[CSkillPacket->Character_id]->ActiveSkill((AnimationsType)CSkillPacket->skilltype);
+			XMFLOAT3 pickposition{ MovePacket->x, 0 ,MovePacket->y };
+			g_pScene->GenerateLayEndWorldPosition(pickposition, MovePacket->Character_id);
 
-		for (int i = 0; i < MAX_USER; ++i) {
-			if (g_clients[i].m_isconnected) {
-				SC_Msg_Permit_Use_Skill p;
-				p.Character_id = CSkillPacket->Character_id;
-				p.size = sizeof(p);
-				p.skilltype = CSkillPacket->skilltype;
-				p.type = SC_PERMIT_USE_SKILL;
-				SendPacket(i, &p);
-			}
-		}
-		break;
-	}
-	case CS_PREPARE_DATA:
-	{
-		g_clients[PreparePacket->Character_id].m_isconnected = true;
-		
-		if (g_clients[(BYTE)PreparePacket->Character_id].m_isconnected)
-		{
-			SC_Msg_Sync_Time p2;
-			p2.Game_Time = g_GameTime;
-			p2.size = sizeof(p2);
-			p2.type = SC_SYNC_TIME;
-			SendPacket((BYTE)PreparePacket->Character_id, &p2);
-		}
+			g_clients[MovePacket->Character_id].m_targetlocation.x = MovePacket->x;
+			g_clients[MovePacket->Character_id].m_targetlocation.y = MovePacket->y;
 
-		break;
-	}
-	case CS_GAME_LOAD:
-	{
-		g_clients[PreparePacket->Character_id].m_isReady = true;
-		g_GameTime = 0; //Warning!
-		break;
-	}
-	default:
-		cout << "Unkown Packet Type from Client [" << id << "]\n";
-		return;
+			for (int i = 0; i < MAX_USER; ++i)
+			{
+				if (g_clients[i].m_isconnected && i != MovePacket->Character_id) {
+					SC_Msg_Target_Location p;
+					p.Character_id = MovePacket->Character_id;
+					p.location = g_clients[MovePacket->Character_id].m_targetlocation;
+					p.size = sizeof(p);
+					p.type = SC_CHANGE_TARGET;
+					SendPacket(i, &p);
+				}
+			}
+			break;
+		}
+		case CS_CHANGE_WEAPON:
+		{
+			g_ppPlayer[WeaponPacket->Character_id]->ChangeWeapon(WeaponPacket->WeaponNum, (ObjectType)WeaponPacket->ObjectType);
+			g_pScene->GetShader(1)->SetPlayerAnimation((ObjectType)WeaponPacket->ObjectType, WeaponPacket->Character_id);
+
+			for (int i = 0; i < MAX_USER; ++i)
+			{
+				if (g_clients[i].m_isconnected) {
+					SC_Msg_BroadCast_Change_Weapon p;
+					p.Character_id = WeaponPacket->Character_id;
+					p.WeaponNum = WeaponPacket->WeaponNum;
+					p.ObjectType = WeaponPacket->ObjectType;
+					p.size = sizeof(p);
+					p.type = SC_CHANGE_WEAPON;
+					SendPacket(i, &p);
+				}
+			}
+			break;
+		}
+		case CS_SET_ABILITY_POINT:
+		{
+			int idx{};
+			for (int i = 0; i < 4; ++i) {
+				if (g_ppPlayer[SpeacialPacket->Character_id]->GetPlayerStatus()->Special[i] == (SpecialType::NoSelected)) {
+					g_ppPlayer[SpeacialPacket->Character_id]->GetPlayerStatus()->Special[i] = (SpecialType)SpeacialPacket->Ability_Type;
+					g_ppPlayer[SpeacialPacket->Character_id]->ApplySpecialStat((SpecialType)SpeacialPacket->Ability_Type);
+					idx = i;
+					break;
+				}
+			}
+			for (int i = 0; i < MAX_USER; ++i)
+			{
+				if (g_clients[i].m_isconnected) {
+					SC_Msg_Set_Speacial_Point p;
+					p.Ability_Type = SpeacialPacket->Ability_Type;
+					p.Character_id = SpeacialPacket->Character_id;
+					p.idx = (BYTE)idx;
+					p.size = sizeof(p);
+					p.type = SC_SET_ABILITY_POINT;
+					SendPacket(i, &p);
+				}
+			}
+
+			break;
+		}
+		case CS_DEMAND_USE_SKILL:
+		{
+			g_ppPlayer[CSkillPacket->Character_id]->ActiveSkill((AnimationsType)CSkillPacket->skilltype);
+
+			for (int i = 0; i < MAX_USER; ++i) {
+				if (g_clients[i].m_isconnected) {
+					SC_Msg_Permit_Use_Skill p;
+					p.Character_id = CSkillPacket->Character_id;
+					p.size = sizeof(p);
+					p.skilltype = CSkillPacket->skilltype;
+					p.type = SC_PERMIT_USE_SKILL;
+					SendPacket(i, &p);
+				}
+			}
+			break;
+		}
+		default:
+			cout << "Unkown Packet Type from Client [" << id << "]\n";
+			return;
+		}
 	}
 }
 
@@ -318,6 +353,7 @@ void DisconnectPlayer(int id)
 	
 	closesocket(g_clients[id].m_s);
 	g_clients[id].m_isconnected = false;
+	g_clients[id].m_isReady = false;
 	g_loaded[id] = false;
 }
 
@@ -431,27 +467,25 @@ void accept_thread()	//새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 		g_loaded[id] = true;
 		StartRecv(id);
 
-		SC_Msg_Put_Character p;
+		CS_Msg_Prepare_Data p;
 		p.Character_id = (BYTE)id;
 		p.size = sizeof(p);
 		p.type = SC_PUT_PLAYER;
-		p.x = g_ppPlayer[id]->GetPosition().x;
-		p.y = g_ppPlayer[id]->GetPosition().z;
 		SendPacket(id, &p);
 	}
 }
 
+float PacketCoolTime{ 0.f };
+float CoolTimeSync{ 0.f };
+float GameTimeSync{ 0.f };
+float StatusTimeChecker{ 0.f };
+
 void timer_thread()
 {
-	static float PacketCoolTime{ 0.f };
-	static float CoolTimeSync{ 0.f };
-	static float GameTimeSync{ 0.f };
-	static float StatusTimeChecker{ 0.f };
 	while (1)
 	{
-	if (g_clients[0].m_isReady) {// && g_clients[1].m_isReady && g_clients[2].m_isReady && g_clients[3].m_isReady) {
-
-		
+		if (g_currentScene == SceneType::GameScene)
+		{
 			Sleep(100);
 
 			if (g_GameTime - StatusTimeChecker >= 60.f)

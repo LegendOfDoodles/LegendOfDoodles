@@ -55,6 +55,8 @@ public: // 공개 함수
 	virtual bool IsShaderDone() { return true; }
 	virtual bool IsShaderExit() { return false; }
 
+	virtual void StartGame() { }
+
 	virtual int GetPlayerId() { return 0; }
 	virtual CardType* GetCardType() { return nullptr; }
 

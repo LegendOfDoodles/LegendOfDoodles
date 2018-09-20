@@ -2,12 +2,13 @@
 #include "RoomButtonsShader.h"
 #include "02.Framework/01.CreateMgr/CreateMgr.h"
 #include "05.Objects/95.Sprites/Sprite.h"
+#include "07.Network/Network.h"
 
 /// <summary>
 /// 목적: 로딩 바 출력용 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-18
+/// 최종 수정 날짜: 2018-09-20
 /// </summary>
 
 #define ReadyButton m_RoomButtons[0]
@@ -80,7 +81,11 @@ bool CRoomButtonsShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 
 	if (ReadyButton->IsInRect(FRAME_BUFFER_WIDTH / 3.f, FRAME_BUFFER_HEIGHT / 6.f, cursorPos))
 	{
-		m_ReadyButtonClicked = true;
+		CS_Msg_Prepare_Data p;
+		p.Character_id = (BYTE)m_pNetwork->m_myid;
+		p.size = sizeof(p);
+		p.type = CS_PLAYER_READY;
+		m_pNetwork->SendPacket(&p);
 	}
 	else if (ExitButton->IsInRect(FRAME_BUFFER_WIDTH / 3.f, FRAME_BUFFER_HEIGHT / 6.f, cursorPos))
 	{

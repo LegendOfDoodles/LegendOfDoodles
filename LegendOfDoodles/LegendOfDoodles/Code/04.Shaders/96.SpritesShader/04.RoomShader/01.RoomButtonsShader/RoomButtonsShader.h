@@ -18,6 +18,8 @@ public: // 공개 함수
 	virtual bool IsShaderDone() { return m_ReadyButtonClicked; }
 	virtual bool IsShaderExit() { return m_ExitButtonClicked; }
 
+	virtual void StartGame() { m_ReadyButtonClicked = true; }
+
 protected: // 내부 함수
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
 	virtual D3D12_BLEND_DESC CreateBlendState();

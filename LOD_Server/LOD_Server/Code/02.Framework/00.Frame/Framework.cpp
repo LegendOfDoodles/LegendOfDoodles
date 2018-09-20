@@ -28,8 +28,6 @@ bool CFramework::Initialize()
 	return(true);
 }
 
-
-
 void CFramework::Finalize()
 {
 	ReleaseObjects();
@@ -37,17 +35,35 @@ void CFramework::Finalize()
 
 void CFramework::FrameAdvance(float timeElapsed)
 {
-	g_GameTime += timeElapsed;
-	m_pScene->AnimateObjects(timeElapsed);
+	if (g_currentScene == SceneType::GameScene)
+	{
+		g_GameTime += timeElapsed;
+		m_pScene->AnimateObjects(timeElapsed);
+	}
 }
 
+void CFramework::StartGame()
+{
+	if (m_pScene) m_pScene->Finalize();
+	m_pScene = shared_ptr<CGameScene>(new CGameScene());
+	m_pScene->Initialize();
+	ReadyForScene(m_pScene);
+	g_currentScene = SceneType::GameScene;
+}
 
+void CFramework::FinishGame()
+{
+	if (m_pScene) m_pScene->Finalize();
+	m_pScene = shared_ptr<CScene>(new CScene());
+	m_pScene->Initialize();
+	g_currentScene = SceneType::RoomScene;
+}
 
 ////////////////////////////////////////////////////////////////////////
 // 내부 함수
 void CFramework::BuildObjects()
 {
-	m_pScene = shared_ptr<CGameScene>(new CGameScene());
+	m_pScene = shared_ptr<CScene>(new CScene());
 	m_pScene->Initialize();
 }
 
