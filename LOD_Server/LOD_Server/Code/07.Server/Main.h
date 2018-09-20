@@ -133,7 +133,7 @@ extern SceneType g_currentScene;
 class CFramework;
 class CScene;
 
-extern shared_ptr<CFramework> g_pFramework;
+extern CFramework g_Framework;			// 프레임 워크
 extern shared_ptr<CScene> g_pScene;
 extern CAnimatedObject** g_ppPlayer;
 extern CollisionObjectList* g_blueSwordMinions;
@@ -165,7 +165,7 @@ void error_display(const char *msg, int err_no);
 
 void ErrorDisplay(const char * location);
 
-void NetworkInitialize(shared_ptr<CFramework> pFramework);
+void NetworkInitialize();
 void ReadyForScene(shared_ptr<CScene> pScene);
 
 void StartRecv(int id);

@@ -19,7 +19,7 @@ array <NexusTower, 14> g_nexustowers;
 
 SceneType g_currentScene{ SceneType::RoomScene };
 
-shared_ptr<CFramework> g_pFramework;
+CFramework g_Framework;			// 프레임 워크
 shared_ptr<CScene> g_pScene;
 CAnimatedObject** g_ppPlayer{ NULL };
 CollisionObjectList* g_blueSwordMinions;
@@ -65,15 +65,13 @@ void ErrorDisplay(const char * location)
 	error_display(location, WSAGetLastError());
 }
 
-void NetworkInitialize(shared_ptr<CFramework> pFramework)
+void NetworkInitialize()
 {
 	gh_iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0); // 의미없는 파라메터, 마지막은 알아서 쓰레드를 만들어준다.
 	std::wcout.imbue(std::locale("korean"));
 
 	WSADATA	wsadata;
 	WSAStartup(MAKEWORD(2, 2), &wsadata);
-
-	g_pFramework = pFramework;
 }
 
 void ReadyForScene(shared_ptr<CScene> pScene)
@@ -168,19 +166,6 @@ void ProcessPacket(int id, char *packet)
 
 		switch (PreparePacket->type)
 		{
-		case CS_PREPARE_DATA:
-		{
-			if (g_clients[PreparePacket->Character_id].m_isconnected)
-			{
-				SC_Msg_Sync_Time p2;
-				p2.Game_Time = g_GameTime;
-				p2.size = sizeof(p2);
-				p2.type = SC_SYNC_TIME;
-				SendPacket(PreparePacket->Character_id, &p2);
-			}
-
-			break;
-		}
 		case CS_PLAYER_READY:
 		{
 			int connectedUserCnt{ 0 };
@@ -203,7 +188,7 @@ void ProcessPacket(int id, char *packet)
 						g_clients[i].m_isReady = false;
 					}
 				}
-				g_pFramework->StartGame();
+				g_Framework.StartGame();
 
 				Packet p;
 				p.size = sizeof(p);
@@ -255,6 +240,7 @@ void ProcessPacket(int id, char *packet)
 	else if (g_currentScene == SceneType::GameScene)
 	{
 		//클라로부터 오는 패킷 종류들
+		CS_Msg_Prepare_Data* PreparePacket = reinterpret_cast<CS_Msg_Prepare_Data*>(packet);
 		CS_MsgChMove* MovePacket = reinterpret_cast<CS_MsgChMove*>(packet);
 		CS_Msg_Demand_Use_Skill* CSkillPacket = reinterpret_cast<CS_Msg_Demand_Use_Skill*>(packet);
 		CS_Msg_Change_Weapon* WeaponPacket = reinterpret_cast<CS_Msg_Change_Weapon*>(packet);
@@ -262,6 +248,19 @@ void ProcessPacket(int id, char *packet)
 		//서버에서 클라로 보내줘야할 패킷들
 		switch (MovePacket->type)
 		{
+		case CS_PREPARE_DATA:
+		{
+			if (g_clients[PreparePacket->Character_id].m_isconnected)
+			{
+				SC_Msg_Sync_Time p2;
+				p2.Game_Time = g_GameTime;
+				p2.size = sizeof(p2);
+				p2.type = SC_SYNC_TIME;
+				SendPacket(PreparePacket->Character_id, &p2);
+			}
+
+			break;
+		}
 			//이동하는 부분
 		case CS_MOVE_PLAYER:
 		{
@@ -530,7 +529,6 @@ void timer_thread()
 		if (g_currentScene == SceneType::GameScene)
 		{
 			Sleep(100);
-
 			if (g_GameTime - StatusTimeChecker >= 60.f)
 			{
 				StatusTimeChecker = g_GameTime;
