@@ -420,7 +420,7 @@ void worker_thread()
 					wptr += work_size;
 				}
 			}
-			if(g_clients[fakeId].m_isconnected) StartRecv(key);
+			if (g_clients[fakeId].m_isconnected) StartRecv(fakeId);
 		}
 		else {  // Send ÈÄÃ³¸®
 				//cout << "WT:A packet was sent to Client[" << key << "]\n";
