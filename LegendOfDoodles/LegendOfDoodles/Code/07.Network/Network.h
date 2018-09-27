@@ -36,6 +36,8 @@ public:
 	int		m_myid;
 	int		m_minon_index;
 
+	CardType m_EachCardType[MAX_USER];
+	float m_EachPlayerLoadPercentage[MAX_USER];
 
 	CBaseObject * m_pSelectedObject{ NULL };
 protected:
@@ -67,6 +69,7 @@ public:
 	void Finalize();
 	void ReadPacket();
 	void SendPacket(void *ptr);
+	void ReadyToLoad();
 	//void err_display(void* msg);
 
 	void PrepareData();

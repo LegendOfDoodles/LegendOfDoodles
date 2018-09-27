@@ -286,6 +286,18 @@ struct SC_Msg_Connect_Player : public Packet
 	bool PlayerConnectStatus[4];
 };
 
+struct CS_Notify_Percentage : public Packet
+{
+	BYTE Character_id;
+	float Percentage;
+};
+
+struct SC_Apply_Percentage : public Packet
+{
+	BYTE Character_id;
+	float Percentage;
+};
+
 #pragma pack(pop)
 
 #define MAX_BUFF_SIZE 4000
@@ -314,6 +326,7 @@ struct SC_Msg_Connect_Player : public Packet
 #define SC_PERMIT_CHANGE_SEAT	  10
 #define SC_GAME_START			  11
 #define SC_CANT_JOIN			  12
+#define SC_APPLY_PERCENTAGE		  13
 
 #define SC_CONNECT_PLAYER		  101
 #define SC_PUT_PLAYER			  102
@@ -352,6 +365,7 @@ struct SC_Msg_Connect_Player : public Packet
 #define CS_PREPARE_DATA			  206
 #define CS_PLAYER_READY			  207
 #define CS_DEMAND_CHANGE_SEAT     208
+#define CS_NOTIFY_PERCENTAGE	  209
 
 
 

@@ -16,11 +16,6 @@
 CRoomCardShader::CRoomCardShader(shared_ptr<CCreateMgr> pCreateMgr) : CShader(pCreateMgr)
 {
 	m_hWnd = pCreateMgr->GetHwnd();
-
-	for (int i = 0; i < 4; ++i)
-	{
-		m_EachCardType[i] = CardType::Blue_AI;
-	}
 }
 
 CRoomCardShader::~CRoomCardShader()
@@ -56,7 +51,7 @@ void CRoomCardShader::UpdateShaderVariables(int opt)
 
 		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
 			XMMatrixTranspose(XMLoadFloat4x4(m_RoomCards[i]->GetWorldMatrix())));
-		pMappedObject->m_percentage = (float)m_EachCardType[i];
+		pMappedObject->m_percentage = (float)m_pNetwork->m_EachCardType[i];
 	}
 }
 
@@ -81,9 +76,9 @@ bool CRoomCardShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 
 	cursorPos.y = FRAME_BUFFER_HEIGHT - cursorPos.y;
 
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < MAX_USER; ++i)
 	{
-		if (m_EachCardType[i] == CardType::Blue_Player || m_EachCardType[i] == CardType::Red_Player) continue;
+		if (m_pNetwork->m_EachCardType[i] == CardType::Blue_Player || m_pNetwork->m_EachCardType[i] == CardType::Red_Player) continue;
 
 		if (m_RoomCards[i]->IsInRect(FRAME_BUFFER_WIDTH / 5.f, FRAME_BUFFER_WIDTH / 5.f, cursorPos))
 		{
@@ -108,13 +103,13 @@ void CRoomCardShader::ApplyChangeSeat(int preId, int curId)
 	if (preId == 1) adjPreId = (BYTE)2;
 	else if (preId == 2) adjPreId = (BYTE)1;
 
-	if (m_EachCardType[adjPreId] == CardType::Blue_Player)
+	if (m_pNetwork->m_EachCardType[adjPreId] == CardType::Blue_Player)
 	{
-		m_EachCardType[adjPreId] = CardType::Blue_AI;
+		m_pNetwork->m_EachCardType[adjPreId] = CardType::Blue_AI;
 	}
-	else if (m_EachCardType[adjPreId] == CardType::Red_Player)
+	else if (m_pNetwork->m_EachCardType[adjPreId] == CardType::Red_Player)
 	{
-		m_EachCardType[adjPreId] = CardType::Red_AI;
+		m_pNetwork->m_EachCardType[adjPreId] = CardType::Red_AI;
 	}
 
 	int adjCurId{ curId };
@@ -122,13 +117,13 @@ void CRoomCardShader::ApplyChangeSeat(int preId, int curId)
 	if (curId == 1) adjCurId = (BYTE)2;
 	else if (curId == 2) adjCurId = (BYTE)1;
 
-	if (m_EachCardType[adjCurId] == CardType::Blue_AI)
+	if (m_pNetwork->m_EachCardType[adjCurId] == CardType::Blue_AI)
 	{
-		m_EachCardType[adjCurId] = CardType::Blue_Player;
+		m_pNetwork->m_EachCardType[adjCurId] = CardType::Blue_Player;
 	}
-	else if (m_EachCardType[adjCurId] == CardType::Red_AI)
+	else if (m_pNetwork->m_EachCardType[adjCurId] == CardType::Red_AI)
 	{
-		m_EachCardType[adjCurId] = CardType::Red_Player;
+		m_pNetwork->m_EachCardType[adjCurId] = CardType::Red_Player;
 	}
 }
 
@@ -140,16 +135,16 @@ void CRoomCardShader::SetPlayerConnectedStatus(bool status[])
 		if (status[i])
 		{
 			if(num == 0 || num == 1)
-				m_EachCardType[num] = CardType::Blue_Player;
+				m_pNetwork->m_EachCardType[num] = CardType::Blue_Player;
 			else
-				m_EachCardType[num] = CardType::Red_Player;
+				m_pNetwork->m_EachCardType[num] = CardType::Red_Player;
 		}
 		else
 		{
 			if (num == 0 || num == 1)
-				m_EachCardType[num] = CardType::Blue_AI;
+				m_pNetwork->m_EachCardType[num] = CardType::Blue_AI;
 			else
-				m_EachCardType[num] = CardType::Red_AI;
+				m_pNetwork->m_EachCardType[num] = CardType::Red_AI;
 		}
 	}
 }

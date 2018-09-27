@@ -154,6 +154,7 @@ void CFramework::ChangeSceneByType(SceneType type)
 	{
 		if (m_pNetwork->Initialize(m_hWnd))
 		{
+			m_pLoadingScene->SetNetworkToShader(m_pNetwork);
 			m_pScene = shared_ptr<CRoomScene>(new CRoomScene());
 			m_pNetwork->SetRoomScene(m_pScene);
 		}
@@ -164,6 +165,7 @@ void CFramework::ChangeSceneByType(SceneType type)
 	}
 	else if (type == SceneType::GameScene)
 	{
+		m_pNetwork->ReadyToLoad();
 		m_pScene = shared_ptr<CGameScene>(new CGameScene());
 	}
 

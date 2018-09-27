@@ -13,7 +13,7 @@ public: // 공개 함수
 	virtual void UpdateShaderVariables(int opt = 0);
 	virtual void Render(CCamera *pCamera);
 
-	virtual void ApplyPercentage(float pct) { m_loadPercentage = pct; }
+	virtual void ApplyPercentage(float pct);
 
 protected: // 내부 함수
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
@@ -29,7 +29,5 @@ protected: // 내부 함수
 
 protected: // 변수
 	CBaseObject *m_pLoadingBar{ NULL };
-	
-	float m_loadPercentage{ 0.f };
 };
 

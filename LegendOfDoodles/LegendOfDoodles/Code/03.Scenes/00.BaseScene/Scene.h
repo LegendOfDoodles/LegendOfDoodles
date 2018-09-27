@@ -45,6 +45,8 @@ public: // 공개 함수
 	virtual bool IsSceneDone() { return false; }
 	virtual bool IsExitScene() { return false; }
 
+	virtual void SetNetworkToShader(shared_ptr<CNetwork> pNetwork) { pNetwork; }
+
 	SceneType GetCurSceneType() { return m_SceneType; }
 
 protected: // 내부 함수

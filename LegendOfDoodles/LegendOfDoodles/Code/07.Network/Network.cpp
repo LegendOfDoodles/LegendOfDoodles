@@ -93,6 +93,12 @@ void CNetwork::ProcessPacket(char *ptr)
 			m_pRoomScene->GetShader(1)->ExitRoom();
 			break;
 		}
+		case SC_APPLY_PERCENTAGE:
+		{
+			SC_Apply_Percentage* percentagePacket{ reinterpret_cast<SC_Apply_Percentage*>(ptr) };
+			m_EachPlayerLoadPercentage[percentagePacket->Character_id] = percentagePacket->Percentage;
+			break;
+		}
 		/*case SC_PACKET:
 		{
 			SC_Msg_What_Is_Packet *my_packet = reinterpret_cast<SC_Msg_What_Is_Packet *>(ptr);
@@ -499,6 +505,18 @@ void CNetwork::SendPacket(void* ptr)
 		if (WSA_IO_PENDING != err_no) printf("Send Error![%d] ", err_no);
 	}
 }
+
+void CNetwork::ReadyToLoad()
+{
+	for (int i = 0; i < MAX_USER; ++i)
+	{
+		if (m_EachCardType[i] == CardType::Blue_Player || m_EachCardType[i] == CardType::Red_Player)
+			m_EachPlayerLoadPercentage[i] = 0.f;
+		else
+			m_EachPlayerLoadPercentage[i] = 1.f;
+	}
+}
+
 
 void CNetwork::PrepareData()
 {

@@ -202,6 +202,7 @@
     <ClInclude Include="Code\04.Shaders\10.EquipShader\EquipShader.h" />
     <ClInclude Include="Code\04.Shaders\96.SpritesShader\01.LoadingShader\01.LoadingScreenShader\LoadingScreenShader.h" />
     <ClInclude Include="Code\04.Shaders\96.SpritesShader\01.LoadingShader\02.LoadingBarShader\LoadingBarShader.h" />
+    <ClInclude Include="Code\04.Shaders\96.SpritesShader\01.LoadingShader\03.LoadingCardShader\LoadingCardShader.h" />
     <ClInclude Include="Code\04.Shaders\96.SpritesShader\02.LogoShader\LogoShader.h" />
     <ClInclude Include="Code\04.Shaders\96.SpritesShader\03.TitleShader\00.TitleScreenShader\TitleScreenShader.h" />
     <ClInclude Include="Code\04.Shaders\96.SpritesShader\03.TitleShader\01.TitleButtonsShader\TitleButtonsShader.h" />
@@ -304,6 +305,7 @@
     <ClCompile Include="Code\04.Shaders\10.EquipShader\EquipShader.cpp" />
     <ClCompile Include="Code\04.Shaders\96.SpritesShader\01.LoadingShader\01.LoadingScreenShader\LoadingScreenShader.cpp" />
     <ClCompile Include="Code\04.Shaders\96.SpritesShader\01.LoadingShader\02.LoadingBarShader\LoadingBarShader.cpp" />
+    <ClCompile Include="Code\04.Shaders\96.SpritesShader\01.LoadingShader\03.LoadingCardShader\LoadingCardShader.cpp" />
     <ClCompile Include="Code\04.Shaders\96.SpritesShader\02.LogoShader\LogoShader.cpp" />
     <ClCompile Include="Code\04.Shaders\96.SpritesShader\03.TitleShader\00.TitleScreenShader\TitleScreenShader.cpp" />
     <ClCompile Include="Code\04.Shaders\96.SpritesShader\03.TitleShader\01.TitleButtonsShader\TitleButtonsShader.cpp" />

@@ -245,6 +245,7 @@ void ProcessPacket(int id, char *packet)
 		CS_Msg_Demand_Use_Skill* CSkillPacket = reinterpret_cast<CS_Msg_Demand_Use_Skill*>(packet);
 		CS_Msg_Change_Weapon* WeaponPacket = reinterpret_cast<CS_Msg_Change_Weapon*>(packet);
 		CS_Msg_Set_Speacial_Point* SpeacialPacket = reinterpret_cast<CS_Msg_Set_Speacial_Point*>(packet);
+		CS_Notify_Percentage* PercentagePacket = reinterpret_cast<CS_Notify_Percentage*>(packet);
 		//서버에서 클라로 보내줘야할 패킷들
 		switch (MovePacket->type)
 		{
@@ -339,6 +340,20 @@ void ProcessPacket(int id, char *packet)
 					p.size = sizeof(p);
 					p.skilltype = CSkillPacket->skilltype;
 					p.type = SC_PERMIT_USE_SKILL;
+					SendPacket(i, &p);
+				}
+			}
+			break;
+		}
+		case CS_NOTIFY_PERCENTAGE:
+		{
+			for (int i = 0; i < MAX_USER; ++i) {
+				if (g_clients[i].m_isconnected && i != PercentagePacket->Character_id) {
+					SC_Apply_Percentage p;
+					p.Character_id = PercentagePacket->Character_id;
+					p.size = sizeof(p);
+					p.Percentage = PercentagePacket->Percentage;
+					p.type = SC_APPLY_PERCENTAGE;
 					SendPacket(i, &p);
 				}
 			}

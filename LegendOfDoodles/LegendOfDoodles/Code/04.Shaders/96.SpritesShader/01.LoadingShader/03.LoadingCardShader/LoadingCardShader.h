@@ -1,23 +1,17 @@
 #pragma once
 #include "04.Shaders/00.BaseShader/Shader.h"
 
-class CRoomCardShader : public CShader
+class CLoadingCardShader : public CShader
 {
 public:	// 생성자, 소멸자
-	CRoomCardShader(shared_ptr<CCreateMgr> pCreateMgr);
-	virtual ~CRoomCardShader();
+	CLoadingCardShader(shared_ptr<CCreateMgr> pCreateMgr);
+	virtual ~CLoadingCardShader();
 
 public: // 공개 함수
 	virtual void ReleaseUploadBuffers();
 
 	virtual void UpdateShaderVariables(int opt = 0);
 	virtual void Render(CCamera *pCamera);
-
-	virtual bool OnProcessMouseInput(WPARAM pKeyBuffer);
-
-	virtual void ApplyChangeSeat(int preId, int curId);
-
-	virtual void SetPlayerConnectedStatus(bool status[]);
 
 	virtual int GetPlayerId() { return m_myId; }
 
@@ -34,10 +28,8 @@ protected: // 내부 함수
 	virtual void ReleaseObjects();
 
 protected: // 변수
-	HWND m_hWnd{ NULL };
-
 	int m_myId{ 0 };
 
-	CBaseObject * m_RoomCards[4];
+	CBaseObject * m_LoadingCards[MAX_USER];
 };
 

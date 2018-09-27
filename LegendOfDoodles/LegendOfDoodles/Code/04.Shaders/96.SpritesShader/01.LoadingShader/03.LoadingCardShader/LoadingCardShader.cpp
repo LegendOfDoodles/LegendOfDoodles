@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "LoadingBarShader.h"
+#include "LoadingCardShader.h"
 #include "02.Framework/01.CreateMgr/CreateMgr.h"
 #include "05.Objects/95.Sprites/Sprite.h"
 #include "07.Network/Network.h"
@@ -13,19 +13,22 @@
 
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
-CLoadingBarShader::CLoadingBarShader(shared_ptr<CCreateMgr> pCreateMgr) : CShader(pCreateMgr)
+CLoadingCardShader::CLoadingCardShader(shared_ptr<CCreateMgr> pCreateMgr) : CShader(pCreateMgr)
 {
 }
 
-CLoadingBarShader::~CLoadingBarShader()
+CLoadingCardShader::~CLoadingCardShader()
 {
 }
 
 ////////////////////////////////////////////////////////////////////////
 // 공개 함수
-void CLoadingBarShader::ReleaseUploadBuffers()
+void CLoadingCardShader::ReleaseUploadBuffers()
 {
-	if (m_pLoadingBar) m_pLoadingBar->ReleaseUploadBuffers();
+	for (int i = 0; i < 4; ++i)
+	{
+		if (m_LoadingCards[i])m_LoadingCards[i]->ReleaseUploadBuffers();
+	}
 
 #if USE_BATCH_MATERIAL
 	if (m_ppMaterials)
@@ -36,40 +39,35 @@ void CLoadingBarShader::ReleaseUploadBuffers()
 #endif
 }
 
-void CLoadingBarShader::UpdateShaderVariables(int opt)
+void CLoadingCardShader::UpdateShaderVariables(int opt)
 {
 	UNREFERENCED_PARAMETER(opt);
 	static UINT elementBytes = ((sizeof(CB_SPRITE_INFO) + 255) & ~255);
 
-	CB_SPRITE_INFO *pMappedObject = (CB_SPRITE_INFO *)m_pMappedObjects;
+	for (int i = 0; i < 4; ++i)
+	{
+		CB_SPRITE_INFO *pMappedObject = (CB_SPRITE_INFO *)(m_pMappedObjects + elementBytes * i);
 
-	XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
-		XMMatrixTranspose(XMLoadFloat4x4(m_pLoadingBar->GetWorldMatrix())));
-	pMappedObject->m_percentage = m_pNetwork->m_EachPlayerLoadPercentage[m_pNetwork->m_myid];
+		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
+			XMMatrixTranspose(XMLoadFloat4x4(m_LoadingCards[i]->GetWorldMatrix())));
+		pMappedObject->m_percentage = (float)m_pNetwork->m_EachCardType[i] * 2 + m_pNetwork->m_EachPlayerLoadPercentage[i];
+	}
 }
 
-void CLoadingBarShader::Render(CCamera * pCamera)
+void CLoadingCardShader::Render(CCamera * pCamera)
 {
 	CShader::Render(pCamera, 0);
 	m_ppMaterials[0]->UpdateShaderVariables();
-	m_pLoadingBar->Render(pCamera);
-}
 
-void CLoadingBarShader::ApplyPercentage(float pct)
-{
-	m_pNetwork->m_EachPlayerLoadPercentage[m_pNetwork->m_myid] = pct;
-
-	CS_Notify_Percentage p;
-	p.Character_id = (BYTE)m_pNetwork->m_myid;
-	p.Percentage = m_pNetwork->m_EachPlayerLoadPercentage[m_pNetwork->m_myid];
-	p.size = sizeof(p);
-	p.type = CS_NOTIFY_PERCENTAGE;
-	m_pNetwork->SendPacket(&p);
+	for (int j = 0; j < 4; j++)
+	{
+		m_LoadingCards[j]->Render(pCamera);
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////
 // 내부 함수
-D3D12_INPUT_LAYOUT_DESC CLoadingBarShader::CreateInputLayout()
+D3D12_INPUT_LAYOUT_DESC CLoadingCardShader::CreateInputLayout()
 {
 	UINT nInputElementDescs = 2;
 	D3D12_INPUT_ELEMENT_DESC *pInputElementDescs = new D3D12_INPUT_ELEMENT_DESC[nInputElementDescs];
@@ -98,7 +96,7 @@ D3D12_INPUT_LAYOUT_DESC CLoadingBarShader::CreateInputLayout()
 	return(d3dInputLayoutDesc);
 }
 
-D3D12_BLEND_DESC CLoadingBarShader::CreateBlendState()
+D3D12_BLEND_DESC CLoadingCardShader::CreateBlendState()
 {
 	D3D12_BLEND_DESC blendDesc;
 	::ZeroMemory(&blendDesc, sizeof(D3D12_BLEND_DESC));
@@ -119,7 +117,7 @@ D3D12_BLEND_DESC CLoadingBarShader::CreateBlendState()
 	return(blendDesc);
 }
 
-D3D12_SHADER_BYTECODE CLoadingBarShader::CreateVertexShader(ComPtr<ID3DBlob>& pShaderBlob)
+D3D12_SHADER_BYTECODE CLoadingCardShader::CreateVertexShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
 		L"./code/04.Shaders/99.GraphicsShader/SpriteShader.hlsl",
@@ -128,16 +126,16 @@ D3D12_SHADER_BYTECODE CLoadingBarShader::CreateVertexShader(ComPtr<ID3DBlob>& pS
 		pShaderBlob));
 }
 
-D3D12_SHADER_BYTECODE CLoadingBarShader::CreatePixelShader(ComPtr<ID3DBlob>& pShaderBlob)
+D3D12_SHADER_BYTECODE CLoadingCardShader::CreatePixelShader(ComPtr<ID3DBlob>& pShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(
-		L"./code/04.Shaders/99.GraphicsShader/UIShader.hlsl",
-		"PSTexturedGauge",
+		L"./code/04.Shaders/99.GraphicsShader/SpriteShader.hlsl",
+		"PSLoadingCards",
 		"ps_5_1",
 		pShaderBlob));
 }
 
-void CLoadingBarShader::CreateShader(shared_ptr<CCreateMgr> pCreateMgr, UINT nRenderTargets, bool isRenderBB, bool isRenderShadow)
+void CLoadingCardShader::CreateShader(shared_ptr<CCreateMgr> pCreateMgr, UINT nRenderTargets, bool isRenderBB, bool isRenderShadow)
 {
 	m_nPipelineStates = 1;
 
@@ -147,31 +145,38 @@ void CLoadingBarShader::CreateShader(shared_ptr<CCreateMgr> pCreateMgr, UINT nRe
 	CShader::CreateShader(pCreateMgr, nRenderTargets, isRenderBB, isRenderShadow);
 }
 
-void CLoadingBarShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pContext)
+void CLoadingCardShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pContext)
 {
 	UNREFERENCED_PARAMETER(pContext);
 
 	UINT ncbElementBytes = ((sizeof(CB_SPRITE_INFO) + 255) & ~255);
-	CreateShaderVariables(pCreateMgr, ncbElementBytes, 1);
-	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, 1, 1, 0);
-	CreateConstantBufferViews(pCreateMgr, 1, m_pConstBuffer.Get(), ncbElementBytes, 0, 0);
+	CreateShaderVariables(pCreateMgr, ncbElementBytes, 4);
+	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, 4, 1, 0);
+	CreateConstantBufferViews(pCreateMgr, 4, m_pConstBuffer.Get(), ncbElementBytes, 0, 0);
 
 	m_nMaterials = 1;
 	m_ppMaterials = new CMaterial*[m_nMaterials];
 
-	m_ppMaterials[0] = Materials::CreateLoadingBarMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[0], &m_psrvGPUDescriptorStartHandle[0]);
+	m_ppMaterials[0] = Materials::CreateRoomCardsMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[0], &m_psrvGPUDescriptorStartHandle[0]);
 
-	CMesh* pLoadingBarMesh{ new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH * 0.4f, FRAME_BUFFER_HEIGHT * 0.04f, 0.f, 0.f, 0.f, 1.f) };
+	CMesh* pTitleButtonMesh{ new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 5.f, FRAME_BUFFER_WIDTH / 5.f * 1.6f, 0.f, 0.f, 0.f, 1.f) };
 
-	m_pLoadingBar = new CSprite(pCreateMgr);
-	m_pLoadingBar->SetMesh(0, pLoadingBarMesh);
+	UINT incrementSize{ pCreateMgr->GetCbvSrvDescriptorIncrementSize() };
 
-	m_pLoadingBar->SetPosition(FRAME_BUFFER_WIDTH * 0.5f, FRAME_BUFFER_HEIGHT * 0.2f, 9.f);
-
-	m_pLoadingBar->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr);
+	for (int i = 0; i < 4; ++i)
+	{
+		CSprite *pCard{ new CSprite(pCreateMgr) };
+		pCard->SetMesh(0, pTitleButtonMesh);
+		pCard->SetPosition(FRAME_BUFFER_WIDTH * (i + 1) / 5.f, FRAME_BUFFER_HEIGHT * 0.6f, 9.f);
+		pCard->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + incrementSize * i);
+		m_LoadingCards[i] = pCard;
+	}
 }
 
-void CLoadingBarShader::ReleaseObjects()
+void CLoadingCardShader::ReleaseObjects()
 {
-	if (m_pLoadingBar) Safe_Delete(m_pLoadingBar);
+	for (int i = 0; i < 4; ++i)
+	{
+		if (m_LoadingCards[i]) Safe_Delete(m_LoadingCards[i]);
+	}
 }
