@@ -510,10 +510,11 @@ void CNetwork::ReadyToLoad()
 {
 	for (int i = 0; i < MAX_USER; ++i)
 	{
+		int adjId{ (i == 1) ? 2 : (i == 2) ? 1 : i };
 		if (m_EachCardType[i] == CardType::Blue_Player || m_EachCardType[i] == CardType::Red_Player)
-			m_EachPlayerLoadPercentage[i] = 0.f;
+			m_EachPlayerLoadPercentage[adjId] = 0.f;
 		else
-			m_EachPlayerLoadPercentage[i] = 1.f;
+			m_EachPlayerLoadPercentage[adjId] = 1.f;
 	}
 }
 
