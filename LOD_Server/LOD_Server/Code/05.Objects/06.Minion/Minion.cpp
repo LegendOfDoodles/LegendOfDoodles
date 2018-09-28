@@ -258,7 +258,7 @@ void CSwordMinion::Animate(float timeElapsed)
 	case States::Attack:
 		if (GetAnimTimeRemainRatio() <= 0.05f)
 		{
-			LookAt(m_pEnemy->GetPosition());
+			if(m_pEnemy) LookAt(m_pEnemy->GetPosition());
 		}
 		if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f
 			&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f) {
@@ -345,7 +345,7 @@ void CMagicMinion::Animate(float timeElapsed)
 	case States::Attack:
 		if (GetAnimTimeRemainRatio() <= 0.05f)
 		{
-			LookAt(m_pEnemy->GetPosition());
+			if(m_pEnemy) LookAt(m_pEnemy->GetPosition());
 		}
 		if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f
 			&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f) {
@@ -430,7 +430,7 @@ void CBowMinion::Animate(float timeElapsed)
 	case States::Attack:
 		if (GetAnimTimeRemainRatio() <= 0.05f)
 		{
-			LookAt(m_pEnemy->GetPosition());
+			if(m_pEnemy) LookAt(m_pEnemy->GetPosition());
 		}
 		if (m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f
 			&&m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f) {

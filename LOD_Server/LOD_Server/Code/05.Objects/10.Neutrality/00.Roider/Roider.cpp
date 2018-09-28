@@ -352,7 +352,7 @@ void CRoider::AnimateByCurState()
 	case States::Attack:
 		if (GetAnimTimeRemainRatio() <= 0.05f)
 		{
-			LookAt(m_pEnemy->GetPosition());
+			if(m_pEnemy) LookAt(m_pEnemy->GetPosition());
 		}
 		if (m_nCurrAnimation == Animations::Attack1) 
 		{

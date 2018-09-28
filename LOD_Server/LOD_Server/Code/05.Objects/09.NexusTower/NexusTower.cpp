@@ -109,9 +109,9 @@ void CNexusTower::PlayAttack(float timeElapsed, shared_ptr<CWayFinder> pWayFinde
 			XMFLOAT3 curPos{ GetPosition() };
 			curPos.y += m_fCollisionSize * 2;
 			m_atkCoolTime = COOLTIME_TOWER_ATTACK;
-			if (m_TeamType == TeamType::Blue)
+			if (m_TeamType == TeamType::Blue && m_pEnemy)
 				m_pThrowingMgr->RequestSpawn(curPos, Vector3::Subtract(m_pEnemy->GetPosition(), curPos, true), m_TeamType, FlyingObjectType::BlueTower_Attack, m_StatusInfo.Atk);
-			else if (m_TeamType == TeamType::Red)
+			else if (m_TeamType == TeamType::Red && m_pEnemy)
 				m_pThrowingMgr->RequestSpawn(curPos, Vector3::Subtract(m_pEnemy->GetPosition(), curPos, true), m_TeamType, FlyingObjectType::RedTower_Attack, m_StatusInfo.Atk);
 			for (int i = 0; i < MAX_USER; ++i)
 			{
