@@ -366,6 +366,7 @@ struct SC_Apply_Percentage : public Packet
 #define CS_PLAYER_READY			  207
 #define CS_DEMAND_CHANGE_SEAT     208
 #define CS_NOTIFY_PERCENTAGE	  209
+#define CS_REQUEST_LEVEL_UP		  210
 
 
 

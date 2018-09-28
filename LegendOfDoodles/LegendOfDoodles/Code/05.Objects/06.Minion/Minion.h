@@ -31,7 +31,7 @@ public:	// 외부 함수
 	}
 
 	virtual CommonInfo* GetCommonStatus() { return &m_StatusInfo; };
-	virtual void SetHP(float maxHP, float curHP) { m_StatusInfo.maxHP = maxHP;  m_StatusInfo.HP = curHP; printf("%.f,	%.f\n", m_StatusInfo.HP, m_StatusInfo.maxHP); }
+	virtual void SetHP(float maxHP, float curHP) { m_StatusInfo.maxHP = maxHP;  m_StatusInfo.HP = curHP; }
 
 protected:	// 내부 함수
 	virtual void AdjustAnimationIndex();

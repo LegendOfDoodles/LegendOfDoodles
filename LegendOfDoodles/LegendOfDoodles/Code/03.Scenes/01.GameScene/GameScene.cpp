@@ -744,6 +744,14 @@ void CGameScene::OnProcessKeyUp(WPARAM wParam, LPARAM lParam)
 	{
 		m_bRenderBoundingBox = !m_bRenderBoundingBox;
 	}
+	else if (wParam == VK_F5)
+	{
+		CS_Msg_Prepare_Data p;
+		p.Character_id = (BYTE)m_pNetwork->m_myid;
+		p.size = sizeof(p);
+		p.type = CS_REQUEST_LEVEL_UP;
+		m_pNetwork->SendPacket(&p);
+	}
 }
 
 void CGameScene::SetPlayer()

@@ -359,6 +359,11 @@ void ProcessPacket(int id, char *packet)
 			}
 			break;
 		}
+		case CS_REQUEST_LEVEL_UP:
+		{
+			g_ppPlayer[PreparePacket->Character_id]->ApplyExp(g_ppPlayer[PreparePacket->Character_id]->GetPlayerStatus()->MaxExp);
+			break;
+		}
 		default:
 			cout << "Unkown Packet Type from Client [" << id << "]\n";
 			return;
