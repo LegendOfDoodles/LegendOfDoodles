@@ -309,7 +309,7 @@ void CPlayer::MoveToSubDestination(float timeElapsed, shared_ptr<CWayFinder> pWa
 	if (pWayFinder != NULL)
 	{
 		m_availableTime -= timeElapsed;
-		if (m_availableTime <= 0.0f)
+		if (m_availableTime <= 0.0f && m_pEnemy)
 		{
 			XMFLOAT3 myPos{ GetPosition() };
 			XMFLOAT3 enemyPos{ m_pEnemy->GetPosition() };
