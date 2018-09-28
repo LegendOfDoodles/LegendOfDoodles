@@ -11,7 +11,7 @@
 /// 목적: 플레이어 관리 및 렌더링 용도
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-08-22
+/// 최종 수정 날짜: 2018-09-29
 /// </summary>
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ void CEquipShader::UpdateShaderVariables(int opt)
 			CPlayer* pPlayer = (dynamic_cast<CEquipment*>(m_ppObjects[i*m_nMaxEquip+j]))->GetMaster();
 			CB_ANIOBJECT_INFO *pMappedObject = (CB_ANIOBJECT_INFO *)(m_pMappedObjects + ((/*matIndex*/m_arrEquipIndex[i][j] * m_nPlayer + i/*selectIndex*/) * elementBytes));
 
-			memcpy(pMappedObject->m_xmf4x4Frame, pPlayer->GetFrameMatrix(), sizeof(XMFLOAT4X4) * 128);
+			memcpy(pMappedObject->m_xmf4x4Frame, pPlayer->GetFrameMatrix(), sizeof(XMFLOAT4X4) * 31);
 
 			XMStoreFloat4x4(&pMappedObject->m_xmf4x4World0,
 				XMMatrixTranspose(XMLoadFloat4x4(pPlayer->GetWorldMatrix())));
