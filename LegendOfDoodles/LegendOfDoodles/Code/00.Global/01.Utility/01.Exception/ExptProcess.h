@@ -36,3 +36,5 @@ void PrintErrorBlob(ComPtr<ID3DBlob> pErrorBlob);
 		throw DxException(_hResult, L#x, wfn, __LINE__);		\
 	}															\
 }
+
+//void Trace(char* szFormat, ...);

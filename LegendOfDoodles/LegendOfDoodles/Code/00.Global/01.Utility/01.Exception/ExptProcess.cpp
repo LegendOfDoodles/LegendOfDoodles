@@ -2,6 +2,8 @@
 #include <comdef.h>
 #include "ExptProcess.h"
 
+//#pragma warning(disable:4996)
+
 /// <summary>
 /// 목적: 예외 처리 관련 함수 작성
 /// 최종 수정자:  김나단
@@ -31,3 +33,19 @@ void PrintErrorBlob(ComPtr<ID3DBlob> pErrorBlob)
 {
 	OutputDebugStringA((char*)pErrorBlob->GetBufferPointer());
 }
+
+//void Trace(char * szFormat, ...)
+//{
+//	char szTempBuf[2048];
+//	va_list vlMarker;
+//
+//	va_start(vlMarker, szFormat);
+//	vsprintf(szTempBuf, szFormat, vlMarker);
+//	va_end(vlMarker);
+//
+//	wchar_t wtext[2048];
+//	mbstowcs(wtext, szTempBuf, strlen(szTempBuf) + 1);
+//	LPWSTR wStr{ wtext };
+//
+//	OutputDebugString(wStr);
+//}

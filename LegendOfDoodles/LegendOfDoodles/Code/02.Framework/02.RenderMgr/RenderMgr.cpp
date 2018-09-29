@@ -130,9 +130,6 @@ void CRenderMgr::RenderLight(shared_ptr<CScene> pScene)
 
 	WaitForGpuComplete();
 
-	hResult = m_pCommandAllocator->Reset();
-	ThrowIfFailed(hResult);
-
 	hResult = m_pCommandList->Reset(m_pCommandAllocator.Get(), NULL);
 	ThrowIfFailed(hResult);
 

@@ -1,0 +1,9 @@
+diff a/LegendOfDoodles/LegendOfDoodles/Code/00.Global/01.Utility/01.Exception/ExptProcess.cpp b/LegendOfDoodles/LegendOfDoodles/Code/00.Global/01.Utility/01.Exception/ExptProcess.cpp	(rejected hunks)
+@@ -3,6 +3,7 @@
+ #include "ExptProcess.h"
+ 
+ #pragma warning(disable:4996)
++
+ /// <summary>
+ /// ����: ���� ó�� ���� �Լ� �ۼ�
+ /// ���� ������:  �質��
