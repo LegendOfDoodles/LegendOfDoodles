@@ -7,7 +7,7 @@
 /// 목적: 길찾기 알고리즘을 위한 클래스 작성
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-05
+/// 최종 수정 날짜: 2018-09-30
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -204,32 +204,22 @@ Path *CWayFinder::GetPathToPosition(const XMFLOAT2 &source, const XMFLOAT2 &targ
 	else
 	{
 		// 길찾기 수행
-		if (adjSource.x < adjTarget.x) m_pCurSearch = shared_ptr<CAstar>(new CAstar(shared_from_this(), srcIndex, dstIndex));
-		else m_pCurSearch = shared_ptr<CAstar>(new CAstar(shared_from_this(), dstIndex, srcIndex));
+		m_pCurSearch = shared_ptr<CAstar>(new CAstar(shared_from_this(), srcIndex, dstIndex));
 
-		int result;
-		for (int i = 0; i < 10000; ++i)
+		States::ProcessStates result;
+		for (int i = 0; i < LIMIT_FIND_PATH; ++i)
 		{
+			// 길 찾기를 성공하거나 실패할 때까지 반복한다.
 			result = m_pCurSearch->FindPath();
 			if (result == States::Found || result == States::Not_Found)
+			{
 				break;
+			}
 		}
 		if (result == States::Found)
 		{
 			// 찾은 패스 저장
 			path = m_pCurSearch->GetPath();
-			if (!path->empty())
-			{
-				// 소스가 오른쪽 이었으면 패스를 뒤집는다.
-				if (adjSource.x <= adjTarget.x)
-				{
-					// 패스에 도착지를 추가로 연결하고 종료한다.
-					if (CanGoDirectly(path->back().To(), adjTarget))
-					{
-						path->push_back(CPathEdge(path->back().To(), adjTarget));
-					}
-				}
-			}
 		}
 
 		m_pCurSearch.reset();
@@ -238,12 +228,6 @@ Path *CWayFinder::GetPathToPosition(const XMFLOAT2 &source, const XMFLOAT2 &targ
 	// 직선 상으로 갈 수 있는 길 돌아가지 않도록 설정
 	// 길이 없는 경우 NULL 리턴
 	if(!SmoothPathDetail(path)) return NULL;
-
-	if (adjSource.x > adjTarget.x)
-	{
-		path->reverse();
-		path->push_back(CPathEdge(path->back().To(), path->back().From()));
-	}
 
 	return path;
 }

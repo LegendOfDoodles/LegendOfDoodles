@@ -36,7 +36,7 @@ public: // 생성자, 소멸자
 	~CAstar();
 
 public: // 공개 함수
-	int FindPath();
+	States::ProcessStates FindPath();
 	Path *GetPath();
 
 protected: // 내부 함수
