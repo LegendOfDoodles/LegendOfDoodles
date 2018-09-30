@@ -22,7 +22,7 @@ CWayFinder::CWayFinder()
 		TERRAIN_COLLISION_SCALE));
 
 	// 노드 읽어오기
-	std::ifstream nodeIn("Resource/Data/AStar/nodesData.txt", std::ios::in, std::ios::binary);
+	std::ifstream nodeIn("Resource/Data/AStar/nodesData.dat", std::ios::in, std::ios::binary);
 
 	int maxNode{ 0 };
 	nodeIn >> maxNode;
@@ -51,7 +51,7 @@ CWayFinder::CWayFinder()
 	nodeIn.close();
 
 	// 에지 읽어오기
-	std::ifstream edgeIn("Resource/Data/AStar/edgesData.txt", std::ios::in, std::ios::binary);
+	std::ifstream edgeIn("Resource/Data/AStar/edgesData.dat", std::ios::in, std::ios::binary);
 
 	int maxEdge{ 0 };
 	edgeIn >> maxEdge;
