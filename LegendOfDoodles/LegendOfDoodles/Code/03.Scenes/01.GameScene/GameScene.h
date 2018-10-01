@@ -61,6 +61,8 @@ public: // 공개 함수
 	virtual void UpdateCamera();
 	virtual void UpdateShadowCamera(int renderStage = 0);
 
+	virtual bool IsSceneDone();
+
 	// Message Process
 	virtual void OnProcessingMouseMessage(HWND hWnd, UINT messageID,
 		WPARAM wParam, LPARAM lParam);
@@ -113,6 +115,8 @@ protected: // 변수
 	bool m_bRenderBoundingBox{ false };
 
 	XMFLOAT3 m_pickWorldPosition{ 0.f, 0.f, 0.f };
+
+	float m_exitTimeChecker{ TIME_GAME_FINISH };
 
 	// 매니저 클래스
 	shared_ptr<CWayFinder> m_pWayFinder;

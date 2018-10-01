@@ -151,7 +151,7 @@ extern int g_MinionCounts;
 extern int g_ReuseMinion;
 
 extern bool g_Clientsync;
-extern bool g_GameStart;
+extern bool g_GameFinished;
 
 extern float g_GameTime;
 extern CommonInfo g_SwordMinionStat;

@@ -85,6 +85,7 @@ void CNetwork::ProcessPacket(char *ptr)
 		}
 		case SC_GAME_START:
 		{
+			m_gameFinished = false;
 			m_pRoomScene->GetShader(1)->StartGame();
 			break;
 		}
@@ -110,6 +111,8 @@ void CNetwork::ProcessPacket(char *ptr)
 		}*/
 		case SC_POS:
 		{
+			if (!m_ppPlayer) break;
+
 			SC_Msg_Pos_Character *my_packet = reinterpret_cast<SC_Msg_Pos_Character *>(ptr);
 			int id = my_packet->Character_id;
 			if (id == m_myid) {
@@ -311,9 +314,10 @@ void CNetwork::ProcessPacket(char *ptr)
 		}
 		case SC_GAME_OVER:
 		{
+			m_gameFinished = true;
+
 			SC_Msg_Game_Over* my_packet = reinterpret_cast<SC_Msg_Game_Over*>(ptr);
 			m_pColManager->GameOver((TeamType)my_packet->Team_Type);
-
 			break;
 		}
 		case SC_BUILDING_ATTACK:
@@ -516,6 +520,14 @@ void CNetwork::ReadyToLoad()
 		else
 			m_EachPlayerLoadPercentage[adjId] = 1.f;
 	}
+}
+
+void CNetwork::ResetGameData()
+{
+	m_ppPlayer = NULL;
+	m_pMinionShader = NULL;
+	m_pNumberShader = NULL;
+	m_ppNexusTower = NULL;
 }
 
 

@@ -77,4 +77,6 @@ protected: // º¯¼ö
 	int m_curSpawnCount{ 0 };
 
 	int m_minionId{ 0 };	// 0 ~ 1000
+
+	bool m_bDataPrepared{ false };
 };

@@ -38,7 +38,7 @@ int g_NeutralityCount = 0;
 int g_NexusTowerCount = 0;
 
 bool g_Clientsync = false;
-bool g_GameStart{ false };
+bool g_GameFinished{ false };
 
 float g_GameTime{ 0.0f };
 CommonInfo g_SwordMinionStat;

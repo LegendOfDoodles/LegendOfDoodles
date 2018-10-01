@@ -14,7 +14,7 @@
 /// 목적: 미니언 관리 및 그리기 용도
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-09-14
+/// 최종 수정 날짜: 2018-10-01
 /// </summary>
 
 #define SwordMinionMesh m_ppMinionMeshes[0]
@@ -322,7 +322,6 @@ bool CMinionShader::OnProcessKeyInput(UCHAR* pKeyBuffer)
 
 void CMinionShader::SpawnMinion(ObjectType minionKind, short tag)
 {
-	static bool dataPrepared{ false };
 	static UINT incrementSize{ m_pCreateMgr->GetCbvSrvDescriptorIncrementSize() };
 	static CCubeMesh boundingBoxMesh(m_pCreateMgr,
 		CONVERT_PaperUnit_to_InG(3.0f), CONVERT_PaperUnit_to_InG(1.5f), CONVERT_PaperUnit_to_InG(7.0f),
@@ -351,7 +350,7 @@ void CMinionShader::SpawnMinion(ObjectType minionKind, short tag)
 
 	static CSkeleton Die("Resource//3D//Minion//Animation//Minion_Die.aniinfo");
 
-	if (!dataPrepared)
+	if (!m_bDataPrepared)
 	{
 		SwordMinionMesh = new CSkinnedMesh(m_pCreateMgr, "Resource//3D//Minion//Mesh//Sword Minion.meshinfo");
 		BowMinionMesh = new CSkinnedMesh(m_pCreateMgr, "Resource//3D//Minion//Mesh//Bow Minion.meshinfo");
@@ -369,7 +368,7 @@ void CMinionShader::SpawnMinion(ObjectType minionKind, short tag)
 			XMFLOAT3(0.0f, 0.0f, -CONVERT_PaperUnit_to_InG(4.0f)),
 			XMFLOAT3(CONVERT_PaperUnit_to_InG(1.5f), CONVERT_PaperUnit_to_InG(1.5f), CONVERT_PaperUnit_to_InG(3.5f)));
 		StaffMinionMesh->AddRef();
-		dataPrepared = true;
+		m_bDataPrepared = true;
 		return;
 	}
 

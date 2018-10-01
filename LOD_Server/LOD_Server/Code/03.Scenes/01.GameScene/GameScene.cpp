@@ -16,13 +16,14 @@
 /// 목적: 기본 씬, 인터페이스 용
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-12
+/// 최종 수정 날짜: 2018-10-01
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
 CGameScene::CGameScene()
 {
+	g_GameFinished = false;
 }
 
 CGameScene::~CGameScene()
@@ -52,6 +53,17 @@ void CGameScene::AnimateObjects(float timeElapsed)
 	{
 		m_pCollisionManager->Update(m_pWayFinder);
 	}
+}
+
+// 플레이어 이동 시 사용 -> 입력 값 월드 포지션 패킷으로 받아서 적용
+void CGameScene::GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, int id)
+{
+	XMFLOAT3 pickWorldPosition = pickPosition;
+	CAnimatedObject* pPlayer = ((CAnimatedObject * *)m_ppShaders[1]->GetCollisionObjects())[id];
+	pPlayer->LookAt(pickWorldPosition);
+	pPlayer->SetPathToGo(m_pWayFinder->GetPathToPosition(
+		pPlayer->GetPosition(),
+		pickWorldPosition));
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -121,16 +133,4 @@ void CGameScene::BuildObjects()
 
 	CFlyingShader* pFS = (CFlyingShader*)m_ppShaders[4];
 	pFS->SetColManagerToObject(m_pCollisionManager);
-}
-
-
-// 플레이어 이동 시 사용 -> 입력 값 월드 포지션 패킷으로 받아서 적용
-void CGameScene::GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, int id)
-{
-	XMFLOAT3 pickWorldPosition = pickPosition;
-	CAnimatedObject* pPlayer = ((CAnimatedObject * *)m_ppShaders[1]->GetCollisionObjects())[id];
-	pPlayer->LookAt(pickWorldPosition);
-	pPlayer->SetPathToGo(m_pWayFinder->GetPathToPosition(
-		pPlayer->GetPosition(),
-		pickWorldPosition));
 }

@@ -93,8 +93,6 @@ public: // 공개 함수
 	void SetDetected(bool value) { m_Detected = value; }
 	bool GetDetected() { return m_Detected; }
 
-	void GameOver() { m_GameOver = true; }
-
 	void Activate() { m_Activated = true; }
 	void Deactivate() { m_Activated = false; }
 
@@ -137,8 +135,6 @@ protected: // 변수
 	shared_ptr<CThrowingMgr> m_pThrowingMgr;
 	shared_ptr<CEffectMgr> m_pEffectMgr;
 	shared_ptr<CSoundManager> m_pSoundMgr;
-	
-	bool m_GameOver{ false };
 
 	bool m_Activated{ false };
 };

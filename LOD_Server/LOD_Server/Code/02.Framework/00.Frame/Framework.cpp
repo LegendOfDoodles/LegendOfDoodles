@@ -39,6 +39,11 @@ void CFramework::FrameAdvance(float timeElapsed)
 	{
 		g_GameTime += timeElapsed;
 		m_pScene->AnimateObjects(timeElapsed);
+
+		if (g_GameFinished)
+		{
+			FinishGame();
+		}
 	}
 }
 

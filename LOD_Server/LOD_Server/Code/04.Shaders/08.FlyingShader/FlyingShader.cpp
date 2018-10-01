@@ -7,7 +7,7 @@
 /// 목적: 날아다니는(화살 등) 오브젝트 그리기 용도의 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-05
+/// 최종 수정 날짜: 2018-10-01
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@ CFlyingShader::~CFlyingShader()
 void CFlyingShader::AnimateObjects(float timeElapsed)
 {
 	// 리스트에서 제거할 조건 함수
-	static auto removeFunc = [this](CCollisionObject* obj) {
+	auto removeFunc = [this](CCollisionObject* obj) {
 		if (obj->GetState() == StatesType::Remove)
 		{
 			ResetPossibleIndex(obj->GetIndex());

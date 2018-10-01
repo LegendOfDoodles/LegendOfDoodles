@@ -10,6 +10,8 @@ CCollisionManager::CCollisionManager()
 
 void CCollisionManager::GameOver(TeamType type)
 {
+	g_GameFinished = true;
+
 	if (type == TeamType::Blue) {
 		m_Winner = TeamType::Red;
 	}
@@ -18,7 +20,6 @@ void CCollisionManager::GameOver(TeamType type)
 	}
 	for (auto i = m_lstColliders.begin(); i != m_lstColliders.end(); ++i)
 	{
-		(*i)->GameOver();
 		if ((*i)->GetTeam() == m_Winner) {
 			(*i)->SetState(StatesType::Win);
 		}
@@ -63,7 +64,7 @@ void CCollisionManager::AddCollider(CCollisionObject* pcol)
 
 void CCollisionManager::Update(shared_ptr<CWayFinder> pWayFinder)
 {
-	if (m_Winner == TeamType::None)
+	if (!g_GameFinished)
 	{
 		int cnt = 0;
 		m_lstColliders.remove_if([](CCollisionObject* obj) { return obj->GetState() == States::Die; });
@@ -171,7 +172,7 @@ void CCollisionManager::Update(shared_ptr<CWayFinder> pWayFinder)
 // typeSecterForm data1 = 거리, data2 = 각도
 void CCollisionManager::RequestCollide(CollisionType type, CCollisionObject * pCol, float data1, float data2, float damage)
 {
-	if (m_Winner == TeamType::None)
+	if (!g_GameFinished)
 	{
 		switch (type)
 		{
@@ -252,7 +253,7 @@ void CCollisionManager::RequestCollide(CollisionType type, CCollisionObject * pC
 
 CCollisionObject* CCollisionManager::RequestNearObject(CCollisionObject * pCol, float lengh, TeamType type, bool player)
 {
-	if (m_Winner != TeamType::None) return NULL;
+	if (g_GameFinished) return NULL;
 
 	CCollisionObject* nearObject{ NULL };
 	float nearDistance = 0;
@@ -295,7 +296,7 @@ CCollisionObject* CCollisionManager::RequestNearObject(CCollisionObject * pCol, 
 }
 void CCollisionManager::RequestIncreaseExp(CCollisionObject * pCol, float sightRange, TeamType type, UINT exp)
 {
-	if (m_Winner != TeamType::None) return;
+	if (g_GameFinished) return;
 
 	TeamType enemytype;
 	

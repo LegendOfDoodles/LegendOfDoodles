@@ -7,7 +7,7 @@
 /// 목적: 스카이 박스 처리용 Shader
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-07-03
+/// 최종 수정 날짜: 2018-10-01
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ void CSkyBoxShader::ReleaseUploadBuffers()
 void CSkyBoxShader::UpdateShaderVariables(int opt)
 {
 	UNREFERENCED_PARAMETER(opt);
-	static CB_GAMEOBJECT_INFO *pMappedObject = (CB_GAMEOBJECT_INFO *)(m_pMappedObjects);
+	CB_GAMEOBJECT_INFO *pMappedObject = (CB_GAMEOBJECT_INFO *)(m_pMappedObjects);
 
 	if (m_pSkyBox)
 		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,

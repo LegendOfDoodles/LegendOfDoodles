@@ -136,14 +136,20 @@ void CFramework::ChangeDoneScene()
 		}
 		else if (m_pScene->GetCurSceneType() == SceneType::GameScene)
 		{
-			
+			ChangeSceneByType(SceneType::RoomScene);
 		}
 	}
 }
 
 void CFramework::ChangeSceneByType(SceneType type)
 {
-	if (m_pScene) m_pScene->Finalize();
+	SceneType preType{ SceneType::BaseScene };
+
+	if (m_pScene)
+	{
+		preType = m_pScene->GetCurSceneType();
+		m_pScene->Finalize();
+	}
 
 	if (type == SceneType::LogoScene)
 	{
@@ -155,7 +161,13 @@ void CFramework::ChangeSceneByType(SceneType type)
 	}
 	else if (type == SceneType::RoomScene)
 	{
-		if (m_pNetwork->Initialize(m_hWnd))
+		if (preType == SceneType::GameScene)
+		{
+			m_pNetwork->ResetGameData();
+			m_pScene = shared_ptr<CRoomScene>(new CRoomScene());
+			m_pNetwork->SetRoomScene(m_pScene);
+		}
+		else if (m_pNetwork->Initialize(m_hWnd))
 		{
 			m_pLoadingScene->SetNetworkToShader(m_pNetwork);
 			m_pScene = shared_ptr<CRoomScene>(new CRoomScene());

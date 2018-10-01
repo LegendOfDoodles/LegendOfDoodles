@@ -36,10 +36,11 @@ public:
 	int		m_myid;
 	int		m_minon_index;
 
+	bool m_gameFinished{ false };
+
 	CardType m_EachCardType[MAX_USER];
 	float m_EachPlayerLoadPercentage[MAX_USER];
 
-	CBaseObject * m_pSelectedObject{ NULL };
 protected:
 	HWND m_hWnd;
 
@@ -52,13 +53,6 @@ protected:
 	CAnimatedObject ** m_ppPlayer{ NULL };
 	CMinionShader *m_pMinionShader{ NULL };
 	CNumberShader *m_pNumberShader{ NULL };
-	/*CollisionObjectList* m_pBlueSwordMinions;
-	CollisionObjectList* m_pBlueStaffMinions;
-	CollisionObjectList* m_pBlueBowMinions;
-	CollisionObjectList* m_pRedSwordMinions;
-	CollisionObjectList* m_pRedStaffMinions;
-	CollisionObjectList* m_pRedBowMinions;*/
-
 	CBaseObject** m_ppNexusTower{ NULL };
 
 public:
@@ -70,6 +64,8 @@ public:
 	void ReadPacket();
 	void SendPacket(void *ptr);
 	void ReadyToLoad();
+
+	void ResetGameData();
 	//void err_display(void* msg);
 
 	void PrepareData();
