@@ -7,7 +7,7 @@
 /// 목적: 길찾기 알고리즘을 위한 클래스 작성
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-30
+/// 최종 수정 날짜: 2018-10-02
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -91,14 +91,16 @@ CWayFinder::~CWayFinder()
 // 직선 이동 가능한지 파악하기 위한 함수
 bool CWayFinder::CanGoDirectly(const XMFLOAT2 & source, const XMFLOAT2 & target)
 {
+	const static float addingValue{ CONVERT_PaperUnit_to_InG(1) };
+
 	// 해당 방향으로 조금씩 이동하면서 주변에 충돌하는 경우가 발생하는지 파악하여 충돌이 없으면 진행 가능으로 판단한다.
 	XMFLOAT2 toTarget{ Vector2::Subtract(target, source, true) };
-	XMFLOAT2 addVal{ Vector2::ScalarProduct(toTarget, NODE_SIZE_HALF) };
+	XMFLOAT2 addVal{ Vector2::ScalarProduct(toTarget, NODE_SIZE) };
 	XMFLOAT2 curPos = Vector2::Add(source, addVal);
 
 	do
 	{
-		for (float checker = -NODE_SIZE; checker < NODE_SIZE; checker += CONVERT_PaperUnit_to_InG(1))
+		for (float checker = -NODE_SIZE; checker <= NODE_SIZE; checker += addingValue)
 		{
 			if (m_pCollisionMapImage->GetCollision(curPos.x, curPos.y + checker)) return false;
 			if (m_pCollisionMapImage->GetCollision(curPos.x + checker, curPos.y)) return false;
@@ -119,22 +121,27 @@ bool CWayFinder::CanGoDirectly(const XMFLOAT3 & source, const XMFLOAT3 & target)
 // 충돌 지점에서 충돌이 없는 가장 가까운 지점을 찾는 함수
 XMFLOAT2 CWayFinder::GetClosestNotCollidePos(const XMFLOAT2 & source, const XMFLOAT2 & target)
 {
+	const static float addingValue{ CONVERT_PaperUnit_to_InG(1) };
+
 	// 해당 방향으로 조금씩 이동하면서 주변에 충돌하는 경우가 발생하는지 파악하여 충돌이 없으면 진행 가능으로 판단한다.
 	XMFLOAT2 toTarget{ Vector2::Subtract(target, source, true) };
-	XMFLOAT2 addVal{ Vector2::ScalarProduct(toTarget, NODE_SIZE_HALF) };
+	XMFLOAT2 addVal{ Vector2::ScalarProduct(toTarget, NODE_SIZE) };
 	XMFLOAT2 curPos = source;
 
 	do
 	{
-		for (float yChecker = -NODE_SIZE; yChecker < NODE_SIZE; yChecker += CONVERT_PaperUnit_to_InG(1))
+		for (float yChecker = 0; yChecker <= NODE_SIZE; yChecker += addingValue)
 		{
-			for (float xChecker = -NODE_SIZE; xChecker < NODE_SIZE; xChecker += CONVERT_PaperUnit_to_InG(1))
+			for (float xChecker = 0; xChecker <= NODE_SIZE; xChecker += addingValue)
 			{
 				if (!m_pCollisionMapImage->GetCollision(curPos.x, curPos.y + yChecker)) return XMFLOAT2(curPos.x, curPos.y + yChecker);
+				if (!m_pCollisionMapImage->GetCollision(curPos.x, curPos.y - yChecker)) return XMFLOAT2(curPos.x, curPos.y - yChecker);
 				if (!m_pCollisionMapImage->GetCollision(curPos.x + xChecker, curPos.y)) return XMFLOAT2(curPos.x + xChecker, curPos.y);
-				if (!m_pCollisionMapImage->GetCollision(curPos.x - xChecker, curPos.y + yChecker)) return XMFLOAT2(curPos.x - xChecker, curPos.y + yChecker);
-				if (!m_pCollisionMapImage->GetCollision(curPos.x + xChecker, curPos.y - yChecker)) return XMFLOAT2(curPos.x + xChecker, curPos.y - yChecker);
+				if (!m_pCollisionMapImage->GetCollision(curPos.x - xChecker, curPos.y)) return XMFLOAT2(curPos.x - xChecker, curPos.y);
 				if (!m_pCollisionMapImage->GetCollision(curPos.x + xChecker, curPos.y + yChecker)) return XMFLOAT2(curPos.x + xChecker, curPos.y + yChecker);
+				if (!m_pCollisionMapImage->GetCollision(curPos.x - xChecker, curPos.y - yChecker)) return XMFLOAT2(curPos.x - xChecker, curPos.y - yChecker);
+				if (!m_pCollisionMapImage->GetCollision(curPos.x + xChecker, curPos.y - yChecker)) return XMFLOAT2(curPos.x + xChecker, curPos.y - yChecker);
+				if (!m_pCollisionMapImage->GetCollision(curPos.x - xChecker, curPos.y + yChecker)) return XMFLOAT2(curPos.x - xChecker, curPos.y + yChecker);
 			}
 		}
 		curPos = Vector2::Add(curPos, addVal);
@@ -150,19 +157,49 @@ XMFLOAT3 CWayFinder::GetClosestNotCollidePos(const XMFLOAT3 & source, const XMFL
 
 XMFLOAT2 CWayFinder::GetClosestNotCollidePos(const XMFLOAT2 & source)
 {
+	const static float addingValue{ CONVERT_PaperUnit_to_InG(1) };
+
 	// Source 기준으로 가장 가까운 충돌하지 않는 위치를 찾는다.
 	int cnt{ 1 };
 	while (true)
 	{
-		for (float yChecker = -NODE_SIZE * cnt; yChecker < NODE_SIZE * cnt; yChecker += CONVERT_PaperUnit_to_InG(1))
+		for (float yChecker = 0; yChecker <= NODE_SIZE * cnt; yChecker += addingValue)
 		{
-			for (float xChecker = -NODE_SIZE * cnt; xChecker < NODE_SIZE * cnt; xChecker += CONVERT_PaperUnit_to_InG(1))
+			for (float xChecker = 0; xChecker <= NODE_SIZE * cnt; xChecker += addingValue)
 			{
-				if (!m_pCollisionMapImage->GetCollision(source.x, source.y + yChecker)) return XMFLOAT2(source.x, source.y + yChecker);
-				if (!m_pCollisionMapImage->GetCollision(source.x + xChecker, source.y)) return XMFLOAT2(source.x + xChecker, source.y);
-				if (!m_pCollisionMapImage->GetCollision(source.x - xChecker, source.y + yChecker)) return XMFLOAT2(source.x - xChecker, source.y + yChecker);
-				if (!m_pCollisionMapImage->GetCollision(source.x + xChecker, source.y - yChecker)) return XMFLOAT2(source.x + xChecker, source.y - yChecker);
-				if (!m_pCollisionMapImage->GetCollision(source.x + xChecker, source.y + yChecker)) return XMFLOAT2(source.x + xChecker, source.y + yChecker);
+				// source 기준으로 범위를 확대해 가며 후보군을 찾는다.
+				XMFLOAT2 possibleArray[8]{
+					XMFLOAT2(source.x, source.y + yChecker),
+					XMFLOAT2(source.x, source.y - yChecker),
+					XMFLOAT2(source.x + xChecker, source.y),
+					XMFLOAT2(source.x - xChecker, source.y),
+					XMFLOAT2(source.x + xChecker, source.y + yChecker),
+					XMFLOAT2(source.x - xChecker, source.y - yChecker),
+					XMFLOAT2(source.x + xChecker, source.y - yChecker),
+					XMFLOAT2(source.x - xChecker, source.y + yChecker)
+				};
+
+				for (int i = 0; i < 8; ++i)
+				{
+					bool result{ true };
+					// 후보군의 인근에 충돌이 없는지 확인하여 충돌이 없는 후보를 결과로 리턴한다.
+					for (float checker = -NODE_SIZE; checker <= NODE_SIZE; checker += addingValue)
+					{
+						if (m_pCollisionMapImage->GetCollision(possibleArray[i].x, possibleArray[i].y + checker)
+							|| m_pCollisionMapImage->GetCollision(possibleArray[i].x + checker, possibleArray[i].y)
+							|| m_pCollisionMapImage->GetCollision(possibleArray[i].x - checker, possibleArray[i].y + checker)
+							|| m_pCollisionMapImage->GetCollision(possibleArray[i].x + checker, possibleArray[i].y - checker)
+							|| m_pCollisionMapImage->GetCollision(possibleArray[i].x + checker, possibleArray[i].y + checker))
+						{
+							result = false;
+							break;
+						}
+					}
+					if (result)
+					{
+						return possibleArray[i];
+					}
+				}
 			}
 		}
 		cnt++;
