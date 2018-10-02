@@ -44,7 +44,7 @@ protected: // 내부 함수
 	void ResetPossibleIndex(int idx) { m_objectsPossibleIndices[idx] = false; }
 
 protected: // 변수
-	static const int m_nMesh{ 7 };
+	static const int m_nMesh{ 8 };
 	CTexturedRectMesh* m_ppMesh[m_nMesh];
 	int UseMatrialNumToObjectCnt[m_nMesh];
 
@@ -84,6 +84,12 @@ protected: // 변수
 
 	CollisionObjectList m_CircleLevelUp_EffectList;
 	CollisionObjectList m_ArrowLevelUp_EffectList;
+
+	CollisionObjectList m_Kill_EffectList;
+	CollisionObjectList m_Death_EffectList;
+	CollisionObjectList m_Miss_EffectList;
+	CollisionObjectList m_Recovery_EffectList;
+	CollisionObjectList m_Absorption_EffectList;
 
 	bool m_Paused{ false };
 

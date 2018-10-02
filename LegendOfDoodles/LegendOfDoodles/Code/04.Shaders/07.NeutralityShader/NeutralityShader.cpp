@@ -212,7 +212,7 @@ void CNeutralityShader::SetThrowingManagerToObject(shared_ptr<CThrowingMgr> mana
 
 void CNeutralityShader::SetEffectManagerToObject(shared_ptr<CEffectMgr> manager)
 {
-	for (int i = m_nObjects - 1; i < m_nObjects; ++i) {
+	for (int i = 0; i < m_nObjects; ++i) {
 		m_ppObjects[i]->SetEffectManager(manager);
 	}
 }

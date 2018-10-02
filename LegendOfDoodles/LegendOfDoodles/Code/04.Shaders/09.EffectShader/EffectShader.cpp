@@ -8,7 +8,7 @@
 /// 목적: Effect 그리기 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  이용선, 김나단
-/// 최종 수정 날짜: 2018-10-01
+/// 최종 수정 날짜: 2018-08-22
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -79,6 +79,10 @@ void CEffectShader::UpdateShaderVariables(int opt)
 		beg = UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4] + UseMatrialNumToObjectCnt[5];
 		end = UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4] + UseMatrialNumToObjectCnt[5] + UseMatrialNumToObjectCnt[6];
 		break;
+	case 7:
+		beg = UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4] + UseMatrialNumToObjectCnt[5] + UseMatrialNumToObjectCnt[6];
+		end = UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4] + UseMatrialNumToObjectCnt[5] + UseMatrialNumToObjectCnt[6] + UseMatrialNumToObjectCnt[7];
+		break;
 	}
 
 	for (int i = beg; i < end; ++i)
@@ -141,6 +145,12 @@ void CEffectShader::AnimateObjects(float timeElapsed)
 
 	m_CircleLevelUp_EffectList.remove_if(removeFunc);
 	m_ArrowLevelUp_EffectList.remove_if(removeFunc);
+
+	m_Kill_EffectList.remove_if(removeFunc);
+	m_Death_EffectList.remove_if(removeFunc);
+	m_Miss_EffectList.remove_if(removeFunc);
+	m_Recovery_EffectList.remove_if(removeFunc);
+	m_Absorption_EffectList.remove_if(removeFunc);
 }
 
 void CEffectShader::Render(CCamera * pCamera)
@@ -346,6 +356,47 @@ void CEffectShader::Render(CCamera * pCamera)
 		}
 	}
 
+	CShader::Render(pCamera, 7);
+	if (!m_Kill_EffectList.empty())
+	{
+		m_ppMaterials[7]->UpdateShaderVariable(0);
+		for (auto iter = m_Kill_EffectList.begin(); iter != m_Kill_EffectList.end(); ++iter)
+		{
+			(*iter)->Render(pCamera);
+		}
+	}
+	if (!m_Death_EffectList.empty())
+	{
+		m_ppMaterials[7]->UpdateShaderVariable(1);
+		for (auto iter = m_Death_EffectList.begin(); iter != m_Death_EffectList.end(); ++iter)
+		{
+			(*iter)->Render(pCamera);
+		}
+	}
+	if (!m_Miss_EffectList.empty())
+	{
+		m_ppMaterials[7]->UpdateShaderVariable(2);
+		for (auto iter = m_Miss_EffectList.begin(); iter != m_Miss_EffectList.end(); ++iter)
+		{
+			(*iter)->Render(pCamera);
+		}
+	}
+	if (!m_Recovery_EffectList.empty())
+	{
+		m_ppMaterials[7]->UpdateShaderVariable(3);
+		for (auto iter = m_Recovery_EffectList.begin(); iter != m_Recovery_EffectList.end(); ++iter)
+		{
+			(*iter)->Render(pCamera);
+		}
+	}
+	if (!m_Absorption_EffectList.empty())
+	{
+		m_ppMaterials[7]->UpdateShaderVariable(4);
+		for (auto iter = m_Absorption_EffectList.begin(); iter != m_Absorption_EffectList.end(); ++iter)
+		{
+			(*iter)->Render(pCamera);
+		}
+	}
 }
 
 void CEffectShader::SpawnEffectObject(const XMFLOAT3 & position, const XMFLOAT3 & direction, int aniLength, EffectObjectType objectType)
@@ -362,214 +413,227 @@ void CEffectShader::SpawnEffectObject(const XMFLOAT3 & position, const XMFLOAT3 
 		m_ppObjects[idx]->SetAnimationLength(aniLength);
 
 		m_ppObjects[idx]->Activate();
-		int adjIdx{ idx };
 		if (objectType == EffectObjectType::Player_SwordSkill_Q_Effect)
 		{
-			adjIdx -= m_objectsIndices[EffectObjectType::Player_SwordSkill_Q_Effect].m_begIndex;
-			m_ppObjects[idx]->SetMesh(0, m_ppMesh[3]);
-			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x + (CONVERT_PaperUnit_to_InG(8) * direction.x), position.y + CONVERT_PaperUnit_to_InG(2), position.z + (CONVERT_PaperUnit_to_InG(8) * direction.z)));
+			m_ppObjects[idx]->SetMesh(0, m_ppMesh[1]);
+			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x + (CONVERT_PaperUnit_to_InG(16) * direction.x), position.y + CONVERT_PaperUnit_to_InG(3), position.z + (CONVERT_PaperUnit_to_InG(16) * direction.z)));
 
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (m_srvIncrementSize * adjIdx));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (m_srvIncrementSize * idx));
 			m_PlayerSwordSkill_Q_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::Player_SwordSkill_W_Effect)
 		{
-			adjIdx -= m_objectsIndices[EffectObjectType::Player_SwordSkill_Q_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[3]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + CONVERT_PaperUnit_to_InG(4), position.z));
 
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (m_srvIncrementSize * adjIdx));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (m_srvIncrementSize * idx));
 			m_PlayerSwordSkill_W_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::Player_SwordSkill_E_Effect)
 		{
-			adjIdx -= m_objectsIndices[EffectObjectType::Player_SwordSkill_Q_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[3]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x + (CONVERT_PaperUnit_to_InG(10) * direction.x), position.y + 50.f, position.z + (CONVERT_PaperUnit_to_InG(10) * direction.z)));
 
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (m_srvIncrementSize * adjIdx));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (m_srvIncrementSize * idx));
 			m_PlayerSwordSkill_E_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::Player_SwordSkill_R_Effect)
 		{
-			adjIdx -= m_objectsIndices[EffectObjectType::Player_SwordSkill_Q_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[3]);
-			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + CONVERT_PaperUnit_to_InG(2), position.z));
+			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + CONVERT_PaperUnit_to_InG(3), position.z));
 
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (m_srvIncrementSize * adjIdx));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (m_srvIncrementSize * idx));
 			m_PlayerSwordSkill_R_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::Player_StaffSkill_W_Effect)
 		{
-			adjIdx -= m_objectsIndices[EffectObjectType::Player_SwordSkill_Q_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[3]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x + (CONVERT_PaperUnit_to_InG(8) * direction.x), position.y + 50.f, position.z + (CONVERT_PaperUnit_to_InG(8) * direction.z)));
 
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (m_srvIncrementSize * adjIdx));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (m_srvIncrementSize * idx));
 			m_PlayerStaffSkill_W_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::Player_StaffSkill_E_Effect)
 		{
-			adjIdx -= m_objectsIndices[EffectObjectType::Player_SwordSkill_Q_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[2]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x + (CONVERT_PaperUnit_to_InG(15) * direction.x), position.y + 50.f, position.z + (CONVERT_PaperUnit_to_InG(15) * direction.z)));
 
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (m_srvIncrementSize * adjIdx));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[0].ptr + (m_srvIncrementSize * idx));
 			m_PlayerStaffSkill_E_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 
 		// Player Attack Motion Effect
 		else if (objectType == EffectObjectType::Player_ArrowAttack_Effect)
 		{
-			adjIdx -= m_objectsIndices[EffectObjectType::Player_ArrowAttack_Effect].m_begIndex;
-			m_ppObjects[idx]->SetMesh(0, m_ppMesh[2]);
-			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + 55.f, position.z));
+			m_ppObjects[idx]->SetMesh(0, m_ppMesh[1]);
+			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + CONVERT_PaperUnit_to_InG(7.2), position.z));
 
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[1].ptr + (m_srvIncrementSize * adjIdx));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[1].ptr + (m_srvIncrementSize * (idx - UseMatrialNumToObjectCnt[0])));
 			m_PlayerArrowAttack_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::Player_StaffAttack_Effect)
 		{
-			adjIdx -= m_objectsIndices[EffectObjectType::Player_ArrowAttack_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[3]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + 55.f, position.z));
 
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[1].ptr + (m_srvIncrementSize * adjIdx));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[1].ptr + (m_srvIncrementSize * (idx - UseMatrialNumToObjectCnt[0])));
 			m_PlayerStaffAttack_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::Player_StaffQSkill_Effect)
 		{
-			adjIdx -= m_objectsIndices[EffectObjectType::Player_ArrowAttack_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[1]);
-			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + 50.f, position.z));
+			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + CONVERT_PaperUnit_to_InG(7.2), position.z));
 
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[1].ptr + (m_srvIncrementSize * adjIdx));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[1].ptr + (m_srvIncrementSize *  (idx - UseMatrialNumToObjectCnt[0])));
 			m_PlayerStaffQSkill_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::Player_StaffESkill_Effect)
 		{
-			adjIdx -= m_objectsIndices[EffectObjectType::Player_ArrowAttack_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[1]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + 55.f, position.z));
 
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[1].ptr + (m_srvIncrementSize * adjIdx));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[1].ptr + (m_srvIncrementSize * (idx - UseMatrialNumToObjectCnt[0])));
 			m_PlayerStaffESkill_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 
 		// Minion Attack Motion Effect
 		else if (objectType == EffectObjectType::Minion_ArrowAttack_Effect)
 		{
-			adjIdx -= m_objectsIndices[EffectObjectType::Minion_ArrowAttack_Effect].m_begIndex;
-			m_ppObjects[idx]->SetMesh(0, m_ppMesh[1]);
-			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + 40.f, position.z - CONVERT_PaperUnit_to_InG(1)));
+			m_ppObjects[idx]->SetMesh(0, m_ppMesh[0]);
+			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + CONVERT_PaperUnit_to_InG(4), position.z - CONVERT_PaperUnit_to_InG(1)));
 
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[2].ptr + (m_srvIncrementSize * adjIdx));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[2].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1]))));
 			m_MinionArrowAttack_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::Minion_StaffAttack_Effect)
 		{
-			adjIdx -= m_objectsIndices[EffectObjectType::Minion_ArrowAttack_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[0]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x + (CONVERT_PaperUnit_to_InG(2) * direction.x), position.y + CONVERT_PaperUnit_to_InG(4), position.z + (CONVERT_PaperUnit_to_InG(4)  * direction.z)));
 
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[2].ptr + (m_srvIncrementSize * adjIdx));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[2].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1]))));
 			m_MinionStaffAttack_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 
 		// FollowingToFlyingObejct Effect
 		else if (objectType == EffectObjectType::Flying_MinionArrow_Effect)
 		{
-			adjIdx -= m_objectsIndices[EffectObjectType::Flying_MinionArrow_Effect].m_begIndex;
-			m_ppObjects[idx]->SetMesh(0, m_ppMesh[0]);
+			m_ppObjects[idx]->SetMesh(0, m_ppMesh[6]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + 4.f, position.z));
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[3].ptr + (m_srvIncrementSize * adjIdx));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[3].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2]))));
 			m_MinionArrow_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::Flying_PlayerArrow_Effect)
 		{
-			adjIdx -= m_objectsIndices[EffectObjectType::Flying_MinionArrow_Effect].m_begIndex;
-			m_ppObjects[idx]->SetMesh(0, m_ppMesh[1]);
+			m_ppObjects[idx]->SetMesh(0, m_ppMesh[7]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x - (CONVERT_PaperUnit_to_InG(3) * direction.x), position.y + 4.f, position.z - (CONVERT_PaperUnit_to_InG(3) * direction.z)));
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[3].ptr + (m_srvIncrementSize * adjIdx));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[3].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2]))));
 			m_PlayerArrow_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::Flying_PlayerFireBall_Effect)
 		{
-			adjIdx -= m_objectsIndices[EffectObjectType::Flying_MinionArrow_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[0]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + 4.f, position.z));
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[3].ptr + (m_srvIncrementSize * adjIdx));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[3].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2]))));
 			m_PlayerFireBall_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::Tower_Attack_Explosion_Effect)
 		{
-			adjIdx -= m_objectsIndices[EffectObjectType::Flying_MinionArrow_Effect].m_begIndex;
 			m_ppObjects[idx]->SetMesh(0, m_ppMesh[5]);
-			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y, position.z));
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[3].ptr + (m_srvIncrementSize * adjIdx));
+			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + CONVERT_PaperUnit_to_InG(3), position.z));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[3].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2]))));
 			m_TowerAttack_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 
 		// HIt Effect
 		else if (objectType == EffectObjectType::Player_ArrowAndFireBall_HitPosition_Effect)
 		{
-			adjIdx -= m_objectsIndices[EffectObjectType::Player_ArrowAndFireBall_HitPosition_Effect].m_begIndex;
-			m_ppObjects[idx]->SetMesh(0, m_ppMesh[1]);
-			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y, position.z));
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[4].ptr + (m_srvIncrementSize * adjIdx));
+			m_ppObjects[idx]->SetMesh(0, m_ppMesh[2]);
+			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + CONVERT_PaperUnit_to_InG(4), position.z));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[4].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3]))));
 			m_PlayerArrowAndFireBall_HitPosition_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::NormallHit_Effect)
 		{
-			adjIdx -= m_objectsIndices[EffectObjectType::Player_ArrowAndFireBall_HitPosition_Effect].m_begIndex;
-			m_ppObjects[idx]->SetMesh(0, m_ppMesh[1]);
+			m_ppObjects[idx]->SetMesh(0, m_ppMesh[7]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + CONVERT_PaperUnit_to_InG(4), position.z));
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[4].ptr + (m_srvIncrementSize * adjIdx));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[4].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3]))));
 			m_NormalHit_Effect.emplace_back(m_ppObjects[idx]);
 		}
 
 		// Golem Attack Effect
 		else if (objectType == EffectObjectType::Golem_StandardAttack_Effect)
 		{
-			adjIdx -= m_objectsIndices[EffectObjectType::Golem_StandardAttack_Effect].m_begIndex;
-			m_ppObjects[idx]->SetMesh(0, m_ppMesh[5]);
-			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x + (CONVERT_PaperUnit_to_InG(20) * direction.x), position.y + (CONVERT_PaperUnit_to_InG(2)), position.z + (CONVERT_PaperUnit_to_InG(20) * direction.z)));
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[5].ptr + (m_srvIncrementSize * adjIdx));
+			m_ppObjects[idx]->SetMesh(0, m_ppMesh[2]);
+			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x + (CONVERT_PaperUnit_to_InG(25) * direction.x), position.y + (CONVERT_PaperUnit_to_InG(4)), position.z + (CONVERT_PaperUnit_to_InG(25) * direction.z)));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[5].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4]))));
 			m_GolemStandardAttack_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::Golem_StumpAttack_Effect)
 		{
-			adjIdx -= m_objectsIndices[EffectObjectType::Golem_StandardAttack_Effect].m_begIndex;
-			m_ppObjects[idx]->SetMesh(0, m_ppMesh[5]);
-			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + (CONVERT_PaperUnit_to_InG(2)), position.z));
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[5].ptr + (m_srvIncrementSize * adjIdx));
+			m_ppObjects[idx]->SetMesh(0, m_ppMesh[2]);
+			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + (CONVERT_PaperUnit_to_InG(3)), position.z));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[5].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4]))));
 			m_GolemStumpAttack_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::Golem_SpecialAttack_Effect)
 		{
-			adjIdx -= m_objectsIndices[EffectObjectType::Golem_StandardAttack_Effect].m_begIndex;
-			m_ppObjects[idx]->SetMesh(0, m_ppMesh[5]);
-			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + (CONVERT_PaperUnit_to_InG(2)), position.z));
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[5].ptr + (m_srvIncrementSize * adjIdx));
+			m_ppObjects[idx]->SetMesh(0, m_ppMesh[4]);
+			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + (CONVERT_PaperUnit_to_InG(3)), position.z));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[5].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4]))));
 			m_GolemSpecialAttack_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 
 		// Level Up Effect
 		else if (objectType == EffectObjectType::Player_LevelUp_CircleEffect)
 		{
-			adjIdx -= m_objectsIndices[EffectObjectType::Player_LevelUp_CircleEffect].m_begIndex;
-			m_ppObjects[idx]->SetMesh(0, m_ppMesh[5]);
-			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + (CONVERT_PaperUnit_to_InG(2)), position.z));
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[6].ptr + (m_srvIncrementSize * adjIdx));
+			m_ppObjects[idx]->SetMesh(0, m_ppMesh[4]);
+			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + (CONVERT_PaperUnit_to_InG(3)), position.z));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[6].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4] + UseMatrialNumToObjectCnt[5]))));
 			m_CircleLevelUp_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::Player_LevelUp_ArrowEffect)
 		{
-			adjIdx -= m_objectsIndices[EffectObjectType::Player_LevelUp_CircleEffect].m_begIndex;
-			m_ppObjects[idx]->SetMesh(0, m_ppMesh[5]);
+			m_ppObjects[idx]->SetMesh(0, m_ppMesh[4]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + (CONVERT_PaperUnit_to_InG(4)), position.z));
-			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[6].ptr + (m_srvIncrementSize * adjIdx));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[6].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4] + UseMatrialNumToObjectCnt[5]))));
 			m_ArrowLevelUp_EffectList.emplace_back(m_ppObjects[idx]);
+		}
+
+		// Text Effect
+		else if (objectType == EffectObjectType::Kill_Effect)
+		{
+			m_ppObjects[idx]->SetMesh(0, m_ppMesh[3]);
+			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + (CONVERT_PaperUnit_to_InG(3)), position.z));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[7].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4] + UseMatrialNumToObjectCnt[5] + UseMatrialNumToObjectCnt[6]))));
+			m_Kill_EffectList.emplace_back(m_ppObjects[idx]);
+		}
+		else if (objectType == EffectObjectType::Death_Effect)
+		{
+			m_ppObjects[idx]->SetMesh(0, m_ppMesh[3]);
+			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + (CONVERT_PaperUnit_to_InG(3)), position.z));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[7].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4] + UseMatrialNumToObjectCnt[5] + UseMatrialNumToObjectCnt[6]))));
+			m_Death_EffectList.emplace_back(m_ppObjects[idx]);
+		}
+		else if (objectType == EffectObjectType::Miss_Effect)
+		{
+			m_ppObjects[idx]->SetMesh(0, m_ppMesh[7]);
+			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + (CONVERT_PaperUnit_to_InG(7.2)), position.z));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[7].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4] + UseMatrialNumToObjectCnt[5] + UseMatrialNumToObjectCnt[6]))));
+			m_Miss_EffectList.emplace_back(m_ppObjects[idx]);
+		}
+		else if (objectType == EffectObjectType::Recovery_Effect)
+		{
+			m_ppObjects[idx]->SetMesh(0, m_ppMesh[7]);
+			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + (CONVERT_PaperUnit_to_InG(7.2)), position.z));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[7].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4] + UseMatrialNumToObjectCnt[5] + UseMatrialNumToObjectCnt[6]))));
+			m_Recovery_EffectList.emplace_back(m_ppObjects[idx]);
+		}
+		else if (objectType == EffectObjectType::Absorption_Effect)
+		{
+			m_ppObjects[idx]->SetMesh(0, m_ppMesh[7]);
+			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + (CONVERT_PaperUnit_to_InG(7.2)), position.z));
+			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[7].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4] + UseMatrialNumToObjectCnt[5] + UseMatrialNumToObjectCnt[6]))));
+			m_Absorption_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 	}
 }
@@ -689,6 +753,12 @@ void CEffectShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pCont
 
 		EffectObjectType::Player_LevelUp_CircleEffect,
 		EffectObjectType::Player_LevelUp_ArrowEffect,
+
+		EffectObjectType::Kill_Effect,
+		EffectObjectType::Death_Effect,
+		EffectObjectType::Miss_Effect,
+		EffectObjectType::Recovery_Effect,
+		EffectObjectType::Absorption_Effect
 	};
 
 	// 각 오브젝트의 최대 개수 설정
@@ -737,6 +807,14 @@ void CEffectShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pCont
 	// 6번 Matrial을 사용하는 Obejct 갯수
 	UseMatrialNumToObjectCnt[6] = (m_nObjects - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4] + UseMatrialNumToObjectCnt[5]));
 
+	m_nObjects += m_objectsMaxCount[EffectObjectType::Kill_Effect] = 4;
+	m_nObjects += m_objectsMaxCount[EffectObjectType::Death_Effect] = 4;
+	m_nObjects += m_objectsMaxCount[EffectObjectType::Miss_Effect] = 20;
+	m_nObjects += m_objectsMaxCount[EffectObjectType::Recovery_Effect] = 20;
+	m_nObjects += m_objectsMaxCount[EffectObjectType::Absorption_Effect] = 20;
+	// 6번 Matrial을 사용하는 Obejct 갯수
+	UseMatrialNumToObjectCnt[7] = (m_nObjects - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4] + UseMatrialNumToObjectCnt[5] + UseMatrialNumToObjectCnt[6]));
+
 	// 각 오브젝트 개수 만큼 Possible Index 생성
 	m_objectsPossibleIndices = std::unique_ptr<bool[]>(new bool[m_nObjects]);
 
@@ -746,6 +824,7 @@ void CEffectShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pCont
 	m_ppObjects = new CCollisionObject*[m_nObjects];
 
 	UINT ncbElementBytes = ((sizeof(CB_EFFECTOBJECT_INFO) + 255) & ~255);
+	int accCnt{ 0 };
 
 	CreateShaderVariables(pCreateMgr, ncbElementBytes, m_nObjects);
 
@@ -771,8 +850,10 @@ void CEffectShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pCont
 	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, UseMatrialNumToObjectCnt[6], 2, 6);
 	CreateConstantBufferViews(pCreateMgr, UseMatrialNumToObjectCnt[6], m_pConstBuffer.Get(), ncbElementBytes, UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4] + UseMatrialNumToObjectCnt[5], 6);
 
+	CreateCbvAndSrvDescriptorHeaps(pCreateMgr, UseMatrialNumToObjectCnt[7], 5, 7);
+	CreateConstantBufferViews(pCreateMgr, UseMatrialNumToObjectCnt[7], m_pConstBuffer.Get(), ncbElementBytes, UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4] + UseMatrialNumToObjectCnt[5] + UseMatrialNumToObjectCnt[6], 7);
+
 	// 오브젝트 Index
-	int accCnt{ 0 };
 	for (int i = 0; i < EffectObjectTime_Max_COUNT; ++i) {
 		m_objectsIndices[objectOrder[i]] = EffectObjectIndices();
 		m_objectsIndices[objectOrder[i]].m_begIndex = accCnt;
@@ -790,14 +871,16 @@ void CEffectShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void * pCont
 	m_ppMaterials[4] = Materials::CreateHitEffectMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[4], &m_psrvGPUDescriptorStartHandle[4]);
 	m_ppMaterials[5] = Materials::CreateGolemAttackEffectMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[5], &m_psrvGPUDescriptorStartHandle[5]);
 	m_ppMaterials[6] = Materials::CreateLevelUpEffectMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[6], &m_psrvGPUDescriptorStartHandle[6]);
+	m_ppMaterials[7] = Materials::CreateTextEffectMaterial(pCreateMgr, &m_psrvCPUDescriptorStartHandle[7], &m_psrvGPUDescriptorStartHandle[7]);
 
-	m_ppMesh[0] = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 25.6f, FRAME_BUFFER_HEIGHT / 14.4f, 0.f);		// 50 x 50
-	m_ppMesh[1] = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 12.8f, FRAME_BUFFER_HEIGHT / 7.2f, 0.f);		// 100 x 100
-	m_ppMesh[2] = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 8.53f, FRAME_BUFFER_HEIGHT / 4.8f, 0.f);		// 150 x 150
-	m_ppMesh[3] = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 6.4f, FRAME_BUFFER_HEIGHT / 3.6f, 0.f);		// 200 x 200
-	m_ppMesh[4] = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 5.12f, FRAME_BUFFER_HEIGHT / 2.88f, 0.f);		// 250 x 250
-	m_ppMesh[5] = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 4.26f, FRAME_BUFFER_HEIGHT / 2.4f, 0.f);		// 300 x 300
-	m_ppMesh[6] = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 3.65f, FRAME_BUFFER_HEIGHT / 2.05f, 0.f);		// 350 x 350
+	m_ppMesh[0] = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 12.8f, FRAME_BUFFER_HEIGHT / 7.2f, 0.f);		// 100 x 100
+	m_ppMesh[1] = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 4.26f, FRAME_BUFFER_HEIGHT / 2.4f, 0.f);		// 300 x 300
+	m_ppMesh[2] = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 3.65f, FRAME_BUFFER_HEIGHT / 2.05f, 0.f);		// 350 x 350
+	m_ppMesh[3] = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 3.2f, FRAME_BUFFER_HEIGHT / 1.8f, 0.f);		// 400 x 400
+	m_ppMesh[4] = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 2.84f, FRAME_BUFFER_HEIGHT / 1.6f, 0.f);		// 450 x 450
+	m_ppMesh[5] = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 2.56f, FRAME_BUFFER_HEIGHT / 1.44f, 0.f);		// 500 x 500
+	m_ppMesh[6] = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 25.6f, FRAME_BUFFER_HEIGHT / 14.4f, 0.f);		// 50 x 50
+	m_ppMesh[7] = new CTexturedRectMesh(pCreateMgr, FRAME_BUFFER_WIDTH / 6.4f, FRAME_BUFFER_HEIGHT / 3.6f, 0.f);		// 200 x 200
 
 	for (int i = 0; i < m_nMesh; ++i)
 	{
@@ -850,6 +933,12 @@ void CEffectShader::ReleaseObjects()
 
 	if (!m_CircleLevelUp_EffectList.empty()) m_CircleLevelUp_EffectList.clear();
 	if (!m_ArrowLevelUp_EffectList.empty()) m_ArrowLevelUp_EffectList.clear();
+
+	if (!m_Kill_EffectList.empty()) m_Kill_EffectList.clear();
+	if (!m_Death_EffectList.empty()) m_Death_EffectList.clear();
+	if (!m_Miss_EffectList.empty()) m_Miss_EffectList.clear();
+	if (!m_Recovery_EffectList.empty()) m_Recovery_EffectList.clear();
+	if (!m_Absorption_EffectList.empty()) m_Absorption_EffectList.clear();
 
 	if (m_ppObjects)
 	{

@@ -551,6 +551,7 @@ bool CPlayer::Heal(float timeElapsed)
 	if (m_recoveryTime - m_lastRecoveryTime >= 1.f)
 	{
 		m_lastRecoveryTime = m_recoveryTime;
+		m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), 30, EffectObjectType::Recovery_Effect);
 	}
 	// 전체 체력의 10%씩 회복
 	m_StatusInfo.HP += m_StatusInfo.maxHP * MAX_RECOVERY_PER_SEC * timeElapsed;

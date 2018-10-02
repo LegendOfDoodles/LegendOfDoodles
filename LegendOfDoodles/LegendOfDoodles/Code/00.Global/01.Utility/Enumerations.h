@@ -188,6 +188,13 @@ enum EffectObjectType {
 	Player_LevelUp_CircleEffect,
 	Player_LevelUp_ArrowEffect,
 
+	// Text Effect
+	Kill_Effect,
+	Death_Effect,
+	Miss_Effect,
+	Recovery_Effect,
+	Absorption_Effect,
+
 	// Effect Type Cnt
 	EffectObjectTime_Max_COUNT,
 };
