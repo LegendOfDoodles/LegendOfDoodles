@@ -19,21 +19,18 @@
 // 持失切, 社瑚切
 CMinionShader::CMinionShader()// : CShader()
 {
-	g_SwordMinionStat.maxHP = 445;
-	g_SwordMinionStat.HP = 445;
+	g_SwordMinionStat.HP = g_SwordMinionStat.maxHP = 425;
 	g_SwordMinionStat.Atk = 12;
 	g_SwordMinionStat.Def = 0;
 	g_SwordMinionStat.Exp = 64;
 
-	g_StaffMinionStat.maxHP = 280;
-	g_StaffMinionStat.HP = 280;
+	g_StaffMinionStat.HP = g_StaffMinionStat.maxHP = 280;
 	g_StaffMinionStat.Atk = 23;
 	g_StaffMinionStat.Def = 0;
 	g_StaffMinionStat.Exp = 64;
 
-	g_BowMinionStat.maxHP = 300;
-	g_BowMinionStat.HP = 300;
-	g_BowMinionStat.Atk = 20;
+	g_BowMinionStat.HP = g_BowMinionStat.maxHP = 300;
+	g_BowMinionStat.Atk = 18;
 	g_BowMinionStat.Def = 0;
 	g_BowMinionStat.Exp = 64;
 }

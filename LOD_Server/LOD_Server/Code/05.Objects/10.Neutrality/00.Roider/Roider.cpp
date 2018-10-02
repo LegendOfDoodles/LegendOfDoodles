@@ -17,15 +17,15 @@ CRoider::CRoider() : CAnimatedObject()
 
 	m_sightRange = CONVERT_PaperUnit_to_InG(80.0f);
 	m_detectRange = CONVERT_PaperUnit_to_InG(40.0f);
-	m_speed = CONVERT_cm_to_InG(3.237f);
+	m_speed = CONVERT_cm_to_InG(5.8266f);
 
-	m_StatusInfo.HP = m_StatusInfo.maxHP = 980.0f;
+	m_StatusInfo.HP = m_StatusInfo.maxHP = 440.0f;
 	m_StatusInfo.Def = 30.0f;
 	m_StatusInfo.Atk = 80.0f;
-	m_StatusInfo.Exp = 153;
+	m_StatusInfo.Exp = 640;
 
-	m_attackRange = CONVERT_PaperUnit_to_InG(16);
-	m_farAttackRange = CONVERT_PaperUnit_to_InG(30);
+	m_attackRange = CONVERT_PaperUnit_to_InG(28.8f);
+	m_farAttackRange = CONVERT_PaperUnit_to_InG(54);
 }
 
 CRoider::~CRoider()

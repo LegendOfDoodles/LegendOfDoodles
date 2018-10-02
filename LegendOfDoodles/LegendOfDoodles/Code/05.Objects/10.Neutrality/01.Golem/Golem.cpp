@@ -6,7 +6,7 @@
 /// 목적: 중립 몬스터(수호 골렘) 클래스 분할
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-12
+/// 최종 수정 날짜: 2018-10-02
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -21,10 +21,10 @@ CGolem::CGolem(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes) : CAnimatedObject
 	m_detectRange = CONVERT_PaperUnit_to_InG(80.0f);
 	m_speed = CONVERT_cm_to_InG(7.682f);
 
-	m_StatusInfo.HP = m_StatusInfo.maxHP = 2800.0f;
+	m_StatusInfo.HP = m_StatusInfo.maxHP = 955.0f;
 	m_StatusInfo.Def = 90.0f;
 	m_StatusInfo.Atk = 240.0f;
-	m_StatusInfo.Exp = 900;
+	m_StatusInfo.Exp = 7680;
 
 	m_attackRange = CONVERT_PaperUnit_to_InG(30);
 

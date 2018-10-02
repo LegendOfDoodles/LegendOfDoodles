@@ -15,7 +15,7 @@ CPlayer::CPlayer() : CAnimatedObject()
 {
 	m_detectRange = CONVERT_PaperUnit_to_InG(80.0f);
 	m_sightRange = CONVERT_PaperUnit_to_InG(80.0f);
-	SetSpeed(CONVERT_cm_to_InG(3.285f));
+	SetSpeed(CONVERT_cm_to_InG(5.913f));
 }
 
 
@@ -49,7 +49,7 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_pColManager->RequestCollide(CollisionType::SPHERE, this, CONVERT_PaperUnit_to_InG(5), CONVERT_PaperUnit_to_InG(20), m_StatusInfo.Atk);
+				m_pColManager->RequestCollide(CollisionType::SPHERE, this, CONVERT_PaperUnit_to_InG(9), CONVERT_PaperUnit_to_InG(7.2f), m_StatusInfo.Atk);
 			}
 		}
 		else if (GetType() == ObjectType::SwordPlayer)
@@ -58,31 +58,31 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_pColManager->RequestCollide(CollisionType::SPHERE, this, CONVERT_PaperUnit_to_InG(5), CONVERT_PaperUnit_to_InG(20), m_StatusInfo.Atk);
+				m_pColManager->RequestCollide(CollisionType::SPHERE, this, CONVERT_PaperUnit_to_InG(9), CONVERT_PaperUnit_to_InG(36), m_StatusInfo.Atk);
 			}
 			else if (m_nCurrAnimation == Animations::SkillQ &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_pColManager->RequestCollide(CollisionType::SPHERE, this, CONVERT_PaperUnit_to_InG(8), CONVERT_PaperUnit_to_InG(8), m_StatusInfo.Atk * m_StatusInfo.QSkillPower);
+				m_pColManager->RequestCollide(CollisionType::SPHERE, this, CONVERT_PaperUnit_to_InG(14.4f), CONVERT_PaperUnit_to_InG(14.4f), m_StatusInfo.Atk * m_StatusInfo.QSkillPower);
 			}
 			else if (m_nCurrAnimation == Animations::SkillW &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_pColManager->RequestCollide(CollisionType::SECTERFORM, this, CONVERT_PaperUnit_to_InG(24), 180, m_StatusInfo.Atk * m_StatusInfo.WSkillPower);
+				m_pColManager->RequestCollide(CollisionType::SECTERFORM, this, CONVERT_PaperUnit_to_InG(43.2f), 180, m_StatusInfo.Atk * m_StatusInfo.WSkillPower);
 			}
 			else if (m_nCurrAnimation == Animations::SkillE &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_pColManager->RequestCollide(CollisionType::SECTERFORM, this, CONVERT_PaperUnit_to_InG(16), 150, m_StatusInfo.Atk * m_StatusInfo.ESkillPower);
+				m_pColManager->RequestCollide(CollisionType::SECTERFORM, this, CONVERT_PaperUnit_to_InG(28.8f), 150, m_StatusInfo.Atk * m_StatusInfo.ESkillPower);
 			}
 			else if (m_nCurrAnimation == Animations::SkillR &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.666f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.666f)
 			{
-				m_pColManager->RequestCollide(CollisionType::SPHERE, this, 0, CONVERT_PaperUnit_to_InG(12), m_StatusInfo.Atk * m_StatusInfo.RSkillPower);
+				m_pColManager->RequestCollide(CollisionType::SPHERE, this, 0, CONVERT_PaperUnit_to_InG(21.6f), m_StatusInfo.Atk * m_StatusInfo.RSkillPower);
 			}
 		}
 		else if (GetType() == ObjectType::StaffPlayer)
@@ -103,13 +103,13 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_pColManager->RequestCollide(CollisionType::SPHERE, this, CONVERT_PaperUnit_to_InG(8) * m_StatusInfo.WSkillRange, CONVERT_PaperUnit_to_InG(8), m_StatusInfo.Atk * m_StatusInfo.WSkillPower);
+				m_pColManager->RequestCollide(CollisionType::SPHERE, this, CONVERT_PaperUnit_to_InG(14.4f) * m_StatusInfo.WSkillRange, CONVERT_PaperUnit_to_InG(14.4f), m_StatusInfo.Atk * m_StatusInfo.WSkillPower);
 			}
 			else if (m_nCurrAnimation == Animations::SkillE &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_pColManager->RequestCollide(CollisionType::SECTERFORM, this, CONVERT_PaperUnit_to_InG(15) * m_StatusInfo.ESkillRange, 90, m_StatusInfo.Atk * m_StatusInfo.ESkillPower);
+				m_pColManager->RequestCollide(CollisionType::SECTERFORM, this, CONVERT_PaperUnit_to_InG(27) * m_StatusInfo.ESkillRange, 90, m_StatusInfo.Atk * m_StatusInfo.ESkillPower);
 			}
 			else if (m_nCurrAnimation == Animations::SkillR &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.666f &&
@@ -429,59 +429,60 @@ void CPlayer::ApplyExp(UINT addExp)
 	// 경험치 처리
 	m_StatusInfo.Exp += addExp;
 
-	// 경험치가 레벨업 가능한 영역에 도달하지 못한 경우 추가 처리 안함
-	if (m_StatusInfo.Exp < m_StatusInfo.MaxExp) return;
-
-	m_StatusInfo.Level++;
-	m_StatusInfo.Exp -= m_StatusInfo.MaxExp;
-
-	m_StatusInfo.MaxExp += INCREASE_PLAYER_EXP;
-
-	if (m_StatusInfo.Level == 7 || m_StatusInfo.Level == 12 || m_StatusInfo.Level == 17 || m_StatusInfo.Level == 21) {
-		m_StatusInfo.SpecialPoint += 1;
-	}
-
-	if (m_StatusInfo.Weapon == 1)
+	// 레벨업이 가능한 만큼 레벨업 처리
+	while (m_StatusInfo.Exp >= m_StatusInfo.MaxExp)
 	{
-		m_StatusInfo.maxHP += INCREASE_SWORD_PLAYER_HP;
-		m_StatusInfo.HP = m_StatusInfo.maxHP;
-		m_StatusInfo.Atk += INCREASE_SWORD_PLAYER_ATK;
-		m_StatusInfo.Def += INCREASE_SWORD_PLAYER_DEF;
-	}
-	else if (m_StatusInfo.Weapon == 2)
-	{
-		m_StatusInfo.maxHP += INCREASE_STAFF_PLAYER_HP;
-		m_StatusInfo.HP = m_StatusInfo.maxHP;
-		m_StatusInfo.Atk += INCREASE_STAFF_PLAYER_ATK;
-		m_StatusInfo.Def += INCREASE_STAFF_PLAYER_DEF;
-		
-	}
-	else if (m_StatusInfo.Weapon == 3)
-	{
-		m_StatusInfo.maxHP += INCREASE_BOW_PLAYER_HP;
-		m_StatusInfo.HP = m_StatusInfo.maxHP;
-		m_StatusInfo.Atk += INCREASE_BOW_PLAYER_ATK;
-		m_StatusInfo.Def += INCREASE_BOW_PLAYER_DEF;
-	}
-	else
-	{
-		// 무기를 선택하지 않은 경우 가장 작게 오르는 것을 기준으로 증가시킨다.
-		// 이후 무기를 선택할 때 부족분을 선택한 무기 옵션에 맞게 추가한다.
-		m_StatusInfo.maxHP += INCREASE_STICK_PLAYER_HP;
-		m_StatusInfo.HP = m_StatusInfo.maxHP;
-		m_StatusInfo.Atk += INCREASE_SWORD_PLAYER_ATK;
-		m_StatusInfo.Def += INCREASE_STAFF_PLAYER_DEF;
-	}
+		m_StatusInfo.Level++;
+		m_StatusInfo.Exp -= m_StatusInfo.MaxExp;
 
-	// 클라이언트에 레벨업 패킷 전송
-	SC_Msg_Level_Up p;
-	p.Target_Tag = (short)m_tag;
-	p.size = sizeof(p);
-	p.type = SC_LEVEL_UP;
-	p.level = (short)m_StatusInfo.Level;
-	for (int j = 0; j < MAX_USER; ++j)
-	{
-		if (g_clients[j].m_isconnected) SendPacket(j, &p);
+		m_StatusInfo.MaxExp += INCREASE_PLAYER_EXP;
+
+		if (m_StatusInfo.Level == 7 || m_StatusInfo.Level == 12 || m_StatusInfo.Level == 17 || m_StatusInfo.Level == 21) {
+			m_StatusInfo.SpecialPoint += 1;
+		}
+
+		if (m_StatusInfo.Weapon == 1)
+		{
+			m_StatusInfo.maxHP += INCREASE_SWORD_PLAYER_HP;
+			m_StatusInfo.HP = m_StatusInfo.maxHP;
+			m_StatusInfo.Atk += INCREASE_SWORD_PLAYER_ATK;
+			m_StatusInfo.Def += INCREASE_SWORD_PLAYER_DEF;
+		}
+		else if (m_StatusInfo.Weapon == 2)
+		{
+			m_StatusInfo.maxHP += INCREASE_STAFF_PLAYER_HP;
+			m_StatusInfo.HP = m_StatusInfo.maxHP;
+			m_StatusInfo.Atk += INCREASE_STAFF_PLAYER_ATK;
+			m_StatusInfo.Def += INCREASE_STAFF_PLAYER_DEF;
+
+		}
+		else if (m_StatusInfo.Weapon == 3)
+		{
+			m_StatusInfo.maxHP += INCREASE_BOW_PLAYER_HP;
+			m_StatusInfo.HP = m_StatusInfo.maxHP;
+			m_StatusInfo.Atk += INCREASE_BOW_PLAYER_ATK;
+			m_StatusInfo.Def += INCREASE_BOW_PLAYER_DEF;
+		}
+		else
+		{
+			// 무기를 선택하지 않은 경우 가장 작게 오르는 것을 기준으로 증가시킨다.
+			// 이후 무기를 선택할 때 부족분을 선택한 무기 옵션에 맞게 추가한다.
+			m_StatusInfo.maxHP += INCREASE_STICK_PLAYER_HP;
+			m_StatusInfo.HP = m_StatusInfo.maxHP;
+			m_StatusInfo.Atk += INCREASE_SWORD_PLAYER_ATK;
+			m_StatusInfo.Def += INCREASE_STAFF_PLAYER_DEF;
+		}
+
+		// 클라이언트에 레벨업 패킷 전송
+		SC_Msg_Level_Up p;
+		p.Target_Tag = (short)m_tag;
+		p.size = sizeof(p);
+		p.type = SC_LEVEL_UP;
+		p.level = (short)m_StatusInfo.Level;
+		for (int j = 0; j < MAX_USER; ++j)
+		{
+			if (g_clients[j].m_isconnected) SendPacket(j, &p);
+		}
 	}
 }
 
@@ -594,6 +595,9 @@ void CPlayer::ChangeWeapon(UINT weaponNum, ObjectType type)
 		m_StatusInfo.Atk += ADJUST_STAFF_PLAYER_ATK(adjLevel);
 		m_StatusInfo.Def += ADJUST_STAFF_PLAYER_DEF(adjLevel);
 
+		m_StatusInfo.AbsorptionRate += 0.05f;
+		m_StatusInfo.AbsorptionAmount += 0.05f;
+
 		m_StatusInfo.QSkillPower = INCREASE_STAFF_PLAYER_SKILL_Q;
 		m_StatusInfo.WSkillPower = INCREASE_STAFF_PLAYER_SKILL_W;
 		m_StatusInfo.ESkillPower = INCREASE_STAFF_PLAYER_SKILL_E;
@@ -604,6 +608,8 @@ void CPlayer::ChangeWeapon(UINT weaponNum, ObjectType type)
 		m_StatusInfo.maxHP += ADJUST_BOW_PLAYER_HP(adjLevel);
 		m_StatusInfo.Atk += ADJUST_BOW_PLAYER_ATK(adjLevel);
 		m_StatusInfo.Def += ADJUST_BOW_PLAYER_DEF(adjLevel);
+
+		m_StatusInfo.EvationRate += 0.1f;
 
 		m_StatusInfo.QSkillPower = INCREASE_BOW_PLAYER_SKILL_Q;
 		m_StatusInfo.WSkillPower = INCREASE_BOW_PLAYER_SKILL_W;
