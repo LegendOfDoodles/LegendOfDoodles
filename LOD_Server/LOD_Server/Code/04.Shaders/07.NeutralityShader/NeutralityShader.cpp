@@ -11,7 +11,7 @@
 /// 목적: 중립 몬스터 관리 및 렌더링용 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-11
+/// 최종 수정 날짜: 2018-10-02
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -123,7 +123,7 @@ void CNeutralityShader::BuildObjects(void *pContext)
 #if !USE_BATCH_MATERIAL
 		pRotatingObject->SetMaterial(pCubeMaterial);
 #endif
-		pRoider->SetCollisionSize(CONVERT_PaperUnit_to_InG(4));
+		pRoider->SetCollisionSize(CONVERT_PaperUnit_to_InG(7.2f));
 
 		pRoider->CBaseObject::SetPosition(CONVERT_Unit_to_InG(pos.x), CONVERT_Unit_to_InG(pos.y), CONVERT_Unit_to_InG(pos.z));
 		pRoider->SetTeam(TeamType::Neutral);

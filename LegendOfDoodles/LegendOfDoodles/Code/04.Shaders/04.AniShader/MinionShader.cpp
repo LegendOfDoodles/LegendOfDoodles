@@ -14,7 +14,7 @@
 /// 목적: 미니언 관리 및 그리기 용도
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-10-01
+/// 최종 수정 날짜: 2018-10-02
 /// </summary>
 
 #define SwordMinionMesh m_ppMinionMeshes[0]
@@ -324,8 +324,8 @@ void CMinionShader::SpawnMinion(ObjectType minionKind, short tag)
 {
 	static UINT incrementSize{ m_pCreateMgr->GetCbvSrvDescriptorIncrementSize() };
 	static CCubeMesh boundingBoxMesh(m_pCreateMgr,
-		CONVERT_PaperUnit_to_InG(3.0f), CONVERT_PaperUnit_to_InG(1.5f), CONVERT_PaperUnit_to_InG(7.0f),
-		0, 0, -CONVERT_PaperUnit_to_InG(4.0f));
+		CONVERT_PaperUnit_to_InG(5.4f), CONVERT_PaperUnit_to_InG(2.7f), CONVERT_PaperUnit_to_InG(9.6f),
+		0, 0, -CONVERT_PaperUnit_to_InG(4.8f));
 	boundingBoxMesh.AddRef();
 
 	static CSkeleton SIdle("Resource//3D//Minion//Animation//Sword//Minion_S_Idle.aniinfo");
@@ -357,16 +357,16 @@ void CMinionShader::SpawnMinion(ObjectType minionKind, short tag)
 		StaffMinionMesh = new CSkinnedMesh(m_pCreateMgr, "Resource//3D//Minion//Mesh//Magic Minion.meshinfo");
 
 		SwordMinionMesh->SetBoundingBox(
-			XMFLOAT3(0.0f, 0.0f, -CONVERT_PaperUnit_to_InG(4.0f)),
-			XMFLOAT3(CONVERT_PaperUnit_to_InG(1.5f), CONVERT_PaperUnit_to_InG(1.5f), CONVERT_PaperUnit_to_InG(3.5f)));
+			XMFLOAT3(0.0f, 0.0f, -CONVERT_PaperUnit_to_InG(4.8f)),
+			XMFLOAT3(CONVERT_PaperUnit_to_InG(2.7f), CONVERT_PaperUnit_to_InG(2.7f), CONVERT_PaperUnit_to_InG(4.8f)));
 		SwordMinionMesh->AddRef();
 		BowMinionMesh->SetBoundingBox(
-			XMFLOAT3(0.0f, 0.0f, -CONVERT_PaperUnit_to_InG(4.0f)),
-			XMFLOAT3(CONVERT_PaperUnit_to_InG(1.5f), CONVERT_PaperUnit_to_InG(1.5f), CONVERT_PaperUnit_to_InG(3.5f)));
+			XMFLOAT3(0.0f, 0.0f, -CONVERT_PaperUnit_to_InG(4.8f)),
+			XMFLOAT3(CONVERT_PaperUnit_to_InG(2.7f), CONVERT_PaperUnit_to_InG(2.7f), CONVERT_PaperUnit_to_InG(4.8f)));
 		BowMinionMesh->AddRef();
 		StaffMinionMesh->SetBoundingBox(
-			XMFLOAT3(0.0f, 0.0f, -CONVERT_PaperUnit_to_InG(4.0f)),
-			XMFLOAT3(CONVERT_PaperUnit_to_InG(1.5f), CONVERT_PaperUnit_to_InG(1.5f), CONVERT_PaperUnit_to_InG(3.5f)));
+			XMFLOAT3(0.0f, 0.0f, -CONVERT_PaperUnit_to_InG(4.8f)),
+			XMFLOAT3(CONVERT_PaperUnit_to_InG(2.7f), CONVERT_PaperUnit_to_InG(2.7f), CONVERT_PaperUnit_to_InG(4.8f)));
 		StaffMinionMesh->AddRef();
 		m_bDataPrepared = true;
 		return;
@@ -412,7 +412,7 @@ void CMinionShader::SpawnMinion(ObjectType minionKind, short tag)
 
 		pMinionObject->SetTag(tag++);
 		pMinionObject->SetBoundingMesh(&boundingBoxMesh);
-		pMinionObject->SetCollisionSize(CONVERT_PaperUnit_to_InG(2));
+		pMinionObject->SetCollisionSize(CONVERT_PaperUnit_to_InG(3.6f));
 
 		switch (minionKind)
 		{

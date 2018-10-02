@@ -14,7 +14,7 @@
 /// 목적: 중립 몬스터 관리 및 렌더링용 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-14
+/// 최종 수정 날짜: 2018-10-02
 /// </summary>
 
 #define Roider_NetralMaterial m_ppMaterials[0]
@@ -380,8 +380,8 @@ void CNeutralityShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pC
 	CSkinnedMesh *pRoiderMesh = new CSkinnedMesh(pCreateMgr, "Resource//3D//Monster//Mesh//Royde.meshinfo");
 
 	CCubeMesh *pBoundingBoxMesh = new CCubeMesh(pCreateMgr,
-		CONVERT_PaperUnit_to_InG(4.0f), CONVERT_PaperUnit_to_InG(1.0f), CONVERT_PaperUnit_to_InG(11.0f),
-		0, 0, -CONVERT_PaperUnit_to_InG(7.0f));
+		CONVERT_PaperUnit_to_InG(7.2f), CONVERT_PaperUnit_to_InG(1.8f), CONVERT_PaperUnit_to_InG(19.8f),
+		0, 0, -CONVERT_PaperUnit_to_InG(12.6f));
 
 	CSkeleton *pSIdle = new CSkeleton("Resource//3D//Monster//Animation//Royde_Idle.aniinfo");
 	CSkeleton *pSStartWalk = new CSkeleton("Resource//3D//Monster//Animation//Royde_Start_Walk.aniinfo");
@@ -391,8 +391,8 @@ void CNeutralityShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pC
 	CSkeleton *pSDie = new CSkeleton("Resource//3D//Monster//Animation//Royde_Die.aniinfo");
 
 	pRoiderMesh->SetBoundingBox(
-		XMFLOAT3(0.0f, 0.0f, -CONVERT_PaperUnit_to_InG(7.0f)),
-		XMFLOAT3(CONVERT_PaperUnit_to_InG(2.0f), CONVERT_PaperUnit_to_InG(1.0f), CONVERT_PaperUnit_to_InG(5.5f)));
+		XMFLOAT3(0.0f, 0.0f, -CONVERT_PaperUnit_to_InG(12.6f)),
+		XMFLOAT3(CONVERT_PaperUnit_to_InG(3.6f), CONVERT_PaperUnit_to_InG(1.8f), CONVERT_PaperUnit_to_InG(9.9f)));
 
 	UINT incrementSize{ pCreateMgr->GetCbvSrvDescriptorIncrementSize() };
 	CRoider *pRoider{ NULL };
@@ -428,7 +428,7 @@ void CNeutralityShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pC
 		pRotatingObject->SetMaterial(pCubeMaterial);
 #endif
 		pRoider->SetBoundingMesh(pBoundingBoxMesh);
-		pRoider->SetCollisionSize(CONVERT_PaperUnit_to_InG(4));
+		pRoider->SetCollisionSize(CONVERT_PaperUnit_to_InG(7.2f));
 
 		pRoider->CBaseObject::SetPosition(CONVERT_Unit_to_InG(pos.x), CONVERT_Unit_to_InG(pos.y), CONVERT_Unit_to_InG(pos.z));
 		pRoider->SetTeam(TeamType::Neutral);

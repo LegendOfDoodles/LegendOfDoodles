@@ -91,8 +91,8 @@ float4 CalculateSketchEffect(float2 uv, float intensity)
 
     float3 overbright = max(0, intensity - 1.0);
 
-    float3 weightsA = saturate((intensity * 6.0) + float3(-3, -4, -5));
-    float3 weightsB = saturate((intensity * 6.0) + float3(-0, -1, -2));
+    float3 weightsA = saturate((intensity * 6.0) + float3(-5, -4, -3));
+    float3 weightsB = saturate((intensity * 6.0) + float3(-2, -1, -0));
 
     weightsA.xy -= weightsA.yz;
     weightsA.z -= weightsB.x;
@@ -103,7 +103,7 @@ float4 CalculateSketchEffect(float2 uv, float intensity)
 
     float4 finalColor = float4(overbright + sketch0.r + sketch0.g + sketch0.b + sketch1.r + sketch1.g + sketch1.b, 1);
 
-    return float4(0.9 - finalColor.r, 0.9 - finalColor.g, 0.9 - finalColor.b, 1);
+    return float4(0.7 - finalColor.r, 0.7 - finalColor.g, 0.7 - finalColor.b, 1);
 }
 
 float CalculateShadowFactor(float4 shadowPosH)
