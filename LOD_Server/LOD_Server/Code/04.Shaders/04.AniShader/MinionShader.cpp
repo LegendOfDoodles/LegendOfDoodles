@@ -12,7 +12,7 @@
 /// 목적: 미니언 관리 및 그리기 용도
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-10-01
+/// 최종 수정 날짜: 2018-10-02
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -371,7 +371,7 @@ void CMinionShader::SpawnMinion()
 		}
 
 		pMinionObject->SetTag(m_minionId++);
-		pMinionObject->SetCollisionSize(CONVERT_PaperUnit_to_InG(2));
+		pMinionObject->SetCollisionSize(CONVERT_PaperUnit_to_InG(3.6f));
 
 		switch (m_kind)
 		{

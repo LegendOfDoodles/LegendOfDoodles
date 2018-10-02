@@ -13,7 +13,7 @@
 /// 목적: 플레이어 관리 및 렌더링 용도
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-09-14
+/// 최종 수정 날짜: 2018-10-02
 /// </summary>
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -399,8 +399,8 @@ void CPlayerShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pConte
 	CSkinnedMesh *pPlayerMesh = new CSkinnedMesh(pCreateMgr, "Resource//3D//Player//Mesh//Player.meshinfo");
 
 	CCubeMesh *pBoundingBoxMesh = new CCubeMesh(pCreateMgr,
-		CONVERT_PaperUnit_to_InG(2.0f), CONVERT_PaperUnit_to_InG(1.0f), CONVERT_PaperUnit_to_InG(10.0f),
-		0, 0, -CONVERT_PaperUnit_to_InG(6.5f));
+		CONVERT_PaperUnit_to_InG(3.6f), CONVERT_PaperUnit_to_InG(1.8f), CONVERT_PaperUnit_to_InG(18.0f),
+		0, 0, -CONVERT_PaperUnit_to_InG(11.7f));
 
 	CSkeleton *pWin = new CSkeleton("Resource//3D//Player//Animation//Player_Win.aniinfo");
 	CSkeleton *pDefeat = new CSkeleton("Resource//3D//Player//Animation//Player_Defeat.aniinfo");
@@ -444,8 +444,8 @@ void CPlayerShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pConte
 	}
 
 	pPlayerMesh->SetBoundingBox(
-		XMFLOAT3(0.0f, 0.0f, -CONVERT_PaperUnit_to_InG(6.5f)),
-		XMFLOAT3(CONVERT_PaperUnit_to_InG(1.0f), CONVERT_PaperUnit_to_InG(1.0f), CONVERT_PaperUnit_to_InG(5.0f)));
+		XMFLOAT3(0.0f, 0.0f, -CONVERT_PaperUnit_to_InG(11.7f)),
+		XMFLOAT3(CONVERT_PaperUnit_to_InG(1.8f), CONVERT_PaperUnit_to_InG(1.8f), CONVERT_PaperUnit_to_InG(9.0f)));
 
 	int i = 0;
 	UINT incrementSize{ pCreateMgr->GetCbvSrvDescriptorIncrementSize() };
@@ -464,7 +464,7 @@ void CPlayerShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pConte
 			pRotatingObject->SetMaterial(pCubeMaterial);
 #endif
 			pPlayer->SetBoundingMesh(pBoundingBoxMesh);
-			pPlayer->SetCollisionSize(CONVERT_PaperUnit_to_InG(3));
+			pPlayer->SetCollisionSize(CONVERT_PaperUnit_to_InG(5.4f));
 
 			pPlayer->CBaseObject::SetPosition(500.0f + (z * 9000.0f), 0.0f, 2000.0f + (x * 1000.0f));
 			if (z == 1) {
