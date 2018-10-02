@@ -89,4 +89,5 @@ protected: // º¯¼ö
 	shared_ptr<CFSMMgr> m_pFSMMgr;
 	shared_ptr<CEffectMgr> m_pEffectMgr;
 
+	bool m_bDataPrepared{ false };
 };

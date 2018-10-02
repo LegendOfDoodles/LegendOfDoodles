@@ -12,7 +12,7 @@
 /// 목적: 미니언 관리 및 그리기 용도
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-09-11
+/// 최종 수정 날짜: 2018-10-01
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -53,7 +53,7 @@ void CMinionShader::Initialize(void *pContext)
 void CMinionShader::AnimateObjects(float timeElapsed)
 {
 	// 리스트에서 제거할 조건 함수
-	static auto removeFunc = [this](CCollisionObject* obj) {
+	auto removeFunc = [this](CCollisionObject* obj) {
 		if (obj->GetState() == StatesType::Remove)
 		{
 			ResetPossibleIndex(obj->GetIndex());
@@ -90,7 +90,7 @@ void CMinionShader::AnimateObjects(float timeElapsed)
 		if (m_curSpawnCount >= 20)
 		{
 			m_bSpawning = false;
-			//m_neverSpawn = true;
+			m_neverSpawn = true;
 		}
 	}
 
@@ -300,8 +300,6 @@ int CMinionShader::GetPossibleIndex()
 
 void CMinionShader::SpawnMinion()
 {
-	static bool dataPrepared{ false };
-
 	static CSkeleton SIdle("Resource//3D//Minion//Animation//Sword//Minion_S_Idle.aniinfo");
 	static CSkeleton SAtk1("Resource//3D//Minion//Animation//Sword//Minion_S_Attack1.aniinfo");
 	static CSkeleton SAtk2("Resource//3D//Minion//Animation//Sword//Minion_S_Attack2.aniinfo");
@@ -324,9 +322,9 @@ void CMinionShader::SpawnMinion()
 
 	static CSkeleton Die("Resource//3D//Minion//Animation//Minion_Die.aniinfo");
 
-	if (!dataPrepared)
+	if (!m_bDataPrepared)
 	{
-		dataPrepared = true;
+		m_bDataPrepared = true;
 		return;
 	}
 

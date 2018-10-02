@@ -10,7 +10,7 @@
 /// 목적: 프레임워크 클래스
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-18
+/// 최종 수정 날짜: 2018-10-01
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -84,8 +84,11 @@ LRESULT CALLBACK CFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMessageI
 		if(m_pScene) m_pScene->OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
 		break;
 	case WM_KEYDOWN:
+		if (m_pScene) m_pScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
+		break;
 	case WM_KEYUP:
-		if(m_pScene) m_pScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
+		if (wParam == VK_F11) m_pCreateMgr->ChangeScreenMode();
+		else if(m_pScene) m_pScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
 		break;
 	}
 	return 0;
@@ -133,14 +136,20 @@ void CFramework::ChangeDoneScene()
 		}
 		else if (m_pScene->GetCurSceneType() == SceneType::GameScene)
 		{
-			
+			ChangeSceneByType(SceneType::RoomScene);
 		}
 	}
 }
 
 void CFramework::ChangeSceneByType(SceneType type)
 {
-	if (m_pScene) m_pScene->Finalize();
+	SceneType preType{ SceneType::BaseScene };
+
+	if (m_pScene)
+	{
+		preType = m_pScene->GetCurSceneType();
+		m_pScene->Finalize();
+	}
 
 	if (type == SceneType::LogoScene)
 	{
@@ -152,7 +161,13 @@ void CFramework::ChangeSceneByType(SceneType type)
 	}
 	else if (type == SceneType::RoomScene)
 	{
-		if (m_pNetwork->Initialize(m_hWnd))
+		if (preType == SceneType::GameScene)
+		{
+			m_pNetwork->ResetGameData();
+			m_pScene = shared_ptr<CRoomScene>(new CRoomScene());
+			m_pNetwork->SetRoomScene(m_pScene);
+		}
+		else if (m_pNetwork->Initialize(m_hWnd))
 		{
 			m_pLoadingScene->SetNetworkToShader(m_pNetwork);
 			m_pScene = shared_ptr<CRoomScene>(new CRoomScene());

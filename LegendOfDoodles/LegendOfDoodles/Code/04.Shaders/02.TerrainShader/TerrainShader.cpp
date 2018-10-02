@@ -6,7 +6,7 @@
 /// 목적: 지형 출력용 Shader
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-14
+/// 최종 수정 날짜: 2018-10-01
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@ void CTerrainShader::ReleaseUploadBuffers()
 void CTerrainShader::UpdateShaderVariables(int opt)
 {
 	UNREFERENCED_PARAMETER(opt);
-	static CB_GAMEOBJECT_INFO *pMappedObject = (CB_GAMEOBJECT_INFO *)(m_pMappedObjects);
+	CB_GAMEOBJECT_INFO *pMappedObject = (CB_GAMEOBJECT_INFO *)(m_pMappedObjects);
 
 	XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
 		XMMatrixTranspose(XMLoadFloat4x4(m_pTerrain->GetWorldMatrix())));

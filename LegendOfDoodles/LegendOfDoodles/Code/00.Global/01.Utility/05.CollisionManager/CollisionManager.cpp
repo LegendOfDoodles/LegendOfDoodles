@@ -10,7 +10,7 @@ CCollisionManager::CCollisionManager()
 
 void CCollisionManager::GameOver(TeamType type)
 {
-	m_GameOver = true;
+	m_gameFinished = true;
 
 	if (type == TeamType::Blue) {
 		m_Winner = TeamType::Red;
@@ -20,12 +20,14 @@ void CCollisionManager::GameOver(TeamType type)
 	}
 	for (auto i = m_lstColliders.begin(); i != m_lstColliders.end(); ++i)
 	{
-		(*i)->GameOver();
-		if ((*i)->GetTeam() == m_Winner) {
+		if ((*i)->GetTeam() == m_Winner) 
+		{
 			(*i)->SetState(StatesType::Win);
 		}
 		else
+		{
 			(*i)->SetState(StatesType::Defeat);
+		}
 	}
 }
 
@@ -77,7 +79,7 @@ void CCollisionManager::AddPlayerCollider(CCollisionObject * pcol)
 
 void CCollisionManager::Update(shared_ptr<CWayFinder> pWayFinder)
 {
-	if (m_Winner == TeamType::None)
+	if (!m_gameFinished)
 	{
 		int cnt = 0;
 		m_lstColliders.remove_if([](CCollisionObject* obj) { return obj->GetState() == States::Die; });
@@ -200,7 +202,7 @@ void CCollisionManager::Update(shared_ptr<CWayFinder> pWayFinder)
 // typeSecterForm data1 = 거리, data2 = 각도
 void CCollisionManager::RequestCollide(CollisionType type, CCollisionObject * pCol, float data1, float data2, float damage)
 {
-	if (m_Winner == TeamType::None)
+	if (!m_gameFinished)
 	{
 		switch (type)
 		{
@@ -295,7 +297,7 @@ void CCollisionManager::RequestCollide(CollisionType type, CCollisionObject * pC
 
 CCollisionObject* CCollisionManager::RequestNearObject(CCollisionObject * pCol, float lengh, TeamType type, bool player)
 {
-	if (m_Winner != TeamType::None) return NULL;
+	if (m_gameFinished) return NULL;
 
 	CCollisionObject* nearObject{ NULL };
 	float nearDistance = 0;
@@ -338,7 +340,7 @@ CCollisionObject* CCollisionManager::RequestNearObject(CCollisionObject * pCol, 
 
 CCollisionObject * CCollisionManager::RequestObjectByTag(short tag)
 {
-	if (m_Winner != TeamType::None) return NULL;
+	if (m_gameFinished) return NULL;
 
 	for (auto i = m_lstColliders.begin(); i != m_lstColliders.end(); ++i)
 	{
@@ -352,7 +354,7 @@ CCollisionObject * CCollisionManager::RequestObjectByTag(short tag)
 
 CCollisionObject * CCollisionManager::RequestNeutralByTag(short tag)
 {
-	if (m_Winner != TeamType::None) return NULL;
+	if (m_gameFinished) return NULL;
 
 	for (auto i = m_neutralList.begin(); i != m_neutralList.end(); ++i)
 	{
@@ -366,7 +368,7 @@ CCollisionObject * CCollisionManager::RequestNeutralByTag(short tag)
 
 CCollisionObject * CCollisionManager::RequestPlayerByTag(short tag)
 {
-	if (m_Winner != TeamType::None) return NULL;
+	if (m_gameFinished) return NULL;
 
 	for (auto i = m_playerList.begin(); i != m_playerList.end(); ++i)
 	{

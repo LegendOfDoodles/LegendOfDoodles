@@ -6,7 +6,7 @@
 /// 목적: ShadowMap 생성용 카메라
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-07-04
+/// 최종 수정 날짜: 2018-10-01
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -59,7 +59,7 @@ void CLightCamera::Initialize(shared_ptr<CCreateMgr> pCreateMgr)
 
 void CLightCamera::UpdateShaderVariables(int rootSignatureIndex)
 {
-	static VS_CB_LIGHT_CAMERA_INFO *pMappedCamera = (VS_CB_LIGHT_CAMERA_INFO *)(m_pMappedCamera);
+	VS_CB_LIGHT_CAMERA_INFO *pMappedCamera = (VS_CB_LIGHT_CAMERA_INFO *)(m_pMappedCamera);
 
 	XMStoreFloat4x4(&pMappedCamera->m_xmf4x4View, XMMatrixTranspose(XMLoadFloat4x4(&m_xmf4x4View)));
 	XMStoreFloat4x4(&pMappedCamera->m_xmf4x4Projection, XMMatrixTranspose(XMLoadFloat4x4(&m_xmf4x4Projection)));

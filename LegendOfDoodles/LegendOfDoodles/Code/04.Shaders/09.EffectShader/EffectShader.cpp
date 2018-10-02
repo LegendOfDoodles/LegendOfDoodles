@@ -8,7 +8,7 @@
 /// 목적: Effect 그리기 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  이용선, 김나단
-/// 최종 수정 날짜: 2018-08-23
+/// 최종 수정 날짜: 2018-10-01
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -94,7 +94,7 @@ void CEffectShader::UpdateShaderVariables(int opt)
 void CEffectShader::AnimateObjects(float timeElapsed)
 {
 	// 리스트에서 제거할 조건 함수
-	static auto removeFunc = [this](CCollisionObject* obj) {
+	auto removeFunc = [this](CCollisionObject* obj) {
 		if (obj->GetState() == StatesType::Remove)
 		{
 			ResetPossibleIndex(obj->GetIndex());

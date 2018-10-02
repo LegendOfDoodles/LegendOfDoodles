@@ -4,7 +4,7 @@
 /// 목적: 메크로 연산을 모아 보기쉽고 처리하기 쉽게 한다.
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-11
+/// 최종 수정 날짜: 2018-10-01
 /// </summary>
 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
@@ -58,6 +58,8 @@
 
 #define COOLTIME_HP_SYNC 0.3f
 
+#define TIME_GAME_FINISH 5.f
+
 // 높이(Height) 관련
 #define REVISE_HEIGHT 100.0f
 #define REVISE_HEIGHT_FOR_OBJECT REVISE_HEIGHT + 7.0f
@@ -78,6 +80,7 @@
 #define MAX_PLAYER_ARROW_ATK 30
 #define MAX_PLAYER_MAGIC_ATK 30
 #define MAX_PLAYER_SKILL 4
+#define LIMIT_FIND_PATH 10000
 
 // 최대 최소
 #define MAX_QSKILL 4

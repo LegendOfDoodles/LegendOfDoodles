@@ -39,7 +39,7 @@
 /// 목적: 기본 씬, 인터페이스 용
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-17
+/// 최종 수정 날짜: 2018-10-01
 /// </summary>
 
 #define UI_Shader m_ppShaders[8]
@@ -103,7 +103,7 @@ void CGameScene::ReleaseUploadBuffers()
 
 void CGameScene::ProcessInput()
 {
-	if (m_pCollisionManager->IsGameOver()) return;
+	if (m_pNetwork->m_gameFinished) return;
 
 	UCHAR pKeyBuffer[256];
 
@@ -119,6 +119,8 @@ void CGameScene::ProcessInput()
 
 void CGameScene::AnimateObjects(float timeElapsed)
 {
+	if (m_pNetwork->m_gameFinished) m_exitTimeChecker -= timeElapsed;
+
 	m_pCamera->Update(timeElapsed);
 
 	UpdateShaderVariables();
@@ -235,6 +237,13 @@ void CGameScene::UpdateShadowCamera(int renderStage)
 	{
 		m_pLightCamera->UpdateShaderVariables(6);
 	}
+}
+
+bool CGameScene::IsSceneDone()
+{
+	if (!m_pNetwork->m_gameFinished) return false;
+	if (m_exitTimeChecker > 0) return false;
+	return true;
 }
 
 void CGameScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID,
@@ -689,7 +698,7 @@ void CGameScene::PickObjectPointedByCursor(WPARAM wParam, LPARAM lParam)
 
 void CGameScene::GenerateLayEndWorldPosition(XMFLOAT3& pickPosition, XMFLOAT4X4&	 xmf4x4View)
 {
-	if (m_pCollisionManager->IsGameOver()) return;
+	if (m_pNetwork->m_gameFinished) return;
 	if (!m_pMyPlayer || m_pMyPlayer->GetState() == States::Die || m_pMyPlayer->GetState() == States::Remove) return;
 
 	XMFLOAT4X4  inverseArr = Matrix4x4::Inverse(xmf4x4View);
