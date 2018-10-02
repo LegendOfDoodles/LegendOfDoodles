@@ -241,7 +241,10 @@ Path *CWayFinder::GetPathToPosition(const XMFLOAT2 &source, const XMFLOAT2 &targ
 	else
 	{
 		// 길찾기 수행
-		m_pCurSearch = shared_ptr<CAstar>(new CAstar(shared_from_this(), srcIndex, dstIndex));
+		do
+		{
+			m_pCurSearch = shared_ptr<CAstar>(new CAstar(shared_from_this(), srcIndex, dstIndex));
+		} while (!m_pCurSearch);
 
 		States::ProcessStates result;
 		for (int i = 0; i < LIMIT_FIND_PATH; ++i)
