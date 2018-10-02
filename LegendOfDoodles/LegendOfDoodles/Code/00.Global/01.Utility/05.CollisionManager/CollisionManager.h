@@ -62,14 +62,11 @@ protected:
 
 	TeamType m_Winner{ TeamType::None };
 	TeamType m_User{ TeamType::Blue };
-	NodeMap** m_BlueSight;
+	NodeMap** m_Sight;
 	NodeMap** m_RedSight;
 	float nodeSize{0};
 	XMFLOAT2 nodeWH;
 	int Fow[NODE_WIDTH][NODE_HEIGHT];
-
-	int BlueFow[NODE_WIDTH][NODE_HEIGHT];
-	int RedFow[NODE_WIDTH][NODE_HEIGHT];
 
 	shared_ptr<CEffectMgr> m_pEffectMgr;
 	
