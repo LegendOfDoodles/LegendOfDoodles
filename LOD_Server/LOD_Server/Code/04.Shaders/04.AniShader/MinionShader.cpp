@@ -317,8 +317,6 @@ void CMinionShader::SpawnMinion()
 	static CSkeleton MWalk("Resource//3D//Minion//Animation//Magic//Minion_M_Walk.aniinfo");
 	static CSkeleton MDie("Resource//3D//Minion//Animation//Magic//Minion_M_Die.aniinfo");
 
-	static CSkeleton Die("Resource//3D//Minion//Animation//Minion_Die.aniinfo");
-
 	if (!m_bDataPrepared)
 	{
 		m_bDataPrepared = true;

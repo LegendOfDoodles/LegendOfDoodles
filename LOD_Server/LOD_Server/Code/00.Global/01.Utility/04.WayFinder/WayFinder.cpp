@@ -95,8 +95,8 @@ bool CWayFinder::CanGoDirectly(const XMFLOAT2 & source, const XMFLOAT2 & target)
 
 	// 해당 방향으로 조금씩 이동하면서 주변에 충돌하는 경우가 발생하는지 파악하여 충돌이 없으면 진행 가능으로 판단한다.
 	XMFLOAT2 toTarget{ Vector2::Subtract(target, source, true) };
-	XMFLOAT2 addVal{ Vector2::ScalarProduct(toTarget, NODE_SIZE) };
-	XMFLOAT2 curPos = Vector2::Add(source, addVal);
+	XMFLOAT2 addVal{ Vector2::ScalarProduct(toTarget, addingValue) };
+	XMFLOAT2 curPos{ source };
 
 	do
 	{
@@ -109,7 +109,7 @@ bool CWayFinder::CanGoDirectly(const XMFLOAT2 & source, const XMFLOAT2 & target)
 			if (m_pCollisionMapImage->GetCollision(curPos.x + checker, curPos.y + checker)) return false;
 		}
 		curPos = Vector2::Add(curPos, addVal);
-	} while (Vector2::DistanceSquare(curPos, target) > NODE_SIZE_SQR);
+	} while (Vector2::DistanceSquare(curPos, target) > addingValue * addingValue);
 	return true;
 }
 
@@ -125,8 +125,8 @@ XMFLOAT2 CWayFinder::GetClosestNotCollidePos(const XMFLOAT2 & source, const XMFL
 
 	// 해당 방향으로 조금씩 이동하면서 주변에 충돌하는 경우가 발생하는지 파악하여 충돌이 없으면 진행 가능으로 판단한다.
 	XMFLOAT2 toTarget{ Vector2::Subtract(target, source, true) };
-	XMFLOAT2 addVal{ Vector2::ScalarProduct(toTarget, NODE_SIZE) };
-	XMFLOAT2 curPos = source;
+	XMFLOAT2 addVal{ Vector2::ScalarProduct(toTarget, addingValue) };
+	XMFLOAT2 curPos{ source };
 
 	do
 	{
@@ -145,7 +145,7 @@ XMFLOAT2 CWayFinder::GetClosestNotCollidePos(const XMFLOAT2 & source, const XMFL
 			}
 		}
 		curPos = Vector2::Add(curPos, addVal);
-	} while (Vector2::DistanceSquare(curPos, target) > NODE_SIZE_SQR);
+	} while (Vector2::DistanceSquare(curPos, target) > addingValue * addingValue);
 	return target;
 }
 
