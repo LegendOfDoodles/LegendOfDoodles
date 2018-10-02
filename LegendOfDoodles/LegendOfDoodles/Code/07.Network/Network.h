@@ -37,6 +37,7 @@ public:
 	int		m_minon_index;
 
 	bool m_gameFinished{ false };
+	bool m_gameLoaded{ false };
 
 	CardType m_EachCardType[MAX_USER];
 	float m_EachPlayerLoadPercentage[MAX_USER];

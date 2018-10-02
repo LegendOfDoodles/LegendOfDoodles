@@ -23,6 +23,8 @@ public: // 공개 함수
 
 	virtual void LevelUP(int level) { level; }
 
+	virtual void SpawnEvationEffect(EvationType type) { type; }
+
 	virtual void PlayIdle(float timeElapsed) { timeElapsed; }
 	virtual void PlayWalk(float timeElapsed, shared_ptr<CWayFinder> pWayFinder) { timeElapsed; pWayFinder; }
 	virtual void PlayChase(float timeElapsed, shared_ptr<CWayFinder> pWayFinder) { timeElapsed; pWayFinder; }

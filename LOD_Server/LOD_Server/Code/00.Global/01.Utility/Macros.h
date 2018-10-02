@@ -56,7 +56,7 @@
 
 #define TIME_ACTIVATE_RECOVERY 10.0f
 
-#define COOLTIME_HP_SYNC 0.3f
+#define COOLTIME_HP_SYNC 0.4f
 
 #define TIME_GAME_FINISH 5.f
 

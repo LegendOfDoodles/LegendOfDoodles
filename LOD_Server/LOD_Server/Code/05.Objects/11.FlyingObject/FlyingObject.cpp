@@ -158,7 +158,7 @@ void CFlyingObject::SetFlyingObjectsType(FlyingObjectType type)
 		m_attackRange = CONVERT_PaperUnit_to_InG(5);
 		m_distance = 0.0f;
 		m_maxDistance = CONVERT_PaperUnit_to_InG(54);
-		m_speed = CONVERT_cm_to_InG(2.805f);
+		m_speed = CONVERT_cm_to_InG(4.2075f);
 	}
 	else if (type == FlyingObjectType::Minion_Arrow)
 	{
@@ -166,14 +166,14 @@ void CFlyingObject::SetFlyingObjectsType(FlyingObjectType type)
 		m_distance = 0.0f;
 		m_EffectTriger = true;
 		m_maxDistance = CONVERT_PaperUnit_to_InG(39);
-		m_speed = CONVERT_cm_to_InG(7.355f);
+		m_speed = CONVERT_cm_to_InG(11.0325f);
 	}
 	else if (type == FlyingObjectType::Minion_Magic)
 	{
 		m_attackRange = CONVERT_PaperUnit_to_InG(2.5f);
 		m_distance = 0.0f;
 		m_maxDistance = CONVERT_PaperUnit_to_InG(31.2f);
-		m_speed = CONVERT_cm_to_InG(4.93f);
+		m_speed = CONVERT_cm_to_InG(7.395f);
 	}
 	else if (type == FlyingObjectType::BlueTower_Attack)
 	{
@@ -194,14 +194,14 @@ void CFlyingObject::SetFlyingObjectsType(FlyingObjectType type)
 		m_EffectTriger = true;
 		m_SoundTrigier = true;
 		m_maxDistance = CONVERT_PaperUnit_to_InG(72);
-		m_speed = CONVERT_cm_to_InG(8.67f);
+		m_speed = CONVERT_cm_to_InG(13.005f);
 	}
 	else if (type == FlyingObjectType::Player_MagicSkill_Q)
 	{
 		m_attackRange = CONVERT_PaperUnit_to_InG(15);
 		m_distance = 0.0f;
 		m_maxDistance = CONVERT_PaperUnit_to_InG(64.8f);
-		m_speed = CONVERT_cm_to_InG(6.13f);
+		m_speed = CONVERT_cm_to_InG(9.195f);
 	}
 	else if (type == FlyingObjectType::Player_ArrowSkill_Q)
 	{
@@ -209,7 +209,7 @@ void CFlyingObject::SetFlyingObjectsType(FlyingObjectType type)
 		m_distance = 0.0f;
 		m_SoundTrigier = true;
 		m_maxDistance = CONVERT_PaperUnit_to_InG(57.6f);
-		m_speed = CONVERT_cm_to_InG(5.79f);
+		m_speed = CONVERT_cm_to_InG(8.685f);
 	}
 	else if (type == FlyingObjectType::Player_ArrowSkill_W)
 	{
@@ -217,7 +217,7 @@ void CFlyingObject::SetFlyingObjectsType(FlyingObjectType type)
 		m_distance = 0.0f;
 		m_SoundTrigier = true;
 		m_maxDistance = CONVERT_PaperUnit_to_InG(90);
-		m_speed = CONVERT_cm_to_InG(5.305f);
+		m_speed = CONVERT_cm_to_InG(7.9575f);
 	}
 	else if (type == FlyingObjectType::Player_ArrowSkill_E)
 	{
@@ -225,7 +225,7 @@ void CFlyingObject::SetFlyingObjectsType(FlyingObjectType type)
 		m_distance = 0.0f;
 		m_EffectTriger = true;
 		m_maxDistance = CONVERT_PaperUnit_to_InG(144);
-		m_speed = CONVERT_cm_to_InG(7.22f);
+		m_speed = CONVERT_cm_to_InG(10.83f);
 	}
 	else if (type == FlyingObjectType::Player_ArrowSkill_R)
 	{
@@ -233,7 +233,7 @@ void CFlyingObject::SetFlyingObjectsType(FlyingObjectType type)
 		m_distance = 0.0f;
 		m_SoundTrigier = true;
 		m_maxDistance = CONVERT_PaperUnit_to_InG(72);
-		m_speed = CONVERT_cm_to_InG(18.7f);
+		m_speed = CONVERT_cm_to_InG(28.05f);
 	}
 	else if (type == FlyingObjectType::Player_MagicSkill_R)
 	{
@@ -247,7 +247,7 @@ void CFlyingObject::SetFlyingObjectsType(FlyingObjectType type)
 		m_distance = 0.0f;
 		m_EffectTriger = true;
 		m_maxDistance = CONVERT_PaperUnit_to_InG(64.8f);
-		m_speed = CONVERT_cm_to_InG(7.72f);
+		m_speed = CONVERT_cm_to_InG(11.58f);
 	}
 }
 

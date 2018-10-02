@@ -32,7 +32,7 @@ public:
 	CCollisionObject* RequestNeutralByTag(short tag);
 	CCollisionObject* RequestPlayerByTag(short tag);
 	~CCollisionManager();
-	int(*GetFoW(TeamType type))[NODE_HEIGHT];
+	int(*GetFoW())[NODE_HEIGHT];
 
 	void SetMyTeam(TeamType team) { m_User = team; }
 	
@@ -54,7 +54,7 @@ protected:
 			return false;
 	}
 
-	void SearchSight(int startX, int startY, int dir, int slength, TeamType team);
+	void SearchSight(int startX, int startY, int dir, int slength);
 
 
 protected:

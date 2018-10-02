@@ -73,20 +73,20 @@ void CNetwork::ProcessPacket(char *ptr)
 			if (id != NONE) {
 				m_myid = id;
 			}
-			m_pRoomScene->GetShader(2)->SetPlayerConnectedStatus(my_packet->PlayerConnectStatus);
+			m_pRoomScene->GetShader(1)->SetPlayerConnectedStatus(my_packet->PlayerConnectStatus);
 			break;
 		}
 		case SC_PERMIT_CHANGE_SEAT:
 		{
 			SC_Msg_Permit_Change_Seat* SeatChangePacket{ reinterpret_cast<SC_Msg_Permit_Change_Seat*>(ptr) };
-			m_pRoomScene->GetShader(2)->ApplyChangeSeat(SeatChangePacket->Pre_id, SeatChangePacket->Permit_id);
+			m_pRoomScene->GetShader(1)->ApplyChangeSeat(SeatChangePacket->Pre_id, SeatChangePacket->Permit_id);
 			m_myid = SeatChangePacket->Permit_id;
 			break;
 		}
 		case SC_GAME_START:
 		{
 			m_gameFinished = false;
-			m_pRoomScene->GetShader(1)->StartGame();
+			m_pRoomScene->GetShader(2)->StartGame();
 			break;
 		}
 		case SC_CANT_JOIN:
@@ -111,7 +111,7 @@ void CNetwork::ProcessPacket(char *ptr)
 		}*/
 		case SC_POS:
 		{
-			if (!m_ppPlayer) break;
+			if (!m_gameLoaded) break;
 
 			SC_Msg_Pos_Character *my_packet = reinterpret_cast<SC_Msg_Pos_Character *>(ptr);
 			int id = my_packet->Character_id;
@@ -176,6 +176,8 @@ void CNetwork::ProcessPacket(char *ptr)
 		
 		case SC_POS_MONSTER:
 		{
+			if (!m_gameLoaded) break;
+
 			SC_Msg_Pos_Neutrality* my_packet = reinterpret_cast<SC_Msg_Pos_Neutrality*>(ptr);
 			CCollisionObject* Monster{ m_pColManager->RequestNeutralByTag(my_packet->Monster_Tag) };
 			if ( Monster && Monster->GetUpdateTime() <= my_packet->updatetime )
@@ -211,6 +213,8 @@ void CNetwork::ProcessPacket(char *ptr)
 		}
 		case SC_POS_MINION:
 		{
+			if (!m_gameLoaded) break;
+
 			SC_Msg_Pos_Minion* my_packet = reinterpret_cast<SC_Msg_Pos_Minion*>(ptr);
 		
 			CCollisionObject* Minion{ m_pColManager->RequestObjectByTag(my_packet->Minion_Tag) };
@@ -368,6 +372,8 @@ void CNetwork::ProcessPacket(char *ptr)
 		}
 		case SC_COOLTIME:
 		{
+			if (!m_gameLoaded) break;
+
 			SC_Msg_Cooltime_Percent* my_packet = reinterpret_cast<SC_Msg_Cooltime_Percent*>(ptr);
 			CCollisionObject* Player{ m_pColManager->RequestPlayerByTag(my_packet->Target_Tag) };
 			if (Player)
@@ -413,6 +419,8 @@ void CNetwork::ProcessPacket(char *ptr)
 		}
 		case SC_SYNC_TIME:
 		{
+			if (!m_gameLoaded) break;
+
 			SC_Msg_Sync_Time* my_packet = reinterpret_cast<SC_Msg_Sync_Time*>(ptr);
 			m_pNumberShader->SyncTime(my_packet->Game_Time);
 			break;
@@ -441,6 +449,13 @@ void CNetwork::ProcessPacket(char *ptr)
 			{
 				Player->GetPlayerStatus()->RSkillRange = my_packet->Changed_Range;
 			}
+			break;
+		}
+		case SC_NOTIFY_EVATION:
+		{
+			SC_Notify_Evation* my_packet = reinterpret_cast<SC_Notify_Evation*>(ptr);
+			CCollisionObject* Player{ m_pColManager->RequestPlayerByTag(my_packet->Player_Tag) };
+			Player->SpawnEvationEffect((EvationType)my_packet->Evation_Type);
 			break;
 		}
 		default:
@@ -528,6 +543,8 @@ void CNetwork::ResetGameData()
 	m_pMinionShader = NULL;
 	m_pNumberShader = NULL;
 	m_ppNexusTower = NULL;
+
+	m_gameLoaded = false;
 }
 
 
@@ -541,6 +558,8 @@ void CNetwork::PrepareData()
 	p.size = sizeof(p);
 	p.type = CS_PREPARE_DATA;
 	SendPacket(&p);
+
+	m_gameLoaded = true;
 }
 //
 //void  CNetwork::err_display(char* msg)

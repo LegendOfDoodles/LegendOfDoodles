@@ -20,8 +20,8 @@ CRoider::CRoider() : CAnimatedObject()
 	m_speed = CONVERT_cm_to_InG(5.8266f);
 
 	m_StatusInfo.HP = m_StatusInfo.maxHP = 440.0f;
-	m_StatusInfo.Def = 30.0f;
-	m_StatusInfo.Atk = 80.0f;
+	m_StatusInfo.Def = 6.0f;
+	m_StatusInfo.Atk = 40.0f;
 	m_StatusInfo.Exp = 640;
 
 	m_attackRange = CONVERT_PaperUnit_to_InG(28.8f);

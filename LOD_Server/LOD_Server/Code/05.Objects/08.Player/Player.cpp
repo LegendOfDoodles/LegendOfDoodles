@@ -426,12 +426,16 @@ void CPlayer::Respawn()
 
 void CPlayer::ApplyExp(UINT addExp)
 {
+	bool levelUp{ false };
+
 	// 경험치 처리
 	m_StatusInfo.Exp += addExp;
 
 	// 레벨업이 가능한 만큼 레벨업 처리
 	while (m_StatusInfo.Exp >= m_StatusInfo.MaxExp)
 	{
+		levelUp = true;
+
 		m_StatusInfo.Level++;
 		m_StatusInfo.Exp -= m_StatusInfo.MaxExp;
 
@@ -472,7 +476,10 @@ void CPlayer::ApplyExp(UINT addExp)
 			m_StatusInfo.Atk += INCREASE_SWORD_PLAYER_ATK;
 			m_StatusInfo.Def += INCREASE_STAFF_PLAYER_DEF;
 		}
+	}
 
+	if (levelUp)
+	{
 		// 클라이언트에 레벨업 패킷 전송
 		SC_Msg_Level_Up p;
 		p.Target_Tag = (short)m_tag;
@@ -506,15 +513,40 @@ void CPlayer::ReceiveDamage(float damage, CCollisionObject * pCol)
 	float evationAbsorbChecker{ RandInRange(0.f, 1.f) };
 	if (evationAbsorbChecker < m_StatusInfo.EvationRate)
 	{
-		// Warning! 회피 처리 -> 이펙트 생성 요청 패킷 전송
+		if (m_hpSyncCoolTime > COOLTIME_HP_SYNC)
+		{
+			SC_Notify_Evation p;
+			p.size = sizeof(p);
+			p.type = SC_NOTIFY_EVATION;
+			p.Player_Tag = (short)m_tag;
+			p.Evation_Type = (BYTE)EvationType::Evation;
+			for (int j = 0; j < MAX_USER; ++j) {
+				if (g_clients[j].m_isconnected == true) {
+					SendPacket(j, &p);
+				}
+			}
+		}
 	}
 	else if (evationAbsorbChecker < m_StatusInfo.AbsorptionRate)
 	{
-		// Warning! 흡수 처리 -> 이펙트 생성 요청 패킷 전송
 		m_StatusInfo.HP += damage * Compute_Defence(m_StatusInfo.Def) * m_StatusInfo.AbsorptionAmount;
 		// 흡수 이후 HP량 최대값 넘지 않도록 조정
 		if (m_StatusInfo.HP > m_StatusInfo.maxHP)
 			m_StatusInfo.HP = m_StatusInfo.maxHP;
+
+		if (m_hpSyncCoolTime > COOLTIME_HP_SYNC)
+		{
+			SC_Notify_Evation p;
+			p.size = sizeof(p);
+			p.type = SC_NOTIFY_EVATION;
+			p.Player_Tag = (short)m_tag;
+			p.Evation_Type = (BYTE)EvationType::Absorbtion;
+			for (int j = 0; j < MAX_USER; ++j) {
+				if (g_clients[j].m_isconnected == true) {
+					SendPacket(j, &p);
+				}
+			}
+		}
 	}
 	else
 	{

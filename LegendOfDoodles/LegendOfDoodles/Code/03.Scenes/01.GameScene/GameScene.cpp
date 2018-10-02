@@ -133,7 +133,7 @@ void CGameScene::AnimateObjects(float timeElapsed)
 	if (m_pCollisionManager) {
 		m_pCollisionManager->Update(m_pWayFinder);
 
-		int(*fow)[NODE_HEIGHT] = m_pCollisionManager->GetFoW(m_pMyPlayer->GetTeam());
+		int(*fow)[NODE_HEIGHT] = m_pCollisionManager->GetFoW();
 		for (int i = 0; i < NODE_WIDTH; ++i)
 			for (int j = 0; j < NODE_HEIGHT; ++j)
 			{

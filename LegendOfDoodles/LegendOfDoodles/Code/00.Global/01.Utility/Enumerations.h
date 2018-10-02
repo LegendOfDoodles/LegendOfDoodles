@@ -7,6 +7,12 @@
 /// 최종 수정 날짜: 2018-10-02
 /// </summary>
 
+enum EvationType
+{
+	Evation,
+	Absorbtion
+};
+
 enum SceneType
 {
 	BaseScene,

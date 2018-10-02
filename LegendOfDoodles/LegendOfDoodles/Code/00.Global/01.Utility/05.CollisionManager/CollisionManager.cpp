@@ -152,7 +152,7 @@ void CCollisionManager::Update(shared_ptr<CWayFinder> pWayFinder)
 			for (int j = 0; j < NODE_HEIGHT; ++j) {
 				if (Fow[i][j] != 0) {
 					for (int dir = 0; dir < 8; ++dir) {
-						SearchSight(i, j, dir, Fow[i][j], Blue);
+						SearchSight(i, j, dir, Fow[i][j]);
 					}
 				}
 			}
@@ -385,7 +385,7 @@ CCollisionObject * CCollisionManager::RequestPlayerByTag(short tag)
 	2 ¤± 6
 	3 4  5
 */
-void CCollisionManager::SearchSight(int startX, int startY, int dir, int slength, TeamType team)
+void CCollisionManager::SearchSight(int startX, int startY, int dir, int slength)
 {
 	XMFLOAT2 result;
 	XMFLOAT2 direction;
@@ -505,7 +505,7 @@ CCollisionManager::~CCollisionManager()
 	}
 }
 
-int(*CCollisionManager::GetFoW(TeamType type))[NODE_HEIGHT]
+int(*CCollisionManager::GetFoW())[NODE_HEIGHT]
 {
 	for (int i = 0; i < NODE_WIDTH; ++i) {
 		for (int j = 0; j < NODE_HEIGHT; ++j) {

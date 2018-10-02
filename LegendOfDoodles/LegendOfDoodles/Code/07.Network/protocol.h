@@ -298,6 +298,12 @@ struct SC_Apply_Percentage : public Packet
 	float Percentage;
 };
 
+struct SC_Notify_Evation : public Packet
+{
+	short Player_Tag;
+	BYTE Evation_Type;
+};
+
 #pragma pack(pop)
 
 #define MAX_BUFF_SIZE 4000
@@ -327,6 +333,7 @@ struct SC_Apply_Percentage : public Packet
 #define SC_GAME_START			  11
 #define SC_CANT_JOIN			  12
 #define SC_APPLY_PERCENTAGE		  13
+#define SC_NOTIFY_EVATION		  14
 
 #define SC_CONNECT_PLAYER		  101
 #define SC_PUT_PLAYER			  102

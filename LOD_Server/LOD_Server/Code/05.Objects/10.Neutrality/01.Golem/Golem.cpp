@@ -22,7 +22,7 @@ CGolem::CGolem() : CAnimatedObject()
 	m_speed = CONVERT_cm_to_InG(7.682f);
 
 	m_StatusInfo.HP = m_StatusInfo.maxHP = 955.0f;
-	m_StatusInfo.Def = 90.0f;
+	m_StatusInfo.Def = 30.0f;
 	m_StatusInfo.Atk = 240.0f;
 	m_StatusInfo.Exp = 7680;
 

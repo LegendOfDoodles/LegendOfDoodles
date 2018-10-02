@@ -481,6 +481,18 @@ void CPlayer::LevelUP(int level)
 	}
 }
 
+void CPlayer::SpawnEvationEffect(EvationType type)
+{
+	if (type == EvationType::Evation)
+	{
+		m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), 30, EffectObjectType::Miss_Effect);
+	}
+	else if (type == EvationType::Absorbtion)
+	{
+		m_pEffectMgr->RequestSpawn(GetPosition(), GetLook(), 30, EffectObjectType::Absorption_Effect);
+	}
+}
+
 void CPlayer::ReceiveSpecial(BYTE idx,  SpecialType type, bool myid)
 {
 	m_StatusInfo.Special[idx] = type;

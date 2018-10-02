@@ -10,12 +10,12 @@
 /// 목적: 로딩 신 처리용 클래스
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-20
+/// 최종 수정 날짜: 2018-10-02
 /// </summary>
 
 #define RoomScreenShader m_ppShaders[0]
-#define RoomButtonsShader m_ppShaders[1]
-#define RoomCardsShader m_ppShaders[2]
+#define RoomCardsShader m_ppShaders[1]
+#define RoomButtonsShader m_ppShaders[2]
 
 ////////////////////////////////////////////////////////////////////////
 // 생성자, 소멸자
@@ -71,14 +71,14 @@ void CRoomScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	m_ppShaders = new CShader*[m_nShaders];
 
 	RoomScreenShader = new CRoomScreenShader(pCreateMgr);
-	RoomButtonsShader = new CRoomButtonsShader(pCreateMgr);
 	RoomCardsShader = new CRoomCardShader(pCreateMgr);
+	RoomButtonsShader = new CRoomButtonsShader(pCreateMgr);
 
 	for (int i = 0; i < m_nShaders; ++i)
 	{
 		m_ppShaders[i]->Initialize(pCreateMgr);
 	}
 
-	RoomButtonsShader->SetNetwork(m_pNetwork);
 	RoomCardsShader->SetNetwork(m_pNetwork);
+	RoomButtonsShader->SetNetwork(m_pNetwork);
 }
