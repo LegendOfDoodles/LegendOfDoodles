@@ -16,7 +16,7 @@ CRoider::CRoider() : CAnimatedObject()
 	m_ObjectType = ObjectType::Roider;
 
 	m_sightRange = CONVERT_PaperUnit_to_InG(80.0f);
-	m_detectRange = CONVERT_PaperUnit_to_InG(40.0f);
+	m_detectRange = CONVERT_PaperUnit_to_InG(80.0f);
 	m_speed = CONVERT_cm_to_InG(5.8266f);
 
 	m_StatusInfo.HP = m_StatusInfo.maxHP = 440.0f;

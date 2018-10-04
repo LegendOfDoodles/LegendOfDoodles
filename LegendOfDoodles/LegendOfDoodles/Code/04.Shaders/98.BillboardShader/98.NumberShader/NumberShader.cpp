@@ -119,6 +119,10 @@ void CNumberShader::SyncTime(float serverTime)
 void CNumberShader::ApplyKill(CCollisionObject * pKiller)
 {
 	pKiller->GetPlayerStatus()->Kill++;
+	
+	if (m_ppPlayers[m_pNetwork->m_myid] == pKiller)
+		m_ppPlayers[m_pNetwork->m_myid]->GetEffectManager()->RequestSpawn(XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, 0), 30, EffectObjectType::Kill_Effect);
+
 
 	int nKill{ 0 };
 	int nBlueTeam{ 0 };
@@ -206,6 +210,9 @@ void CNumberShader::ApplyDeath(CCollisionObject * pDumber)
 {
 	pDumber->SetState(StatesType::Die);
 	pDumber->GetPlayerStatus()->Death++;
+
+	if (m_ppPlayers[m_pNetwork->m_myid] == pDumber)
+		m_ppPlayers[m_pNetwork->m_myid]->GetEffectManager()->RequestSpawn(XMFLOAT3(0,0,0), XMFLOAT3(0,0,0), 30, EffectObjectType::Death_Effect);
 
 	int nDeath{ 0 };
 	for (int j = 0; j < m_nObjects; j++)

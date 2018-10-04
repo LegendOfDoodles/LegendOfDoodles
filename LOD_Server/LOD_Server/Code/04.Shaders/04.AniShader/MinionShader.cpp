@@ -12,7 +12,7 @@
 /// 목적: 미니언 관리 및 그리기 용도
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-10-02
+/// 최종 수정 날짜: 2018-10-04
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -84,7 +84,7 @@ void CMinionShader::AnimateObjects(float timeElapsed)
 			}
 			m_preSpawnTime = m_spawnTime;
 		}
-		if (m_curSpawnCount >= 5)
+		if (m_curSpawnCount >= 20)
 		{
 			m_bSpawning = false;
 			//m_neverSpawn = true;

@@ -13,7 +13,7 @@
 CMinion::CMinion() : CAnimatedObject()
 {
 	m_sightRange = CONVERT_PaperUnit_to_InG(80.0f);
-	m_detectRange = CONVERT_PaperUnit_to_InG(40.0f);
+	m_detectRange = CONVERT_PaperUnit_to_InG(80.0f);
 	m_speed = CONVERT_cm_to_InG(2.3465f);
 }
 
