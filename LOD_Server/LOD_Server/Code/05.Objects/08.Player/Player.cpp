@@ -551,7 +551,6 @@ void CPlayer::ReceiveDamage(float damage, CCollisionObject * pCol)
 	else
 	{
 		m_StatusInfo.HP -= damage * Compute_Defence(m_StatusInfo.Def);
-		printf("¸ÂÀ½    %f %f\n", m_StatusInfo.HP, m_StatusInfo.maxHP);
 	}
 
 	if (m_StatusInfo.HP <= 0)
