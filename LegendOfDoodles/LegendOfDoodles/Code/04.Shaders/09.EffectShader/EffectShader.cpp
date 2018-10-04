@@ -602,14 +602,14 @@ void CEffectShader::SpawnEffectObject(const XMFLOAT3 & position, const XMFLOAT3 
 		// Text Effect
 		else if (objectType == EffectObjectType::Kill_Effect)
 		{
-			m_ppObjects[idx]->SetMesh(0, m_ppMesh[3]);
+			m_ppObjects[idx]->SetMesh(0, m_ppMesh[7]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + (CONVERT_PaperUnit_to_InG(3)), position.z));
 			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[7].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4] + UseMatrialNumToObjectCnt[5] + UseMatrialNumToObjectCnt[6]))));
 			m_Kill_EffectList.emplace_back(m_ppObjects[idx]);
 		}
 		else if (objectType == EffectObjectType::Death_Effect)
 		{
-			m_ppObjects[idx]->SetMesh(0, m_ppMesh[3]);
+			m_ppObjects[idx]->SetMesh(0, m_ppMesh[7]);
 			m_ppObjects[idx]->SetPosition(XMFLOAT3(position.x, position.y + (CONVERT_PaperUnit_to_InG(3)), position.z));
 			m_ppObjects[idx]->SetCbvGPUDescriptorHandlePtr(m_pcbvGPUDescriptorStartHandle[7].ptr + (m_srvIncrementSize * (idx - (UseMatrialNumToObjectCnt[0] + UseMatrialNumToObjectCnt[1] + UseMatrialNumToObjectCnt[2] + UseMatrialNumToObjectCnt[3] + UseMatrialNumToObjectCnt[4] + UseMatrialNumToObjectCnt[5] + UseMatrialNumToObjectCnt[6]))));
 			m_Death_EffectList.emplace_back(m_ppObjects[idx]);

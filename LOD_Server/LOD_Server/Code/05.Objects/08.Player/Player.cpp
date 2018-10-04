@@ -6,7 +6,7 @@
 /// 목적: 플레이어 관리 클래스
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-10-02
+/// 최종 수정 날짜: 2018-10-04
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -551,6 +551,7 @@ void CPlayer::ReceiveDamage(float damage, CCollisionObject * pCol)
 	else
 	{
 		m_StatusInfo.HP -= damage * Compute_Defence(m_StatusInfo.Def);
+		printf("맞음    %f %f\n", m_StatusInfo.HP, m_StatusInfo.maxHP);
 	}
 
 	if (m_StatusInfo.HP <= 0)
@@ -608,7 +609,7 @@ void CPlayer::ChangeWeapon(UINT weaponNum, ObjectType type)
 	m_StatusInfo.Weapon = weaponNum;
 	m_ObjectType = type;
 
-	UINT adjLevel{ 3 - m_StatusInfo.Level };	// 무기 변경 레벨은 2이므로 보정 값을 찾는다.
+	int adjLevel{ abs(static_cast<int>(3 - m_StatusInfo.Level)) };	// 무기 변경 레벨은 2이므로 보정 값을 찾는다.
 
 	if (type == ObjectType::SwordPlayer)
 	{

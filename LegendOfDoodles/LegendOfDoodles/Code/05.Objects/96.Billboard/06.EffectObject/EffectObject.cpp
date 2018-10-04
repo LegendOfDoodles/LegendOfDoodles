@@ -268,8 +268,8 @@ void CEffectObject::Animate(float timeElapsed)
 		// Kill And Dead Effect Position Test
 		XMFLOAT3 newPos{ 0, 0, 0 };
 
-		UpVectorMoveWeight = 80.f;
-		RightVectorMoveWeight = (FRAME_BUFFER_WIDTH / 1280.f);
+		UpVectorMoveWeight = 120.f;
+		RightVectorMoveWeight = 0.f;
 
 		newPos = Vector3::Add(m_pCamera->GetPosition(), Vector3::ScalarProduct(m_pCamera->GetLookVector(), 200.f));
 		newPos = Vector3::Add(Vector3::Add(newPos, Vector3::ScalarProduct(m_pCamera->GetUpVector(), UpVectorMoveWeight)), Vector3::ScalarProduct(m_pCamera->GetRightVector(), RightVectorMoveWeight));
@@ -293,8 +293,8 @@ void CEffectObject::Animate(float timeElapsed)
 		// Kill And Dead Effect Position Test
 		XMFLOAT3 newPos{ 0, 0, 0 };
 
-		UpVectorMoveWeight = 80.f;
-		RightVectorMoveWeight = (FRAME_BUFFER_WIDTH / 1280.f);
+		UpVectorMoveWeight = 120.f;
+		RightVectorMoveWeight = 0.f;
 
 		newPos = Vector3::Add(m_pCamera->GetPosition(), Vector3::ScalarProduct(m_pCamera->GetLookVector(), 200.f));
 		newPos = Vector3::Add(Vector3::Add(newPos, Vector3::ScalarProduct(m_pCamera->GetUpVector(), UpVectorMoveWeight)), Vector3::ScalarProduct(m_pCamera->GetRightVector(), RightVectorMoveWeight));
@@ -351,6 +351,7 @@ void CEffectObject::Animate(float timeElapsed)
 void CEffectObject::Render(CCamera * pCamera, UINT istanceCnt)
 {
 	OnPrepareRender();
+	if (!IsVisible(pCamera)) return;
 
 	if (m_pMaterial)
 	{

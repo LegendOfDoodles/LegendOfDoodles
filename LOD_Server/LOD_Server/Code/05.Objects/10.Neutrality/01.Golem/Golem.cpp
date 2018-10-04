@@ -18,7 +18,7 @@ CGolem::CGolem() : CAnimatedObject()
 	m_ObjectType = ObjectType::GOLEM;
 
 	m_sightRange = CONVERT_PaperUnit_to_InG(100.0f);
-	m_detectRange = CONVERT_PaperUnit_to_InG(80.0f);
+	m_detectRange = CONVERT_PaperUnit_to_InG(100.0f);
 	m_speed = CONVERT_cm_to_InG(7.682f);
 
 	m_StatusInfo.HP = m_StatusInfo.maxHP = 955.0f;
