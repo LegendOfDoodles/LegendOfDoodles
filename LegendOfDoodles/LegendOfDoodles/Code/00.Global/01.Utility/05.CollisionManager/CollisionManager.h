@@ -14,8 +14,6 @@ struct CharacterStatus {
 	}
 };
 
-
-
 class CCollisionManager
 {
 public:
@@ -46,6 +44,8 @@ public:
 	bool IsGameFinished() { return m_gameFinished; }
 
 protected:
+	void SearchSight(int startX, int startY, int dir, int slength);
+
 	bool NearLevel(XMFLOAT2 a, XMFLOAT2 b,bool attack = false) {
 
 		if ((Vector2::Distance(a, b) <15&&!attack)|| (Vector2::Distance(a, b) <20&& attack))
@@ -53,9 +53,6 @@ protected:
 		else
 			return false;
 	}
-
-	void SearchSight(int startX, int startY, int dir, int slength);
-
 
 protected:
 	bool m_gameFinished{ false };

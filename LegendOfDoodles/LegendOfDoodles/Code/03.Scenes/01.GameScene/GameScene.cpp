@@ -39,7 +39,7 @@
 /// 목적: 기본 씬, 인터페이스 용
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-10-01
+/// 최종 수정 날짜: 2018-10-04
 /// </summary>
 
 #define UI_Shader m_ppShaders[8]
@@ -555,6 +555,7 @@ void CGameScene::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr)
 	pPlayerS->SetThrowingManagerToObject(m_pThrowingMgr);
 	pPlayerS->SetEffectManagerToObject(m_pEffectMgr);
 	pPlayerS->SetSoundManagerToObject(m_pSoundManager);
+	pPlayerS->SetWayFinderToObject(m_pWayFinder);
 
 	loadPercentage += 0.01f;
 	pCreateMgr->RenderLoadingScreen(loadPercentage);

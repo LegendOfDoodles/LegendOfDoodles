@@ -10,7 +10,7 @@ struct CharacterStatus {
 	}
 };
 
-
+typedef std::list<CCollisionObject*> CollisionObjectList;
 
 class CCollisionManager
 {
@@ -23,6 +23,12 @@ public:
 	void RequestCollide(CollisionType type, CCollisionObject* pCol, float data1 = 0, float data2 = 0, float damage = 0);
 	CCollisionObject* RequestNearObject(CCollisionObject* pCol, float lengh, TeamType type, bool player = false);
 	void RequestIncreaseExp(CCollisionObject* pCol, float sightRange, TeamType type, UINT exp);
+
+	PlayerInfo* NearFightingValue(CCollisionObject* pCol, TeamType type);
+	XMFLOAT2 GetFrontLinePosition(int line, TeamType type);
+	CollisionObjectList* GetEnemyList(TeamType type);
+	CollisionObjectList* GetTeamList(CCollisionObject* pCol, TeamType type);
+
 	~CCollisionManager();
 	int(*GetFoW(void))[NODE_HEIGHT];
 
@@ -31,6 +37,8 @@ public:
 	float GetnodeSize() { return nodeSize; }
 	
 protected:
+	void SearchSight(int startX, int startY, int dir, int slength, TeamType team);
+
 	bool NearLevel(XMFLOAT2 a, XMFLOAT2 b, bool attack = false) {
 
 		if ((Vector2::Distance(a, b) <15 && !attack) || (Vector2::Distance(a, b) <20 && attack))
@@ -38,9 +46,6 @@ protected:
 		else
 			return false;
 	}
-
-	void SearchSight(int startX, int startY, int dir, int slength, TeamType team);
-
 
 protected:
 	TeamType m_Winner{ TeamType::None };
@@ -52,9 +57,11 @@ protected:
 	int Fow[NODE_WIDTH][NODE_HEIGHT];
 
 
-	std::list<CCollisionObject*> m_lstColliders;
+	CollisionObjectList m_lstColliders;
 
-	std::list<CCollisionObject*> m_lstBlueSight;
-	std::list<CCollisionObject*> m_lstRedSight;
+	CollisionObjectList m_lstBlueSight;
+	CollisionObjectList m_lstRedSight;
+
+	CollisionObjectList m_lstReturn;
 };
 

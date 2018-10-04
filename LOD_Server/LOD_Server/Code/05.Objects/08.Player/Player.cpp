@@ -281,7 +281,7 @@ void CPlayer::MoveToSubDestination(float timeElapsed, shared_ptr<CWayFinder> pWa
 		{
 			XMFLOAT3 myPos{ GetPosition() };
 			XMFLOAT3 enemyPos{ m_pEnemy->GetPosition() };
-			m_availableTime = TIME_AVAILABILITY_CHECK;
+			m_availableTime = TIME_REFRESH_SUB_PATH;
 			ResetSubPath();
 			m_subPath = pWayFinder->GetPathToPosition(
 				myPos,

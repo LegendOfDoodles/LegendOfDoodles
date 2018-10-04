@@ -113,6 +113,8 @@ public: // 공개 함수
 
 	virtual void AttackEnemy() {};
 
+	virtual void SetWayFinder(shared_ptr<CWayFinder> pWayFinder) { pWayFinder; }
+
 protected: // 내부 함수
 
 protected: // 변수

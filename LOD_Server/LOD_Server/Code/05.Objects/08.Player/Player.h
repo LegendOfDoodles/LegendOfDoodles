@@ -52,6 +52,9 @@ public:	// 외부 함수
 	UINT GetWeaponType() { return m_StatusInfo.Weapon; }
 	UINT GetWeaponNum() { return m_StatusInfo.WeaponNum; }
 
+	virtual void PrepareData() {}
+	virtual void SetPathes(Path* pathes) { pathes; }
+
 protected: // 내부 함수
 	virtual void AdjustAnimationIndex();
 

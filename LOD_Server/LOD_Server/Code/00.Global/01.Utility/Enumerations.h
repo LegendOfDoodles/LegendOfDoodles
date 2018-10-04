@@ -4,7 +4,7 @@
 /// 목적: 여러 지점에서 사용할 나열형 데이터를 통합 관리한다.
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-10-02
+/// 최종 수정 날짜: 2018-10-04
 /// </summary>
 
 enum EvationType
@@ -19,16 +19,18 @@ enum SceneType
 	RoomScene
 };
 
-enum CardType
+enum PlayerLine
 {
-	Blue_Player_Deactive,
-	Blue_AI_Deactive,
-	Red_Player_Deactive,
-	Red_AI_Deactive,
-	Blue_Player,
-	Blue_AI,
-	Red_Player,
-	Red_AI
+	TopLine,
+	BottomLine
+};
+
+enum PlayerAIActions
+{
+	Push_Line,
+	Attack_Player,
+	Fall_Back,
+	Support_Line
 };
 
 namespace States

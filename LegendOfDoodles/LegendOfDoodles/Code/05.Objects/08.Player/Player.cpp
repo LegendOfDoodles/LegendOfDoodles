@@ -6,7 +6,7 @@
 /// 목적: 플레이어 관리 클래스
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-10-02
+/// 최종 수정 날짜: 2018-10-04
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -313,7 +313,7 @@ void CPlayer::MoveToSubDestination(float timeElapsed, shared_ptr<CWayFinder> pWa
 		{
 			XMFLOAT3 myPos{ GetPosition() };
 			XMFLOAT3 enemyPos{ m_pEnemy->GetPosition() };
-			m_availableTime = TIME_AVAILABILITY_CHECK;
+			m_availableTime = TIME_REFRESH_SUB_PATH;
 			ResetSubPath();
 			m_subPath = pWayFinder->GetPathToPosition(
 				myPos,

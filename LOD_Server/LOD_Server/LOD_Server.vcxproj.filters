@@ -138,6 +138,9 @@
     <Filter Include="소스 파일\03.Scenes\01.GameScene">
       <UniqueIdentifier>{d36d1ebb-968b-460e-81ee-bdfe6b0c5798}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\05.Objects\08.Player\01.PlayerAI">
+      <UniqueIdentifier>{2c15bb27-d5b2-44a3-bcbd-0d485ff877a7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource\Resource.h">
@@ -260,6 +263,9 @@
     <ClInclude Include="Code\03.Scenes\01.GameScene\GameScene.h">
       <Filter>소스 파일\03.Scenes\01.GameScene</Filter>
     </ClInclude>
+    <ClInclude Include="Code\05.Objects\08.Player\01.PlayerAI\PlayerAI.h">
+      <Filter>소스 파일\05.Objects\08.Player\01.PlayerAI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resource\LOD_Server.ico">
@@ -379,6 +385,9 @@
     </ClCompile>
     <ClCompile Include="Code\03.Scenes\01.GameScene\GameScene.cpp">
       <Filter>소스 파일\03.Scenes\01.GameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\05.Objects\08.Player\01.PlayerAI\PlayerAI.cpp">
+      <Filter>소스 파일\05.Objects\08.Player\01.PlayerAI</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

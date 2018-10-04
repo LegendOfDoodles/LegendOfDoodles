@@ -348,6 +348,9 @@
     <Filter Include="소스 파일\04.Shaders\96.SpritesShader\01.LoadingShader\03.LoadingCardShader">
       <UniqueIdentifier>{ed4bb178-a822-4ec1-a453-97d933cc87a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\05.Objects\08.Player\01.PlayerAI">
+      <UniqueIdentifier>{e7763aa2-3b6c-4419-8ae8-985da871d036}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\00.Global\00.Standard\stdafx.h">
@@ -653,6 +656,9 @@
     <ClInclude Include="Code\04.Shaders\96.SpritesShader\01.LoadingShader\03.LoadingCardShader\LoadingCardShader.h">
       <Filter>소스 파일\04.Shaders\96.SpritesShader\01.LoadingShader\03.LoadingCardShader</Filter>
     </ClInclude>
+    <ClInclude Include="Code\05.Objects\08.Player\01.PlayerAI\PlayerAI.h">
+      <Filter>소스 파일\05.Objects\08.Player\01.PlayerAI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\00.Global\00.Standard\stdafx.cpp">
@@ -936,6 +942,9 @@
     </ClCompile>
     <ClCompile Include="Code\04.Shaders\96.SpritesShader\01.LoadingShader\03.LoadingCardShader\LoadingCardShader.cpp">
       <Filter>소스 파일\04.Shaders\96.SpritesShader\01.LoadingShader\03.LoadingCardShader</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\05.Objects\08.Player\01.PlayerAI\PlayerAI.cpp">
+      <Filter>소스 파일\05.Objects\08.Player\01.PlayerAI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

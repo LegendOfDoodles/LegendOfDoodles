@@ -73,6 +73,8 @@ public: // 공개 함수
 	virtual void ApplyChangeSeat(int preId, int curId) { preId; curId; }
 	virtual void SetPlayerConnectedStatus(bool status[]) { status; };
 
+	virtual void SetWayFinderToObject(shared_ptr<CWayFinder> pWayFinder) { pWayFinder; }
+
 protected: // 내부 함수
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
 	virtual D3D12_RASTERIZER_DESC CreateRasterizerState();

@@ -4,7 +4,7 @@
 /// 목적: 메크로 연산을 모아 보기쉽고 처리하기 쉽게 한다.
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-10-02
+/// 최종 수정 날짜: 2018-10-04
 /// </summary>
 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
@@ -52,7 +52,7 @@
 #define TERRAIN_COLLISION_SCALE XMFLOAT3(TERRAIN_SIZE_WIDTH / TETRRAIN_COLLISION_WIDTH, 1.4f, TERRAIN_SIZE_HEIGHT / TETRRAIN_COLLISION_HEIGHT)
 
 // 시간(Time) 관련
-#define TIME_AVAILABILITY_CHECK 1.5f	// subPath가 유효한 시간
+#define TIME_REFRESH_SUB_PATH 1.5f	// subPath가 유효한 시간
 #define TIME_ACTIVATE_CHECK 3.0f	// 중립 몬스터가 대기 상태로 돌아가는 시간
 #define TIME_ACTIVATE_CHECK_GOLEM 10.0f	// 중립 몬스터가 대기 상태로 돌아가는 시간
 
@@ -60,6 +60,8 @@
 
 #define TIME_LOGO_SHOW 2.f
 #define TIME_GAME_FINISH 5.f
+
+#define TIME_REFRESH_ACTION 2.f
 
 // 높이(Height) 관련
 #define REVISE_HEIGHT 100.0f
