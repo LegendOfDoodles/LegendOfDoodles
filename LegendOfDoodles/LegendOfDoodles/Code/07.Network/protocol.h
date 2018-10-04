@@ -287,18 +287,6 @@ struct SC_Msg_Connect_Player : public Packet
 	bool PlayerReadyStatus[4];
 };
 
-struct CS_Notify_Percentage : public Packet
-{
-	BYTE Character_id;
-	float Percentage;
-};
-
-struct SC_Apply_Percentage : public Packet
-{
-	BYTE Character_id;
-	float Percentage;
-};
-
 struct SC_Notify_Evation : public Packet
 {
 	short Player_Tag;
@@ -338,10 +326,9 @@ struct SC_Notify_Player_Ready : public Packet
 #define SC_PERMIT_CHANGE_SEAT		  10
 #define SC_GAME_START				  11
 #define SC_CANT_JOIN				  12
-#define SC_APPLY_PERCENTAGE			  13
-#define SC_NOTIFY_EVATION			  14
-#define SC_NOTIFY_PLAYER_READY		  15
-#define SC_NOTIFY_PLAYER_CANCEL_READY 16
+#define SC_NOTIFY_EVATION			  13
+#define SC_NOTIFY_PLAYER_READY		  14
+#define SC_NOTIFY_PLAYER_CANCEL_READY 15
 
 #define SC_CONNECT_PLAYER			  101
 #define SC_PUT_PLAYER				  102
@@ -380,9 +367,8 @@ struct SC_Notify_Player_Ready : public Packet
 #define CS_PREPARE_DATA				  206
 #define CS_PLAYER_READY				  207
 #define CS_DEMAND_CHANGE_SEAT		  208
-#define CS_NOTIFY_PERCENTAGE		  209
-#define CS_REQUEST_LEVEL_UP			  210
-#define CS_PLAYER_CANCEL_READY		  211
+#define CS_REQUEST_LEVEL_UP			  209
+#define CS_PLAYER_CANCEL_READY		  210
 
 
 

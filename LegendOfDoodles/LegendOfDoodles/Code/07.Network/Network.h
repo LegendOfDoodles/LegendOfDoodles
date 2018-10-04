@@ -40,7 +40,6 @@ public:
 	bool m_gameLoaded{ false };
 
 	CardType m_EachCardType[MAX_USER];
-	float m_EachPlayerLoadPercentage[MAX_USER];
 	bool m_EachPlayerReadyState[MAX_USER];
 
 protected:
@@ -65,7 +64,6 @@ public:
 	void Finalize();
 	void ReadPacket();
 	void SendPacket(void *ptr);
-	void ReadyToLoad();
 
 	void ResetGameData();
 	//void err_display(void* msg);

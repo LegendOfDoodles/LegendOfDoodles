@@ -29,5 +29,6 @@ protected: // 내부 함수
 
 protected: // 변수
 	CBaseObject *m_pLoadingBar{ NULL };
+	float m_loadPercentage{ 0.f };
 };
 

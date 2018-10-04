@@ -89,11 +89,9 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT_DEFAULT PSLoadingCards(VS_TEXTURED_OUTPUT inpu
 {
     PS_MULTIPLE_RENDER_TARGETS_OUTPUT_DEFAULT output;
 
-    uint curImage = int(CurrentHP / 2);
-    float percentage = clamp(CurrentHP - curImage * 2, 0, 1);
-    int cardType = floor(percentage + input.uv.y);
+    uint curImage = int(CurrentHP);
 
-    float2 newUV = float2(input.uv.x / 2.f + 0.5f * cardType, input.uv.y);
+    float2 newUV = float2(input.uv.x / 2.f + 0.5f, input.uv.y);
 
     output.color = gtxtTextures.Sample(wrapSampler, float3(newUV, curImage));
     output.normal = float4(0, 0, 0, 0);

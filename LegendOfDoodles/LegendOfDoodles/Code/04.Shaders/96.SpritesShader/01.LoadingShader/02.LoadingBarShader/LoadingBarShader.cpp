@@ -8,7 +8,7 @@
 /// 목적: 로딩 바 출력용 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-27
+/// 최종 수정 날짜: 2018-10-04
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ void CLoadingBarShader::UpdateShaderVariables(int opt)
 
 	XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
 		XMMatrixTranspose(XMLoadFloat4x4(m_pLoadingBar->GetWorldMatrix())));
-	pMappedObject->m_percentage = m_pNetwork->m_EachPlayerLoadPercentage[m_pNetwork->m_myid];
+	pMappedObject->m_percentage = m_loadPercentage;
 }
 
 void CLoadingBarShader::Render(CCamera * pCamera)
@@ -57,14 +57,7 @@ void CLoadingBarShader::Render(CCamera * pCamera)
 
 void CLoadingBarShader::ApplyPercentage(float pct)
 {
-	m_pNetwork->m_EachPlayerLoadPercentage[m_pNetwork->m_myid] = pct;
-
-	CS_Notify_Percentage p;
-	p.Character_id = (BYTE)m_pNetwork->m_myid;
-	p.Percentage = m_pNetwork->m_EachPlayerLoadPercentage[m_pNetwork->m_myid];
-	p.size = sizeof(p);
-	p.type = CS_NOTIFY_PERCENTAGE;
-	m_pNetwork->SendPacket(&p);
+	m_loadPercentage = pct;
 }
 
 ////////////////////////////////////////////////////////////////////////

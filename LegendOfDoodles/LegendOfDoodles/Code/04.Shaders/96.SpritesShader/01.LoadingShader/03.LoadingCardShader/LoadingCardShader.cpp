@@ -8,7 +8,7 @@
 /// 목적: 로딩 바 출력용 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-27
+/// 최종 수정 날짜: 2018-10-04
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ void CLoadingCardShader::UpdateShaderVariables(int opt)
 
 		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
 			XMMatrixTranspose(XMLoadFloat4x4(m_LoadingCards[i]->GetWorldMatrix())));
-		pMappedObject->m_percentage = (float)m_pNetwork->m_EachCardType[i] * 2 + m_pNetwork->m_EachPlayerLoadPercentage[i];
+		pMappedObject->m_percentage = (float)m_pNetwork->m_EachCardType[i];
 	}
 }
 

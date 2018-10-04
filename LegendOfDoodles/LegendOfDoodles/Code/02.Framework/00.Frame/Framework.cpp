@@ -180,7 +180,6 @@ void CFramework::ChangeSceneByType(SceneType type)
 	}
 	else if (type == SceneType::GameScene)
 	{
-		m_pNetwork->ReadyToLoad();
 		m_pScene = shared_ptr<CGameScene>(new CGameScene());
 	}
 
