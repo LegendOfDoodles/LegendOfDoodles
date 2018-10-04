@@ -33,7 +33,7 @@ public:
 	char	m_packet_buffer[MAX_BUFF_SIZE];
 	DWORD	m_in_packet_size = 0;
 	int		m_saved_packet_size = 0;
-	int		m_myid;
+	int		m_myid{ NONE };
 	int		m_minon_index;
 
 	bool m_gameFinished{ false };
@@ -41,6 +41,7 @@ public:
 
 	CardType m_EachCardType[MAX_USER];
 	float m_EachPlayerLoadPercentage[MAX_USER];
+	bool m_EachPlayerReadyState[MAX_USER];
 
 protected:
 	HWND m_hWnd;

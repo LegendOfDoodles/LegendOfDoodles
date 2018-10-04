@@ -74,9 +74,9 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT_DEFAULT PSCards(VS_TEXTURED_OUTPUT input)
 {
     PS_MULTIPLE_RENDER_TARGETS_OUTPUT_DEFAULT output;
 
-    int curImage = floor(CurrentHP + 0.5f);
-
-    float2 newUV = float2(input.uv.x / 2.f + 0.5f, input.uv.y);
+    int curImage = floor(CurrentHP / 2);
+    float curState = clamp(CurrentHP - curImage * 2, 0, 1);
+    float2 newUV = float2(input.uv.x / 2.f + 0.5f * curState, input.uv.y);
 
     output.color = gtxtTextures.Sample(wrapSampler, float3(newUV, curImage));
     output.normal = float4(0, 0, 0, 0);

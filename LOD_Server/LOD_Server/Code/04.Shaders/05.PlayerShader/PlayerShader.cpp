@@ -10,7 +10,7 @@
 /// 목적: 플레이어 관리 및 렌더링 용도
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-10-02
+/// 최종 수정 날짜: 2018-10-04
 /// </summary>
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -121,7 +121,6 @@ void CPlayerShader::BuildObjects(void *pContext)
 
 	for (int x = 0; x < m_nObjects / 2; ++x) {
 		for (int z = 0; z < m_nObjects / 2; ++z) {
-
 			pPlayer = new CPlayer();
 
 			pPlayer->SetType(ObjectType::StickPlayer);
@@ -130,8 +129,8 @@ void CPlayerShader::BuildObjects(void *pContext)
 #endif
 			pPlayer->SetCollisionSize(CONVERT_PaperUnit_to_InG(5.4f));
 
-			pPlayer->CBaseObject::SetPosition(500.0f + (z * 9000.0f), 0.0f, 2000.0f + (x * 1000.0f));
-			if (z == 1) {
+			pPlayer->CBaseObject::SetPosition(500.0f + (x * 9000.0f), 0.0f, 2000.0f + (z * 1000.0f));
+			if (x == 1) {
 				pPlayer->SetTeam(TeamType::Red);
 			}
 			else

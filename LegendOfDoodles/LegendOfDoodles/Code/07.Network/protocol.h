@@ -284,6 +284,7 @@ struct SC_Msg_Connect_Player : public Packet
 {
 	BYTE Character_id;
 	bool PlayerConnectStatus[4];
+	bool PlayerReadyStatus[4];
 };
 
 struct CS_Notify_Percentage : public Packet
@@ -304,6 +305,11 @@ struct SC_Notify_Evation : public Packet
 	BYTE Evation_Type;
 };
 
+struct SC_Notify_Player_Ready : public Packet
+{
+	BYTE Character_id;
+};
+
 #pragma pack(pop)
 
 #define MAX_BUFF_SIZE 4000
@@ -321,59 +327,62 @@ struct SC_Notify_Evation : public Packet
 
 //enum class Type : BYTE { Connect, Create, Delete, Move, Attack, Hit };
 //Server-> Client
-#define SC_PLAYER_RESPAWN		  1
-#define SC_CHANGE_SIGHT			  2
-#define SC_COOLTIME				  4
-#define SC_CHANGE_SPEED			  5
-#define SC_SET_PLAYER_DEATH		  6
-#define SC_SET_PLAYER_KILL		  7
-#define SC_SYNC_TIME			  8
-#define SC_CHANGE_RANGE			  9
-#define SC_PERMIT_CHANGE_SEAT	  10
-#define SC_GAME_START			  11
-#define SC_CANT_JOIN			  12
-#define SC_APPLY_PERCENTAGE		  13
-#define SC_NOTIFY_EVATION		  14
+#define SC_PLAYER_RESPAWN			  1
+#define SC_CHANGE_SIGHT				  2
+#define SC_COOLTIME					  4
+#define SC_CHANGE_SPEED				  5
+#define SC_SET_PLAYER_DEATH			  6
+#define SC_SET_PLAYER_KILL			  7
+#define SC_SYNC_TIME				  8
+#define SC_CHANGE_RANGE				  9
+#define SC_PERMIT_CHANGE_SEAT		  10
+#define SC_GAME_START				  11
+#define SC_CANT_JOIN				  12
+#define SC_APPLY_PERCENTAGE			  13
+#define SC_NOTIFY_EVATION			  14
+#define SC_NOTIFY_PLAYER_READY		  15
+#define SC_NOTIFY_PLAYER_CANCEL_READY 16
 
-#define SC_CONNECT_PLAYER		  101
-#define SC_PUT_PLAYER			  102
-#define SC_REMOVE_PLAYER		  103
-#define SC_POS					  104
-#define SC_PERMIT_USE_SKILL		  105
-#define SC_POS_MINION			  106
-#define SC_HP_SYNC				  107
-//#define SC_PACKET				  115
-#define SC_CHANGE_TARGET		  108
-#define SC_MINION_SPAWN			  109
-#define SC_MINION_STATE			  110
-#define SC_SET_ENEMY			  111
-#define SC_POS_MONSTER			  112
-#define SC_MONSTER_STATE		  113
-#define SC_MONSTER_CHANGE_TEAM	  114
-#define SC_MONSTER_RESPAWN		  115
-#define SC_MONSTER_SET_ENEMY	  116
-#define SC_BOSS_SET_CURR_ANIM	  117
-#define SC_BOSS_SET_NEXT_ANIM	  118
-#define SC_NEXUS_STATE			  119
-#define SC_BUILDING_SET_ENEMY	  120
-#define SC_GAME_OVER			  121
-#define SC_BUILDING_ATTACK		  122
-#define SC_LEVEL_UP				  124
-#define SC_CHANGE_WEAPON		  125
-#define SC_UPDATE_GOLEM_STAT	  126
-#define SC_SET_ABILITY_POINT      127
+#define SC_CONNECT_PLAYER			  101
+#define SC_PUT_PLAYER				  102
+#define SC_REMOVE_PLAYER			  103
+#define SC_POS						  104
+#define SC_PERMIT_USE_SKILL			  105
+#define SC_POS_MINION				  106
+#define SC_HP_SYNC					  107
+//#define SC_PACKET					  115
+#define SC_CHANGE_TARGET			  108
+#define SC_MINION_SPAWN				  109
+#define SC_MINION_STATE				  110
+#define SC_SET_ENEMY				  111
+#define SC_POS_MONSTER			      112
+#define SC_MONSTER_STATE			  113
+#define SC_MONSTER_CHANGE_TEAM		  114
+#define SC_MONSTER_RESPAWN			  115
+#define SC_MONSTER_SET_ENEMY		  116
+#define SC_BOSS_SET_CURR_ANIM		  117
+#define SC_BOSS_SET_NEXT_ANIM		  118
+#define SC_NEXUS_STATE				  119
+#define SC_BUILDING_SET_ENEMY		  120
+#define SC_GAME_OVER				  121
+#define SC_BUILDING_ATTACK			  122
+#define SC_LEVEL_UP					  124
+#define SC_CHANGE_WEAPON			  125
+#define SC_UPDATE_GOLEM_STAT		  126
+#define SC_SET_ABILITY_POINT		  127
 
 //Client->Server
-#define CS_ACTION				  201
-#define CS_MOVE_PLAYER			  202
-#define CS_DEMAND_USE_SKILL		  203
-#define CS_CHANGE_WEAPON		  204
-#define CS_SET_ABILITY_POINT      205
-#define CS_PREPARE_DATA			  206
-#define CS_PLAYER_READY			  207
-#define CS_DEMAND_CHANGE_SEAT     208
-#define CS_NOTIFY_PERCENTAGE	  209
-#define CS_REQUEST_LEVEL_UP		  210
+#define CS_ACTION					  201
+#define CS_MOVE_PLAYER				  202
+#define CS_DEMAND_USE_SKILL			  203
+#define CS_CHANGE_WEAPON			  204
+#define CS_SET_ABILITY_POINT		  205
+#define CS_PREPARE_DATA				  206
+#define CS_PLAYER_READY				  207
+#define CS_DEMAND_CHANGE_SEAT		  208
+#define CS_NOTIFY_PERCENTAGE		  209
+#define CS_REQUEST_LEVEL_UP			  210
+#define CS_PLAYER_CANCEL_READY		  211
 
 
 

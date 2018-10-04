@@ -8,7 +8,7 @@
 /// 목적: 로딩 바 출력용 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-09-18
+/// 최종 수정 날짜: 2018-10-04
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -51,7 +51,7 @@ void CRoomCardShader::UpdateShaderVariables(int opt)
 
 		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
 			XMMatrixTranspose(XMLoadFloat4x4(m_RoomCards[i]->GetWorldMatrix())));
-		pMappedObject->m_percentage = (float)m_pNetwork->m_EachCardType[i];
+		pMappedObject->m_percentage = (float)m_pNetwork->m_EachCardType[i] * 2 + static_cast<float>(m_pNetwork->m_EachPlayerReadyState[i]);
 	}
 }
 
@@ -84,9 +84,7 @@ bool CRoomCardShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 		{
 			CS_Msg_Demand_Change_Seat p;
 			p.Character_id = (BYTE)m_pNetwork->m_myid;
-			if (i == 0 || i == 3) p.Demand_id = (BYTE)i;
-			else if (i == 1) p.Demand_id = (BYTE)2;
-			else if (i == 2) p.Demand_id = (BYTE)1;
+			p.Demand_id = (BYTE)i;
 			p.size = sizeof(p);
 			p.type = CS_DEMAND_CHANGE_SEAT;
 			m_pNetwork->SendPacket(&p);
@@ -98,32 +96,26 @@ bool CRoomCardShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 
 void CRoomCardShader::ApplyChangeSeat(int preId, int curId)
 {
-	int adjPreId{ preId };
-
-	if (preId == 1) adjPreId = (BYTE)2;
-	else if (preId == 2) adjPreId = (BYTE)1;
-
-	if (m_pNetwork->m_EachCardType[adjPreId] == CardType::Blue_Player)
+	if (m_pNetwork->m_EachCardType[preId] == CardType::Blue_Player)
 	{
-		m_pNetwork->m_EachCardType[adjPreId] = CardType::Blue_AI;
+		m_pNetwork->m_EachCardType[preId] = CardType::Blue_AI;
+		m_pNetwork->m_EachPlayerReadyState[preId] = true;
 	}
-	else if (m_pNetwork->m_EachCardType[adjPreId] == CardType::Red_Player)
+	else if (m_pNetwork->m_EachCardType[preId] == CardType::Red_Player)
 	{
-		m_pNetwork->m_EachCardType[adjPreId] = CardType::Red_AI;
+		m_pNetwork->m_EachCardType[preId] = CardType::Red_AI;
+		m_pNetwork->m_EachPlayerReadyState[preId] = true;
 	}
 
-	int adjCurId{ curId };
-
-	if (curId == 1) adjCurId = (BYTE)2;
-	else if (curId == 2) adjCurId = (BYTE)1;
-
-	if (m_pNetwork->m_EachCardType[adjCurId] == CardType::Blue_AI)
+	if (m_pNetwork->m_EachCardType[curId] == CardType::Blue_AI)
 	{
-		m_pNetwork->m_EachCardType[adjCurId] = CardType::Blue_Player;
+		m_pNetwork->m_EachCardType[curId] = CardType::Blue_Player;
+		m_pNetwork->m_EachPlayerReadyState[curId] = false;
 	}
-	else if (m_pNetwork->m_EachCardType[adjCurId] == CardType::Red_AI)
+	else if (m_pNetwork->m_EachCardType[curId] == CardType::Red_AI)
 	{
-		m_pNetwork->m_EachCardType[adjCurId] = CardType::Red_Player;
+		m_pNetwork->m_EachCardType[curId] = CardType::Red_Player;
+		m_pNetwork->m_EachPlayerReadyState[curId] = false;
 	}
 }
 
@@ -131,20 +123,20 @@ void CRoomCardShader::SetPlayerConnectedStatus(bool status[])
 {
 	for (int i = 0; i < 4; ++i)
 	{
-		int num{ (i == 1) ? 2 : (i == 2) ? 1 : i };
 		if (status[i])
 		{
-			if(num == 0 || num == 1)
-				m_pNetwork->m_EachCardType[num] = CardType::Blue_Player;
+			if(i == 0 || i == 1)
+				m_pNetwork->m_EachCardType[i] = CardType::Blue_Player;
 			else
-				m_pNetwork->m_EachCardType[num] = CardType::Red_Player;
+				m_pNetwork->m_EachCardType[i] = CardType::Red_Player;
 		}
 		else
 		{
-			if (num == 0 || num == 1)
-				m_pNetwork->m_EachCardType[num] = CardType::Blue_AI;
+			if (i == 0 || i == 1)
+				m_pNetwork->m_EachCardType[i] = CardType::Blue_AI;
 			else
-				m_pNetwork->m_EachCardType[num] = CardType::Red_AI;
+				m_pNetwork->m_EachCardType[i] = CardType::Red_AI;
+			m_pNetwork->m_EachPlayerReadyState[i] = true;
 		}
 	}
 }

@@ -8,7 +8,7 @@
 /// 목적: 로딩 바 출력용 쉐이더
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-10-02
+/// 최종 수정 날짜: 2018-10-04
 /// </summary>
 
 #define ReadyButton m_RoomButtons[0]
@@ -84,7 +84,10 @@ bool CRoomButtonsShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 		CS_Msg_Prepare_Data p;
 		p.Character_id = (BYTE)m_pNetwork->m_myid;
 		p.size = sizeof(p);
-		p.type = CS_PLAYER_READY;
+		if(!m_pNetwork->m_EachPlayerReadyState[m_pNetwork->m_myid])
+			p.type = CS_PLAYER_READY;
+		else
+			p.type = CS_PLAYER_CANCEL_READY;
 		m_pNetwork->SendPacket(&p);
 	}
 	else if (ExitButton->IsInRect(FRAME_BUFFER_WIDTH / 3.f, FRAME_BUFFER_HEIGHT / 6.f, cursorPos))

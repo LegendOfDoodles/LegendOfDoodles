@@ -50,8 +50,7 @@ void CLoadingCardShader::UpdateShaderVariables(int opt)
 
 		XMStoreFloat4x4(&pMappedObject->m_xmf4x4World,
 			XMMatrixTranspose(XMLoadFloat4x4(m_LoadingCards[i]->GetWorldMatrix())));
-		int adjId{ (i == 1) ? 2 : (i == 2) ? 1 : i };
-		pMappedObject->m_percentage = (float)m_pNetwork->m_EachCardType[i] * 2 + m_pNetwork->m_EachPlayerLoadPercentage[adjId];
+		pMappedObject->m_percentage = (float)m_pNetwork->m_EachCardType[i] * 2 + m_pNetwork->m_EachPlayerLoadPercentage[i];
 	}
 }
 

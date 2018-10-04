@@ -168,6 +168,15 @@ void ProcessPacket(int id, char *packet)
 		{
 		case CS_PLAYER_READY:
 		{
+			SC_Notify_Player_Ready notifyPacket;
+			notifyPacket.size = sizeof(notifyPacket);
+			notifyPacket.type = SC_NOTIFY_PLAYER_READY;
+			notifyPacket.Character_id = PreparePacket->Character_id;
+			for (int i = 0; i < MAX_USER; ++i) {
+				if (g_clients[i].m_isconnected)
+					SendPacket(i, &notifyPacket);
+			}
+
 			int connectedUserCnt{ 0 };
 			int readyUserCnt{ 0 };
 			g_clients[PreparePacket->Character_id].m_isReady = true;
@@ -200,6 +209,20 @@ void ProcessPacket(int id, char *packet)
 			}
 			break;
 		}
+		case CS_PLAYER_CANCEL_READY:
+		{
+			SC_Notify_Player_Ready notifyPacket;
+			notifyPacket.size = sizeof(notifyPacket);
+			notifyPacket.type = SC_NOTIFY_PLAYER_CANCEL_READY;
+			notifyPacket.Character_id = PreparePacket->Character_id;
+			for (int i = 0; i < MAX_USER; ++i) {
+				if (g_clients[i].m_isconnected)
+					SendPacket(i, &notifyPacket);
+			}
+
+			g_clients[PreparePacket->Character_id].m_isReady = false;
+			break;
+		}
 		case CS_DEMAND_CHANGE_SEAT:
 		{
 			if (g_clients[SeatChangePacket->Demand_id].m_isconnected) break;
@@ -215,6 +238,9 @@ void ProcessPacket(int id, char *packet)
 
 			g_clients[SeatChangePacket->Demand_id].m_prev_packet_size = 0;
 			g_clients[SeatChangePacket->Demand_id].m_packet_size = 0;
+
+			g_clients[SeatChangePacket->Character_id].m_isReady = false;
+			g_clients[SeatChangePacket->Demand_id].m_isReady = false;
 
 			SC_Msg_Permit_Change_Seat p;
 			p.Pre_id = SeatChangePacket->Character_id;
@@ -522,10 +548,16 @@ void accept_thread()	//새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 			for (int i = 0; i < MAX_USER; ++i)
 			{
 				p.PlayerConnectStatus[i] = g_clients[i].m_isconnected;
+				p.PlayerReadyStatus[i] = g_clients[i].m_isReady;
 			}
 			p.size = sizeof(p);
 			p.type = SC_CONNECT_PLAYER;
-			SendPacket(fakeId, &p);
+
+			for (int i = 0; i < MAX_USER; ++i) {
+				if (g_clients[i].m_isconnected) {
+					SendPacket(i, &p);
+				}
+			}
 		}
 		else
 		{

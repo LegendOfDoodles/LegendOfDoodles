@@ -70,8 +70,12 @@ void CNetwork::ProcessPacket(char *ptr)
 		{
 			SC_Msg_Connect_Player *my_packet = reinterpret_cast<SC_Msg_Connect_Player *>(ptr);
 			int id = my_packet->Character_id;
-			if (id != NONE) {
+			if (m_myid == NONE) {
 				m_myid = id;
+			}
+			for (int i = 0; i < MAX_USER; ++i)
+			{
+				m_EachPlayerReadyState[i] = my_packet->PlayerReadyStatus[i];
 			}
 			m_pRoomScene->GetShader(1)->SetPlayerConnectedStatus(my_packet->PlayerConnectStatus);
 			break;
@@ -80,7 +84,10 @@ void CNetwork::ProcessPacket(char *ptr)
 		{
 			SC_Msg_Permit_Change_Seat* SeatChangePacket{ reinterpret_cast<SC_Msg_Permit_Change_Seat*>(ptr) };
 			m_pRoomScene->GetShader(1)->ApplyChangeSeat(SeatChangePacket->Pre_id, SeatChangePacket->Permit_id);
-			m_myid = SeatChangePacket->Permit_id;
+			if (m_myid == SeatChangePacket->Pre_id)
+			{
+				m_myid = SeatChangePacket->Permit_id;
+			}
 			break;
 		}
 		case SC_GAME_START:
@@ -458,6 +465,18 @@ void CNetwork::ProcessPacket(char *ptr)
 			Player->SpawnEvationEffect((EvationType)my_packet->Evation_Type);
 			break;
 		}
+		case SC_NOTIFY_PLAYER_READY:
+		{
+			SC_Notify_Player_Ready* my_packet = reinterpret_cast<SC_Notify_Player_Ready*>(ptr);
+			m_EachPlayerReadyState[my_packet->Character_id] = true;
+			break;
+		}
+		case SC_NOTIFY_PLAYER_CANCEL_READY:
+		{
+			SC_Notify_Player_Ready* my_packet = reinterpret_cast<SC_Notify_Player_Ready*>(ptr);
+			m_EachPlayerReadyState[my_packet->Character_id] = false;
+			break;
+		}
 		default:
 			printf("Unknown PACKET type [%d]\n", ptr[1]);
 			break;
@@ -529,11 +548,10 @@ void CNetwork::ReadyToLoad()
 {
 	for (int i = 0; i < MAX_USER; ++i)
 	{
-		int adjId{ (i == 1) ? 2 : (i == 2) ? 1 : i };
 		if (m_EachCardType[i] == CardType::Blue_Player || m_EachCardType[i] == CardType::Red_Player)
-			m_EachPlayerLoadPercentage[adjId] = 0.f;
+			m_EachPlayerLoadPercentage[i] = 0.f;
 		else
-			m_EachPlayerLoadPercentage[adjId] = 1.f;
+			m_EachPlayerLoadPercentage[i] = 1.f;
 	}
 }
 
