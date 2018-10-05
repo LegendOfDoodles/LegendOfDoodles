@@ -1,8 +1,5 @@
 #pragma once
 #include "04.Shaders/00.BaseShader/Shader.h"
-#include "00.Global/01.Utility/04.WayFinder/01.Edge/Edge.h"
-
-typedef std::list<CPathEdge> Path;
 
 class CMaterial;
 class CHeightMapTerrain;
@@ -34,7 +31,6 @@ public: // 공개 함수
 	void SetThrowingManagerToObject(shared_ptr<CThrowingMgr> manager);
 	void SetEffectManagerToObject(shared_ptr<CEffectMgr> manager);
 	void SetSoundManagerToObject(shared_ptr<CSoundManager> manager);
-	virtual void SetWayFinderToObject(shared_ptr<CWayFinder> pWayFinder);
 
 	virtual void SetChangeWeapon(int id);
 
@@ -53,8 +49,6 @@ protected: // 내부 함수
 	virtual void BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pContext = NULL);
 	virtual void ReleaseObjects();
 
-	void CreatePathes();
-
 protected: // 변수
 
 		   //애니메이션 정보
@@ -69,6 +63,4 @@ protected: // 변수
 
 	bool m_ChangeWeapon{ false };
 	float m_fRecvTime{ 0.f };
-
-	Path m_pathes[4];
 };

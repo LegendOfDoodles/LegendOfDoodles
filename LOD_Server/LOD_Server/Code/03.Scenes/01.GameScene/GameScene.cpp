@@ -16,7 +16,7 @@
 /// 목적: 기본 씬, 인터페이스 용
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-10-04
+/// 최종 수정 날짜: 2018-10-05
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -109,7 +109,6 @@ void CGameScene::BuildObjects()
 	}
 	pPlayerS->SetColManagerToObject(m_pCollisionManager);
 	pPlayerS->SetThrowingManagerToObject(m_pThrowingMgr);
-	pPlayerS->SetWayFinderToObject(m_pWayFinder);
 
 	// 중립 몬스터에 충돌체 부여
 	CNeutralityShader* pNetral = (CNeutralityShader *)m_ppShaders[2];

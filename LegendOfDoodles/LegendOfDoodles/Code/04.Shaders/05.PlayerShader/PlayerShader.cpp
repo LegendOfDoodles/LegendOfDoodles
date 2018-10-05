@@ -13,7 +13,7 @@
 /// 목적: 플레이어 관리 및 렌더링 용도
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-10-04
+/// 최종 수정 날짜: 2018-10-05
 /// </summary>
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -215,17 +215,6 @@ void CPlayerShader::SetSoundManagerToObject(shared_ptr<CSoundManager> manager)
 {
 	for (int i = 0; i < m_nObjects; ++i) {
 		m_ppObjects[i]->SetSoundManager(manager);
-	}
-}
-
-void CPlayerShader::SetWayFinderToObject(shared_ptr<CWayFinder> pWayFinder)
-{
-	if (m_ppObjects)
-	{
-		for (int j = 0; j < m_nObjects; j++)
-		{
-			m_ppObjects[j]->SetWayFinder(pWayFinder);
-		}
 	}
 }
 
@@ -559,21 +548,4 @@ void CPlayerShader::ReleaseObjects()
 		Safe_Delete_Array(m_ppMaterials);
 	}
 #endif
-}
-
-void CPlayerShader::CreatePathes()
-{
-	CTransformImporter transformInporter;
-	transformInporter.LoadMeshData("Resource/Data/Pathes.txt");
-	for (int i = 0, cnt = 0; i < 4; ++i)
-	{
-		m_pathes[i].push_back(CPathEdge(XMFLOAT2(0, 0), XMFLOAT2(CONVERT_Unit_to_InG(transformInporter.m_Transform[cnt].pos.x), CONVERT_Unit_to_InG(transformInporter.m_Transform[cnt].pos.z))));
-		for (int j = 0; j < transformInporter.m_iKindMeshCnt[i] - 1; ++j, ++cnt)
-		{
-			XMFLOAT3 from = transformInporter.m_Transform[cnt].pos;
-			XMFLOAT3 to = transformInporter.m_Transform[cnt + 1].pos;
-			m_pathes[i].push_back(CPathEdge(XMFLOAT2(CONVERT_Unit_to_InG(from.x), CONVERT_Unit_to_InG(from.z)), XMFLOAT2(CONVERT_Unit_to_InG(to.x), CONVERT_Unit_to_InG(to.z))));
-		}
-		++cnt;
-	}
 }

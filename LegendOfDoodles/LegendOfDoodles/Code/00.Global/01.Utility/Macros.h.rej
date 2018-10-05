@@ -1,0 +1,10 @@
+diff a/LegendOfDoodles/LegendOfDoodles/Code/00.Global/01.Utility/Macros.h b/LegendOfDoodles/LegendOfDoodles/Code/00.Global/01.Utility/Macros.h	(rejected hunks)
+@@ -61,6 +61,8 @@
+ #define TIME_LOGO_SHOW 2.f
+ #define TIME_GAME_FINISH 5.f
+ 
++#define TIME_REFRESH_ACTION 2.f
++
+ // ����(Height) ����
+ #define REVISE_HEIGHT 100.0f
+ #define REVISE_HEIGHT_FOR_OBJECT REVISE_HEIGHT + 6.3f

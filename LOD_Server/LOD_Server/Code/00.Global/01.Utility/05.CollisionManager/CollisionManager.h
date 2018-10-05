@@ -24,11 +24,6 @@ public:
 	CCollisionObject* RequestNearObject(CCollisionObject* pCol, float lengh, TeamType type, bool player = false);
 	void RequestIncreaseExp(CCollisionObject* pCol, float sightRange, TeamType type, UINT exp);
 
-	PlayerInfo* NearFightingValue(CCollisionObject* pCol, TeamType type);
-	XMFLOAT2 GetFrontLinePosition(int line, TeamType type);
-	CollisionObjectList* GetEnemyList(TeamType type);
-	CollisionObjectList* GetTeamList(CCollisionObject* pCol, TeamType type);
-
 	~CCollisionManager();
 	int(*GetFoW(void))[NODE_HEIGHT];
 
