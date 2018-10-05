@@ -181,7 +181,6 @@
     <ClInclude Include="Code\05.Objects\03.AnimatedObject\AnimatedObject.h" />
     <ClInclude Include="Code\05.Objects\04.Terrain\HeightMapTerrain.h" />
     <ClInclude Include="Code\05.Objects\06.Minion\Minion.h" />
-    <ClInclude Include="Code\05.Objects\08.Player\01.PlayerAI\PlayerAI.h" />
     <ClInclude Include="Code\05.Objects\08.Player\Player.h" />
     <ClInclude Include="Code\05.Objects\09.NexusTower\NexusTower.h" />
     <ClInclude Include="Code\05.Objects\10.Neutrality\00.Roider\Roider.h" />
@@ -232,7 +231,6 @@
     <ClCompile Include="Code\05.Objects\03.AnimatedObject\AnimatedObject.cpp" />
     <ClCompile Include="Code\05.Objects\04.Terrain\HeightMapTerrain.cpp" />
     <ClCompile Include="Code\05.Objects\06.Minion\Minion.cpp" />
-    <ClCompile Include="Code\05.Objects\08.Player\01.PlayerAI\PlayerAI.cpp" />
     <ClCompile Include="Code\05.Objects\08.Player\Player.cpp" />
     <ClCompile Include="Code\05.Objects\09.NexusTower\NexusTower.cpp" />
     <ClCompile Include="Code\05.Objects\10.Neutrality\00.Roider\Roider.cpp" />

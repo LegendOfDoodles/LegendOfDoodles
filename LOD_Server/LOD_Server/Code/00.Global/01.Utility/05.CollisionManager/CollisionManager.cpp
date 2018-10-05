@@ -278,8 +278,8 @@ CCollisionObject* CCollisionManager::RequestNearObject(CCollisionObject * pCol, 
 		{
 			XMFLOAT2 apos = XMFLOAT2((*i)->GetPosition().x, (*i)->GetPosition().z);
 			XMFLOAT2 bpos = XMFLOAT2(pCol->GetPosition().x, pCol->GetPosition().z);
-			float distance = Vector2::Distance(apos, bpos);
-			if (distance <= lengh)
+			float distance = Vector2::DistanceSquare(apos, bpos);
+			if (distance <= lengh * lengh)
 			{
 				if (!nearObject) {
 					nearDistance = distance;
