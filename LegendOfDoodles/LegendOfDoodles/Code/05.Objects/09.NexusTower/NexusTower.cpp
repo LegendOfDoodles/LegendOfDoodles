@@ -6,7 +6,7 @@
 /// 목적: 넥서스 및 타워 관리 클래스
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-10-02
+/// 최종 수정 날짜: 2018-10-07
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -18,9 +18,9 @@ CNexusTower::CNexusTower(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes) : CColl
 	m_StatusInfo.Def = 100;
 	m_StatusInfo.Exp = 840;
 	m_sightRange = CONVERT_PaperUnit_to_InG(160.0f);
-	m_detectRange = CONVERT_PaperUnit_to_InG(100.0f);
+	m_detectRange = CONVERT_PaperUnit_to_InG(80.0f);
 
-	m_attackRange = CONVERT_PaperUnit_to_InG(100.0f);
+	m_attackRange = CONVERT_PaperUnit_to_InG(80.0f);
 }
 
 CNexusTower::~CNexusTower()

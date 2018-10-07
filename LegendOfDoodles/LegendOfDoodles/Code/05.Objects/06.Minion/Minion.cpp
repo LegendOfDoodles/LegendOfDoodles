@@ -5,7 +5,7 @@
 /// 목적: 미니언 클래스 분할
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-10-04
+/// 최종 수정 날짜: 2018-10-07
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 CMinion::CMinion(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes) : CAnimatedObject(pCreateMgr, nMeshes)
 {
 	m_sightRange = CONVERT_PaperUnit_to_InG(80.0f);
-	m_detectRange = CONVERT_PaperUnit_to_InG(80.0f);
+	m_detectRange = CONVERT_PaperUnit_to_InG(57.0f);
 	m_speed = CONVERT_cm_to_InG(2.3465f);
 }
 

@@ -6,7 +6,7 @@
 /// 목적: 중립 몬스터(로이더) 클래스 분할
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-10-02
+/// 최종 수정 날짜: 2018-10-07
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@ CRoider::CRoider() : CAnimatedObject()
 	m_ObjectType = ObjectType::Roider;
 
 	m_sightRange = CONVERT_PaperUnit_to_InG(80.0f);
-	m_detectRange = CONVERT_PaperUnit_to_InG(80.0f);
+	m_detectRange = CONVERT_PaperUnit_to_InG(68.0f);
 	m_speed = CONVERT_cm_to_InG(5.8266f);
 
 	m_StatusInfo.HP = m_StatusInfo.maxHP = 440.0f;
