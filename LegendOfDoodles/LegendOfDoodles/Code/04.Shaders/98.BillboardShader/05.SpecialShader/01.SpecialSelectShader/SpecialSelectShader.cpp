@@ -95,7 +95,7 @@ bool CSpecialSelectShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 		{
 			// Warning! 무기 선택 레벨 2로 변경 필요
 			if (m_pPlayer->GetPlayerStatus()->Weapon == 0
-				&& m_pPlayer->GetPlayerStatus()->Level >= 0)
+				&& m_pPlayer->GetPlayerStatus()->Level >= 2)
 			{
 				if (ShowWindow[0] == true)
 				{
