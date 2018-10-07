@@ -81,7 +81,6 @@ void CCollisionManager::Update(shared_ptr<CWayFinder> pWayFinder)
 {
 	if (!m_gameFinished)
 	{
-		int cnt = 0;
 		m_lstColliders.remove_if([](CCollisionObject* obj) { return obj->GetState() == States::Die; });
 		for (auto i = m_lstColliders.begin(); i != m_lstColliders.end(); ++i)
 		{
@@ -104,25 +103,45 @@ void CCollisionManager::Update(shared_ptr<CWayFinder> pWayFinder)
 
 				for (auto j = m_lstColliders.begin(); j != m_lstColliders.end(); ++j)
 				{
-					if (i != j && (*j)->GetStaticType() != StaticType::Static) {
-						if (NearLevel((*i)->GetCollisionLevel(), (*j)->GetCollisionLevel()))
-						{
-							cnt++;
-							float sizeA = (*i)->GetCollisionSize();
-							float sizeB = (*j)->GetCollisionSize();
-
-							float distance = Vector3::Distance((*i)->GetPosition(), (*j)->GetPosition());
-							float collisionLength = sizeA + sizeB;
-							if (distance < collisionLength)
+					if (i != j) {
+						if ((*j)->GetStaticType() != StaticType::Static) {
+							if (NearLevel((*i)->GetCollisionLevel(), (*j)->GetCollisionLevel()))
 							{
-								float length = (collisionLength - distance);
-								XMFLOAT3 vec3 = Vector3::Subtract((*i)->GetPosition(), (*j)->GetPosition());
-								vec3.y = 0;
-								vec3 = Vector3::Normalize(vec3);
-								pWayFinder->AdjustValueByWallCollision((*i), vec3, length *sizeB / (sizeA + sizeB));
-								pWayFinder->AdjustValueByWallCollision((*j), vec3, -length * sizeB / (sizeA + sizeB));
-								(*i)->RegenerateLookAt();
-								(*j)->RegenerateLookAt();
+								float sizeA = (*i)->GetCollisionSize();
+								float sizeB = (*j)->GetCollisionSize();
+
+								float distance = Vector3::Distance((*i)->GetPosition(), (*j)->GetPosition());
+								float collisionLength = sizeA + sizeB;
+								if (distance < collisionLength)
+								{
+									float length = min((collisionLength - distance), collisionLength*0.05f);
+									XMFLOAT3 vec3 = Vector3::Subtract((*i)->GetPosition(), (*j)->GetPosition());
+									vec3.y = 0;
+									vec3 = Vector3::Normalize(vec3);
+									pWayFinder->AdjustValueByWallCollision((*i), vec3, length *sizeB / (sizeA + sizeB));
+									pWayFinder->AdjustValueByWallCollision((*j), vec3, -length * sizeB / (sizeA + sizeB));
+									(*i)->RegenerateLookAt();
+									(*j)->RegenerateLookAt();
+								}
+							}
+						}
+						else if ((*j)->GetStaticType() == StaticType::Static) {
+							if (NearLevel((*i)->GetCollisionLevel(), (*j)->GetCollisionLevel()))
+							{
+								float sizeA = (*i)->GetCollisionSize();
+								float sizeB = (*j)->GetCollisionSize();
+
+								float distance = Vector3::Distance((*i)->GetPosition(), (*j)->GetPosition());
+								float collisionLength = sizeA + sizeB;
+								if (distance < collisionLength)
+								{
+									float length = min((collisionLength - distance), collisionLength*0.1f);
+									XMFLOAT3 vec3 = Vector3::Subtract((*i)->GetPosition(), (*j)->GetPosition());
+									vec3.y = 0;
+									vec3 = Vector3::Normalize(vec3);
+									pWayFinder->AdjustValueByWallCollision((*i), vec3, length);
+									(*i)->RegenerateLookAt();
+								}
 							}
 						}
 					}

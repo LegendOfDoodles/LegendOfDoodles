@@ -16,6 +16,7 @@ CGolem::CGolem() : CAnimatedObject()
 	srand((unsigned)time(NULL));
 
 	m_ObjectType = ObjectType::GOLEM;
+	SetStatic(StaticType::Static);
 
 	m_sightRange = CONVERT_PaperUnit_to_InG(100.0f);
 	m_detectRange = CONVERT_PaperUnit_to_InG(75.0f);

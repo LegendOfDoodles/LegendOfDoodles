@@ -71,9 +71,7 @@ void CCollisionManager::Update(shared_ptr<CWayFinder> pWayFinder)
 		m_lstColliders.remove_if([](CCollisionObject* obj) { return obj->GetState() == States::Die; });
 		for (auto i = m_lstColliders.begin(); i != m_lstColliders.end(); ++i)
 		{
-			if ((*i)->GetTeam() != m_User) {
-				(*i)->SetDetected(false);
-			}
+			(*i)->SetDetected(false);
 		}
 		for (int i = 0; i < nodeWH.x; ++i) {
 			for (int j = 0; j < nodeWH.y; ++j) {
@@ -91,25 +89,48 @@ void CCollisionManager::Update(shared_ptr<CWayFinder> pWayFinder)
 
 				for (auto j = m_lstColliders.begin(); j != m_lstColliders.end(); ++j)
 				{
-					if (i != j && (*j)->GetStaticType() != StaticType::Static) {
-						if (NearLevel((*i)->GetCollisionLevel(), (*j)->GetCollisionLevel()))
-						{
-							cnt++;
-							float sizeA = (*i)->GetCollisionSize();
-							float sizeB = (*j)->GetCollisionSize();
-
-							float distance = Vector3::Distance((*i)->GetPosition(), (*j)->GetPosition());
-							float collisionLength = sizeA + sizeB;
-							if (distance < collisionLength)
+					if (i != j ){
+						if ((*j)->GetStaticType() != StaticType::Static) {
+							if (NearLevel((*i)->GetCollisionLevel(), (*j)->GetCollisionLevel()))
 							{
-								float length = (collisionLength - distance);
-								XMFLOAT3 vec3 = Vector3::Subtract((*i)->GetPosition(), (*j)->GetPosition());
-								vec3.y = 0;
-								vec3 = Vector3::Normalize(vec3);
-								pWayFinder->AdjustValueByWallCollision((*i), vec3, length *sizeB / (sizeA + sizeB));
-								pWayFinder->AdjustValueByWallCollision((*j), vec3, -length * sizeB / (sizeA + sizeB));
-								(*i)->RegenerateLookAt();
-								(*j)->RegenerateLookAt();
+								cnt++;
+								float sizeA = (*i)->GetCollisionSize();
+								float sizeB = (*j)->GetCollisionSize();
+
+								float distance = Vector3::Distance((*i)->GetPosition(), (*j)->GetPosition());
+								float collisionLength = sizeA + sizeB;
+								if (distance < collisionLength)
+								{
+									float length = min((collisionLength - distance), collisionLength*0.05f);
+
+									XMFLOAT3 vec3 = Vector3::Subtract((*i)->GetPosition(), (*j)->GetPosition());
+									vec3.y = 0;
+									vec3 = Vector3::Normalize(vec3);
+									pWayFinder->AdjustValueByWallCollision((*i), vec3, length *sizeB / (sizeA + sizeB));
+									pWayFinder->AdjustValueByWallCollision((*j), vec3, -length * sizeB / (sizeA + sizeB));
+									(*i)->RegenerateLookAt();
+									(*j)->RegenerateLookAt();
+								}
+							}
+						}
+						else if ((*j)->GetStaticType() == StaticType::Static) {
+							if (NearLevel((*i)->GetCollisionLevel(), (*j)->GetCollisionLevel()))
+							{
+								float sizeA = (*i)->GetCollisionSize();
+								float sizeB = (*j)->GetCollisionSize();
+
+								float distance = Vector3::Distance((*i)->GetPosition(), (*j)->GetPosition());
+								float collisionLength = sizeA + sizeB;
+								if (distance < collisionLength)
+								{
+									float length = min((collisionLength - distance), collisionLength*0.1f);
+
+									XMFLOAT3 vec3 = Vector3::Subtract((*i)->GetPosition(), (*j)->GetPosition());
+									vec3.y = 0;
+									vec3 = Vector3::Normalize(vec3);
+									pWayFinder->AdjustValueByWallCollision((*i), vec3, length);
+									(*i)->RegenerateLookAt();
+								}
 							}
 						}
 					}
@@ -136,36 +157,27 @@ void CCollisionManager::Update(shared_ptr<CWayFinder> pWayFinder)
 
 			if ((*i)->GetTeam() == Red) {
 				if (m_BlueSight[posX][posY].Detected) {
-					if (m_User == Blue) {
 						(*i)->SetDetected(true);
-					}
 					m_lstBlueSight.push_back((*i));
 				}
 			}
 			else if ((*i)->GetTeam() == Blue) {
 				if (m_RedSight[posX][posY].Detected) {
-					if (m_User == Red) {
-						(*i)->SetDetected(true);
-					}
+					(*i)->SetDetected(true);
 					m_lstRedSight.push_back((*i));
 				}
 			}
 			else {
 				if (m_BlueSight[posX][posY].Detected) {
-					if (m_User == Blue) {
 						(*i)->SetDetected(true);
-					}
 					m_lstBlueSight.push_back((*i));
 				}
 				if (m_RedSight[posX][posY].Detected) {
-					if (m_User == Red) {
 						(*i)->SetDetected(true);
-					}
 					m_lstRedSight.push_back((*i));
 				}
 			}
 		}
-
 
 	}
 }
@@ -388,15 +400,15 @@ void CCollisionManager::SearchSight(int startX, int startY, int dir, int slength
 			isBuilding = true;
 		}
 	}
-	bool buildingout = true;
+	bool buildingout;
+	if (isBuilding) {
+		buildingout = false;
+	}
+	else
+		buildingout = true;
+
 	for (int i = 0; i < slength; ++i) {
 		XMFLOAT2 nNext = Vector2::Normalize(XMFLOAT2(direction.x*slength + (next.x * i), direction.y*slength + (next.y * i)));
-		if (isBuilding) {
-			buildingout = false;
-		}
-		else
-			buildingout = true;
-
 		for (int j = 1; j < slength; ++j) {
 			result = XMFLOAT2((float)startX, (float)startY);
 			if (next.x == 0) {
@@ -421,39 +433,23 @@ void CCollisionManager::SearchSight(int startX, int startY, int dir, int slength
 					if (m_BlueSight[resultX][resultY].Static == true) {
 						if (buildingout)
 						{
-							for (int x = -2; x < 3; ++x) {
-								for (int y = -2; y < 3; ++y) {
-									if (result.x + x < 0 || result.y + y < 0 || result.x + x >= nodeWH.x || result.y + y >= nodeWH.y)
-									{
-										continue;
-									}
-									else if (m_BlueSight[resultX + x][resultY + y].Static == true) {
-										m_BlueSight[resultX + x][resultY + y].Detected = true;
-									}
-								}
-							}
 							break;
 						}
 					}
-					if (m_BlueSight[resultX][resultY].Static == false && buildingout == false) {
+					else if (m_BlueSight[resultX][resultY].Static == false && buildingout == false) {
 						buildingout = true;
 					}
 				}
 				else if (team == Red) {
 					m_RedSight[resultX][resultY].Detected = true;
 					if (m_RedSight[resultX][resultY].Static == true) {
-						for (int x = -2; x < 3; ++x) {
-							for (int y = -2; y < 3; ++y) {
-								if (result.x + x < 0 || result.y + y < 0 || result.x + x >= nodeWH.x || result.y + y >= nodeWH.y)
-								{
-									continue;
-								}
-								else if (m_RedSight[resultX + x][resultY + y].Static == true) {
-									m_RedSight[resultX + x][resultY + y].Detected = true;
-								}
-							}
+						if (buildingout)
+						{
+							break;
 						}
-						break;
+					}
+					else if (m_RedSight[resultX][resultY].Static == false && buildingout == false) {
+						buildingout = true;
 					}
 				}
 

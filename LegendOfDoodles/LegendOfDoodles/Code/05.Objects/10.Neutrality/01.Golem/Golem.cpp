@@ -14,7 +14,7 @@
 CGolem::CGolem(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes) : CAnimatedObject(pCreateMgr, nMeshes)
 {
 	srand((unsigned)time(NULL));
-
+	SetStatic(StaticType::Static);
 	m_ObjectType = ObjectType::GOLEM;
 
 	m_sightRange = CONVERT_PaperUnit_to_InG(100.0f);
