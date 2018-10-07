@@ -305,7 +305,7 @@ struct PlayerInfo
 	UINT Exp{ 0 };
 
 	// Warning! 특성 포인트 0으로 변경 필요
-	UINT SpecialPoint{ 4 };
+	UINT SpecialPoint{ 0 };
 
 	// 특성 7 ~ 21 4개
 	SpecialType Special[4] = { SpecialType::NoSelected, SpecialType::NoSelected, SpecialType::NoSelected, SpecialType::NoSelected };
