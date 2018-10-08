@@ -251,8 +251,7 @@ void CCollisionManager::RequestCollide(CollisionType type, CCollisionObject * pC
 								{
 									if (pCol->GetType() == ObjectType::FlyingObject
 										&&
-										(pCol->GetFlyingObjectsType() == FlyingObjectType::Player_ArrowSkill_Q
-											|| pCol->GetFlyingObjectsType() == FlyingObjectType::Player_Magic))
+										(pCol->GetFlyingObjectsType() == FlyingObjectType::Player_ArrowSkill_Q))
 									{
 										m_pEffectMgr->RequestSpawn((*i)->GetPosition(), pCol->GetLook(), 10, EffectObjectType::Player_ArrowAndFireBall_HitPosition_Effect);
 									}
