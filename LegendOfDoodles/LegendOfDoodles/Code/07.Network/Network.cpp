@@ -28,7 +28,7 @@ bool CNetwork::Initialize(HWND hWnd)
 	WSAStartup(MAKEWORD(2, 2), &wsadata);
 	ifstream fp;
 	char ipaddress[16]{ NULL };
-	fp.open("Code/07.Network/IpAddress.txt");
+	fp.open("Resource/IP/IpAddress.txt");
 	if (fp.is_open()) {
 		fp.getline(ipaddress, sizeof(ipaddress));
 	}
