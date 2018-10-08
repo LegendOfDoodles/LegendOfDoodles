@@ -6,7 +6,7 @@
 /// 목적: 중립 몬스터(로이더) 클래스 분할
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-10-07
+/// 최종 수정 날짜: 2018-10-09
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -24,8 +24,8 @@ CRoider::CRoider() : CAnimatedObject()
 	m_StatusInfo.Atk = 40.0f;
 	m_StatusInfo.Exp = 640;
 
-	m_attackRange = CONVERT_PaperUnit_to_InG(28.8f);
-	m_farAttackRange = CONVERT_PaperUnit_to_InG(54);
+	m_attackRange = CONVERT_PaperUnit_to_InG(20.8f);
+	m_farAttackRange = CONVERT_PaperUnit_to_InG(39);
 }
 
 CRoider::~CRoider()

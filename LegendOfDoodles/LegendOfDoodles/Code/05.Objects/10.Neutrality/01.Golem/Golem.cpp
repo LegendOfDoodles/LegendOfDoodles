@@ -6,7 +6,7 @@
 /// 목적: 중립 몬스터(수호 골렘) 클래스 분할
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-10-07
+/// 최종 수정 날짜: 2018-10-09
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -199,7 +199,7 @@ void CGolem::BuildSelf(shared_ptr<CCreateMgr> pCreateMgr)
 
 	SetMesh(0, pGolemMesh);
 	SetBoundingMesh(pBoundingBoxMesh);
-	SetCollisionSize(CONVERT_PaperUnit_to_InG(14));
+	SetCollisionSize(CONVERT_PaperUnit_to_InG(28));
 
 	SetAnimation(Animations::Sit);
 

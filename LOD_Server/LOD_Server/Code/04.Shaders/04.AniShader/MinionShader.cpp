@@ -12,7 +12,7 @@
 /// 목적: 미니언 관리 및 그리기 용도
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-10-05
+/// 최종 수정 날짜: 2018-10-09
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -64,9 +64,9 @@ void CMinionShader::AnimateObjects(float timeElapsed)
 
 	if (!m_neverSpawn && m_bSpawning)
 	{
-		if ((m_spawnTime - m_preSpawnTime) >= 0.25f)
+		if ((m_spawnTime - m_preSpawnTime) >= DELAY_BETWEEN_SPAWN_MINION)
 		{
-			for (float time = m_spawnTime - m_preSpawnTime; time >= 0.25f; time -= 0.25f)
+			for (float time = m_spawnTime - m_preSpawnTime; time >= DELAY_BETWEEN_SPAWN_MINION; time -= DELAY_BETWEEN_SPAWN_MINION)
 			{
 				int curTag{ m_minionId };
 				SpawnMinion();

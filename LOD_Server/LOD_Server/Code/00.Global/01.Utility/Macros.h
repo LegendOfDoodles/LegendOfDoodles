@@ -4,7 +4,7 @@
 /// 목적: 메크로 연산을 모아 보기쉽고 처리하기 쉽게 한다.
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-10-05
+/// 최종 수정 날짜: 2018-10-09
 /// </summary>
 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
@@ -200,8 +200,8 @@
 #define INCREASE_STATICOBJECT_BF_ATK 6
 #define INCREASE_STATICOBJECT_AF_ATK 8
 // 방어력
-#define INCREASE_STATICOBJECT_BF_DEF 0
-#define INCREASE_STATICOBJECT_AF_DEF 0
+#define INCREASE_STATICOBJECT_BF_DEF -8
+#define INCREASE_STATICOBJECT_AF_DEF -16
 
 // Minimap Window Screen 범위
 #define MINIMAP_MINIMUM_X FRAME_BUFFER_WIDTH / 1.3034f
@@ -268,6 +268,7 @@
 #define COOLTIME_SKILL_R 15.0f
 
 // 몬스터 관련
+#define DELAY_BETWEEN_SPAWN_MINION 0.42f
 #define TIME_SPAWN_FIRST_MINION 40.0f
 #define COOLTIME_SPAWN_MINION 30.0f
 #define COOLTIME_SPAWN_ROIDER 10.0f

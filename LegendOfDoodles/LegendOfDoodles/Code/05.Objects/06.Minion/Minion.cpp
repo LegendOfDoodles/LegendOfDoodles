@@ -5,7 +5,7 @@
 /// 목적: 미니언 클래스 분할
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-10-07
+/// 최종 수정 날짜: 2018-10-09
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -165,7 +165,7 @@ CSwordMinion::CSwordMinion(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes) : CMi
 	m_StatusInfo.Def = 0;
 	m_StatusInfo.Exp = 64;
 
-	m_attackRange = CONVERT_PaperUnit_to_InG(10);
+	m_attackRange = CONVERT_PaperUnit_to_InG(13);
 }
 
 CSwordMinion::~CSwordMinion()
@@ -241,7 +241,7 @@ CMagicMinion::CMagicMinion(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes) : CMi
 	m_StatusInfo.Def = 0;
 	m_StatusInfo.Exp = 64;
 
-	m_attackRange = CONVERT_PaperUnit_to_InG(24);
+	m_attackRange = CONVERT_PaperUnit_to_InG(26);
 }
 
 CMagicMinion::~CMagicMinion()
@@ -321,7 +321,7 @@ CBowMinion::CBowMinion(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes) : CMinion
 	m_StatusInfo.Def = 0;
 	m_StatusInfo.Exp = 64;
 
-	m_attackRange = CONVERT_PaperUnit_to_InG(30);
+	m_attackRange = CONVERT_PaperUnit_to_InG(33);
 }
 
 CBowMinion::~CBowMinion()

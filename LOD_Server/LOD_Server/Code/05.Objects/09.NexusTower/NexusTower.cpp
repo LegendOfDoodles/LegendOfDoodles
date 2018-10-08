@@ -6,7 +6,7 @@
 /// 목적: 넥서스 및 타워 관리 클래스
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-10-07
+/// 최종 수정 날짜: 2018-10-09
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -15,12 +15,12 @@ CNexusTower::CNexusTower() : CCollisionObject()
 {
 	m_StatusInfo.HP = m_StatusInfo.maxHP = 3136;
 	m_StatusInfo.Atk = 295;
-	m_StatusInfo.Def = 100;
+	m_StatusInfo.Def = 60;
 	m_StatusInfo.Exp = 840;
 	m_sightRange = CONVERT_PaperUnit_to_InG(160.0f);
-	m_detectRange = CONVERT_PaperUnit_to_InG(80.0f);
+	m_detectRange = CONVERT_PaperUnit_to_InG(78.0f);
 
-	m_attackRange = CONVERT_PaperUnit_to_InG(80.0f);
+	m_attackRange = CONVERT_PaperUnit_to_InG(78.0f);
 }
 
 CNexusTower::~CNexusTower()

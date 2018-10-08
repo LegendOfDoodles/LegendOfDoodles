@@ -324,9 +324,9 @@ namespace Vector3
 
 	inline float DistanceSquare(const XMFLOAT3& xmf3Vector1, const XMFLOAT3& xmf3Vector2)
 	{
-		float x = abs(xmf3Vector2.x - xmf3Vector1.x);
-		float y = abs(xmf3Vector2.y - xmf3Vector1.y);
-		float z = abs(xmf3Vector2.z - xmf3Vector1.z);
+		float x = xmf3Vector2.x - xmf3Vector1.x;
+		float y = xmf3Vector2.y - xmf3Vector1.y;
+		float z = xmf3Vector2.z - xmf3Vector1.z;
 		return(x * x + y * y + z * z);
 	}
 

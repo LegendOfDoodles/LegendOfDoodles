@@ -6,7 +6,7 @@
 /// 목적: 플레이어 관리 클래스
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-10-05
+/// 최종 수정 날짜: 2018-10-09
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -49,7 +49,7 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_pColManager->RequestCollide(CollisionType::SPHERE, this, CONVERT_PaperUnit_to_InG(9), CONVERT_PaperUnit_to_InG(7.2f), m_StatusInfo.Atk);
+				m_pColManager->RequestCollide(CollisionType::SPHERE, this, CONVERT_PaperUnit_to_InG(6.5f), CONVERT_PaperUnit_to_InG(7.2f), m_StatusInfo.Atk);
 			}
 		}
 		else if (GetType() == ObjectType::SwordPlayer)
@@ -58,31 +58,31 @@ void CPlayer::Animate(float timeElapsed)
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_pColManager->RequestCollide(CollisionType::SPHERE, this, CONVERT_PaperUnit_to_InG(9), CONVERT_PaperUnit_to_InG(36), m_StatusInfo.Atk);
+				m_pColManager->RequestCollide(CollisionType::SPHERE, this, CONVERT_PaperUnit_to_InG(6.5f), CONVERT_PaperUnit_to_InG(7.2f), m_StatusInfo.Atk);
 			}
 			else if (m_nCurrAnimation == Animations::SkillQ &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_pColManager->RequestCollide(CollisionType::SPHERE, this, CONVERT_PaperUnit_to_InG(14.4f), CONVERT_PaperUnit_to_InG(14.4f), m_StatusInfo.Atk * m_StatusInfo.QSkillPower);
+				m_pColManager->RequestCollide(CollisionType::SPHERE, this, CONVERT_PaperUnit_to_InG(10.4f), CONVERT_PaperUnit_to_InG(10.4f), m_StatusInfo.Atk * m_StatusInfo.QSkillPower);
 			}
 			else if (m_nCurrAnimation == Animations::SkillW &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_pColManager->RequestCollide(CollisionType::SECTERFORM, this, CONVERT_PaperUnit_to_InG(43.2f), 180, m_StatusInfo.Atk * m_StatusInfo.WSkillPower);
+				m_pColManager->RequestCollide(CollisionType::SECTERFORM, this, CONVERT_PaperUnit_to_InG(31.2f), 180, m_StatusInfo.Atk * m_StatusInfo.WSkillPower);
 			}
 			else if (m_nCurrAnimation == Animations::SkillE &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.5f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.5f)
 			{
-				m_pColManager->RequestCollide(CollisionType::SECTERFORM, this, CONVERT_PaperUnit_to_InG(28.8f), 150, m_StatusInfo.Atk * m_StatusInfo.ESkillPower);
+				m_pColManager->RequestCollide(CollisionType::SECTERFORM, this, CONVERT_PaperUnit_to_InG(19.5f), 150, m_StatusInfo.Atk * m_StatusInfo.ESkillPower);
 			}
 			else if (m_nCurrAnimation == Animations::SkillR &&
 				m_fFrameTime >= m_nAniLength[m_nAniIndex] * 0.666f &&
 				m_fPreFrameTime < m_nAniLength[m_nAniIndex] * 0.666f)
 			{
-				m_pColManager->RequestCollide(CollisionType::SPHERE, this, 0, CONVERT_PaperUnit_to_InG(21.6f), m_StatusInfo.Atk * m_StatusInfo.RSkillPower);
+				m_pColManager->RequestCollide(CollisionType::SPHERE, this, 0, CONVERT_PaperUnit_to_InG(15.6f), m_StatusInfo.Atk * m_StatusInfo.RSkillPower);
 			}
 		}
 		else if (GetType() == ObjectType::StaffPlayer)

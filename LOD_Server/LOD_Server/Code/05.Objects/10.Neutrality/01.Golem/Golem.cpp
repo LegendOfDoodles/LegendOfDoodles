@@ -6,7 +6,7 @@
 /// 목적: 중립 몬스터(수호 골렘) 클래스 분할
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-10-07
+/// 최종 수정 날짜: 2018-10-09
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -405,7 +405,7 @@ void CGolem::BuildSelf()
 	CSkeleton *pSpAttack2 = new CSkeleton("Resource//3D//Golem//Animation//Golem_Special_Attack2.aniinfo");
 	CSkeleton *pSDie = new CSkeleton("Resource//3D//Golem//Animation//Golem_Die.aniinfo");
 
-	SetCollisionSize(CONVERT_PaperUnit_to_InG(14));
+	SetCollisionSize(CONVERT_PaperUnit_to_InG(28));
 
 	SetAnimation(AnimationsType::Sit);
 
