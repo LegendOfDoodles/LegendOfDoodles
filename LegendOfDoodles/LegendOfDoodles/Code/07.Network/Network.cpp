@@ -26,7 +26,13 @@ bool CNetwork::Initialize(HWND hWnd)
 
 	WSADATA	wsadata;
 	WSAStartup(MAKEWORD(2, 2), &wsadata);
-
+	ifstream fp;
+	char ipaddress[16]{ NULL };
+	fp.open("Code/07.Network/IpAddress.txt");
+	if (fp.is_open()) {
+		fp.getline(ipaddress, sizeof(ipaddress));
+	}
+	fp.close();
 	m_mysocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, 0);
 
 	SOCKADDR_IN ServerAddr;
@@ -34,7 +40,7 @@ bool CNetwork::Initialize(HWND hWnd)
 	ServerAddr.sin_family = AF_INET;
 	ServerAddr.sin_port = htons(MY_SERVER_PORT);
 	//ServerAddr.sin_addr.s_addr = inet_addr("192.168.0.101");
-	ServerAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	ServerAddr.sin_addr.s_addr = inet_addr(ipaddress);
 
 	int Result = WSAConnect(m_mysocket, (sockaddr *)&ServerAddr, sizeof(ServerAddr), NULL, NULL, NULL, NULL);
 	if (Result) 
