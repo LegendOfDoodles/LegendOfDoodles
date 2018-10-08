@@ -101,7 +101,7 @@ void CNexusTowerShader::BuildObjects(void *pContext)
 			pBuild->SetPosition(CONVERT_Unit_to_InG(pos.x), CONVERT_Unit_to_InG(pos.y), CONVERT_Unit_to_InG(pos.z));
 
 			if (i < 2) {
-				pBuild->SetCollisionSize(CONVERT_PaperUnit_to_InG(40));
+				pBuild->SetCollisionSize(CONVERT_PaperUnit_to_InG(20));
 				pBuild->SetType(ObjectType::Nexus);
 				if (i == 0 || i == 2)
 				{

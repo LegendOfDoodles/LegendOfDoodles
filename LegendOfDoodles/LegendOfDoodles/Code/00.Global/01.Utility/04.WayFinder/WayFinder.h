@@ -56,6 +56,5 @@ protected: // º¯¼ö
 	float nodeSize{ 0 };
 	XMFLOAT2 m_nodeWH;
 
-	shared_ptr<CAstar> m_pCurSearch;
 	shared_ptr<CCollisionMapImage> m_pCollisionMapImage;
 };

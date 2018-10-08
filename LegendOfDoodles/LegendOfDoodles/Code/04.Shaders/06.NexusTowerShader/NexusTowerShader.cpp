@@ -384,7 +384,7 @@ void CNexusTowerShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pC
 				pBuild->SetTeam(TeamType::Red);
 			}
 			if (i < 2) {
-				pBuild->SetCollisionSize(CONVERT_PaperUnit_to_InG(40));
+				pBuild->SetCollisionSize(CONVERT_PaperUnit_to_InG(20));
 				pBuild->SetType(ObjectType::Nexus);
 			}
 			else {

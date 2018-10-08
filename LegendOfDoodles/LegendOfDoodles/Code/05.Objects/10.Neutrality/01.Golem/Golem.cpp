@@ -199,7 +199,7 @@ void CGolem::BuildSelf(shared_ptr<CCreateMgr> pCreateMgr)
 
 	SetMesh(0, pGolemMesh);
 	SetBoundingMesh(pBoundingBoxMesh);
-	SetCollisionSize(CONVERT_PaperUnit_to_InG(28));
+	SetCollisionSize(CONVERT_PaperUnit_to_InG(14));
 
 	SetAnimation(Animations::Sit);
 

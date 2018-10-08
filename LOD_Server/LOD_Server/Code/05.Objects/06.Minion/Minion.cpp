@@ -240,7 +240,7 @@ CSwordMinion::CSwordMinion() : CMinion()
 	SetType(ObjectType::SwordMinion);
 	m_StatusInfo = g_SwordMinionStat;
 
-	m_attackRange = CONVERT_PaperUnit_to_InG(13);
+	m_attackRange = CONVERT_PaperUnit_to_InG(19);
 }
 
 CSwordMinion::~CSwordMinion()
@@ -281,7 +281,7 @@ void CSwordMinion::Animate(float timeElapsed)
 		{
 			if (m_curState == m_nextState)
 			{
-				if (m_fFrameTime < m_nAniLength[m_nAniIndex]) break;
+				if (m_fFrameTime < m_nAniLength[m_nAniIndex] / 2) break;
 				m_nCurrAnimation = Animations::Attack1;
 				m_fFrameTime = 0;
 			}

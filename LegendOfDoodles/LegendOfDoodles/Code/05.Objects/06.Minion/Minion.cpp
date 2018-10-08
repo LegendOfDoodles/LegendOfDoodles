@@ -165,7 +165,7 @@ CSwordMinion::CSwordMinion(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes) : CMi
 	m_StatusInfo.Def = 0;
 	m_StatusInfo.Exp = 64;
 
-	m_attackRange = CONVERT_PaperUnit_to_InG(13);
+	m_attackRange = CONVERT_PaperUnit_to_InG(19);
 }
 
 CSwordMinion::~CSwordMinion()
@@ -197,7 +197,7 @@ void CSwordMinion::Animate(float timeElapsed)
 		{
 			if (m_curState == m_nextState)
 			{
-				if (m_fFrameTime < m_nAniLength[m_nAniIndex]) break;
+				if (m_fFrameTime < m_nAniLength[m_nAniIndex] / 2) break;
 				m_nCurrAnimation = Animations::Attack1;
 				m_fFrameTime = 0;
 			}
