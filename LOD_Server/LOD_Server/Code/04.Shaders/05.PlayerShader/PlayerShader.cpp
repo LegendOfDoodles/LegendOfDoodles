@@ -127,7 +127,7 @@ void CPlayerShader::BuildObjects(void *pContext)
 #if !USE_BATCH_MATERIAL
 			pRotatingObject->SetMaterial(pCubeMaterial);
 #endif
-			pPlayer->SetCollisionSize(CONVERT_PaperUnit_to_InG(5.4f));
+			pPlayer->SetCollisionSize(CONVERT_PaperUnit_to_InG(2.7f));
 
 			if(g_clients[i].m_isconnected)
 				pPlayer->CBaseObject::SetPosition(500.0f + (x * 9000.0f), 0.0f, 2000.0f + (z * 1000.0f));

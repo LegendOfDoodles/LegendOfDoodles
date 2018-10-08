@@ -26,6 +26,8 @@ CRoider::CRoider(shared_ptr<CCreateMgr> pCreateMgr, int nMeshes) : CAnimatedObje
 
 	m_attackRange = CONVERT_PaperUnit_to_InG(20.8f);
 	m_farAttackRange = CONVERT_PaperUnit_to_InG(39);
+
+	SetStatic(StaticType::Static);
 }
 
 CRoider::~CRoider()
@@ -96,15 +98,18 @@ void CRoider::SetState(StatesType newState, shared_ptr<CWayFinder> pWayFinder)
 	{
 	case States::Idle:
 		SetAnimation(Animations::Idle);
+		SetStatic(StaticType::Static);
 		break;
 	case States::Walk:
 		RegenerateLookAt();
 		m_availableTime = 0.0f;
 		m_nCurrAnimation = Animations::StartWalk;
+		SetStatic(StaticType::Move);
 		break;
 	case States::Chase:
 		m_availableTime = 0.0f;
 		m_nCurrAnimation = Animations::StartWalk;
+		SetStatic(StaticType::Move);
 		break;
 	case States::Attack:
 		ResetRecovery();
@@ -117,6 +122,7 @@ void CRoider::SetState(StatesType newState, shared_ptr<CWayFinder> pWayFinder)
 			SetAnimation(Animations::Attack2);
 		}
 		m_fFrameTime = 0;
+		SetStatic(StaticType::Move);
 		break;
 	case States::Die:
 		m_nCurrAnimation = Animations::Die;
@@ -252,6 +258,8 @@ void CRoider::Respawn()
 	m_pColManager->AddCollider(this);
 
 	m_xmf4x4World = m_xmf4x4SpawnWorld;
+
+	SetStatic(StaticType::Static);
 }
 
 void CRoider::SetCollisionManager(shared_ptr<CCollisionManager> manager)

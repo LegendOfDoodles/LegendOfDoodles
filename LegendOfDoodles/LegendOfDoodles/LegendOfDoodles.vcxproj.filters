@@ -892,9 +892,6 @@
     <ClCompile Include="Code\03.Scenes\00.BaseScene\Scene.cpp">
       <Filter>소스 파일\03.Scenes\00.BaseScene</Filter>
     </ClCompile>
-    <ClCompile Include="Code\03.Scenes\99.LoadingScene\LoadingScene.cpp">
-      <Filter>소스 파일\03.Scenes\99.LoadingScene</Filter>
-    </ClCompile>
     <ClCompile Include="Code\05.Objects\01.Camera\03.StaticCamera\StaticCamera.cpp">
       <Filter>소스 파일\05.Objects\01.Camera\03.StaticCamera</Filter>
     </ClCompile>
@@ -936,6 +933,9 @@
     </ClCompile>
     <ClCompile Include="Code\04.Shaders\96.SpritesShader\01.LoadingShader\03.LoadingCardShader\LoadingCardShader.cpp">
       <Filter>소스 파일\04.Shaders\96.SpritesShader\01.LoadingShader\03.LoadingCardShader</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\03.Scenes\99.LoadingScene\LoadingScene.cpp">
+      <Filter>소스 파일\03.Scenes\99.LoadingScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

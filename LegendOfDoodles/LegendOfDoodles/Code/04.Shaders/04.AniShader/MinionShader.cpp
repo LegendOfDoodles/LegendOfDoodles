@@ -412,7 +412,7 @@ void CMinionShader::SpawnMinion(ObjectType minionKind, short tag)
 
 		pMinionObject->SetTag(tag++);
 		pMinionObject->SetBoundingMesh(&boundingBoxMesh);
-		pMinionObject->SetCollisionSize(CONVERT_PaperUnit_to_InG(3.6f));
+		pMinionObject->SetCollisionSize(CONVERT_PaperUnit_to_InG(1.8f));
 
 		switch (minionKind)
 		{
