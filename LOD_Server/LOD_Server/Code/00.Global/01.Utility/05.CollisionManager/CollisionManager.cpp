@@ -107,7 +107,7 @@ void CCollisionManager::Update(shared_ptr<CWayFinder> pWayFinder)
 									vec3.y = 0;
 									vec3 = Vector3::Normalize(vec3);
 									pWayFinder->AdjustValueByWallCollision((*i), vec3, length *sizeB / (sizeA + sizeB));
-									pWayFinder->AdjustValueByWallCollision((*j), vec3, -length * sizeB / (sizeA + sizeB));
+									pWayFinder->AdjustValueByWallCollision((*j), vec3, -length * sizeA / (sizeA + sizeB));
 									(*i)->RegenerateLookAt();
 									(*j)->RegenerateLookAt();
 								}
@@ -123,7 +123,7 @@ void CCollisionManager::Update(shared_ptr<CWayFinder> pWayFinder)
 								float collisionLength = sizeA + sizeB;
 								if (distance < collisionLength)
 								{
-									float length = min((collisionLength - distance), collisionLength*0.1f);
+									float length = (collisionLength - distance);
 
 									XMFLOAT3 vec3 = Vector3::Subtract((*i)->GetPosition(), (*j)->GetPosition());
 									vec3.y = 0;
