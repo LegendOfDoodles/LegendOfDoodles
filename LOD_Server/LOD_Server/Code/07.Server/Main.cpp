@@ -314,15 +314,15 @@ void ProcessPacket(int id, char *packet)
 			g_ppPlayer[WeaponPacket->Character_id]->ChangeWeapon(WeaponPacket->WeaponNum, (ObjectType)WeaponPacket->ObjectType);
 			g_pScene->GetShader(1)->SetPlayerAnimation((ObjectType)WeaponPacket->ObjectType, WeaponPacket->Character_id);
 
+			SC_Msg_BroadCast_Change_Weapon p;
+			p.Character_id = WeaponPacket->Character_id;
+			p.WeaponNum = WeaponPacket->WeaponNum;
+			p.size = sizeof(p);
+			p.type = SC_APPLY_CHANGE_WEAPON;
 			for (int i = 0; i < MAX_USER; ++i)
 			{
 				if (g_clients[i].m_isconnected && i != WeaponPacket->Character_id) {
-					SC_Msg_BroadCast_Change_Weapon p;
-					p.Character_id = WeaponPacket->Character_id;
-					p.WeaponNum = WeaponPacket->WeaponNum;
-					p.ObjectType = WeaponPacket->ObjectType;
-					p.size = sizeof(p);
-					p.type = SC_APPLY_CHANGE_WEAPON;
+					printf("무기 바꾸기 패킷 보냄 To %d\n", i);
 					SendPacket(i, &p);
 				}
 			}

@@ -83,7 +83,6 @@ struct SC_Msg_BroadCast_Change_Weapon :public Packet
 {
 	BYTE Character_id;
 	BYTE WeaponNum;
-	short ObjectType;
 };
 struct SC_Msg_Remove_Character : public Packet
 {

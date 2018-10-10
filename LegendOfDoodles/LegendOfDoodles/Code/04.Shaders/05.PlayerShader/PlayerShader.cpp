@@ -228,7 +228,6 @@ void CPlayerShader::RequestChangeWeapon()
 		switch (m_ppObjects[id]->GetPlayerStatus()->Weapon)
 		{
 		case 1:
-			m_ppObjects[m_pNetwork->m_myid]->SetType((ObjectType)m_nWeaponState);
 			m_ppObjects[m_pNetwork->m_myid]->SetType(ObjectType::SwordPlayer);
 			dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->ChangeSkillSet(m_ppSwordAni);
 			dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->SetWeaponData(ObjectType::SwordPlayer, 0);
@@ -240,7 +239,6 @@ void CPlayerShader::RequestChangeWeapon()
 			p.WeaponNum = 1;
 			break;
 		case 2:
-			m_ppObjects[m_pNetwork->m_myid]->SetType((ObjectType)m_nWeaponState);
 			m_ppObjects[m_pNetwork->m_myid]->SetType(ObjectType::StaffPlayer);
 			dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->ChangeSkillSet(m_ppStaffAni);
 			dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->SetWeaponData(ObjectType::StaffPlayer, 0);
@@ -252,7 +250,6 @@ void CPlayerShader::RequestChangeWeapon()
 			p.WeaponNum = 2;
 			break;
 		case 3:
-			m_ppObjects[m_pNetwork->m_myid]->SetType((ObjectType)m_nWeaponState);
 			m_ppObjects[m_pNetwork->m_myid]->SetType(ObjectType::BowPlayer);
 			dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->ChangeSkillSet(m_ppBowAni);
 			dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->SetWeaponData(ObjectType::BowPlayer, 0);
@@ -277,7 +274,6 @@ void CPlayerShader::ApplyChangeWeapon(int id)
 	switch (m_ppObjects[id]->GetPlayerStatus()->Weapon)
 	{
 	case 1:
-		m_ppObjects[m_pNetwork->m_myid]->SetType((ObjectType)m_nWeaponState);
 		m_ppObjects[m_pNetwork->m_myid]->SetType(ObjectType::SwordPlayer);
 		dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->ChangeSkillSet(m_ppSwordAni);
 		dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->SetWeaponData(ObjectType::SwordPlayer, 0);
@@ -285,7 +281,6 @@ void CPlayerShader::ApplyChangeWeapon(int id)
 		m_ChangeWeapon = true;
 		break;
 	case 2:
-		m_ppObjects[m_pNetwork->m_myid]->SetType((ObjectType)m_nWeaponState);
 		m_ppObjects[m_pNetwork->m_myid]->SetType(ObjectType::StaffPlayer);
 		dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->ChangeSkillSet(m_ppStaffAni);
 		dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->SetWeaponData(ObjectType::StaffPlayer, 0);
@@ -293,7 +288,6 @@ void CPlayerShader::ApplyChangeWeapon(int id)
 		m_ChangeWeapon = true;
 		break;
 	case 3:
-		m_ppObjects[m_pNetwork->m_myid]->SetType((ObjectType)m_nWeaponState);
 		m_ppObjects[m_pNetwork->m_myid]->SetType(ObjectType::BowPlayer);
 		dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->ChangeSkillSet(m_ppBowAni);
 		dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->SetWeaponData(ObjectType::BowPlayer, 0);
