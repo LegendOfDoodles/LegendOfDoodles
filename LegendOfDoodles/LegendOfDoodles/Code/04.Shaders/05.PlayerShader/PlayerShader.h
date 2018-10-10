@@ -32,7 +32,8 @@ public: // 공개 함수
 	void SetEffectManagerToObject(shared_ptr<CEffectMgr> manager);
 	void SetSoundManagerToObject(shared_ptr<CSoundManager> manager);
 
-	virtual void SetChangeWeapon(int id);
+	virtual void RequestChangeWeapon();
+	virtual void ApplyChangeWeapon(int id);
 
 	bool* GetChangeWeapon() { return &m_ChangeWeapon; }
 

@@ -11,7 +11,7 @@
 /// 목적: 선택된 특성
 /// 최종 수정자:  김나단
 /// 수정자 목록:  이용선, 김나단
-/// 최종 수정 날짜: 2018-08-22
+/// 최종 수정 날짜: 2018-10-10
 /// </summary>
 
 ////////////////////////////////////////////////////////////////////////
@@ -126,7 +126,7 @@ bool CSpecialSelectShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 				// 무기 변경
 				m_pPlayer->GetPlayerStatus()->Weapon = 1;
 				m_pPlayer->SetWeaponChangeTriger(true);
-				m_pPlayerShader->SetChangeWeapon(m_pNetwork->m_myid);
+				m_pPlayerShader->RequestChangeWeapon();
 
 				// 무기 선택창 닫기
 				ShowWindow[0] = false;
@@ -142,7 +142,7 @@ bool CSpecialSelectShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 				// 무기 변경
 				m_pPlayer->GetPlayerStatus()->Weapon = 3;
 				m_pPlayer->SetWeaponChangeTriger(true);
-				m_pPlayerShader->SetChangeWeapon(m_pNetwork->m_myid);
+				m_pPlayerShader->RequestChangeWeapon();
 
 				// 무기 선택창 닫기
 				ShowWindow[0] = false;
@@ -158,7 +158,7 @@ bool CSpecialSelectShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 				// 무기 변경
 				m_pPlayer->GetPlayerStatus()->Weapon = 2;
 				m_pPlayer->SetWeaponChangeTriger(true);
-				m_pPlayerShader->SetChangeWeapon(m_pNetwork->m_myid);
+				m_pPlayerShader->RequestChangeWeapon();
 
 				// 무기 선택창 닫기
 				ShowWindow[0] = false;

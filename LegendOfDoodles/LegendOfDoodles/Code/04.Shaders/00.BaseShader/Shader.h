@@ -69,7 +69,8 @@ public: // 공개 함수
 	void AddRef() { m_nReferences++; }
 	void Release() { if (--m_nReferences <= 0) delete this; }
 
-	virtual void SetChangeWeapon(int id) { id; }
+	virtual void RequestChangeWeapon() { }
+	virtual void ApplyChangeWeapon(int id) { id; }
 	virtual void ApplyChangeSeat(int preId, int curId) { preId; curId; }
 	virtual void SetPlayerConnectedStatus(bool status[]) { status; };
 

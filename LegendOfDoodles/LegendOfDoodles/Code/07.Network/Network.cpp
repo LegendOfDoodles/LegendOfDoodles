@@ -152,13 +152,13 @@ void CNetwork::ProcessPacket(char *ptr)
 			}
 			break;
 		}
-		case SC_CHANGE_WEAPON:
+		case SC_APPLY_CHANGE_WEAPON:
 		{
 			SC_Msg_BroadCast_Change_Weapon *my_packet = reinterpret_cast<SC_Msg_BroadCast_Change_Weapon *>(ptr);
 			m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->Weapon = my_packet->WeaponNum;
 			m_ppPlayer[my_packet->Character_id]->SetType((ObjectType)my_packet->ObjectType);
 			
-			m_pGameScene->GetShader(3)->SetChangeWeapon(my_packet->Character_id);
+			m_pGameScene->GetShader(3)->ApplyChangeWeapon(my_packet->Character_id);
 			break;
 		}
 		case SC_PERMIT_USE_SKILL:

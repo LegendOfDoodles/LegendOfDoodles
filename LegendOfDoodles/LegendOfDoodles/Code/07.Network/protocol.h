@@ -335,6 +335,7 @@ struct SC_Notify_Player_Ready : public Packet
 #define SC_NOTIFY_PLAYER_READY		  14
 #define SC_NOTIFY_PLAYER_CANCEL_READY 15
 #define SC_DISCONNECT_PLAYER		  16
+#define SC_APPLY_CHANGE_WEAPON		  17
 
 #define SC_CONNECT_PLAYER			  101
 #define SC_PUT_PLAYER				  102
@@ -368,7 +369,7 @@ struct SC_Notify_Player_Ready : public Packet
 #define CS_ACTION					  201
 #define CS_MOVE_PLAYER				  202
 #define CS_DEMAND_USE_SKILL			  203
-#define CS_CHANGE_WEAPON			  204
+#define CS_REQUEST_CHANGE_WEAPON	  204
 #define CS_SET_ABILITY_POINT		  205
 #define CS_PREPARE_DATA				  206
 #define CS_PLAYER_READY				  207

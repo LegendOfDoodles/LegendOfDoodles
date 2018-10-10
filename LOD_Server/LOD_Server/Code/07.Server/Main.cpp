@@ -309,20 +309,20 @@ void ProcessPacket(int id, char *packet)
 			}
 			break;
 		}
-		case CS_CHANGE_WEAPON:
+		case CS_REQUEST_CHANGE_WEAPON:
 		{
 			g_ppPlayer[WeaponPacket->Character_id]->ChangeWeapon(WeaponPacket->WeaponNum, (ObjectType)WeaponPacket->ObjectType);
 			g_pScene->GetShader(1)->SetPlayerAnimation((ObjectType)WeaponPacket->ObjectType, WeaponPacket->Character_id);
 
 			for (int i = 0; i < MAX_USER; ++i)
 			{
-				if (g_clients[i].m_isconnected) {
+				if (g_clients[i].m_isconnected && i != WeaponPacket->Character_id) {
 					SC_Msg_BroadCast_Change_Weapon p;
 					p.Character_id = WeaponPacket->Character_id;
 					p.WeaponNum = WeaponPacket->WeaponNum;
 					p.ObjectType = WeaponPacket->ObjectType;
 					p.size = sizeof(p);
-					p.type = SC_CHANGE_WEAPON;
+					p.type = SC_APPLY_CHANGE_WEAPON;
 					SendPacket(i, &p);
 				}
 			}

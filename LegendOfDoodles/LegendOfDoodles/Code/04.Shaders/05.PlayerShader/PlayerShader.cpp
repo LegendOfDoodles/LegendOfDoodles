@@ -218,8 +218,10 @@ void CPlayerShader::SetSoundManagerToObject(shared_ptr<CSoundManager> manager)
 	}
 }
 
-void CPlayerShader::SetChangeWeapon(int id)
+void CPlayerShader::RequestChangeWeapon()
 {
+	int id{ m_pNetwork->m_myid };
+
 	if (static_cast<CPlayer*>(m_ppObjects[id])->GetWeaponChangeTriger() == true)
 	{
 		CS_Msg_Change_Weapon p;
@@ -263,10 +265,41 @@ void CPlayerShader::SetChangeWeapon(int id)
 			break;
 		}
 
-		p.Character_id = (BYTE)m_pNetwork->m_myid;
+		p.Character_id = (BYTE)id;
 		p.size = sizeof(p);
-		p.type = CS_CHANGE_WEAPON;
+		p.type = CS_REQUEST_CHANGE_WEAPON;
 		m_pNetwork->SendPacket(&p);
+	}
+}
+
+void CPlayerShader::ApplyChangeWeapon(int id)
+{
+	switch (m_ppObjects[id]->GetPlayerStatus()->Weapon)
+	{
+	case 1:
+		m_ppObjects[m_pNetwork->m_myid]->SetType((ObjectType)m_nWeaponState);
+		m_ppObjects[m_pNetwork->m_myid]->SetType(ObjectType::SwordPlayer);
+		dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->ChangeSkillSet(m_ppSwordAni);
+		dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->SetWeaponData(ObjectType::SwordPlayer, 0);
+
+		m_ChangeWeapon = true;
+		break;
+	case 2:
+		m_ppObjects[m_pNetwork->m_myid]->SetType((ObjectType)m_nWeaponState);
+		m_ppObjects[m_pNetwork->m_myid]->SetType(ObjectType::StaffPlayer);
+		dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->ChangeSkillSet(m_ppStaffAni);
+		dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->SetWeaponData(ObjectType::StaffPlayer, 0);
+
+		m_ChangeWeapon = true;
+		break;
+	case 3:
+		m_ppObjects[m_pNetwork->m_myid]->SetType((ObjectType)m_nWeaponState);
+		m_ppObjects[m_pNetwork->m_myid]->SetType(ObjectType::BowPlayer);
+		dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->ChangeSkillSet(m_ppBowAni);
+		dynamic_cast<CPlayer*>(m_ppObjects[m_pNetwork->m_myid])->SetWeaponData(ObjectType::BowPlayer, 0);
+
+		m_ChangeWeapon = true;
+		break;
 	}
 }
 
