@@ -10,7 +10,7 @@
 /// 목적: 플레이어 관리 및 렌더링 용도
 /// 최종 수정자:  김나단
 /// 수정자 목록:  정휘현, 김나단
-/// 최종 수정 날짜: 2018-10-06
+/// 최종 수정 날짜: 2018-10-10
 /// </summary>
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -95,8 +95,8 @@ void CPlayerShader::BuildObjects(void *pContext)
 
 	m_ppStaffAni[0] = new CSkeleton("Resource//3D//Player//Animation//Staff//Player_Staff_Idle.aniinfo");
 	//임시
-	m_ppStaffAni[1] = new CSkeleton("Resource//3D//Player//Animation//Sword//Player_Sword_Start_Walk.aniinfo");
-	m_ppStaffAni[2] = new CSkeleton("Resource//3D//Player//Animation//Sword//Player_Sword_Walk.aniinfo");
+	m_ppStaffAni[1] = new CSkeleton("Resource//3D//Player//Animation//Staff//Player_Staff_Start_Walk.aniinfo");
+	m_ppStaffAni[2] = new CSkeleton("Resource//3D//Player//Animation//Staff//Player_Staff_Walk.aniinfo");
 	///////////////////////////////////////////////////////
 
 	m_ppStaffAni[3] = new CSkeleton("Resource//3D//Player//Animation//Staff//Player_Staff_SkillA.aniinfo");
