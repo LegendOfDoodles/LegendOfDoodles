@@ -4,7 +4,7 @@
 /// 목적: 메크로 연산을 모아 보기쉽고 처리하기 쉽게 한다.
 /// 최종 수정자:  김나단
 /// 수정자 목록:  김나단
-/// 최종 수정 날짜: 2018-10-09
+/// 최종 수정 날짜: 2018-10-10
 /// </summary>
 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
@@ -111,7 +111,7 @@
 #define INCREASE_MINION_EXP 5
 
 //방어력 적용 공식----------------
-#define Compute_Defence(val) (100.f)/(100.f + val)
+#define Compute_Defence(val) (100.f)/max((100.f + val), 1.f)
 
 
 // 플레이어 무기별 증가량-----------
