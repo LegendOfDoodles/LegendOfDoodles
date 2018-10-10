@@ -281,7 +281,7 @@ void CSwordMinion::Animate(float timeElapsed)
 		{
 			if (m_curState == m_nextState)
 			{
-				if (m_fFrameTime < m_nAniLength[m_nAniIndex] / 2) break;
+				if (m_fFrameTime < m_nAniLength[m_nAniIndex]) break;
 				m_nCurrAnimation = Animations::Attack1;
 				m_fFrameTime = 0;
 			}
