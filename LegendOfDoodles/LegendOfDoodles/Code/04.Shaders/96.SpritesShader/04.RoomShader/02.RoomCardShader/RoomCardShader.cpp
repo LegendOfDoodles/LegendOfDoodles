@@ -17,11 +17,14 @@ CRoomCardShader::CRoomCardShader(shared_ptr<CCreateMgr> pCreateMgr) : CShader(pC
 {
 	m_hWnd = pCreateMgr->GetHwnd();
 
-	for (int i = 0; i < 4; ++i)
+	if (m_pNetwork)
 	{
-		if (m_pNetwork->m_EachCardType[i] == CardType::Blue_Player || m_pNetwork->m_EachCardType[i] == CardType::Red_Player)
+		for (int i = 0; i < 4; ++i)
 		{
-			m_pNetwork->m_EachPlayerReadyState[i] = false;
+			if (m_pNetwork->m_EachCardType[i] == CardType::Blue_Player || m_pNetwork->m_EachCardType[i] == CardType::Red_Player)
+			{
+				m_pNetwork->m_EachPlayerReadyState[i] = false;
+			}
 		}
 	}
 }
