@@ -322,7 +322,6 @@ void ProcessPacket(int id, char *packet)
 			for (int i = 0; i < MAX_USER; ++i)
 			{
 				if (g_clients[i].m_isconnected && i != WeaponPacket->Character_id) {
-					printf("무기 바꾸기 패킷 보냄 To %d\n", i);
 					SendPacket(i, &p);
 				}
 			}

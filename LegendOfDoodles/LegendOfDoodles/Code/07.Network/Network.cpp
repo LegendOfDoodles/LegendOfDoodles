@@ -155,7 +155,6 @@ void CNetwork::ProcessPacket(char *ptr)
 		case SC_APPLY_CHANGE_WEAPON:
 		{
 			SC_Msg_BroadCast_Change_Weapon *my_packet = reinterpret_cast<SC_Msg_BroadCast_Change_Weapon *>(ptr);
-			printf("%d\n", my_packet->Character_id);
 
 			m_ppPlayer[my_packet->Character_id]->GetPlayerStatus()->Weapon = my_packet->WeaponNum;
 			
