@@ -240,18 +240,20 @@ Path *CWayFinder::GetPathToPosition(const XMFLOAT2 &source, const XMFLOAT2 &targ
 	}
 	else
 	{
+		CAstar *pCurSearch{ NULL };
+
 		// 길찾기 수행
 		do
 		{
-			if (adjSource.x <= adjTarget.x) m_pCurSearch = shared_ptr<CAstar>(new CAstar(shared_from_this(), srcIndex, dstIndex));
-			else m_pCurSearch = shared_ptr<CAstar>(new CAstar(shared_from_this(), dstIndex, srcIndex));
-		} while (!m_pCurSearch);
+			if (adjSource.x <= adjTarget.x) pCurSearch = new CAstar(shared_from_this(), srcIndex, dstIndex);
+			else pCurSearch = new CAstar(shared_from_this(), dstIndex, srcIndex);
+		} while (!pCurSearch);
 
 		States::ProcessStates result;
 		for (int i = 0; i < LIMIT_FIND_PATH; ++i)
 		{
 			// 길 찾기를 성공하거나 실패할 때까지 반복한다.
-			result = m_pCurSearch->FindPath();
+			result = pCurSearch->FindPath();
 			if (result == States::Found || result == States::Not_Found)
 			{
 				break;
@@ -260,10 +262,9 @@ Path *CWayFinder::GetPathToPosition(const XMFLOAT2 &source, const XMFLOAT2 &targ
 		if (result == States::Found)
 		{
 			// 찾은 패스 저장
-			path = m_pCurSearch->GetPath();
+			path = pCurSearch->GetPath();
 		}
-
-		m_pCurSearch.reset();
+		Safe_Delete(pCurSearch);
 	}
 
 	// 직선 상으로 갈 수 있는 길 돌아가지 않도록 설정

@@ -290,8 +290,7 @@ void CNetwork::ProcessPacket(char *ptr)
 			{
 				if ((FlyingObjectType)my_packet->Flying_Type == FlyingObjectType::BlueTower_Attack
 					|| (FlyingObjectType)my_packet->Flying_Type == FlyingObjectType::RedTower_Attack
-					|| (FlyingObjectType)my_packet->Flying_Type == FlyingObjectType::Player_ArrowSkill_Q
-					|| (FlyingObjectType)my_packet->Flying_Type == FlyingObjectType::Player_Magic)
+					|| (FlyingObjectType)my_packet->Flying_Type == FlyingObjectType::Player_ArrowSkill_Q)
 				{
 					if(Target) m_pEffectMgr->RequestSpawn(Target->GetPosition(), Target->GetLook(), 10, EffectObjectType::Player_ArrowAndFireBall_HitPosition_Effect);
 				}

@@ -464,7 +464,7 @@ void CPlayerShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pConte
 			pRotatingObject->SetMaterial(pCubeMaterial);
 #endif
 			pPlayer->SetBoundingMesh(pBoundingBoxMesh);
-			pPlayer->SetCollisionSize(CONVERT_PaperUnit_to_InG(5.4f));
+			pPlayer->SetCollisionSize(CONVERT_PaperUnit_to_InG(2.7f));
 
 			if (m_pNetwork->m_EachCardType[i] == CardType::Blue_Player || m_pNetwork->m_EachCardType[i] == CardType::Red_Player)
 				pPlayer->CBaseObject::SetPosition(500.0f + (x * 9000.0f), 0.0f, 2000.0f + (z * 1000.0f));

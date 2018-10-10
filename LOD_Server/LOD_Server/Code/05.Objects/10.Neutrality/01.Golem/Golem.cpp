@@ -405,7 +405,7 @@ void CGolem::BuildSelf()
 	CSkeleton *pSpAttack2 = new CSkeleton("Resource//3D//Golem//Animation//Golem_Special_Attack2.aniinfo");
 	CSkeleton *pSDie = new CSkeleton("Resource//3D//Golem//Animation//Golem_Die.aniinfo");
 
-	SetCollisionSize(CONVERT_PaperUnit_to_InG(28));
+	SetCollisionSize(CONVERT_PaperUnit_to_InG(14));
 
 	SetAnimation(AnimationsType::Sit);
 

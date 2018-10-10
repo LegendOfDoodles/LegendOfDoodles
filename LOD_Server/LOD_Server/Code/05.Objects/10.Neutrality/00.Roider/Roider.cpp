@@ -26,6 +26,8 @@ CRoider::CRoider() : CAnimatedObject()
 
 	m_attackRange = CONVERT_PaperUnit_to_InG(20.8f);
 	m_farAttackRange = CONVERT_PaperUnit_to_InG(39);
+
+	SetStatic(StaticType::Static);
 }
 
 CRoider::~CRoider()
@@ -124,9 +126,7 @@ void CRoider::PlayIdle(float timeElapsed)
 		{
 			m_activated = false;
 			m_deactiveTime = 0.0f;
-			// Warning! 회복 처리
-			// 방안 1: 전체 회복
-			// 방안 2: 일정 시간동안 몇 %의 체력 회복
+			SetStatic(StaticType::Static);
 		}
 	}
 
@@ -159,6 +159,8 @@ void CRoider::PlayIdle(float timeElapsed)
 		SetAnimation(Animations::Attack2);
 	}
 	else SetState(States::Chase);
+
+	SetStatic(StaticType::Move);
 }
 
 void CRoider::PlayWalk(float timeElapsed, shared_ptr<CWayFinder> pWayFinder)
@@ -484,6 +486,7 @@ void CRoider::Respawn()
 
 	SetState(StatesType::Idle);
 	SetTeam(TeamType::Neutral);
+	SetStatic(StaticType::Static);
 
 	m_StatusInfo.HP = m_StatusInfo.maxHP;
 
@@ -500,7 +503,6 @@ void CRoider::Respawn()
 			SendPacket(i, &p);
 		}
 	}
-
 }
 
 void CRoider::GenerateSubPathToSpawnLocation(shared_ptr<CWayFinder> pWayFinder)

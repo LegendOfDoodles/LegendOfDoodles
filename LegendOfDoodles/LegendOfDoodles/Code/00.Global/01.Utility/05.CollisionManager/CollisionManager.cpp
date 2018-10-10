@@ -118,8 +118,8 @@ void CCollisionManager::Update(shared_ptr<CWayFinder> pWayFinder)
 									XMFLOAT3 vec3 = Vector3::Subtract((*i)->GetPosition(), (*j)->GetPosition());
 									vec3.y = 0;
 									vec3 = Vector3::Normalize(vec3);
-									pWayFinder->AdjustValueByWallCollision((*i), vec3, length *sizeB / (sizeA + sizeB));
-									pWayFinder->AdjustValueByWallCollision((*j), vec3, -length * sizeA / (sizeA + sizeB));
+									pWayFinder->AdjustValueByWallCollision((*i), vec3, length);
+									pWayFinder->AdjustValueByWallCollision((*j), vec3, -length);
 									(*i)->RegenerateLookAt();
 									(*j)->RegenerateLookAt();
 								}
@@ -251,8 +251,7 @@ void CCollisionManager::RequestCollide(CollisionType type, CCollisionObject * pC
 								{
 									if (pCol->GetType() == ObjectType::FlyingObject
 										&&
-										(pCol->GetFlyingObjectsType() == FlyingObjectType::Player_ArrowSkill_Q
-											|| pCol->GetFlyingObjectsType() == FlyingObjectType::Player_Magic))
+										(pCol->GetFlyingObjectsType() == FlyingObjectType::Player_ArrowSkill_Q))
 									{
 										m_pEffectMgr->RequestSpawn((*i)->GetPosition(), pCol->GetLook(), 10, EffectObjectType::Player_ArrowAndFireBall_HitPosition_Effect);
 									}

@@ -428,7 +428,7 @@ void CNeutralityShader::BuildObjects(shared_ptr<CCreateMgr> pCreateMgr, void *pC
 		pRotatingObject->SetMaterial(pCubeMaterial);
 #endif
 		pRoider->SetBoundingMesh(pBoundingBoxMesh);
-		pRoider->SetCollisionSize(CONVERT_PaperUnit_to_InG(7.2f));
+		pRoider->SetCollisionSize(CONVERT_PaperUnit_to_InG(3.6f));
 
 		pRoider->CBaseObject::SetPosition(CONVERT_Unit_to_InG(pos.x), CONVERT_Unit_to_InG(pos.y), CONVERT_Unit_to_InG(pos.z));
 		pRoider->SetTeam(TeamType::Neutral);
