@@ -225,6 +225,8 @@ void ProcessPacket(int id, char *packet)
 		}
 		case CS_DEMAND_CHANGE_SEAT:
 		{
+			printf("Cur Seat: %d Demand Seat: %d\n", SeatChangePacket->Character_id, SeatChangePacket->Demand_id);
+
 			if (g_clients[SeatChangePacket->Demand_id].m_isconnected) break;
 
 			g_clients[SeatChangePacket->Demand_id].m_s = g_clients[SeatChangePacket->Character_id].m_s;
@@ -537,6 +539,7 @@ void accept_thread()	//새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 			}
 			p.size = sizeof(p);
 			p.type = SC_CONNECT_PLAYER;
+			printf("cur id: %d real id: %d\n", fakeId, id);
 
 			for (int i = 0; i < MAX_USER; ++i) {
 				if (g_clients[i].m_isconnected) {

@@ -16,6 +16,14 @@
 CRoomCardShader::CRoomCardShader(shared_ptr<CCreateMgr> pCreateMgr) : CShader(pCreateMgr)
 {
 	m_hWnd = pCreateMgr->GetHwnd();
+
+	for (int i = 0; i < 4; ++i)
+	{
+		if (m_pNetwork->m_EachCardType[i] == CardType::Blue_Player || m_pNetwork->m_EachCardType[i] == CardType::Red_Player)
+		{
+			m_pNetwork->m_EachPlayerReadyState[i] = false;
+		}
+	}
 }
 
 CRoomCardShader::~CRoomCardShader()
@@ -82,6 +90,7 @@ bool CRoomCardShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 
 		if (m_RoomCards[i]->IsInRect(FRAME_BUFFER_WIDTH / 5.f, FRAME_BUFFER_WIDTH / 5.f, cursorPos))
 		{
+			printf("Cur Seat: %d Demand Seat: %d\n", m_pNetwork->m_myid, i);
 			CS_Msg_Demand_Change_Seat p;
 			p.Character_id = (BYTE)m_pNetwork->m_myid;
 			p.Demand_id = (BYTE)i;
