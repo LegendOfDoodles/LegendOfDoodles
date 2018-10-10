@@ -101,7 +101,7 @@ void CCollisionManager::Update(shared_ptr<CWayFinder> pWayFinder)
 								float collisionLength = sizeA + sizeB;
 								if (distance < collisionLength)
 								{
-									float length = min((collisionLength - distance), collisionLength*0.05f);
+									float length = (collisionLength - distance);
 
 									XMFLOAT3 vec3 = Vector3::Subtract((*i)->GetPosition(), (*j)->GetPosition());
 									vec3.y = 0;
