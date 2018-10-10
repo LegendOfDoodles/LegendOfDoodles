@@ -225,8 +225,6 @@ void ProcessPacket(int id, char *packet)
 		}
 		case CS_DEMAND_CHANGE_SEAT:
 		{
-			printf("Cur Seat: %d Demand Seat: %d\n", SeatChangePacket->Character_id, SeatChangePacket->Demand_id);
-
 			if (g_clients[SeatChangePacket->Demand_id].m_isconnected) break;
 
 			g_clients[SeatChangePacket->Demand_id].m_s = g_clients[SeatChangePacket->Character_id].m_s;
@@ -391,6 +389,28 @@ void DisconnectPlayer(int id)
 	g_clients[id].m_isconnected = false;
 	g_clients[id].m_isReady = false;
 	g_loaded[g_clients[id].m_realId] = false;
+
+	for (int i = 0; i < MAX_USER; ++i)
+	{
+		if (g_clients[i].m_isconnected && g_clients[i].m_isReady)
+		{
+			g_clients[i].m_isReady = false;
+		}
+	}
+
+	SC_Msg_Disconnect_Player p;
+	for (int i = 0; i < MAX_USER; ++i)
+	{
+		p.PlayerConnectStatus[i] = g_clients[i].m_isconnected;
+	}
+	p.size = sizeof(p);
+	p.type = SC_DISCONNECT_PLAYER;
+
+	for (int i = 0; i < MAX_USER; ++i) {
+		if (g_clients[i].m_isconnected) {
+			SendPacket(i, &p);
+		}
+	}
 }
 
 void worker_thread()
@@ -528,7 +548,7 @@ void accept_thread()	//새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 
 			g_loaded[id] = true;
 			g_clients[fakeId].m_isconnected = true;
-			StartRecv(id);
+			StartRecv(fakeId);
 
 			SC_Msg_Connect_Player p;
 			p.Character_id = (BYTE)fakeId;
@@ -539,7 +559,6 @@ void accept_thread()	//새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 			}
 			p.size = sizeof(p);
 			p.type = SC_CONNECT_PLAYER;
-			printf("cur id: %d real id: %d\n", fakeId, id);
 
 			for (int i = 0; i < MAX_USER; ++i) {
 				if (g_clients[i].m_isconnected) {

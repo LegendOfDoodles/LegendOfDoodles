@@ -287,6 +287,11 @@ struct SC_Msg_Connect_Player : public Packet
 	bool PlayerReadyStatus[4];
 };
 
+struct SC_Msg_Disconnect_Player : public Packet
+{
+	bool PlayerConnectStatus[4];
+};
+
 struct SC_Notify_Evation : public Packet
 {
 	short Player_Tag;
@@ -329,6 +334,7 @@ struct SC_Notify_Player_Ready : public Packet
 #define SC_NOTIFY_EVATION			  13
 #define SC_NOTIFY_PLAYER_READY		  14
 #define SC_NOTIFY_PLAYER_CANCEL_READY 15
+#define SC_DISCONNECT_PLAYER		  16
 
 #define SC_CONNECT_PLAYER			  101
 #define SC_PUT_PLAYER				  102

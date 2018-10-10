@@ -72,6 +72,16 @@ void CNetwork::ProcessPacket(char *ptr)
  	if (ptr[1] != 0) {
 		switch (ptr[1])
 		{
+		case SC_DISCONNECT_PLAYER:
+		{
+			SC_Msg_Disconnect_Player *my_packet = reinterpret_cast<SC_Msg_Disconnect_Player *>(ptr);
+			for (int i = 0; i < MAX_USER; ++i)
+			{
+				m_EachPlayerReadyState[i] = false;
+			}
+			m_pRoomScene->GetShader(1)->SetPlayerConnectedStatus(my_packet->PlayerConnectStatus);
+			break;
+		}
 		case SC_CONNECT_PLAYER:
 		{
 			SC_Msg_Connect_Player *my_packet = reinterpret_cast<SC_Msg_Connect_Player *>(ptr);

@@ -93,7 +93,6 @@ bool CRoomCardShader::OnProcessMouseInput(WPARAM pKeyBuffer)
 
 		if (m_RoomCards[i]->IsInRect(FRAME_BUFFER_WIDTH / 5.f, FRAME_BUFFER_WIDTH / 5.f, cursorPos))
 		{
-			printf("Cur Seat: %d Demand Seat: %d\n", m_pNetwork->m_myid, i);
 			CS_Msg_Demand_Change_Seat p;
 			p.Character_id = (BYTE)m_pNetwork->m_myid;
 			p.Demand_id = (BYTE)i;
